@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 
 function MainPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <h1 className="text-3xl font-bold mb-8">Main Page</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-gray-100 p-4">
+      <h1 className="text-3xl font-bold mb-8 font-dela text-main">took!</h1>
       <div className="space-y-4">
-        <Link to="/login" className="block w-full">
-          <button className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition">Login</button>
+        <Link to="/login" className="">
+          <button className="w-full px-6 py-3 bg-main bg-opacity-90 text-white rounded hover:bg-blue-700 transition ">Login</button>
         </Link>
         <Link to="/signup" className="block w-full">
           <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">Sign Up</button>

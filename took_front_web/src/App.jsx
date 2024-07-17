@@ -10,10 +10,10 @@ import TaxiPage from './pages/TaxiPage'; // 택시 화면
 import PurchasePage from './pages/PurchasePage'; // 공동구매 화면
 
 const ROUTER = createBrowserRouter([
-  { path: '/', element: <MainPage /> },
+  {path: '/', element: <MainPage /> },
   {path: '/login', element: <LoginPage /> },
   {path: '/signup', element: <SignupPage /> },
-  {path: '/userinfo', element: <UserInfoPage /> },
+   {path: '/userinfo', element: <UserInfoPage /> },
   {path: '/payment', element: <PaymentPage />},
   {path: '/food', element: <FoodPage />},
   {path: '/taxi', element: <TaxiPage />},
