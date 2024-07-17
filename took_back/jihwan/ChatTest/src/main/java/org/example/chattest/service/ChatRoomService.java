@@ -3,6 +3,7 @@ package org.example.chattest.service;
 import lombok.RequiredArgsConstructor;
 import org.example.chattest.dto.ChatRoomCreateRequest;
 import org.example.chattest.dto.ChatRoomCreateResponse;
+import org.example.chattest.dto.ChatRoomSelectResponse;
 import org.example.chattest.entity.ChatRoom;
 import org.example.chattest.repository.ChatRoomRepository;
 import org.springframework.stereotype.Service;
@@ -39,9 +40,9 @@ public class ChatRoomService {
      * @return 모든 채팅방 리스트
      */
     @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
-    public List<ChatRoomCreateResponse> findAllRooms() {
+    public List<ChatRoomSelectResponse> findAllRooms() {
         return chatRoomRepository.findAll().stream()
-                .map(ChatRoomCreateResponse::new)  // ChatRoom 엔티티를 ChatRoomCreateResponse로 변환
+                .map(ChatRoomSelectResponse::new)  // ChatRoom 엔티티를 ChatRoomCreateResponse로 변환
                 .collect(Collectors.toList());  // 리스트로 변환하여 반환
     }
 
@@ -51,9 +52,18 @@ public class ChatRoomService {
      * @return 조회된 채팅방 리스트
      */
     @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
-    public List<ChatRoomCreateResponse> findRoomByCategory(int category) {
+    public List<ChatRoomSelectResponse> findRoomsByCategory(int category) {
         return chatRoomRepository.findByCategory(category).stream()
-                .map(ChatRoomCreateResponse::new)  // ChatRoom 엔티티를 ChatRoomCreateResponse로 변환
+                .map(ChatRoomSelectResponse::new)  // ChatRoom 엔티티를 ChatRoomCreateResponse로 변환
                 .collect(Collectors.toList());  // 리스트로 변환하여 반환
+    }
+
+    /**
+     * 특정 채팅방 삭제
+     * @param roomSeq 삭제할 채팅방의 고유 번호
+     */
+    @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
+    public void deleteChatRoom(Long roomSeq) {
+        chatRoomRepository.deleteById(roomSeq);  // 채팅방 삭제
     }
 }

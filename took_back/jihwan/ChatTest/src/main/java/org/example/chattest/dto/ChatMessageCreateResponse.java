@@ -1,6 +1,8 @@
 package org.example.chattest.dto;
 
 import lombok.Data;
+import org.example.chattest.entity.ChatMessage;
+import org.example.chattest.entity.ChatRoom;
 
 import java.time.LocalDateTime;
 
@@ -12,4 +14,13 @@ public class ChatMessageCreateResponse {
     private String userId;  // 메시지 송신자 ID
     private String message;  // 메시지 내용
     private LocalDateTime createdAt;  // 메시지 생성 시간
+
+    public ChatMessageCreateResponse(ChatMessage chatMessage) {
+        this.messageSeq = chatMessage.getMessageSeq();
+        this.type = String.valueOf(chatMessage.getType());
+        this.roomSeq = chatMessage.getChatRoom().getRoomSeq();
+        this.userId = chatMessage.getUserId();
+        this.message = chatMessage.getMessage();
+        this.createdAt = chatMessage.getCreatedAt();
+    }
 }

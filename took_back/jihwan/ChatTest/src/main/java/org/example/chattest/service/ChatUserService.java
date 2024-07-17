@@ -1,8 +1,9 @@
 package org.example.chattest.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.chattest.dto.ChatUserRequest;
-import org.example.chattest.dto.ChatUserResponse;
+import org.example.chattest.dto.ChatUserCreateRequest;
+import org.example.chattest.dto.ChatUserCreateResponse;
+import org.example.chattest.dto.ChatUserDeleteRequest;
 import org.example.chattest.entity.ChatRoom;
 import org.example.chattest.entity.ChatUser;
 import org.example.chattest.repository.ChatRoomRepository;
@@ -19,36 +20,27 @@ public class ChatUserService {
     private final ChatUserRepository chatUserRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    /**
-     * 채팅방 입장
-     * @param chatUserRequest 채팅방 입장 요청 DTO
-     * @return 채팅방에 입장한 유저의 응답 DTO
-     */
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
-    public ChatUserResponse enterChatRoom(ChatUserRequest chatUserRequest) {
+    public ChatUserCreateResponse enterChatRoom(ChatUserCreateRequest chatUserCreateRequest) {
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
-        ChatRoom chatRoom = chatRoomRepository.findById(chatUserRequest.getRoomSeq()).orElseThrow();
+        ChatRoom chatRoom = chatRoomRepository.findById(chatUserCreateRequest.getRoomSeq()).orElseThrow();
         // 새로운 채팅 유저 객체 생성 및 설정
         ChatUser chatUser = ChatUser.builder()
                 .chatRoom(chatRoom)
-                .userId(chatUserRequest.getUserId())
+                .userId(chatUserCreateRequest.getUserId())
                 .joinTime(LocalDateTime.now())
                 .build();
         // 채팅 유저 객체를 저장하고 반환
         ChatUser savedChatUser = chatUserRepository.save(chatUser);
-        return new ChatUserResponse(savedChatUser);
+        return new ChatUserCreateResponse(savedChatUser);
     }
 
-    /**
-     * 채팅방 퇴장
-     * @param chatUserRequest 채팅방 퇴장 요청 DTO
-     */
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
-    public void leaveChatRoom(ChatUserRequest chatUserRequest) {
+    public void leaveChatRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
-        ChatRoom chatRoom = chatRoomRepository.findById(chatUserRequest.getRoomSeq()).orElseThrow();
+        ChatRoom chatRoom = chatRoomRepository.findById(chatUserDeleteRequest.getRoomSeq()).orElseThrow();
         // 채팅 유저 객체를 사용자 ID와 채팅방으로 조회
-        ChatUser chatUser = chatUserRepository.findByUserIdAndChatRoom(chatUserRequest.getUserId(), chatRoom);
+        ChatUser chatUser = chatUserRepository.findByUserIdAndChatRoom(chatUserDeleteRequest.getUserId(), chatRoom);
         // 조회된 채팅 유저 객체가 존재할 경우 삭제
         if (chatUser != null) {
             chatUserRepository.delete(chatUser);
