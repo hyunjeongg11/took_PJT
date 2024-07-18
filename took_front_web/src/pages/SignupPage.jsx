@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import BackButton from "../components/common/backButton";
+import BackButton from "../components/common/BackButton";
 import { isValidEmail, isValidPassword } from "../utils/validation";
 
 function SignupPage() {
@@ -14,7 +14,7 @@ function SignupPage() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState(null);
-
+  
   const handleSignupClick = e => {
     let valid = true;
 

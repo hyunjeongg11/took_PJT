@@ -8,6 +8,7 @@ import PaymentPage from "./pages/PaymentPage"; // 결제 화면
 import FoodPage from "./pages/FoodPage"; // 배달음식 화면
 import TaxiPage from "./pages/TaxiPage"; // 택시 화면
 import PurchasePage from "./pages/PurchasePage"; // 공동구매 화면
+import MyInfoPage from "./pages/mypage/MyInfoPage"; // MyInfoPage
 
 const ROUTER = createBrowserRouter([
   { path: "/", element: <MainPage /> },
@@ -17,7 +18,8 @@ const ROUTER = createBrowserRouter([
   { path: "/payment", element: <PaymentPage /> },
   { path: "/food", element: <FoodPage /> },
   { path: "/taxi", element: <TaxiPage /> },
-  { path: "/purchase", element: <PurchasePage /> }
+  { path: "/purchase", element: <PurchasePage /> },
+  { path: "/myInfo", element: <MyInfoPage /> }
 ]);
 
 function App() {

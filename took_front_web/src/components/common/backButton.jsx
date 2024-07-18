@@ -10,7 +10,7 @@ const BackButton = () => {
     <img
       src={backIcon}
       alt="뒤로"
-      className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0"
+      className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
       onClick={handleBackClick}
     />
   );

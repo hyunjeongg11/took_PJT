@@ -1,8 +1,8 @@
 import { useState } from "react";
 import kakaoImage from "../assets/login/kakao.svg";
 import googleImage from "../assets/login/google.png";
-import backIcon from "../assets/common/back.svg";
-import BackButton from "../components/common/backButton.jsx";
+import BackButton from "../components/common/BackButton.jsx";
+import Button from "../components/login/Button.jsx";
 
 function LoginPage() {
   const [userName, setUserName] = useState("");
@@ -15,35 +15,36 @@ function LoginPage() {
     // TODO: 로그인 API 호출
   };
   return (
-    <div className="min-h-screen">
+    <div className="max-h-screen">
       <BackButton />
-      <div className="flex flex-col mt-16 w-[70%] items-center justify-center  bg-white p-4 mx-auto">
-        <div className="text-main font-dela  text-4xl mb-10">took !</div>
-        <div className="w-full max-w-xs">
+      <div className="flex flex-col mt-[30%] w-[65%] items-center justify-center  bg-white p-4 mx-auto">
+        <div className="text-main font-dela text-4xl mb-10">took !</div>
+        <div className="w-full">
           <div className="mb-4">
             <input
-              className="appearance-none block w-full  placeholder-main text-main text-lg placeholder:text-sm placeholder:text-opacity-60 border-b-2 border-main rounded py-2 px-1 my-4 leading-tight focus:outline-none focus:bg-white focus:border-main"
+              className="appearance-none block w-full  placeholder-main text-main placeholder:text-opacity-50 text-base placeholder:text-sm border-b-2 border-opacity-60 border-main pt-2 pb-1 px-1 my-4 leading-tight focus:outline-none focus:bg-white focus:border-main"
               type="text"
               value={userName}
               onChange={e => setUserName(e.target.value)}
               placeholder="아이디"
             />
             <input
-              className="appearance-none block w-full  placeholder-main text-main text-lg placeholder:text-sm placeholder:text-opacity-60 border-b-2 border-main rounded py-2 px-1 my-4 leading-tight focus:outline-none focus:bg-white focus:border-main"
+              className="appearance-none block w-full  placeholder-main text-main text-base placeholder:text-sm placeholder:text-opacity-60 border-b-2 border-opacity-60 border-main  pt-2 pb-1 px-1 my-4 leading-tight focus:outline-none focus:bg-white focus:border-main"
               type="password"
               placeholder="비밀번호"
               value={password}
               onChange={e => setPassword(e.target.value)}
             />
           </div>
-          <button
-            className="w-full bg-main text-white font-bold text-lg py-3 mt-8 px-4 rounded-2xl shadow-md focus:outline-none focus:shadow-outline"
-            type="submit"
-            onClick={handleLoginClick}
-          >
-            로그인
-          </button>
-          <div className="flex justify-between text-main text-sm mb-12 mt-6">
+
+          <Button
+            name="로그인"
+            textColor="white"
+            width="full"
+            handleClick={handleLoginClick}
+            style="mt-10 font-bold bg-main"
+          />
+          <div className="flex justify-between text-main text-xs mb-16 mt-6">
             <a href="/signup" className="hover:underline">
               회원가입
             </a>
@@ -51,25 +52,25 @@ function LoginPage() {
               비밀번호 찾기
             </a>
           </div>
-          <div className="flex items-center my-6">
+          <div className="flex items-center my-4 text-xs">
             <hr className="flex-grow border-t border-main" />
-            <span className="mx-2 text-main text-sm">또는</span>
+            <span className="mx-2 text-main">또는</span>
             <hr className="flex-grow border-t border-main" />
           </div>
-          <button
-            className="w-full bg-yellow-400 text-black font-bold py-3 px-4 rounded-2xl shadow-md focus:outline-none focus:shadow-outline mb-4 flex items-center justify-center"
-            type="button"
-          >
-            <img src={kakaoImage} alt="Kakao" className="w-6 h-6 mr-2" />
-            카카오로 로그인
-          </button>
-          <button
-            className="w-full font-nanum bg-blue-500 font-bold text-white py-3  px-4 rounded-2xl shadow-md focus:outline-none focus:shadow-outline flex items-center justify-center"
-            type="button"
-          >
-            <img src={googleImage} alt="Google" className="w-6 h-6 mr-2" />
-            구글로 로그인
-          </button>
+          <Button
+            name="카카오로 로그인"
+            width="full"
+            textColor="black"
+            image={kakaoImage}
+            style="bg-yellow-400 mb-4 text-xs font-bold "
+          />
+          <Button
+            name="구글로 로그인"
+            width="full"
+            textColor="white"
+            image={googleImage}
+            style="text-xs font-bold bg-blue-500"
+          />
         </div>
       </div>
     </div>
