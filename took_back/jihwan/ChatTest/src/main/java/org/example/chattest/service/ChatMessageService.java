@@ -1,7 +1,10 @@
 package org.example.chattest.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.chattest.dto.*;
+import org.example.chattest.dto.ChatMessageCreateRequest;
+import org.example.chattest.dto.ChatMessageCreateResponse;
+import org.example.chattest.dto.ChatMessageSelectRequest;
+import org.example.chattest.dto.ChatMessageSelectResponse;
 import org.example.chattest.entity.ChatMessage;
 import org.example.chattest.entity.ChatRoom;
 import org.example.chattest.repository.ChatMessageRepository;
@@ -44,13 +47,13 @@ public class ChatMessageService {
 
     /**
      * 특정 채팅방의 모든 메시지 조회
-     * @param roomSeq 조회할 채팅방의 고유 번호
+     * @param chatMessageSelectRequest 조회할 채팅방의 해당 유저의 참가시간과 메시지 생성 시간을 비교
      * @return 해당 채팅방의 모든 메시지 리스트
      */
     @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
-    public List<ChatMessageSelectResponse> findMessagesByRoomSeq(Long roomSeq) {
-        // 특정 채팅방 ID의 모든 메시지를 조회하고 반환
-        return chatMessageRepository.findByChatRoomRoomSeq(roomSeq).stream()
+    public List<ChatMessageSelectResponse> findMessagesByRoomSeq(ChatMessageSelectRequest chatMessageSelectRequest) {
+        // 특정 채팅방 ID와 유저 ID로 해당 유저의 참가 시간 이후에 생성된 모든 메시지를 조회하고 반환
+        return chatMessageRepository.findMessagesByRoomSeqAndUserJoinTime(chatMessageSelectRequest.getRoomSeq(), chatMessageSelectRequest.getUserId()).stream()
                 .map(ChatMessageSelectResponse::new)
                 .collect(Collectors.toList());
     }

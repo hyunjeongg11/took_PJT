@@ -20,6 +20,26 @@ public class ChatUserService {
     private final ChatUserRepository chatUserRepository;
     private final ChatRoomRepository chatRoomRepository;
 
+    /**
+     * 유저가 이미 채팅방에 존재하는지 확인하는 메서드
+     * @param chatUserCreateRequest 유저의 방 입장 요청 정보를 담은 객체
+     * @return 유저가 채팅방에 존재하지 않으면 true, 존재하면 false
+     */
+    @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
+    public boolean checkChatUser(ChatUserCreateRequest chatUserCreateRequest) {
+        // 채팅방을 ID로 조회, 없을 경우 예외 발생
+        ChatRoom chatRoom = chatRoomRepository.findById(chatUserCreateRequest.getRoomSeq()).orElseThrow();
+        // 해당 유저의 채팅방 소속 여부를 확인
+        ChatUser checkedChatUser = chatUserRepository.findByUserIdAndChatRoom(chatUserCreateRequest.getUserId(), chatRoom);
+        // 유저가 존재하지 않으면 true 반환
+        return checkedChatUser == null;
+    }
+
+    /**
+     * 유저가 채팅방에 새로 참가할 때 처리하는 메서드
+     * @param chatUserCreateRequest 유저의 방 입장 요청 정보를 담은 객체
+     * @return 방에 입장한 유저의 정보
+     */
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
     public ChatUserCreateResponse enterChatRoom(ChatUserCreateRequest chatUserCreateRequest) {
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
@@ -35,6 +55,10 @@ public class ChatUserService {
         return new ChatUserCreateResponse(savedChatUser);
     }
 
+    /**
+     * 유저가 채팅방에서 퇴장할 때 처리하는 메서드
+     * @param chatUserDeleteRequest 유저의 방 퇴장 요청 정보를 담은 객체
+     */
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
     public void leaveChatRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
