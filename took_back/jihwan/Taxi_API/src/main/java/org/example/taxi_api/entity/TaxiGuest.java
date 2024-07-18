@@ -34,5 +34,5 @@ public class TaxiGuest {
     private double destiLat;  // 도착지 위도
 
     @Column
-    private double destiLng;  // 도착지 경도
+    private double destiLon;  // 도착지 경도
 }
