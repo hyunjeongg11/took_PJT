@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 function UserInfoPage() {
   return <div>User Info Page</div>;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 function TaxiPage() {
   return <div>Taxi Page</div>;

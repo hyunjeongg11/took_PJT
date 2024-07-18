@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 
 function PurchasePage() {
   return <div>Purchase Page</div>;
