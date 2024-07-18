@@ -63,6 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
 
                 // ROLE_DEVELOPER ,등을 리스트로 전달 할 수 있게금 가능!
+                // 다중 권한 소지자일 경우
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 authorities.add(new SimpleGrantedAuthority(role));
                 

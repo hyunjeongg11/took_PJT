@@ -9,13 +9,16 @@ import com.housing.back.common.CertificationNumber;
 import com.housing.back.dto.request.auth.CheckCertificationRequestDto;
 import com.housing.back.dto.request.auth.EmailCertificaionRequestDto;
 import com.housing.back.dto.request.auth.IdCheckRequestDto;
+import com.housing.back.dto.request.auth.SignInRequestDto;
 import com.housing.back.dto.request.auth.SignUpRequestDto;
 import com.housing.back.dto.response.ResponseDto;
 import com.housing.back.dto.response.auth.CheckCertificationResponseDto;
 import com.housing.back.dto.response.auth.EmailCertificationResponseDto;
 import com.housing.back.dto.response.auth.IdCheckResponseDto;
+import com.housing.back.dto.response.auth.SignInResponseDto;
 import com.housing.back.dto.response.auth.SignUpResponseDto;
 import com.housing.back.provider.EmailProvider;
+import com.housing.back.provider.JwtProvider;
 import com.housing.back.repository.UserRepository;
 import com.housing.back.service.AuthService;
 import com.housing.back.entity.CertificationEntity;
@@ -30,6 +33,8 @@ public class AuthServiceImpl implements AuthService{
    
     private final UserRepository userRepository;
     private final CertificationRepository certificationRepository;
+    
+    private final JwtProvider jwtProvider;
     private final EmailProvider emailProvider;
 
     // 의존성을 주입받지 않고 외부에서 가지고 옴
@@ -149,6 +154,36 @@ public class AuthServiceImpl implements AuthService{
     }
 
     return SignUpResponseDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto dto) {
+
+
+        String token = null;
+
+        try{
+
+            String userId = dto.getId();
+            UserEntity userEntity = userRepository.findByUserId(userId);
+
+            if(userEntity==null) return SignInResponseDto.signInFail();
+
+            //유저의 입력된 비밀번호와 DB에 저장된 암호화된 비밀번호를 matches로 비교
+            String password = dto.getPassword();
+            String encodedPassword = userEntity.getPassword();
+            boolean isMatched = passwordEncoder.matches(password, encodedPassword);
+
+            if(!isMatched) return SignInResponseDto.signInFail();
+
+            token = jwtProvider.create(userId);
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return SignInResponseDto.success(token);
     }
 
 
