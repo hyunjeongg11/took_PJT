@@ -70,4 +70,20 @@ public class ChatUserService {
             chatUserRepository.delete(chatUser);
         }
     }
+
+
+    /**
+     * 유저가 채팅방에서 강퇴당할때 처리하는 메서드
+     * @param chatUserDeleteRequest 유저의 방 퇴장 요청 정보를 담은 객체
+     */
+    public void kickUserFromRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
+        // 채팅방을 ID로 조회, 없을 경우 예외 발생
+        ChatRoom chatRoom = chatRoomRepository.findById(chatUserDeleteRequest.getRoomSeq()).orElseThrow();
+        // 채팅 유저 객체를 사용자 ID와 채팅방으로 조회
+        ChatUser chatUser = chatUserRepository.findByUserIdAndChatRoom(chatUserDeleteRequest.getUserId(), chatRoom);
+        // 조회된 채팅 유저 객체가 존재할 경우 삭제
+        if (chatUser != null) {
+            chatUserRepository.delete(chatUser);
+        }
+    }
 }

@@ -72,7 +72,7 @@ public class ChatController {
      * 유저가 채팅방에 참가하는 로직을 처리하는 메서드
      * @param chatUserCreateRequest 유저의 방 입장 요청 정보를 담은 객체
      */
-    public void joinRoom(ChatUserCreateRequest chatUserCreateRequest) {
+    public ResponseEntity<?> joinRoom(ChatUserCreateRequest chatUserCreateRequest) {
         ChatUserCreateResponse chatUser = chatUserService.enterChatRoom(chatUserCreateRequest);
         // 입장 메시지 생성 및 전송
         ChatMessageCreateRequest chatMessageCreateRequest = ChatMessageCreateRequest.builder()
@@ -82,6 +82,7 @@ public class ChatController {
                 .message(chatUser.getUserId() + "님이 입장하셨습니다.")
                 .build();
         sendMessage(chatMessageCreateRequest);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -89,7 +90,7 @@ public class ChatController {
      * @param chatUserDeleteRequest 유저의 방 퇴장 요청 정보를 담은 객체
      */
     @MessageMapping("/room/leave")
-    public void leaveRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
+    public ResponseEntity<?> leaveRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
         chatUserService.leaveChatRoom(chatUserDeleteRequest);
         // 퇴장 메시지 생성 및 저장
         ChatMessageCreateRequest chatMessageCreateRequest = ChatMessageCreateRequest.builder()
@@ -99,6 +100,26 @@ public class ChatController {
                 .message(chatUserDeleteRequest.getUserId() + "님이 퇴장하셨습니다.")
                 .build();
         sendMessage(chatMessageCreateRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 특정 멤버를 채팅방에서 내보내는 메서드
+     * @param chatUserDeleteRequest 유저의 방 퇴장 요청 정보를 담은 객체
+     * @return 응답 본문 없음
+     */
+    @MessageMapping("/room/kick")
+    public ResponseEntity<?> kickUser(@RequestBody ChatUserDeleteRequest chatUserDeleteRequest) {
+        chatUserService.kickUserFromRoom(chatUserDeleteRequest);
+        // 내보내기 메시지 생성 및 저장
+        ChatMessageCreateRequest chatMessageCreateRequest = ChatMessageCreateRequest.builder()
+                .type("EXIT")
+                .roomSeq(chatUserDeleteRequest.getRoomSeq())
+                .userId(chatUserDeleteRequest.getUserId())
+                .message(chatUserDeleteRequest.getUserId() + "님이 내보내졌습니다.")
+                .build();
+        sendMessage(chatMessageCreateRequest);
+        return ResponseEntity.noContent().build();
     }
 
     /**
