@@ -39,7 +39,7 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService{
 
         if(oauthClientName.equals("kakao")){
             userId = "kakao_" + oAuth2User.getAttributes().get("id");
-            userEntity = new UserEntity(userId,email,"kakao");
+            userEntity = new UserEntity(userId,email);
         }
 
         userRepository.save(userEntity);

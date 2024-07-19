@@ -47,7 +47,7 @@ public class WebSecurityConfig {
                                 .httpBasic(HttpBasicConfigurer::disable)
                                 .sessionManagement(sessionManagement -> sessionManagement
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                //
+                                // 일단 세션 안쓰게끔
                                 .authorizeHttpRequests(request -> request
 
                                                 .requestMatchers("/", "/api/v1/auth/**","/oauth2/**").permitAll()
@@ -73,18 +73,21 @@ public class WebSecurityConfig {
 
         @Bean
         protected CorsConfigurationSource configurationSource() {
-
-                CorsConfiguration configuration = new CorsConfiguration();
-
-                configuration.addAllowedOrigin("*");
-                configuration.addAllowedMethod("*");
-                configuration.addAllowedHeader("*");
-
-                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                source.registerCorsConfiguration("/**", configuration);
-
-                return source;
+        
+            CorsConfiguration configuration = new CorsConfiguration();
+        
+            // 정확한 출처만 허용
+            configuration.addAllowedOrigin("http://localhost:3000");
+            configuration.addAllowedMethod("*"); // 필요에 따라 특정 메서드만 허용
+            configuration.addAllowedHeader("*"); // 필요에 따라 특정 헤더만 허용
+            configuration.setAllowCredentials(true); // 자격 증명(쿠키 등) 허용
+        
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            source.registerCorsConfiguration("/**", configuration);
+        
+            return source;
         }
+        
 }
 
 // jwt인증에 실패하게 되면 위 값을 넣어주게 된다.

@@ -36,6 +36,38 @@ public class JwtProvider {
 
     }
 
+    // accessToken 확인
+    public String createAccessToken(String userId){
+        Date expiredDate = Date.from(Instant.now().plusMillis(3600000)); // 1시간 유효
+        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharset.UTF_8));
+
+        String jwt = Jwts.builder()
+                    .signWith(key,SignatureAlgorithm.HS256)
+                    .setSubject(userId)
+                    .setIssuedAt(new Date())
+                    .setExpiration(expiredDate)
+                    .compact();
+
+        return jwt;
+
+    }
+
+     // Refresh Token 생성
+     public String createRefreshToken(String userId) {
+        Date expiredDate = Date.from(Instant.now().plusMillis(2592000000L)); // 30일 유효
+        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharset.UTF_8));
+
+        String jwt= Jwts.builder()
+                    .signWith(key, SignatureAlgorithm.HS256)
+                    .setSubject(userId)
+                    .setIssuedAt(new Date())
+                    .setExpiration(expiredDate)
+                    .compact();
+
+        return jwt;
+    }
+
+
     // jwt 검증!
     public String validate(String jwt){
         

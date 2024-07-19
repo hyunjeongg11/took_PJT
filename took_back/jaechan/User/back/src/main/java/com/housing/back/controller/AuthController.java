@@ -12,10 +12,14 @@ import com.housing.back.dto.response.auth.SignUpResponseDto;
 import com.housing.back.dto.request.auth.CheckCertificationRequestDto;
 import com.housing.back.dto.request.auth.EmailCertificaionRequestDto;
 import com.housing.back.dto.request.auth.IdCheckRequestDto;
+import com.housing.back.dto.request.auth.RefreshTokenRequestDto;
+
 import com.housing.back.dto.request.auth.SignInRequestDto;
 import com.housing.back.dto.request.auth.SignUpRequestDto;
 import com.housing.back.dto.response.auth.IdCheckResponseDto;
 import com.housing.back.dto.response.auth.SignInResponseDto;
+import com.housing.back.dto.response.auth.RefreshTokenResponseDto;
+
 import com.housing.back.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -61,9 +65,19 @@ public class AuthController {
     public ResponseEntity<? super SignInResponseDto> signIn(
         @RequestBody @Valid SignInRequestDto requestBody
     ){
+
         ResponseEntity<? super SignInResponseDto> response = authService.signIn(requestBody);
         return response;
     }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(
+        @RequestBody @Valid RefreshTokenRequestDto requestBody
+    ){
+        ResponseEntity<? super RefreshTokenResponseDto> response = authService.refreshAccessToken(requestBody);
+        return response;
+    }   
+    
     
     
     
