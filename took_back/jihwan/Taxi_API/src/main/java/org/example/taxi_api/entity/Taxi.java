@@ -23,7 +23,7 @@ public class Taxi {
     @Id  // 이 필드가 엔티티의 기본 키임을 나타냅니다.
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // 기본 키 생성을 데이터베이스에 위임합니다.
     private long taxiSeq;  // 택시 시퀀스 번호
-
+ 
     @Column
     private String startName;  // 출발지 이름
 
@@ -60,4 +60,6 @@ public class Taxi {
 
     @OneToMany(mappedBy = "taxi", cascade = CascadeType.ALL, orphanRemoval = true)  // 일대다 관계 설정
     private List<TaxiGuest> taxiGuests;  // 택시에 탑승한 게스트들
+    
+    private Long roomSeq; // 채팅방 참조
 }
