@@ -20,8 +20,8 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // 자동 증가 설정
     private Long roomSeq;  // 채팅방 고유 번호
 
-    @Column(nullable = false)
-    private String userId;
+    @Column(nullable = false) //  유저테이블 참조
+    private Long userSeq;
 
     @Column(nullable = false)  // Not Null 설정
     private String roomTitle;  // 채팅방 제목

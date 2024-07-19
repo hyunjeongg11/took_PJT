@@ -1,9 +1,7 @@
 package org.example.chattest.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.chattest.dto.ChatRoomCreateRequest;
-import org.example.chattest.dto.ChatRoomCreateResponse;
-import org.example.chattest.dto.ChatRoomSelectResponse;
+import org.example.chattest.dto.*;
 import org.example.chattest.entity.ChatRoom;
 import org.example.chattest.repository.ChatRoomRepository;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,8 @@ public class ChatRoomService {
     public ChatRoomCreateResponse createChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomTitle(chatRoomCreateRequest.getRoomTitle())
-                .userId(chatRoomCreateRequest.getUserId())
+                .userSeq(chatRoomCreateRequest.getUserSeq())
+                .category(chatRoomCreateRequest.getCategory())
                 .createdAt(LocalDateTime.now())
                 .build();
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);  // 채팅방을 저장
@@ -40,9 +39,9 @@ public class ChatRoomService {
      * @return 모든 채팅방 리스트
      */
     @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
-    public List<ChatRoomSelectResponse> findAllRooms() {
+    public List<ChatRoomCategorySelectResponse> findAllRooms() {
         return chatRoomRepository.findAll().stream()
-                .map(ChatRoomSelectResponse::new)  // ChatRoom 엔티티를 ChatRoomCreateResponse로 변환
+                .map(ChatRoomCategorySelectResponse::new)  // ChatRoom 엔티티를 ChatRoomCreateResponse로 변환
                 .collect(Collectors.toList());  // 리스트로 변환하여 반환
     }
 
@@ -52,10 +51,23 @@ public class ChatRoomService {
      * @return 조회된 채팅방 리스트
      */
     @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
-    public List<ChatRoomSelectResponse> findRoomsByCategory(int category) {
+    public List<ChatRoomCategorySelectResponse> findRoomsByCategory(int category) {
         return chatRoomRepository.findByCategory(category).stream()
-                .map(ChatRoomSelectResponse::new)  // ChatRoom 엔티티를 ChatRoomCreateResponse로 변환
+                .map(ChatRoomCategorySelectResponse::new)  // ChatRoom 엔티티를 ChatRoomCreateResponse로 변환
                 .collect(Collectors.toList());  // 리스트로 변환하여 반환
+    }
+
+    /**
+     * 카테고리와 사용자 번호 목록으로 채팅방 조회
+     * @param chatRoomFilterRequest 필터링할 카테고리와 사용자 번호 목록을 담은 객체
+     * @return 필터링된 채팅방 리스트
+     */
+    @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
+    public List<ChatRoomFilterResponse> findRoomsByCategoryAndUsers(ChatRoomFilterRequest chatRoomFilterRequest) {
+        List<ChatRoom> chatRooms = chatRoomRepository.findByCategoryAndUserSeqIn(chatRoomFilterRequest.getCategory(), chatRoomFilterRequest.getUserSeqs());
+        return chatRooms.stream()
+                .map(ChatRoomFilterResponse::new)
+                .collect(Collectors.toList());
     }
 
     /**

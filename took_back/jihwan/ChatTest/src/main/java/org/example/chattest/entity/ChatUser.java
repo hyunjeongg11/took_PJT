@@ -16,7 +16,7 @@ public class ChatUser {
 
     @Id  // 기본 키(PK)로 설정
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // 자동 증가 설정
-    private Long userSeq;  // 유저 고유 번호
+    private Long chatUserSeq;  // 유저 고유 번호
 
     @ManyToOne  // 다대일 관계 설정
     @JoinColumn(name = "room_seq", nullable = false)  // 외래 키 설정 및 Not Null 설정
@@ -26,5 +26,5 @@ public class ChatUser {
     private LocalDateTime joinTime;  // 방에 들어간 시간
 
     @Column(nullable = false)  // Not Null 설정
-    private String userId;  // 유저 이름
+    private Long userSeq;  // 유저 이름
 }

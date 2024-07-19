@@ -17,11 +17,11 @@ public class ChatMessageRepositoryCustomImpl implements ChatMessageRepositoryCus
      * 주어진 방 번호와 유저 ID를 기반으로 해당 유저의 방 참가 시간 이후에 생성된 모든 메시지를 조회합니다.
      *
      * @param roomSeq 조회할 채팅방의 고유 번호
-     * @param userId 조회할 유저의 ID
+     * @param userSeq 조회할 유저의 번호
      * @return 해당 유저의 방 참가 시간 이후에 생성된 메시지 리스트
      */
     @Override
-    public List<ChatMessage> findMessagesByRoomSeqAndUserJoinTime(Long roomSeq, String userId) {
+    public List<ChatMessage> findMessagesByRoomSeqAndUserJoinTime(Long roomSeq, Long userSeq) {
         QChatMessage chatMessage = QChatMessage.chatMessage;  // QueryDSL을 사용한 ChatMessage 엔티티의 메타데이터
         QChatUser chatUser = QChatUser.chatUser;  // QueryDSL을 사용한 ChatUser 엔티티의 메타데이터
 
@@ -29,7 +29,7 @@ public class ChatMessageRepositoryCustomImpl implements ChatMessageRepositoryCus
         return queryFactory.selectFrom(chatMessage)
                 // ChatUser 엔티티와 조인
                 .join(chatUser).on(chatMessage.chatRoom.roomSeq.eq(chatUser.chatRoom.roomSeq)
-                        .and(chatUser.userId.eq(userId)))
+                        .and(chatUser.userSeq.eq(userSeq)))
                 // 채팅방 번호가 일치하고, 메시지 생성 시간이 유저의 방 참가 시간 이후인 경우 필터링
                 .where(chatMessage.chatRoom.roomSeq.eq(roomSeq)
                         .and(chatMessage.createdAt.after(chatUser.joinTime)))

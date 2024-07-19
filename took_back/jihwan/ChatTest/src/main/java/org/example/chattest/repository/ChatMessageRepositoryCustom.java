@@ -5,5 +5,5 @@ import org.example.chattest.entity.ChatMessage;
 import java.util.List;
 
 public interface ChatMessageRepositoryCustom {
-    List<ChatMessage> findMessagesByRoomSeqAndUserJoinTime(Long roomSeq, String userId);
+    List<ChatMessage> findMessagesByRoomSeqAndUserJoinTime(Long roomSeq, Long UserSeq);
 }

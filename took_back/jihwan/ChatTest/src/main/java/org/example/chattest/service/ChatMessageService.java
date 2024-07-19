@@ -36,7 +36,7 @@ public class ChatMessageService {
         ChatMessage chatMessage = ChatMessage.builder()
                 .type(ChatMessage.MessageType.valueOf(chatMessageCreateRequest.getType()))
                 .chatRoom(chatRoom)
-                .userId(chatMessageCreateRequest.getUserId())
+                .userSeq(chatMessageCreateRequest.getUserSeq())
                 .message(chatMessageCreateRequest.getMessage())
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -53,7 +53,7 @@ public class ChatMessageService {
     @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
     public List<ChatMessageSelectResponse> findMessagesByRoomSeq(ChatMessageSelectRequest chatMessageSelectRequest) {
         // 특정 채팅방 ID와 유저 ID로 해당 유저의 참가 시간 이후에 생성된 모든 메시지를 조회하고 반환
-        return chatMessageRepository.findMessagesByRoomSeqAndUserJoinTime(chatMessageSelectRequest.getRoomSeq(), chatMessageSelectRequest.getUserId()).stream()
+        return chatMessageRepository.findMessagesByRoomSeqAndUserJoinTime(chatMessageSelectRequest.getRoomSeq(), chatMessageSelectRequest.getUserSeq()).stream()
                 .map(ChatMessageSelectResponse::new)
                 .collect(Collectors.toList());
     }

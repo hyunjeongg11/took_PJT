@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.chattest.dto.ChatUserCreateRequest;
 import org.example.chattest.dto.ChatUserCreateResponse;
 import org.example.chattest.dto.ChatUserDeleteRequest;
+import org.example.chattest.dto.ChatUserSelectResponse;
 import org.example.chattest.entity.ChatRoom;
 import org.example.chattest.entity.ChatUser;
 import org.example.chattest.repository.ChatRoomRepository;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor  // Lombok 어노테이션으로, final 필드에 대해 생성자를 자동으로 생성
 @Service  // 이 클래스가 서비스 역할을 한다는 것을 Spring에게 알려주는 어노테이션
@@ -30,7 +33,7 @@ public class ChatUserService {
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(chatUserCreateRequest.getRoomSeq()).orElseThrow();
         // 해당 유저의 채팅방 소속 여부를 확인
-        ChatUser checkedChatUser = chatUserRepository.findByUserIdAndChatRoom(chatUserCreateRequest.getUserId(), chatRoom);
+        ChatUser checkedChatUser = chatUserRepository.findByUserSeqAndChatRoom(chatUserCreateRequest.getUserSeq(), chatRoom);
         // 유저가 존재하지 않으면 true 반환
         return checkedChatUser == null;
     }
@@ -47,7 +50,7 @@ public class ChatUserService {
         // 새로운 채팅 유저 객체 생성 및 설정
         ChatUser chatUser = ChatUser.builder()
                 .chatRoom(chatRoom)
-                .userId(chatUserCreateRequest.getUserId())
+                .userSeq(chatUserCreateRequest.getUserSeq())
                 .joinTime(LocalDateTime.now())
                 .build();
         // 채팅 유저 객체를 저장하고 반환
@@ -64,7 +67,7 @@ public class ChatUserService {
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(chatUserDeleteRequest.getRoomSeq()).orElseThrow();
         // 채팅 유저 객체를 사용자 ID와 채팅방으로 조회
-        ChatUser chatUser = chatUserRepository.findByUserIdAndChatRoom(chatUserDeleteRequest.getUserId(), chatRoom);
+        ChatUser chatUser = chatUserRepository.findByUserSeqAndChatRoom(chatUserDeleteRequest.getUserSeq(), chatRoom);
         // 조회된 채팅 유저 객체가 존재할 경우 삭제
         if (chatUser != null) {
             chatUserRepository.delete(chatUser);
@@ -80,10 +83,28 @@ public class ChatUserService {
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(chatUserDeleteRequest.getRoomSeq()).orElseThrow();
         // 채팅 유저 객체를 사용자 ID와 채팅방으로 조회
-        ChatUser chatUser = chatUserRepository.findByUserIdAndChatRoom(chatUserDeleteRequest.getUserId(), chatRoom);
+        ChatUser chatUser = chatUserRepository.findByUserSeqAndChatRoom(chatUserDeleteRequest.getUserSeq(), chatRoom);
         // 조회된 채팅 유저 객체가 존재할 경우 삭제
         if (chatUser != null) {
             chatUserRepository.delete(chatUser);
         }
+    }
+
+    /**
+     * 채팅방의 유저리스트를 조회하는 메서드
+     * @param roomSeq 채팅방 번호
+     */
+    public List<ChatUserSelectResponse> findUserByRoom(Long roomSeq) {
+        // 채팅방을 ID로 조회, 없을 경우 예외 발생
+        ChatRoom chatRoom = chatRoomRepository.findById(roomSeq).orElseThrow();
+
+        List<ChatUser> users = chatUserRepository.findByChatRoom(chatRoom);
+
+        // ChatUser 리스트를 ChatUserSelectResponse 리스트로 변환
+        return users.stream()
+                .map(user -> ChatUserSelectResponse.builder()
+                        .userSeq(user.getUserSeq())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

@@ -31,7 +31,7 @@ public class ChatMessage {
     private ChatRoom chatRoom;  // 메시지가 속한 채팅방
 
     @Column(nullable = false)  // Not Null 설정
-    private String userId;  // 메시지 송신자
+    private Long userSeq;  // 메시지 송신자
 
     @Column(nullable = false)  // Not Null 설정
     private String message;  // 메시지 내용

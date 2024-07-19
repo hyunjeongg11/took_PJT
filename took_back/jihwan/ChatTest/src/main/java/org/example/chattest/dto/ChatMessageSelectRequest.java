@@ -7,5 +7,5 @@ import java.time.LocalDateTime;
 @Data
 public class ChatMessageSelectRequest {
     private Long roomSeq;
-    private String userId;
+    private Long userSeq;
 }

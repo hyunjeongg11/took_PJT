@@ -40,8 +40,8 @@ public class ChatController {
      * @return 모든 채팅방의 정보 리스트
      */
     @GetMapping("/rooms")
-    public ResponseEntity<List<ChatRoomSelectResponse>> getAllRooms() {
-        List<ChatRoomSelectResponse> rooms = chatRoomService.findAllRooms();
+    public ResponseEntity<List<ChatRoomCategorySelectResponse>> getAllRooms() {
+        List<ChatRoomCategorySelectResponse> rooms = chatRoomService.findAllRooms();
         return ResponseEntity.ok(rooms);
     }
 
@@ -51,9 +51,32 @@ public class ChatController {
      * @return 해당 카테고리의 채팅방 정보 리스트
      */
     @GetMapping("/room/{category}")
-    public ResponseEntity<List<ChatRoomSelectResponse>> getRoom(@PathVariable int category) {
-        List<ChatRoomSelectResponse> room = chatRoomService.findRoomsByCategory(category);
+    public ResponseEntity<List<ChatRoomCategorySelectResponse>> getRoom(@PathVariable int category) {
+        List<ChatRoomCategorySelectResponse> room = chatRoomService.findRoomsByCategory(category);
         return ResponseEntity.ok(room);
+    }
+
+    /**
+     * 특정 카테고리의 특정 사용자가 만든 채팅방을 조회하는 메서드
+     * @param chatRoomFilterRequest 필터링할 카테고리와 사용자 번호 목록을 담은 객체
+     * @return 필터링된 채팅방 리스트
+     */
+    @PostMapping("/rooms/filter")
+    public ResponseEntity<List<ChatRoomFilterResponse>> filterRoomsByCategoryAndUsers(@RequestBody ChatRoomFilterRequest chatRoomFilterRequest) {
+        List<ChatRoomFilterResponse> filteredRooms = chatRoomService.findRoomsByCategoryAndUsers(chatRoomFilterRequest);
+        return ResponseEntity.ok(filteredRooms);
+    }
+
+
+    /**
+     * 특정 채팅방의 속한 유저를 조회하는 메서드
+     * @param roomSeq 조회할 채팅방
+     * @return 해당 채팅방의 속한 유저 리스트
+     */
+    @GetMapping("/users/{roomSeq}")
+    public ResponseEntity<List<ChatUserSelectResponse>> getRoom(@PathVariable Long roomSeq) {
+        List<ChatUserSelectResponse> users = chatUserService.findUserByRoom(roomSeq);
+        return ResponseEntity.ok(users);
     }
 
     /**
@@ -63,7 +86,7 @@ public class ChatController {
     @MessageMapping("/room/enter")
     public void enterRoom(ChatUserCreateRequest chatUserCreateRequest) {
         // 유저가 이미 채팅방에 존재하는지 확인
-        if (chatUserService.checkChatUser(chatUserCreateRequest)) {
+         if (chatUserService.checkChatUser(chatUserCreateRequest)) {
             joinRoom(chatUserCreateRequest);
         }
     }
@@ -73,15 +96,7 @@ public class ChatController {
      * @param chatUserCreateRequest 유저의 방 입장 요청 정보를 담은 객체
      */
     public ResponseEntity<?> joinRoom(ChatUserCreateRequest chatUserCreateRequest) {
-        ChatUserCreateResponse chatUser = chatUserService.enterChatRoom(chatUserCreateRequest);
-        // 입장 메시지 생성 및 전송
-        ChatMessageCreateRequest chatMessageCreateRequest = ChatMessageCreateRequest.builder()
-                .type("ENTER")
-                .roomSeq(chatUser.getRoomSeq())
-                .userId(chatUser.getUserId())
-                .message(chatUser.getUserId() + "님이 입장하셨습니다.")
-                .build();
-        sendMessage(chatMessageCreateRequest);
+        chatUserService.enterChatRoom(chatUserCreateRequest);
         return ResponseEntity.noContent().build();
     }
 
@@ -92,14 +107,6 @@ public class ChatController {
     @MessageMapping("/room/leave")
     public ResponseEntity<?> leaveRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
         chatUserService.leaveChatRoom(chatUserDeleteRequest);
-        // 퇴장 메시지 생성 및 저장
-        ChatMessageCreateRequest chatMessageCreateRequest = ChatMessageCreateRequest.builder()
-                .type("EXIT")
-                .roomSeq(chatUserDeleteRequest.getRoomSeq())
-                .userId(chatUserDeleteRequest.getUserId())
-                .message(chatUserDeleteRequest.getUserId() + "님이 퇴장하셨습니다.")
-                .build();
-        sendMessage(chatMessageCreateRequest);
         return ResponseEntity.noContent().build();
     }
 
@@ -111,14 +118,6 @@ public class ChatController {
     @MessageMapping("/room/kick")
     public ResponseEntity<?> kickUser(@RequestBody ChatUserDeleteRequest chatUserDeleteRequest) {
         chatUserService.kickUserFromRoom(chatUserDeleteRequest);
-        // 내보내기 메시지 생성 및 저장
-        ChatMessageCreateRequest chatMessageCreateRequest = ChatMessageCreateRequest.builder()
-                .type("EXIT")
-                .roomSeq(chatUserDeleteRequest.getRoomSeq())
-                .userId(chatUserDeleteRequest.getUserId())
-                .message(chatUserDeleteRequest.getUserId() + "님이 내보내졌습니다.")
-                .build();
-        sendMessage(chatMessageCreateRequest);
         return ResponseEntity.noContent().build();
     }
 
