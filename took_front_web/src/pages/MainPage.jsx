@@ -26,24 +26,20 @@ function MainPage() {
             User Info
           </button>
         </Link>
-        <Link to="/payment" className="block w-full">
-          <button className="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition">
-            Payment
-          </button>
-        </Link>
-        <Link to="/food" className="block w-full">
-          <button className="w-full px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-700 transition">
-            Food Order
-          </button>
-        </Link>
-        <Link to="/taxi" className="block w-full">
-          <button className="w-full px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-700 transition">
-            Taxi
-          </button>
-        </Link>
-        <Link to="/purchase" className="block w-full">
+        
+        <Link to="/complete" className="block w-full">
           <button className="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 transition">
-            Group Purchase
+           3번째 화면
+          </button>
+        </Link>
+        <Link to="/paymentTemp" className="block w-full">
+          <button className="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 transition">
+           1번째 화면
+          </button>
+        </Link>
+        <Link to="/pwd" className="block w-full">
+          <button className="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 transition">
+           2번째 화면
           </button>
         </Link>
       </div>
