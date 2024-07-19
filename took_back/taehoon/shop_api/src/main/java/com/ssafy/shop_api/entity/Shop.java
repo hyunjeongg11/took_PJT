@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -16,9 +18,16 @@ public class Shop {
     public enum statusType {
         OPEN, IN_PROGRESS, COMPLETED
     }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shopSeq;
+
+    @Column(nullable = false)
+    private Long userSeq;
+
+    @Column(nullable = true)
+    private Long roomSeq;
 
     @Column(nullable = false)
     private String title;
@@ -26,7 +35,7 @@ public class Shop {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int hit;
 
     @Column(nullable = false)
@@ -39,10 +48,24 @@ public class Shop {
     private String place;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private statusType status;
 
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createAt == null) {
+            this.createAt = LocalDateTime.now();
+        }
+        if (this.status == null) {
+            this.status = statusType.OPEN;
+        }
+    }
+
     @Builder
-    public Shop(String title, String content, int hit, String item, String site, String place, statusType status) {
+    public Shop(String title, String content, int hit, String item, String site, String place, statusType status, LocalDateTime createAt) {
         this.title = title;
         this.content = content;
         this.hit = hit;
@@ -50,10 +73,15 @@ public class Shop {
         this.site = site;
         this.place = place;
         this.status = status;
+        this.createAt = createAt;
     }
 
-    public void update(String title, String content) {
+    public void update(String title, String content, String item, String site, String place) {
         this.title = title;
         this.content = content;
+        this.item = item;
+        this.site = site;
+        this.place = place;
     }
+
 }

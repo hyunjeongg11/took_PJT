@@ -2,34 +2,39 @@ package com.ssafy.shop_api.service;
 
 import com.ssafy.shop_api.dto.AddShopRequest;
 import com.ssafy.shop_api.dto.UpdateShopRequest;
+import com.ssafy.shop_api.dto.UpdateStatusShopRequest;
 import com.ssafy.shop_api.entity.Shop;
 import com.ssafy.shop_api.repository.ShopRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class ShopService {
 
     private final ShopRepository shopRepository;
 
-    public ShopService(ShopRepository shopRepository) {
-        this.shopRepository = shopRepository;
-    }
-
     public Shop save(AddShopRequest request) {
         return shopRepository.save(request.toEntity());
     }
 
-    public List<Shop> findAll() {
-        return shopRepository.findAll();
+    public List<Shop> findShopsByIds(List<Long> id) {
+        return shopRepository.findByUserSeqInAndStatus(id, Shop.statusType.OPEN);
     }
 
+    @Transactional
     public Shop findById(long id) {
-        return shopRepository.findById(id)
+        Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
+
+        shop.setHit(shop.getHit() + 1);
+
+        shopRepository.save(shop);
+
+        return shop;
     }
 
     public void delete(long id) {
@@ -41,7 +46,17 @@ public class ShopService {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
 
-        shop.update(request.getTitle(), request.getContent());
+        shop.update(request.getTitle(), request.getContent(), request.getItem(), request.getSite(), request.getPlace());
+
+        return shop;
+    }
+
+    @Transactional
+    public Shop updateStatus(long id, UpdateStatusShopRequest request) {
+        Shop shop = shopRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
+
+        shop.setStatus(request.getStatus());
 
         return shop;
     }
