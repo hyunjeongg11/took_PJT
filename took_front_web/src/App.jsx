@@ -12,6 +12,9 @@ import MyInfoPage from "./pages/mypage/MyInfoPage"; // MyInfoPage
 import CompletePage from "./pages/temp/CompletePage"; //
 import PaymentTempPage from "./pages/temp/PaymentPage"; // 
 import PwdPage from "./pages/temp/PwdPage"; // 
+import AccountPage from "./pages/AccountRegistration/AccountPage"; //계좌등록 화면
+import SelectPage from "./pages/AccountRegistration/SelectPage"; //은행선택 화면
+
 
 const ROUTER = createBrowserRouter([
   { path: "/", element: <MainPage /> },
@@ -25,7 +28,9 @@ const ROUTER = createBrowserRouter([
   { path: "/myInfo", element: <MyInfoPage /> },
   { path: "/complete", element: <CompletePage /> },
   { path: "/paymentTemp", element: <PaymentTempPage /> },
-  { path: "/pwd", element: <PwdPage /> }
+  { path: "/pwd", element: <PwdPage /> },
+  { path: "/account", element: <AccountPage /> },
+  { path: "/select", element: <SelectPage /> },
 ]);
 
 function App() {
