@@ -8,13 +8,10 @@ import PaymentPage from "./pages/PaymentPage"; // 결제 화면
 import FoodPage from "./pages/FoodPage"; // 배달음식 화면
 import TaxiPage from "./pages/TaxiPage"; // 택시 화면
 import PurchasePage from "./pages/PurchasePage"; // 공동구매 화면
-<<<<<<< Updated upstream
 import MyInfoPage from "./pages/mypage/MyInfoPage"; // MyInfoPage
-=======
 import CompletePage from "./pages/temp/CompletePage"; //
 import PaymentTempPage from "./pages/temp/PaymentPage"; // 
 import PwdPage from "./pages/temp/PwdPage"; // 
->>>>>>> Stashed changes
 
 const ROUTER = createBrowserRouter([
   { path: "/", element: <MainPage /> },
@@ -25,13 +22,10 @@ const ROUTER = createBrowserRouter([
   { path: "/food", element: <FoodPage /> },
   { path: "/taxi", element: <TaxiPage /> },
   { path: "/purchase", element: <PurchasePage /> },
-<<<<<<< Updated upstream
-  { path: "/myInfo", element: <MyInfoPage /> }
-=======
+  { path: "/myInfo", element: <MyInfoPage /> },
   { path: "/complete", element: <CompletePage /> },
   { path: "/paymentTemp", element: <PaymentTempPage /> },
   { path: "/pwd", element: <PwdPage /> }
->>>>>>> Stashed changes
 ]);
 
 function App() {
