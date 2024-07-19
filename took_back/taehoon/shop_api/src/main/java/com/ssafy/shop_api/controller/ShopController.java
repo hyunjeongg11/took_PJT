@@ -3,6 +3,7 @@ package com.ssafy.shop_api.controller;
 import com.ssafy.shop_api.dto.AddShopRequest;
 import com.ssafy.shop_api.dto.ShopResponse;
 import com.ssafy.shop_api.dto.UpdateShopRequest;
+import com.ssafy.shop_api.dto.UpdateStatusShopRequest;
 import com.ssafy.shop_api.entity.Shop;
 import com.ssafy.shop_api.service.ShopService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,22 +21,22 @@ public class ShopController {
 
     private final ShopService shopService;
 
-    @PostMapping("/crate")
+    @PostMapping("/create")
     public ResponseEntity<Shop> addShop(@RequestBody AddShopRequest request) {
         Shop saveShop = shopService.save(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(saveShop);
     }
 
-    @GetMapping("/selectAll")
-    public ResponseEntity<List<ShopResponse>> findAllShops() {
-        List<ShopResponse> articles = shopService.findAll()
+    @PostMapping("/selectAll")
+    public ResponseEntity<List<ShopResponse>> findShopsByIds(@RequestBody List<Long> id) {
+        List<ShopResponse> shops = shopService.findShopsByIds(id)
                 .stream()
                 .map(ShopResponse::new)
-                .toList();
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok()
-                .body(articles);
+                .body(shops);
     }
 
     @GetMapping("/select/{id}")
@@ -54,11 +56,20 @@ public class ShopController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Shop> updateArticle(@PathVariable long id,
+    public ResponseEntity<Shop> updateShop(@PathVariable long id,
                                                  @RequestBody UpdateShopRequest request) {
-        Shop updatedShop = shopService.update(id, request);
+        Shop updateShop = shopService.update(id, request);
 
         return ResponseEntity.ok()
-                .body(updatedShop);
+                .body(updateShop);
+    }
+
+    @PutMapping("/update/status/{id}")
+    public ResponseEntity<Shop> updateArticle(@PathVariable long id,
+                                              @RequestBody UpdateStatusShopRequest request) {
+        Shop updateStatusShop = shopService.updateStatus(id, request);
+
+        return ResponseEntity.ok()
+                .body(updateStatusShop);
     }
 }

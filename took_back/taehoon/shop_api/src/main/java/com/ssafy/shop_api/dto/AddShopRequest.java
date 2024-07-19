@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class AddShopRequest {
+    private Long userSeq;
+
     private String title;
 
     private String content;
@@ -21,6 +23,7 @@ public class AddShopRequest {
 
     public Shop toEntity() {
         return Shop.builder()
+                .userSeq(userSeq)
                 .title(title)
                 .content(content)
                 .item(item)
