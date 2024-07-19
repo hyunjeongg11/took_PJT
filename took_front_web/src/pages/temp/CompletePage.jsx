@@ -25,7 +25,14 @@ function CompletePage({ userName = '사용자', amount }) {
       <div style={styles.amount}>
         {formatNumber(amount)} 원
       </div>
-      <button style={styles.button} onClick={() => navigate('/')}>메인으로</button>
+      <button 
+        style={styles.button} 
+        onMouseOver={(e) => e.currentTarget.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.2)'}
+        onMouseOut={(e) => e.currentTarget.style.boxShadow = 'none'}
+        onClick={() => navigate('/')}
+      >
+        메인으로
+      </button>
     </div>
   );
 }
@@ -76,6 +83,7 @@ const styles = {
     borderRadius: '20px',
     cursor: 'pointer',
     marginTop: '0px',
+    transition: 'box-shadow 0.3s ease', 
   }
 };
 
