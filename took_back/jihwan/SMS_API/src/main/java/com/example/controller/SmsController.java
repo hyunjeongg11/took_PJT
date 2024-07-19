@@ -5,17 +5,17 @@ import com.example.dto.VerifyRequest;
 import com.example.service.SmsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/sms")
+@RequiredArgsConstructor
 @Tag(name = "SMS 인증 API", description = "SMS 인증을 위한 API입니다.")
 public class SmsController {
 
-    @Autowired
-    private SmsService smsService;
+    private final SmsService smsService;
 
     @Operation(summary = "SMS 전송", description = "사용자의 전화번호로 인증 코드를 전송합니다.")
     @PostMapping("/send")

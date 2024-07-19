@@ -1,11 +1,11 @@
 package com.example.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@Getter
+@Data
 public class SmsRequest {
     @NotNull
     private String phoneNumber;

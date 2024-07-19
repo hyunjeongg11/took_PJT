@@ -3,7 +3,7 @@ package com.example.service;
 import com.example.domain.Identity;
 import com.example.repository.IdentityRepository;
 import com.example.util.ApiUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -11,11 +11,11 @@ import org.springframework.web.client.RestTemplate;
 import java.security.SecureRandom;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class SmsService {
 
-    @Autowired
-    private IdentityRepository identityRepository;
+    private final IdentityRepository identityRepository;
 
     /**
      * 6자리의 랜덤 인증 코드를 생성합니다.

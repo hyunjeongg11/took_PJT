@@ -1,13 +1,11 @@
 package com.example.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
 
 @NoArgsConstructor
-@Getter
+@Data
 public class VerifyRequest {
 
     @NotNull
