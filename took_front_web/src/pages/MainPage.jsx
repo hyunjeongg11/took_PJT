@@ -16,9 +16,9 @@ function MainPage() {
             Sign Up
           </button>
         </Link>
-        <Link to="/myInfo" className="block w-full">
+        <Link to="/mypage" className="block w-full">
           <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            MyInfo
+            Mypage
           </button>
         </Link>
         <Link to="/userinfo" className="block w-full">
