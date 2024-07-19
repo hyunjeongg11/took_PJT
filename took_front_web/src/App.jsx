@@ -12,6 +12,7 @@ import MyInfoPage from "./pages/mypage/MyInfoPage"; // MyInfoPage
 import CompletePage from "./pages/temp/CompletePage"; //
 import PaymentTempPage from "./pages/temp/PaymentPage"; // 
 import PwdPage from "./pages/temp/PwdPage"; // 
+import MyPage from "./pages/mypage/MyPage"; 
 
 const ROUTER = createBrowserRouter([
   { path: "/", element: <MainPage /> },
@@ -25,7 +26,8 @@ const ROUTER = createBrowserRouter([
   { path: "/myInfo", element: <MyInfoPage /> },
   { path: "/complete", element: <CompletePage /> },
   { path: "/paymentTemp", element: <PaymentTempPage /> },
-  { path: "/pwd", element: <PwdPage /> }
+  { path: "/pwd", element: <PwdPage /> },
+  { path: "/mypage", element: <MyPage /> },
 ]);
 
 function App() {
