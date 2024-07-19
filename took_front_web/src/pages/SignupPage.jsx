@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import BackButton from "../components/common/BackButton";
 import { isValidEmail, isValidPassword } from "../utils/validation";
-
+import InputButton from "../components/signup/InputButton";
+import GenderInput from "../components/signup/GenderInput";
+import { formatPhoneNumber, removeHyphens} from "../utils/formatPhoneNumber";
 function SignupPage() {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
@@ -14,11 +16,19 @@ function SignupPage() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState(null);
-  
+  const [idError, setIdError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [birthError, setBirthError] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
+
   const handleSignupClick = e => {
+    e.preventDefault();
     let valid = true;
 
-    if (!isValidEmail(email)) {
+    if(email === "") {
+      setEmailError("이메일을 입력해주세요.");
+      valid = false;
+    } else if (!isValidEmail(email)) {
       setEmailError("유효한 이메일 주소를 입력하세요.");
       valid = false;
     } else {
@@ -27,7 +37,7 @@ function SignupPage() {
 
     if (!isValidPassword(password)) {
       setPasswordError(
-        "비밀번호는 최소 8자, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다."
+        "비밀번호는 최소 8자, 최대 13자, 영문자와 숫자를 포함해야 합니다."
       );
       valid = false;
     } else {
@@ -41,8 +51,39 @@ function SignupPage() {
       setConfirmPasswordError("");
     }
 
+    if(id === "") {
+      setIdError("아이디를 입력해주세요.");
+      valid = false;
+    } else {
+      setIdError("");
+    }
+
+    if(name === "") {
+      setNameError("이름을 입력해주세요.");
+      valid = false;
+    } else {
+      setNameError("");
+    }
+
+    if(birth === "") {
+      setBirthError("생년월일을 입력해주세요.");
+      valid = false;
+    } else if (!/^\d{8}$/.test(birth)) {
+      setBirthError("생년월일은 8자리 숫자로 입력해주세요.");
+      valid = false;
+    } else {
+      setBirthError("");
+    }
+
+    if(phoneNumber === "") {
+      setPhoneNumberError("휴대폰 번호를 입력해주세요.");
+      valid = false;
+    } else {
+      setPhoneNumberError("");
+    }
+
     if (valid) {
-      // 회원가입 로직
+
       console.log("아이디:", id);
       console.log("비밀번호:", password);
       console.log("비밀번호 확인:", confirmPassword);
@@ -50,7 +91,8 @@ function SignupPage() {
       console.log("성별:", gender);
       console.log("이메일:", email);
       console.log("생년월일:", birth);
-      console.log("휴대폰 번호:", phoneNumber);
+      console.log("휴대폰 번호:", removeHyphens(phoneNumber));
+
     }
   };
   return (
@@ -63,130 +105,81 @@ function SignupPage() {
       </div>
 
       <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[1px]" />
-
-      <div className="flex flex-col px-10 mt-7 w-full">
-        <div className=" text-sm font-bold leading-5 text-neutral-600">
-          아이디
-        </div>
+      
+      <div className="flex flex-col px-10 mt-3 w-full">
+      <InputButton
+        label="이름"
+        type="text"
+        value={name}
+        onChange={e => setName(e.target.value)}
+        placeholder="이름을 입력해주세요"
+        styleClass="flex-grow" error={nameError}
+      />
+      <GenderInput gender={gender} setGender={setGender} />
         <div className="flex ">
-          <input
+          <InputButton
+            label="아이디"
             type="text"
             value={id}
             onChange={e => setId(e.target.value)}
-            className="mt-1.5 text-xs leading-5 w-full text-neutral-600 text-opacity-30 border-b-2"
             placeholder="아이디를 입력해주세요"
+            styleClass="flex-grow" error={idError}
           />
-          <div className="justify-center m-2 self-end p-2 text-xs font-bold tracking-normal leading-3 text-center whitespace-nowrap rounded bg-neutral-600 text-zinc-100">
-            중복확인{" "}
+
+          <div className="justify-center ml-1 self-end p-2 text-xs font-bold tracking-normal leading-3 text-center whitespace-nowrap rounded bg-neutral-600 text-zinc-100">
+            중복확인
           </div>
         </div>
-        <div className="mt-8 text-sm font-bold leading-5 text-neutral-600">
-          비밀번호
-        </div>
 
-        <input
+        <InputButton
+          label="비밀번호"
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-          className="mt-1.5 text-xs leading-5 text-neutral-600 text-opacity-30 border-b-2"
           placeholder="비밀번호를 입력해주세요"
+          styleClass=""
+          error={passwordError}
         />
-        {passwordError && (
-          <p className="text-red-500 text-xs mt-1">{passwordError}</p>
-        )}
-
-        <div className="mt-8 text-sm font-bold leading-5 text-neutral-600">
-          비밀번호 확인
-        </div>
-
-        <input
+  
+        <InputButton
+          label="비밀번호 확인"
           type="password"
           value={confirmPassword}
           onChange={e => setConfirmPassword(e.target.value)}
-          className="mt-1.5 text-xs leading-5 text-neutral-600 text-opacity-30 border-b-2"
           placeholder="비밀번호를 한 번 더 입력해주세요"
+          error={confirmPasswordError}
         />
-        {confirmPasswordError === false && (
-          <p className="text-red-500 text-xs mt-1">비밀번호를 확인해주세요.</p>
-        )}
-        <div className="flex justify-between">
-          <div>
-            <div className="mt-8 text-sm font-bold leading-5 text-neutral-600">
-              이름
-            </div>
-            <input
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              className="mt-1.5 text-xs leading-5 text-neutral-600 text-opacity-30 border-b-2"
-              placeholder="이름을 입력해주세요"
-            />
-          </div>
-          <div>
-            <div className="mt-9 text-sm font-bold leading-5 text-neutral-600">
-              성별
-            </div>
-            <div className="mt-1.5 flex gap-4">
-              <label className="flex items-center text-xs leading-5 text-neutral-600">
-                <input
-                  type="radio"
-                  value="남"
-                  checked={gender === "남"}
-                  onChange={() => setGender("남")}
-                  className="mr-2"
-                />
-                남
-              </label>
-              <label className="flex items-center text-xs leading-5 text-neutral-600">
-                <input
-                  type="radio"
-                  value="여"
-                  checked={gender === "여"}
-                  onChange={() => setGender("여")}
-                  className="mr-2"
-                />
-                여
-              </label>
-            </div>
-          </div>
-        </div>
 
-        <div className="mt-9 text-sm font-bold leading-5 text-neutral-600">
-          이메일
-        </div>
-        <input
+        <InputButton
+          label="이메일"
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
-          className="mt-1.5 text-xs leading-5 text-neutral-600 text-opacity-30 border-b-2"
           placeholder="예: took@took.com"
+          error={emailError}
         />
-        {emailError && (
-          <p className="text-red-500 text-xs mt-1">{emailError}</p>
-        )}
-        <div className="mt-9 text-sm font-bold leading-5 text-neutral-600">
-          생년월일(8자리)
-        </div>
-        <input
+
+        <InputButton
+          label="생년월일(8자리)"
           type="number"
           value={birth}
           onChange={e => setBirth(e.target.value)}
-          className="mt-1.5 text-xs leading-5 text-neutral-600 text-opacity-30 border-b-2"
-          placeholder="예) 20010129"
+          placeholder="예: 20010129"
+          error={birthError}
         />
 
-        <div className="mt-9 text-sm font-bold leading-5 text-neutral-600">
-          휴대폰 번호
-        </div>
         <div className="flex ">
-          <input
-            type="number"
+          <InputButton
+            label="휴대폰 번호"
+            type="text"
             value={phoneNumber}
-            onChange={e => setPhoneNumber(e.target.value)}
-            className="mt-1.5 text-xs leading-5 w-full text-neutral-600 text-opacity-30 border-b-2"
+            onChange={e => setPhoneNumber(formatPhoneNumber(e.target.value))}
             placeholder="숫자만 입력해주세요"
+            styleClass="flex-grow"
+            error={phoneNumberError}
           />
-          <div className="justify-center m-2 self-end p-2 text-xs font-bold tracking-normal leading-3 text-center whitespace-nowrap rounded bg-neutral-600 text-zinc-100">
+
+          <div className="justify-center ml-1 self-end p-2 text-xs font-bold tracking-normal leading-3 text-center whitespace-nowrap rounded bg-neutral-600 text-zinc-100">
             인증하기
           </div>
         </div>
