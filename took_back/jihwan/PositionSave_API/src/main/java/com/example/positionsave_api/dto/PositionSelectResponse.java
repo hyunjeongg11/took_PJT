@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class PositionSelectResponse {
 
-    private String userId;  // 사용자 ID
+    private Long userSeq;  // 사용자 ID
     private double lat;     // 위치의 위도 정보
     private double lon;     // 위치의 경도 정보
 
@@ -15,7 +15,7 @@ public class PositionSelectResponse {
      * @param position Position 엔터티 객체
      */
     public PositionSelectResponse(Position position) {
-        this.userId = position.getUserId();  // Position 엔터티의 userId 값을 가져와 필드에 설정
+        this.userSeq = position.getUserSeq();  // Position 엔터티의 userId 값을 가져와 필드에 설정
         this.lat = position.getLat();        // Position 엔터티의 lat 값을 가져와 필드에 설정
         this.lon = position.getLon();        // Position 엔터티의 lon 값을 가져와 필드에 설정
     }
