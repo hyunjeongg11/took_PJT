@@ -1,7 +1,7 @@
 
 import profileImage from "../../assets/profile/img1.png";
 import historyIcon from "../../assets/mypage/history.svg";
-
+import { Link } from "react-router-dom";
 function MyPage() {
     return(
       <div className="max-h-screen ">
@@ -18,11 +18,12 @@ function MyPage() {
                 />
                 <div className="flex gap-3 self-center mt-6 text-lgtext-center text-black whitespace-nowrap">
                 <div>차민주</div>
+                <Link to="/userinfo" className="mt-1">
                 <img
                     loading="lazy"
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/411b774a6c6b6a895509efb85522213199777c7a3685a8ad0d68f2cfefdbc068?"
                     className="shrink-0 my-auto w-1.5 aspect-[0.6] fill-neutral-500"
-                />
+                /></Link>
                 </div>
                 <div className="flex gap-5 mt-5 w-full text-black">
                 <div className="flex flex-1 gap-2.5 whitespace-nowrap leading-[150%]">

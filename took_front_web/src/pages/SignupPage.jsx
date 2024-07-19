@@ -10,7 +10,7 @@ function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [gender, setGender] = useState(false);
+  const [gender, setGender] = useState("남");
   const [birth, setBirth] = useState("");
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -99,7 +99,7 @@ function SignupPage() {
     <div className="flex flex-col bg-white max-w-[360px] mx-auto">
       <div className="flex items-center px-4 py-3">
         <BackButton />
-        <div className="mt-1 flex-grow text-center text-lg font-bold text-black">
+        <div className="mt-2 flex-grow text-center text-lg font-bold text-black">
           회원가입
         </div>
       </div>
