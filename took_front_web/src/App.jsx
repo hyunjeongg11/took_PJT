@@ -14,6 +14,8 @@ import PaymentTempPage from "./pages/temp/PaymentPage"; //
 import PwdPage from "./pages/temp/PwdPage"; // 
 import AccountPage from "./pages/AccountRegistration/AccountPage"; //계좌등록 화면
 import SelectPage from "./pages/AccountRegistration/SelectPage"; //은행선택 화면
+import AgreementPage from "./pages/AccountRegistration/AgreementPage"; //약관동의 화면
+import VerificationPage from "./pages/AccountRegistration/VerificationPage"; //본인인증 화면
 
 
 const ROUTER = createBrowserRouter([
@@ -31,6 +33,8 @@ const ROUTER = createBrowserRouter([
   { path: "/pwd", element: <PwdPage /> },
   { path: "/account", element: <AccountPage /> },
   { path: "/select", element: <SelectPage /> },
+  { path: "/agreement", element: <AgreementPage /> },
+  { path: "/verification", element: <VerificationPage /> },
 ]);
 
 function App() {
