@@ -1,17 +1,32 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai"; // 오른쪽 화살표 아이콘 추가
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 
 function AccountPage() {
   const navigate = useNavigate();
-  const [bank, setBank] = useState("");
+  const location = useLocation();
+  const { selectedName } = location.state || { selectedName: "" };
+
+  const [bank, setBank] = useState(selectedName);
   const [account, setAccount] = useState("");
   const [alias, setAlias] = useState("");
+
+  useEffect(() => {
+    if (selectedName) {
+      setBank(selectedName);
+    }
+  }, [selectedName]);
 
   const isFormValid = bank !== "" && account !== "";
 
   const handleAccountChange = (e) => setAccount(e.target.value);
   const handleAliasChange = (e) => setAlias(e.target.value);
+
+  const handleNextClick = () => {
+    if (isFormValid) {
+      navigate("/agreement", { state: { bank, account, alias } });
+    }
+  };
 
   return (
     <div style={styles.container}>
@@ -21,8 +36,9 @@ function AccountPage() {
       </div>
       <div style={styles.form}>
         <label style={styles.label}>
-          <div style={styles.labelIcon}>1</div>
-          <span style={styles.labelText}>본인 명의 계좌 번호 등록</span>
+          <span style={styles.labelText}>
+            <span style={styles.circleFilled}>1</span> 본인 명의 계좌 번호 등록
+          </span>
           <div style={styles.selectBox} onClick={() => navigate('/select')}>
             <span style={{ color: bank ? 'black' : '#999' }}>{bank || '은행 / 증권사'}</span>
             <AiOutlineRight style={styles.selectIcon} />
@@ -43,13 +59,18 @@ function AccountPage() {
             placeholder="(선택) 계좌별칭 등록 / 최대16글자"
             value={alias}
             onChange={handleAliasChange}
+            maxLength="16"
             style={{ ...styles.infoText, color: alias ? 'black' : '#999' }}
           />
         </div>
       </div>
       <div style={styles.steps}>
-        <div style={styles.step}>2 &nbsp;약관 동의</div>
-        <div style={styles.step}>3 &nbsp;본인 인증</div>
+        <div style={styles.step}>
+          <span style={styles.circleEmpty}>2</span> 약관 동의
+        </div>
+        <div style={styles.step}>
+          <span style={styles.circleEmpty}>3</span> 본인 인증
+        </div>
       </div>
       <button
         style={{
@@ -67,7 +88,7 @@ function AccountPage() {
           isFormValid && (e.currentTarget.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.2)")
         }
         onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
-        onClick={() => navigate('/')}
+        onClick={handleNextClick}
       >
         다음
       </button>
@@ -114,26 +135,34 @@ const styles = {
     flexDirection: "column",
     marginBottom: "10px",
   },
-  labelIcon: {
-    width: "24px",
-    height: "24px",
+  labelText: {
+    fontSize: "16px",
+    color: "black",
+    fontWeight: "bold",
+    marginBottom: "15px",
+    marginLeft: "20px",
+  },
+  circleFilled: {
+    display: "inline-block",
+    width: "20px",
+    height: "20px",
     borderRadius: "50%",
     backgroundColor: "#FF7F50",
     color: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontWeight: "bold",
+    textAlign: "center",
+    lineHeight: "20px",
     marginRight: "10px",
   },
-  labelText: {
-    fontSize: "16px",
-    color: "black", 
-    fontWeight: "bold", 
-    marginBottom: "15px",
-    display: "flex",
-    alignItems: "center",
-    marginLeft: "20px",
+  circleEmpty: {
+    display: "inline-block",
+    width: "20px",
+    height: "20px",
+    borderRadius: "50%",
+    border: "1px solid #ddd",
+    color: "black",
+    textAlign: "center",
+    lineHeight: "20px",
+    marginRight: "10px",
   },
   selectBox: {
     display: "flex",
@@ -145,14 +174,14 @@ const styles = {
     padding: "0 10px",
     fontSize: "15px",
     cursor: "pointer",
-    color: "#999", 
+    color: "#999",
     fontFamily: "'Nanum Gothic', sans-serif",
     marginLeft: "20px",
     marginRight: "20px",
   },
   selectIcon: {
     fontSize: "20px",
-    color: "#999", 
+    color: "#999",
   },
   input: {
     height: "55px",
@@ -187,7 +216,7 @@ const styles = {
   },
   step: {
     fontSize: "16px",
-    fontWeight: "bold", 
+    fontWeight: "bold",
     color: "#666",
     marginBottom: "20px",
     marginLeft: "20px",
