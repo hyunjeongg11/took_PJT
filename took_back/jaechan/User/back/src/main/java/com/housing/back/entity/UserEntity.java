@@ -75,7 +75,7 @@ public class UserEntity {
     private Integer imageNo;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
+    @Column(nullable = true, length = 10)
     private Gender gender;
 
     private Integer simplePassword;
@@ -107,6 +107,7 @@ public class UserEntity {
         this.createdAt = LocalDateTime.now();
         this.loginStatus = LoginStatus.KAKAO;
         this.role = "ROLE_USER";
+        this.imageNo = (int)Math.random()*20+1;
     }
 
     public enum LoginStatus {

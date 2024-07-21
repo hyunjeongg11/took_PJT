@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.housing.back.common.CertificationNumber;
-import com.housing.back.dto.request.auth.AccessTokenValidationRequestDto;
 import com.housing.back.dto.request.auth.CheckCertificationRequestDto;
 import com.housing.back.dto.request.auth.EmailCertificaionRequestDto;
 import com.housing.back.dto.request.auth.IdCheckRequestDto;
@@ -224,29 +223,5 @@ public class AuthServiceImpl implements AuthService {
 
         return RefreshTokenResponseDto.success(newAccessToken);
     }
-
-    @Override
-    public ResponseEntity<Boolean> checkToken(AccessTokenValidationRequestDto dto) {
-        String userId = null;
-    
-        try {
-            // AccessToken을 검증하여 userId를 얻으려고 시도
-            userId = jwtProvider.validate(dto.getAcessToken());
-    
-            if (userId == null) {
-                // Token이 유효하지 않은 경우
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
-            }
-    
-            // Token이 유효한 경우
-            return ResponseEntity.ok(true);
-    
-        } catch (Exception e) {
-            e.printStackTrace();
-            // 예외 발생 시 false 반환
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
-        }
-    }
-    
 
 }
