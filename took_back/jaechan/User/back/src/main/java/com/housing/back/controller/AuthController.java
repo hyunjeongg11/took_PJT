@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.housing.back.dto.response.auth.EmailCertificationResponseDto;
 import com.housing.back.dto.response.auth.CheckCertificationResponseDto;
 import com.housing.back.dto.response.auth.SignUpResponseDto;
+import com.housing.back.dto.request.auth.AccessTokenValidationRequestDto;
 import com.housing.back.dto.request.auth.CheckCertificationRequestDto;
 import com.housing.back.dto.request.auth.EmailCertificaionRequestDto;
 import com.housing.back.dto.request.auth.IdCheckRequestDto;
@@ -21,6 +22,7 @@ import com.housing.back.dto.response.auth.SignInResponseDto;
 import com.housing.back.dto.response.auth.RefreshTokenResponseDto;
 
 import com.housing.back.service.AuthService;
+import com.nimbusds.oauth2.sdk.dpop.verifiers.AccessTokenValidationException;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -69,6 +71,16 @@ public class AuthController {
         ResponseEntity<? super SignInResponseDto> response = authService.signIn(requestBody);
         return response;
     }
+
+    @PostMapping("/check-token")
+    public ResponseEntity<Boolean> checkToken(
+        @RequestBody @Valid AccessTokenValidationRequestDto requestBody
+    ){
+        ResponseEntity<Boolean> response = authService.checkToken(requestBody);
+        return response;
+    }
+    
+    
 
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(
