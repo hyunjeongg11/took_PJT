@@ -71,6 +71,12 @@ public class TaxiController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/guest/{userSeq}")
+    ResponseEntity<GuestSelectResponse> getGuest(@PathVariable Long userSeq) {
+        GuestSelectResponse guest = taxiGuestService.getGuest(userSeq);
+        return ResponseEntity.ok(guest);
+    }
+
     @GetMapping("/guests/{taxiSeq}")
     ResponseEntity<List<GuestListSelectResponse>> getGuests(@PathVariable Long taxiSeq) {
         List<GuestListSelectResponse> guests = taxiGuestService.getGuests(taxiSeq);
@@ -90,5 +96,8 @@ public class TaxiController {
         return ResponseEntity.ok(rank);
     }
 
-
+    @GetMapping("/isJoined/{userSeq}")
+    public boolean isJoined(@PathVariable Long userSeq) {
+        return taxiGuestService.isJoined(userSeq);
+    }
 }

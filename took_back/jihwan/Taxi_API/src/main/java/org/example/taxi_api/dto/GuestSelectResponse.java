@@ -4,11 +4,11 @@ import lombok.Data;
 import org.example.taxi_api.entity.TaxiGuest;
 
 @Data
-public class DestinationListResponse {
+public class GuestSelectResponse {
+
+    private Long taxiSeq;
 
     private Long userSeq;
-
-    private int cost;
 
     private String destiName;
 
@@ -16,14 +16,17 @@ public class DestinationListResponse {
 
     private double destiLon;
 
+    private int cost;
+
     private int routeRank;
 
-    public DestinationListResponse(TaxiGuest taxiGuest) {
+    public GuestSelectResponse(TaxiGuest taxiGuest) {
+        this.taxiSeq = taxiGuest.getTaxi().getTaxiSeq();
         this.userSeq = taxiGuest.getUserSeq();
-        this.cost = taxiGuest.getCost();
         this.destiName = taxiGuest.getDestiName();
         this.destiLat = taxiGuest.getDestiLat();
         this.destiLon = taxiGuest.getDestiLon();
+        this.cost = taxiGuest.getCost();
         this.routeRank = taxiGuest.getRouteRank();
     }
 }

@@ -1,7 +1,6 @@
 package org.example.taxi_api.repository;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.example.taxi_api.entity.QTaxiGuest;
@@ -29,17 +28,32 @@ public class TaxiGuestRepositoryCustomImpl implements TaxiGuestRepositoryCustom 
     }
 
     @Override
-    public List<TaxiGuest> findUniqueDestinationsByTaxiSeq(Long taxiSeq) {
+    public List<TaxiGuest> findDestinationsByTaxiSeqOrderedByRouteRank(Long taxiSeq) {
         QTaxiGuest taxiGuest = QTaxiGuest.taxiGuest;
 
-        return queryFactory.select(Projections.bean(TaxiGuest.class,
+        return queryFactory.select(Projections.fields(TaxiGuest.class,
+                        taxiGuest.userSeq,
                         taxiGuest.destiName,
                         taxiGuest.destiLat,
                         taxiGuest.destiLon,
-                        taxiGuest.routeRank.min().as("routeRank")))
+                        taxiGuest.routeRank,
+                        taxiGuest.cost))
                 .from(taxiGuest)
                 .where(taxiGuest.taxi.taxiSeq.eq(taxiSeq))
-                .groupBy(taxiGuest.routeRank)
+                .orderBy(taxiGuest.routeRank.asc())
                 .fetch();
     }
+
+    @Override
+    public boolean existsByUserSeq(Long userSeq) {
+        QTaxiGuest taxiGuest = QTaxiGuest.taxiGuest;
+
+        Integer result = queryFactory.selectOne()
+                .from(taxiGuest)
+                .where(taxiGuest.userSeq.eq(userSeq))
+                .fetchFirst(); // fetchFirst()는 결과가 없으면 null을 반환
+
+        return result != null;
+    }
 }
+

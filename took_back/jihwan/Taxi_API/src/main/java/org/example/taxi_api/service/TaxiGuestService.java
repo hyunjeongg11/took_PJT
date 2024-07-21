@@ -1,10 +1,7 @@
 package org.example.taxi_api.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.taxi_api.dto.DestinationListResponse;
-import org.example.taxi_api.dto.GuestCreateRequest;
-import org.example.taxi_api.dto.GuestDeleteRequest;
-import org.example.taxi_api.dto.GuestListSelectResponse;
+import org.example.taxi_api.dto.*;
 import org.example.taxi_api.entity.Taxi;
 import org.example.taxi_api.entity.TaxiGuest;
 import org.example.taxi_api.repository.TaxiGuestRepository;
@@ -43,8 +40,7 @@ public class TaxiGuestService {
 
     @Transactional
     public int getRank(Long taxiSeq) {
-        int rank = taxiGuestRepository.findNextRankByTaxiSeq(taxiSeq);
-        return rank;
+        return taxiGuestRepository.findNextRankByTaxiSeq(taxiSeq);
     }
 
     @Transactional
@@ -58,9 +54,19 @@ public class TaxiGuestService {
 
     @Transactional
     public List<DestinationListResponse> getDestinations(Long taxiSeq) {
-        List<TaxiGuest> guests = taxiGuestRepository.findUniqueDestinationsByTaxiSeq(taxiSeq);
+        List<TaxiGuest> guests = taxiGuestRepository.findDestinationsByTaxiSeqOrderedByRouteRank(taxiSeq);
         return guests.stream()
                 .map(DestinationListResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public GuestSelectResponse getGuest(Long userSeq) {
+        TaxiGuest guest = taxiGuestRepository.findByUserSeq(userSeq);
+        return new GuestSelectResponse(guest);
+    }
+
+    public boolean isJoined(Long userSeq) {
+        return taxiGuestRepository.existsByUserSeq(userSeq);
     }
 }

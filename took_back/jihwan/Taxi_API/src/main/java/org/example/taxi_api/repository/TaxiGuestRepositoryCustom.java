@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface TaxiGuestRepositoryCustom {
     int findNextRankByTaxiSeq(Long taxiSeq);
-    List<TaxiGuest> findUniqueDestinationsByTaxiSeq(Long taxiSeq);
+    List<TaxiGuest> findDestinationsByTaxiSeqOrderedByRouteRank(Long taxiSeq);
+    boolean existsByUserSeq(Long userSeq);
 }

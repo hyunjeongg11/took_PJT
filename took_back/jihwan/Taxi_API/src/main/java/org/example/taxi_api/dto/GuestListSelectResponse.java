@@ -16,6 +16,10 @@ public class GuestListSelectResponse {
 
     private String destiName;
 
+    private double destiLat;
+
+    private double destiLon;
+
     private int routeRank;
 
     public GuestListSelectResponse(TaxiGuest taxiGuest) {
@@ -24,6 +28,8 @@ public class GuestListSelectResponse {
         this.userSeq = taxiGuest.getUserSeq();
         this.cost = taxiGuest.getCost();
         this.destiName = taxiGuest.getDestiName();
+        this.destiLat = taxiGuest.getDestiLat();
+        this.destiLon = taxiGuest.getDestiLon();
         this.routeRank = taxiGuest.getRouteRank();
     }
 }
