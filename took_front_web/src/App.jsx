@@ -11,6 +11,9 @@ import CompletePage from "./pages/temp/CompletePage"; //
 import PaymentTempPage from "./pages/temp/PaymentPage"; // 
 import PwdPage from "./pages/temp/PwdPage"; // 
 import  { ModifyPwdPage, MyPage, UserInfoPage, UserListPage, PaymentInputPage } from "./pages";
+import Notification from "./pages/mypage/NotificationSetting"
+import Location from "./pages/mypage/LocationSettingPage"
+import TookDetails from "./pages/mypage/TookDetailsPage"
 
 
 const ROUTER = createBrowserRouter([
@@ -28,7 +31,10 @@ const ROUTER = createBrowserRouter([
   { path: "/pwd", element: <PwdPage /> },
   { path: "/mypage", element: <MyPage /> },
   {path: '/dutch/userlist', element: <UserListPage />},
-  { path: "/dutch/input", element: <PaymentInputPage />}
+  { path: "/dutch/input", element: <PaymentInputPage />},
+  { path: "/notification", element: <Notification /> },
+  { path: "/location", element: <Location /> },
+  { path: "/tookDetails", element: <TookDetails /> },
 ]);
 
 function App() {
