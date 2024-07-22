@@ -2,10 +2,10 @@ import React from "react";
 import BackButton from "../../components/common/BackButton";
 import SelectArrow from "../../assets/payment/selectArrow.png";
 import ProfileImg from "../../assets/profile/img11.png";
-// import { formatNumber } from '../../utils/format'; 
+import { formatNumber } from '../../utils/format'; 
 import { useNavigate } from "react-router-dom";
 
-function PaymentPage({ userName="사용자", amount="0", account="국민은행 8910" }) {
+function PaymentPage({ userName="사용자", amount="50000", account="국민은행 8910" }) {
   const navigate = useNavigate();
 
   const handleSendMoney = () => {
@@ -34,7 +34,7 @@ function PaymentPage({ userName="사용자", amount="0", account="국민은행 8
             {userName} 님에게
           </div>
           <div className="mt-1 text-3xl font-bold text-black">
-            {amount}원
+            {formatNumber(amount)}원
           </div>
           <div className="mt-1 text-xl font-bold text-black">
             <span className="font-dela text-orange-500">took!</span> 할까요?
