@@ -176,7 +176,7 @@ const styles = {
     fontSize: "16px",
     fontWeight: "bold",
     color: "black",
-    marginBottom: "10px",
+    marginBottom: "20px",
     display: "flex",
     alignItems: "center",
     cursor: "pointer",
