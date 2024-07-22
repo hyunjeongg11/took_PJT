@@ -13,14 +13,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class KakaoChangeRequestDto {
 
-  @NotBlank
-  private String userSeq;
+  private Long userSeq;
     
   private String userId;
 
   private String userName;
 
-  @NotBlank
   private Gender gender;
 
   @NotBlank

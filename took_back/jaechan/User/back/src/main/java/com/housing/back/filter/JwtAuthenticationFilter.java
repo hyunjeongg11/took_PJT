@@ -44,7 +44,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             try{
 
                 String token = parseVearerToken(request);
-
                 if(token == null){
                     filterChain.doFilter(request, response);
                     return;
@@ -61,7 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 // 이게 진짜로 맞다면? 아이디가 정상적으로 나왔다면?
                 UserEntity userEntity = userRepository.findByUserId(userId);
                 String role = userEntity.getRole(); //role : 이때 role은 ROLE_USER,ROLE_ADMIN
-
 
                 // ROLE_DEVELOPER ,등을 리스트로 전달 할 수 있게금 가능!
                 // 다중 권한 소지자일 경우

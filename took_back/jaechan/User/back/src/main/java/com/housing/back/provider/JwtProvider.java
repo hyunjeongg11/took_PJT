@@ -10,9 +10,11 @@ import org.springframework.stereotype.Component;
 
 import com.nimbusds.jose.util.StandardCharset;
 
-
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 
 @Component
@@ -85,9 +87,14 @@ public class JwtProvider {
                         .getBody().getSubject();
 
 
-        }catch(Exception exception){
-            exception.printStackTrace();
-            return null;
+        }catch (MalformedJwtException e) {
+            System.out.println("Invalid JWT token");
+        } catch (ExpiredJwtException e) {
+            System.out.println("Expired JWT token");
+        } catch (UnsupportedJwtException e) {
+            System.out.println("Unsupported JWT token");
+        } catch (IllegalArgumentException e) {
+            System.out.println("JWT token compact of handler are invalid");
         }
 
         return subject;

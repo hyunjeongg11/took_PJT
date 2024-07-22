@@ -1,4 +1,4 @@
-package com.housing.back.dto.response.auth;
+package com.housing.back.dto.response.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

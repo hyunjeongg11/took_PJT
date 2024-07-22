@@ -1,10 +1,12 @@
 package com.housing.back.entity;
 
+import java.util.List;
 
 import java.time.LocalDateTime;
 
 import com.housing.back.dto.request.auth.SignUpRequestDto;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +14,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -82,6 +85,12 @@ public class UserEntity {
 
     @Column(nullable = false, length = 10)
     private String role;
+
+    // 계좌와 관계 설정
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<AccountEntity> accounts;
+
+
 
     public UserEntity(SignUpRequestDto dto) {
         this.userId = dto.getUserId();

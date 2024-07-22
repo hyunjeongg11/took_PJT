@@ -53,7 +53,9 @@ public class WebSecurityConfig {
                                                 .requestMatchers("/", "/api/v1/auth/**","/oauth2/**").permitAll()
                                                 // 접두사는 제외 하고 USER만 적어준다.w
                                                 .requestMatchers("/api/v1/user/**").hasRole("USER")
-                                                // api/v1/user/로의 접근은 역하이 USER인 것만 가능하다.
+                                                // api/v1/user/로의 접근은 USER인 것만 가능하다.
+                                                .requestMatchers("/api/v1/account/**").hasRole("USER")
+                                                // 접근 권한이 User인 사람들 접근 가능하게!
                                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                                                 // 나머지 모든 request에 대해서는 인증을 하겠다.
 

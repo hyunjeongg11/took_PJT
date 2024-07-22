@@ -10,10 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -31,9 +29,9 @@ public class TestContoller {
     public ResponseEntity<? super KakaoChangeResponseDto> kakaoChange(
         @RequestBody @Valid KakaoChangeRequestDto requestBody
     ){
-        KakaoChangeResponseDto responseDto = userService.kakaoChange(requestBody);
+        ResponseEntity<? super KakaoChangeResponseDto> response = userService.kakaoChange(requestBody);
+        return response;
     }
-    
-    
-    
 }
+
+    
