@@ -23,8 +23,8 @@ public class ApiUtil {
         }
 
         Ini ini = new Ini(inputStream);
-        String apiKey = ini.get("AUTH", "ApiKey");
-        String apiSecret = ini.get("AUTH", "ApiSecret");
+        String apiKey = ini.get("AUTH", "SmsApiKey");
+        String apiSecret = ini.get("AUTH", "SmsApiSecret");
         String salt = UUID.randomUUID().toString().replaceAll("-", "");
         String date = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toString().split("\\[")[0];
 

@@ -15,27 +15,27 @@ public class TaxiGuest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long guestSeq;
+    private Long guestSeq;  // 게스트 번호
 
     @ManyToOne
     @JoinColumn(name = "taxi_seq", nullable = false)
-    private Taxi taxi;
+    private Taxi taxi;  // 택시 참조
 
     @Column(nullable = false)
-    private Long userSeq;
+    private Long userSeq;  // 사용자 번호
 
     @Column(nullable = false)
-    private int cost;
+    private int cost;  // 비용
 
     @Column(nullable = false)
-    private String destiName;
+    private String destiName;  // 목적지 이름
 
     @Column(nullable = false)
-    private double destiLat;
+    private double destiLat;  // 목적지 위도
 
     @Column(nullable = false)
-    private double destiLon;
+    private double destiLon;  // 목적지 경도
 
     @Column(nullable = false)
-    private int routeRank;
+    private int routeRank;  // 경로 순위
 }

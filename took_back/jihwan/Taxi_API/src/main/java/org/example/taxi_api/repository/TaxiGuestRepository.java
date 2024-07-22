@@ -12,5 +12,6 @@ public interface TaxiGuestRepository extends JpaRepository<TaxiGuest, Long>, Tax
     TaxiGuest findByUserSeqAndTaxi(Long userSeq, Taxi taxi);
     TaxiGuest findByUserSeq(Long userSeq);
     List<TaxiGuest> findByTaxi(Taxi taxi);
-
+    TaxiGuest findByGuestSeq(Long guestSeq);
+    List<TaxiGuest> findByTaxiAndDestiName(Taxi taxi, String destiName);
 }

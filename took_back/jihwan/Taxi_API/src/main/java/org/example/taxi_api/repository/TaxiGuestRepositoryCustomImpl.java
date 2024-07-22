@@ -9,12 +9,17 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-@RequiredArgsConstructor
+@Repository  // 이 클래스가 Spring의 Repository 빈으로 등록됨을 나타냅니다.
+@RequiredArgsConstructor  // Lombok을 사용하여 모든 final 필드를 매개변수로 가지는 생성자를 자동으로 생성합니다.
 public class TaxiGuestRepositoryCustomImpl implements TaxiGuestRepositoryCustom {
 
-    private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;  // JPAQueryFactory를 통해 데이터베이스 작업을 처리합니다.
 
+    /**
+     * 특정 택시의 다음 목적지 순위를 조회합니다.
+     * @param taxiSeq 택시 번호
+     * @return 다음 목적지 순위
+     */
     @Override
     public int findNextRankByTaxiSeq(Long taxiSeq) {
         QTaxiGuest taxiGuest = QTaxiGuest.taxiGuest;
@@ -27,6 +32,11 @@ public class TaxiGuestRepositoryCustomImpl implements TaxiGuestRepositoryCustom 
         return maxRank != null ? maxRank + 1 : 1;
     }
 
+    /**
+     * 특정 택시의 경로를 순위별로 조회합니다.
+     * @param taxiSeq 택시 번호
+     * @return 경로 목록
+     */
     @Override
     public List<TaxiGuest> findDestinationsByTaxiSeqOrderedByRouteRank(Long taxiSeq) {
         QTaxiGuest taxiGuest = QTaxiGuest.taxiGuest;
@@ -44,6 +54,11 @@ public class TaxiGuestRepositoryCustomImpl implements TaxiGuestRepositoryCustom 
                 .fetch();
     }
 
+    /**
+     * 특정 사용자가 참가했는지 확인합니다.
+     * @param userSeq 사용자 번호
+     * @return 탑승 여부
+     */
     @Override
     public boolean existsByUserSeq(Long userSeq) {
         QTaxiGuest taxiGuest = QTaxiGuest.taxiGuest;
@@ -56,4 +71,3 @@ public class TaxiGuestRepositoryCustomImpl implements TaxiGuestRepositoryCustom 
         return result != null;
     }
 }
-

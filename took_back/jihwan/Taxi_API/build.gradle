@@ -37,6 +37,8 @@ dependencies {
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"  // QueryDSL APT 설정 (Jakarta 버전)
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"  // Jakarta 어노테이션 API 추가
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"  // Jakarta Persistence API 추가
+
+    implementation 'org.ini4j:ini4j:0.5.4' // ini 파일을 읽기위한 라이브러리
 }
 
 clean {

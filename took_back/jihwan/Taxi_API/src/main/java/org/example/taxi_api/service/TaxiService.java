@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,26 +40,44 @@ public class TaxiService {
         taxiRepository.save(taxi);
     }
 
+    /**
+     * 특정 사용자들의 택시 목록을 조회합니다.
+     * @param request TaxiListSelectRequest 객체로, 사용자 번호 리스트를 담고 있습니다.
+     * @return 사용자들의 택시 목록
+     */
     @Transactional
-    public List<TaxiListSelectResponse> listTaxi(TaxiListSelectRequest request) {
+    public List<TaxiSelectResponse> listTaxi(TaxiListSelectRequest request) {
         List<Taxi> taxis = taxiRepository.findTaxisByUserSeqs(request.getUserSeqs());
         return taxis.stream()
-                .map(TaxiListSelectResponse::new)
+                .map(TaxiSelectResponse::new)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 특정 택시를 삭제합니다.
+     * @param taxiSeq 삭제할 택시의 번호
+     */
     @Transactional
     public void deleteTaxi(Long taxiSeq) {
         Taxi taxi = taxiRepository.findByTaxiSeq(taxiSeq);
         taxiRepository.delete(taxi);
     }
 
+    /**
+     * 특정 택시의 정보를 조회합니다.
+     * @param taxiSeq 조회할 택시의 번호
+     * @return 조회된 택시의 정보
+     */
     @Transactional
     public TaxiSelectResponse getTaxi(Long taxiSeq) {
         Taxi taxi = taxiRepository.findByTaxiSeq(taxiSeq);
         return new TaxiSelectResponse(taxi);
     }
 
+    /**
+     * 택시 정보를 업데이트합니다.
+     * @param request TaxiSetRequest 객체로, 택시 정보 업데이트에 필요한 정보를 담고 있습니다.
+     */
     @Transactional
     public void setTaxi(TaxiSetRequest request) {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
@@ -68,7 +87,10 @@ public class TaxiService {
         taxiRepository.save(taxi);
     }
 
-
+    /**
+     * 택시의 상태를 업데이트합니다.
+     * @param request TaxiStatusRequest 객체로, 택시 상태 업데이트에 필요한 정보를 담고 있습니다.
+     */
     @Transactional
     public void statusTaxi(TaxiStatusRequest request) {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
@@ -88,6 +110,10 @@ public class TaxiService {
         taxiRepository.save(taxi);
     }
 
+    /**
+     * 택시 출발 정보를 설정합니다.
+     * @param request TaxiStartRequest 객체로, 택시 출발 정보 설정에 필요한 정보를 담고 있습니다.
+     */
     @Transactional
     public void startTaxi(TaxiStartRequest request) {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
@@ -95,5 +121,47 @@ public class TaxiService {
         taxi.setStartLon(request.getStartLon());
         taxi.setCost(request.getCost());
         taxiRepository.save(taxi);
+    }
+
+    @Transactional
+    /**
+     * 택시의 예상or실제 비용을 설정합니다.
+     * @param request TaxiSetCostRequest 객체로, 택시 비용 설정에 필요한 정보를 담고 있습니다.
+     */
+    public void setCost(TaxiSetCostRequest request) {
+        Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
+        taxi.setCost(request.getCost());
+        taxiRepository.save(taxi);
+    }
+
+
+    /**
+     * 최종 결제 비용을 계산하고 사용자별로 분배합니다.
+     * @param request TaxiFinalCostRequest 객체로, 최종 결제 비용 계산에 필요한 정보를 담고 있습니다.
+     * @return 사용자별 최종 결제 비용 응답 데이터
+     */
+    @Transactional
+    public TaxiFinalCostResponse finalCost(TaxiFInalCostRequest request) {
+        Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
+        taxi.setCost(request.getAllCost());
+        taxiRepository.save(taxi);
+
+        TaxiFinalCostResponse response = new TaxiFinalCostResponse();
+        List<TaxiFinalCostResponse.User> userList = new ArrayList<>();
+        int totalUserCost = request.getUsers().stream().mapToInt(TaxiFInalCostRequest.User::getCost).sum();
+
+        // 결제 비용 계산
+        for (TaxiFInalCostRequest.User user : request.getUsers()) {
+            int userCost = user.getCost();
+            int proportionateCost = (int) Math.round(((double) userCost / totalUserCost) * request.getAllCost());
+
+            TaxiFinalCostResponse.User userCostResponse = new TaxiFinalCostResponse.User();
+            userCostResponse.setUserSeq(user.getUserSeq());
+            userCostResponse.setCost(proportionateCost);
+            userList.add(userCostResponse);
+        }
+
+        response.setUsers(userList);
+        return response;
     }
 }
