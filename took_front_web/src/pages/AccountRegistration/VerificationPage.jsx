@@ -207,6 +207,8 @@ const styles = {
   labelText: {
     fontSize: "14px",
     marginBottom: "5px",
+    fontWeight: "bold",
+
   },
   inputContainer: {
     display: "flex",
