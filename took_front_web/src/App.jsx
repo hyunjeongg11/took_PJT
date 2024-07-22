@@ -15,6 +15,7 @@ import PwdPage from "./pages/temp/PwdPage"; //
 import MyPage from "./pages/mypage/MyPage"; 
 import Notification from "./pages/mypage/NotificationSetting"
 import Location from "./pages/mypage/LocationSettingPage"
+import TookDetails from "./pages/mypage/TookDetailsPage"
 
 const ROUTER = createBrowserRouter([
   { path: "/", element: <MainPage /> },
@@ -32,6 +33,7 @@ const ROUTER = createBrowserRouter([
   { path: "/mypage", element: <MyPage /> },
   { path: "/notification", element: <Notification /> },
   { path: "/location", element: <Location /> },
+  { path: "/tookDetails", element: <TookDetails /> },
 ]);
 
 function App() {
