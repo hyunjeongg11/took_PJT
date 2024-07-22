@@ -13,6 +13,7 @@ import CompletePage from "./pages/temp/CompletePage"; //
 import PaymentTempPage from "./pages/temp/PaymentPage"; // 
 import PwdPage from "./pages/temp/PwdPage"; // 
 import MyPage from "./pages/mypage/MyPage"; 
+import Notification from "./pages/mypage/NotificationSetting"
 
 const ROUTER = createBrowserRouter([
   { path: "/", element: <MainPage /> },
@@ -28,6 +29,7 @@ const ROUTER = createBrowserRouter([
   { path: "/paymentTemp", element: <PaymentTempPage /> },
   { path: "/pwd", element: <PwdPage /> },
   { path: "/mypage", element: <MyPage /> },
+  { path: "/notification", element: <Notification /> },
 ]);
 
 function App() {
