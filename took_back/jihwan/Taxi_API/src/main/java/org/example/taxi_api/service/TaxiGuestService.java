@@ -33,6 +33,9 @@ public class TaxiGuestService {
                 .routeRank(request.getRouteRank())
                 .build();
         taxiGuestRepository.save(taxiGuest);
+
+        taxi.setCount(taxi.getCount() + 1);
+        taxiRepository.save(taxi);
     }
 
     /**
@@ -44,6 +47,9 @@ public class TaxiGuestService {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
         TaxiGuest guest = taxiGuestRepository.findByUserSeqAndTaxi(request.getUserSeq(), taxi);
         taxiGuestRepository.delete(guest);
+
+        taxi.setCount(taxi.getCount() - 1);
+        taxiRepository.save(taxi);
     }
 
     /**
