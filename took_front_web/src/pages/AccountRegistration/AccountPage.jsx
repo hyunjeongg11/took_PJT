@@ -42,9 +42,10 @@ function AccountPage() {
   const handleAliasChange = (e) => setAlias(e.target.value);
 
   const handleNextClick = () => {
-    console.log("Selected Bank: ", bank);
-    console.log("Account Number: ", account);
-    console.log("Password: ", password);
+    console.log("bank_name: ", bank);
+    console.log("account_num: ", account);
+    console.log("account_pwd : ", password);
+    console.log("accountName : ", alias );
     if (isFormValid) {
       navigate("/agreement", { state: { bank, account, alias } });
     }
