@@ -17,6 +17,7 @@ import SelectPage from "./pages/AccountRegistration/SelectPage"; //은행선택 
 import AgreementPage from "./pages/AccountRegistration/AgreementPage"; //약관동의 화면
 import AgreementDetailPage from "./pages/AccountRegistration/AgreementDetailPage"; //약관동의상세 화면
 import VerificationPage from "./pages/AccountRegistration/VerificationPage"; //본인인증 화면
+import AccountCompletePage from "./pages/AccountRegistration/AccountCompletePage"; //계좌등록완료 화면
 
 function App() {
   const [checkedItems, setCheckedItems] = useState({
@@ -52,6 +53,7 @@ function App() {
       element: <AgreementDetailPage checkedItems={checkedItems} setCheckedItems={setCheckedItems} />
     },
     { path: "/verification", element: <VerificationPage /> },
+    { path: "/accountcomplete", element: <AccountCompletePage /> },
   ]);
 
   return <RouterProvider router={ROUTER} />;
