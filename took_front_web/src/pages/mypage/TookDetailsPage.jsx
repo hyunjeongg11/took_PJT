@@ -8,12 +8,13 @@ import userProfile1 from "../../assets/profile/img1.png"; // 사용자 프로필
 import userProfile2 from "../../assets/profile/img2.png"; // 사용자 프로필 아이콘 경로
 import userProfile3 from "../../assets/profile/img3.png"; // 사용자 프로필 아이콘 경로
 import userProfile4 from "../../assets/profile/img4.png"; // 사용자 프로필 아이콘 경로
+import isMeIcon from "../../assets/payment/isMe.png"; // 본인 아이콘 경로
 
 const users = [
-  { name: "차민주", icon: userProfile1, amount: 14150, status: "완료", orderAmount: 12900, deliveryTip: 1250 },
-  { name: "공지환", icon: userProfile2, amount: 18550, status: "완료", orderAmount: 17300, deliveryTip: 1250 },
-  { name: "조현정", icon: userProfile3, amount: 15650, status: "미완료", orderAmount: 14400, deliveryTip: 1250 },
-  { name: "이재찬", icon: userProfile4, amount: 23250, status: "완료", orderAmount: 22000, deliveryTip: 1250 }
+  { name: "차민주", icon: userProfile1, amount: 14150, status: "완료", orderAmount: 12900, deliveryTip: 1250, isMe: true },
+  { name: "공지환", icon: userProfile2, amount: 18550, status: "완료", orderAmount: 17300, deliveryTip: 1250, isMe: false },
+  { name: "조현정", icon: userProfile3, amount: 15650, status: "미완료", orderAmount: 14400, deliveryTip: 1250, isMe: false },
+  { name: "이재찬", icon: userProfile4, amount: 23250, status: "완료", orderAmount: 22000, deliveryTip: 1250, isMe: false }
 ];
 
 function TookDetailsPage({ type = "배달" }) {
@@ -24,7 +25,10 @@ function TookDetailsPage({ type = "배달" }) {
         <div className="flex items-center mb-3">
           <img src={user.icon} alt={user.name} className="w-9 h-9 mr-4" />
           <div className="flex-grow flex justify-between items-center">
-            <span>{user.name}</span>
+            <div className="flex items-center">
+              <span>{user.name}</span>
+              {user.isMe && <img src={isMeIcon} alt="본인" className="ml-2 w-9.5 h-5" />}
+            </div>
             <div className="text-right">
               <span>{user.amount.toLocaleString()}원</span>
               <div className={`text-sm ${isCompleted ? "text-gray-500" : "text-[#DD5555]"}`}>
@@ -34,7 +38,7 @@ function TookDetailsPage({ type = "배달" }) {
           </div>
         </div>
         {type === "배달" || type === "공동구매" ? (
-          <div className="text-sm text-gray-500 mb-2">
+          <div className="text-sm mb-2">
             <div className="flex justify-between mb-2">
               <span>주문금액</span>
               <span className="font-normal">{user.orderAmount.toLocaleString()}원</span>
