@@ -17,4 +17,6 @@ public class QuerydslConfiguration {
     public JPAQueryFactory jpaQueryFactory() {
         return new JPAQueryFactory(entityManager);  // JPAQueryFactory를 생성하여 반환합니다.
     }
+
+
 }
