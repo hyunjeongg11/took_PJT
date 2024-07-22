@@ -1,35 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 
-function AgreementPage() {
+function AgreementPage({ checkedItems, setCheckedItems }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [checkedItems, setCheckedItems] = useState({});
   const [allChecked, setAllChecked] = useState(false);
 
   const { bank, account } = location.state || {};
 
+  useEffect(() => {
+    const allChecked = Object.values(checkedItems).length > 0 && Object.values(checkedItems).every(Boolean);
+    setAllChecked(allChecked);
+  }, [checkedItems]);
+
   const handleAllCheckChange = () => {
     const newCheckedState = !allChecked;
     setAllChecked(newCheckedState);
-    setCheckedItems({
+    const newCheckedItems = {
       terms1: newCheckedState,
       terms2: newCheckedState,
       terms3: newCheckedState,
       terms4: newCheckedState,
       terms5: newCheckedState,
       terms6: newCheckedState,
-      terms7: newCheckedState,
-    });
+    };
+    setCheckedItems(newCheckedItems);
   };
 
-  const handleCheckChange = (e) => {
-    const { name, checked } = e.target;
-    setCheckedItems((prev) => ({ ...prev, [name]: checked }));
+  const handleCheckChange = (name) => {
+    setCheckedItems((prev) => ({ ...prev, [name]: !prev[name] }));
   };
 
-  const isFormValid = Object.values(checkedItems).slice(0, 3).every(Boolean);
+  const isFormValid = ["terms1", "terms2", "terms3"].every((term) => checkedItems[term]);
+
+  const handleNavigateDetail = (index) => {
+    navigate('/agreementdetail', { state: { scrollToIndex: index } });
+  };
 
   return (
     <div style={styles.container}>
@@ -40,7 +47,7 @@ function AgreementPage() {
       <div style={styles.section}>
         <div style={styles.stepContainer}>
           <div style={styles.step} onClick={() => navigate("/account", { state: { bank, account } })}>
-            1 &nbsp;&nbsp;본인 명의 계좌 번호 등록
+            <span style={styles.circleEmpty}>1</span> 본인 명의 계좌 번호 등록
           </div>
           <div style={styles.stepActive}>
             <span style={styles.stepNumberActive}>2</span> 약관 동의
@@ -51,98 +58,62 @@ function AgreementPage() {
           설명 및 약관을 이해하였음을 확인합니다.
         </div>
         <div style={styles.termsContainer}>
-          <label style={styles.termsLabel}>
-            <input
-              type="checkbox"
-              checked={allChecked}
-              onChange={handleAllCheckChange}
-              style={styles.checkbox}
-            />
-            전체 동의하기
-          </label>
+          <div style={styles.termsLabelContainer}>
+            <label style={styles.termsLabel} onClick={handleAllCheckChange}>
+              <span style={styles.customCheckbox}>{allChecked ? "🗹" : "☐"}</span>
+              전체 동의하기
+            </label>
+            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(0)} />
+          </div>
           <div style={styles.term}>
-            <label style={styles.termLabel}>
-              <input
-                type="checkbox"
-                name="terms1"
-                checked={checkedItems.terms1 || false}
-                onChange={handleCheckChange}
-                style={styles.checkbox}
-              />
+            <label style={styles.termLabel} onClick={() => handleCheckChange("terms1")}>
+              <span style={styles.customCheckbox}>{checkedItems.terms1 ? "🗹" : "☐"}</span>
               (필수) 상품 이용약관
             </label>
-            <AiOutlineRight style={styles.rightIcon} />
+            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(1)} />
           </div>
-          <div style={styles.subTerm}>- 예금거래기본약과</div>
-          <div style={styles.subTerm}>- 입출금이자유로운예금 약관</div>
-          <div style={styles.subTerm}>- 카카오뱅크 입출금통장 특약</div>
+          <div style={styles.subTerms}>
+            <div style={styles.subTerm}>- 예금거래기본약과</div>
+            <div style={styles.subTerm}>- 입출금이자유로운예금 약관</div>
+          </div>
           <div style={styles.term}>
-            <label style={styles.termLabel}>
-              <input
-                type="checkbox"
-                name="terms2"
-                checked={checkedItems.terms2 || false}
-                onChange={handleCheckChange}
-                style={styles.checkbox}
-              />
-              (필수) 불법·탈법 차명거래 금지 설명 확인
+            <label style={styles.termLabel} onClick={() => handleCheckChange("terms2")}>
+              <span style={styles.customCheckbox}>{checkedItems.terms2 ? "🗹" : "☐"}</span>
+              (필수) 불법·탈법 차명거래 금지 설명 <br /> 확인
             </label>
-            <AiOutlineRight style={styles.rightIcon} />
+            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(2)} />
           </div>
           <div style={styles.term}>
-            <label style={styles.termLabel}>
-              <input
-                type="checkbox"
-                name="terms3"
-                checked={checkedItems.terms3 || false}
-                onChange={handleCheckChange}
-                style={styles.checkbox}
-              />
+            <label style={styles.termLabel} onClick={() => handleCheckChange("terms3")}>
+              <span style={styles.customCheckbox}>{checkedItems.terms3 ? "🗹" : "☐"}</span>
               (필수) 예금자보호법 설명 확인
             </label>
-            <AiOutlineRight style={styles.rightIcon} />
+            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(3)} />
           </div>
           <div style={styles.term}>
-            <label style={styles.termLabel}>
-              <input
-                type="checkbox"
-                name="terms4"
-                checked={checkedItems.terms4 || false}
-                onChange={handleCheckChange}
-                style={styles.checkbox}
-              />
+            <label style={styles.termLabel} onClick={() => handleCheckChange("terms4")}>
+              <span style={styles.customCheckbox}>{checkedItems.terms4 ? "🗹" : "☐"}</span>
               (선택) 개인신용정보 선택적 제공 동의
             </label>
-            <AiOutlineRight style={styles.rightIcon} />
+            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(4)} />
           </div>
           <div style={styles.term}>
-            <label style={styles.termLabel}>
-              <input
-                type="checkbox"
-                name="terms5"
-                checked={checkedItems.terms5 || false}
-                onChange={handleCheckChange}
-                style={styles.checkbox}
-              />
-              (선택) 개인신용정보 선택적 수집 및 이용 동의
+            <label style={styles.termLabel} onClick={() => handleCheckChange("terms5")}>
+              <span style={styles.customCheckbox}>{checkedItems.terms5 ? "🗹" : "☐"}</span>
+              (선택) 개인신용정보 선택적 수집 및 <br />이용 동의
             </label>
-            <AiOutlineRight style={styles.rightIcon} />
+            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(5)} />
           </div>
           <div style={styles.term}>
-            <label style={styles.termLabel}>
-              <input
-                type="checkbox"
-                name="terms6"
-                checked={checkedItems.terms6 || false}
-                onChange={handleCheckChange}
-                style={styles.checkbox}
-              />
+            <label style={styles.termLabel} onClick={() => handleCheckChange("terms6")}>
+              <span style={styles.customCheckbox}>{checkedItems.terms6 ? "🗹" : "☐"}</span>
               (선택) 광고성 정보 수신 동의
             </label>
-            <AiOutlineRight style={styles.rightIcon} />
+            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(6)} />
           </div>
         </div>
-        <div style={styles.stepInactive}>3 &nbsp;&nbsp;본인 인증</div>
+        <div style={styles.stepInactive}>
+        <span style={styles.circleEmpty}>3</span>본인 인증</div>
       </div>
       <button
         style={{
@@ -199,7 +170,7 @@ const styles = {
   stepContainer: {
     display: "flex",
     flexDirection: "column",
-    marginBottom: "20px",
+    marginBottom: "10px",
   },
   step: {
     fontSize: "16px",
@@ -213,7 +184,6 @@ const styles = {
   stepActive: {
     fontSize: "16px",
     fontWeight: "bold",
-    // color: "#FF7F50",
     display: "flex",
     alignItems: "center",
   },
@@ -239,7 +209,7 @@ const styles = {
   notice: {
     fontSize: "14px",
     color: "black",
-    marginBottom: "20px",
+    marginBottom: "10px",
   },
   termsContainer: {
     border: "1px solid #ddd",
@@ -248,6 +218,11 @@ const styles = {
     width: "100%",
     backgroundColor: "#fafafa",
     marginBottom: "10px",
+  },
+  termsLabelContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   termsLabel: {
     fontSize: "16px",
@@ -267,13 +242,19 @@ const styles = {
     alignItems: "center",
     fontSize: "14px",
   },
+  subTerms: {
+    marginBottom: "10px",
+  },
   subTerm: {
     fontSize: "14px",
     color: "#555",
     marginLeft: "20px",
+    marginBottom: "5px",
   },
-  checkbox: {
+  customCheckbox: {
+    fontSize: "16px",
     marginRight: "10px",
+    cursor: "pointer",
   },
   rightIcon: {
     fontSize: "18px",
@@ -300,7 +281,7 @@ const styles = {
     height: "20px",
     borderRadius: "50%",
     border: "1px solid #ddd",
-    color: "black",
+    color: "#666",
     textAlign: "center",
     lineHeight: "20px",
     marginRight: "10px",
