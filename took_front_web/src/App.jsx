@@ -14,6 +14,7 @@ import PaymentTempPage from "./pages/temp/PaymentPage"; //
 import PwdPage from "./pages/temp/PwdPage"; // 
 import MyPage from "./pages/mypage/MyPage"; 
 import Notification from "./pages/mypage/NotificationSetting"
+import Location from "./pages/mypage/LocationSettingPage"
 
 const ROUTER = createBrowserRouter([
   { path: "/", element: <MainPage /> },
@@ -30,6 +31,7 @@ const ROUTER = createBrowserRouter([
   { path: "/pwd", element: <PwdPage /> },
   { path: "/mypage", element: <MyPage /> },
   { path: "/notification", element: <Notification /> },
+  { path: "/location", element: <Location /> },
 ]);
 
 function App() {
