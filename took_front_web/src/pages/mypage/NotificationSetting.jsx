@@ -10,7 +10,7 @@ function NotificationSettingPage() {
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-4 py-3">
         <BackButton />
-        <div className="mt-1 flex-grow text-center text-lg font-bold text-black">
+        <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
           앱푸시 알림 설정
         </div>
       </div>
