@@ -14,6 +14,7 @@ import  { ModifyPwdPage, MyPage, UserInfoPage, UserListPage, PaymentInputPage } 
 import Notification from "./pages/mypage/NotificationSetting"
 import Location from "./pages/mypage/LocationSettingPage"
 import TookDetails from "./pages/mypage/TookDetailsPage"
+import PaymentMethods from "./pages/oneclick/PaymentMethodsPage"
 
 
 const ROUTER = createBrowserRouter([
@@ -35,6 +36,7 @@ const ROUTER = createBrowserRouter([
   { path: "/notification", element: <Notification /> },
   { path: "/location", element: <Location /> },
   { path: "/tookDetails", element: <TookDetails /> },
+  { path: "/paymentmethods", element: <PaymentMethods /> },
 ]);
 
 function App() {
