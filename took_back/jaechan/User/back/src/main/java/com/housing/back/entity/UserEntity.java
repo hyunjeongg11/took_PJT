@@ -90,6 +90,9 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<AccountEntity> accounts;
 
+    //party member와 관계 설정
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<MemberEntity> members;
 
 
     public UserEntity(SignUpRequestDto dto) {

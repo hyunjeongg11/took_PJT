@@ -16,17 +16,6 @@ import java.time.Duration;
 @Getter
 public class SignInResponseDto extends ResponseDto{
 
-
-    // private String token;
-    // private int expirationTime;
-
-    // private SignInResponseDto(String token){
-    //     super();
-    //     this.token=token;
-    //     this.expirationTime=3600;
-
-    // }
-
     private String accessToken;
     private String refreshToken;
 

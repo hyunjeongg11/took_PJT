@@ -28,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 
 
 // 이 필터에서 Jwtprovidder을 사용해 준다.
-
 @Component
 @RequiredArgsConstructor  // 필수 요소에 대한 생성자 생성 | 필터로 만들기 위해서는 해당 필터를 상속하여 메서드를 재정의 해주어야한다.
 public class JwtAuthenticationFilter extends OncePerRequestFilter{

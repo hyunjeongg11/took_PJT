@@ -11,7 +11,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import com.housing.back.dto.request.user.KakaoChangeRequestDto;
-import com.housing.back.entity.UserEntity;
 import com.housing.back.entity.UserEntity.Gender;
 import com.housing.back.entity.UserEntity.LoginStatus;
 

@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 import com.housing.back.dto.request.user.KakaoChangeRequestDto;
 import com.housing.back.dto.response.ResponseDto;
 import com.housing.back.dto.response.user.KakaoChangeResponseDto;
-import com.housing.back.repository.BankRepositoryCustom;
 import com.housing.back.repository.UserCustomRepository;
-import com.housing.back.repository.UserRepository;
 import com.housing.back.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService{
 
     private final UserCustomRepository userCustomRepository;
-    private final BankRepositoryCustom bankRepositoryCustom;
 
 
     @Override

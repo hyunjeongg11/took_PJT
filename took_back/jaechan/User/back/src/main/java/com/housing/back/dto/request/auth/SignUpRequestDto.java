@@ -1,6 +1,5 @@
 package com.housing.back.dto.request.auth;
 
-import java.time.LocalDateTime;
 
 import com.housing.back.entity.UserEntity.Gender;
 

@@ -56,6 +56,8 @@ public class WebSecurityConfig {
                                                 // api/v1/user/로의 접근은 USER인 것만 가능하다.
                                                 .requestMatchers("/api/v1/account/**").hasRole("USER")
                                                 // 접근 권한이 User인 사람들 접근 가능하게!
+                                                .requestMatchers("/api/v1/pay/**").hasRole("USER")
+                                                // 접근 권한이 USER인 사람들이 pay에 접근가능하게
                                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                                                 // 나머지 모든 request에 대해서는 인증을 하겠다.
 

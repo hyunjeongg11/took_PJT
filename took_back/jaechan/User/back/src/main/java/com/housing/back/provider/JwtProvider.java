@@ -77,7 +77,7 @@ public class JwtProvider {
 
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharset.UTF_8));
 
-
+        
         try{
         
             subject = Jwts.parserBuilder()
