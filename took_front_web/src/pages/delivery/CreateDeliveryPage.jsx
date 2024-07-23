@@ -43,7 +43,7 @@ function CreateDeliveryPage() {
         <div className="mt-2 flex-grow text-center text-lg font-bold text-black">
           배달 <span className="font-dela">took</span> 작성하기
         </div>
-        <button className="text-white bg-[#FF7F50] px-3 py-1.5 rounded-full text-sm font-bold" onClick={handleSubmit}>
+        <button className="text-white mt-2 bg-[#FF7F50] px-3 py-1.5 rounded-full text-sm font-bold" onClick={handleSubmit}>
           등록
         </button>
       </div>
@@ -75,17 +75,17 @@ function CreateDeliveryPage() {
         </div>
         <div className="border-b border-gray-300 mb-4">
           <input
-            type="number"
+            type="text"
             name="deliveryTip"
             value={form.deliveryTip}
             onChange={handleChange}
-            placeholder="₩ 배달팁을 입력해주세요."
+            placeholder="₩ 예상 배달팁을 입력해주세요."
             className="bg-transparent py-2 placeholder-gray-300 focus:outline-none focus:border-[#FF7F50]"
           />
         </div>
         <div className="border-b border-gray-300 mb-4">
           <input
-            type="datetime-local"
+            type="date"
             name="orderTime"
             value={form.orderTime}
             onChange={handleChange}

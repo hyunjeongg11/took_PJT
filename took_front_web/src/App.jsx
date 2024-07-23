@@ -3,6 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {MainPage, LoginPage, PaymentPage, SignupPage, LocationSettingPage, ModifyPwdPage, MyPage, NotificationSetting, TookDetailsPage, TookHistoryPage, UserInfoPage, AccountCompletePage, AccountPage, AgreementDetailPage, AgreementPage, VerificationPage, SelectPage, CompletePage, PwdPage, PaymentInputPage, UserListPage } from "./pages";
 import PaymentMethods from "./pages/oneclick/PaymentMethodsPage"
 import MyTookMoneyPage from "./pages/oneclick/MyTookMoneyPage"
+import CreateDeliveryPage from "./pages/delivery/CreateDeliveryPage"
+
 
 
 
@@ -45,6 +47,7 @@ function App() {
     { path: "/dutch/userlist", element: <UserListPage />},
     { path: "/dutch/input", element: <PaymentInputPage />},
     { path: "/mytookmoney", element: <MyTookMoneyPage />},
+    { path: "/create/delivery", element: <CreateDeliveryPage />},
   ]);
 
   return <RouterProvider router={ROUTER} />;
