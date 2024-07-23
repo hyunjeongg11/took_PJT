@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import {MainPage, LoginPage, PaymentPage, SignupPage, LocationSettingPage, ModifyPwdPage, MyPage, NotificationSetting, TookDetailsPage, UserInfoPage, AccountCompletePage, AccountPage, AgreementDetailPage, AgreementPage, VerificationPage, SelectPage, CompletePage, PwdPage, PaymentInputPage, UserListPage } from "./pages";
+import {MainPage, LoginPage, PaymentPage, SignupPage, LocationSettingPage, ModifyPwdPage, MyPage, NotificationSetting, TookDetailsPage, UserInfoPage, AccountCompletePage, AccountPage, AgreementDetailPage, AgreementPage, VerificationPage, SelectPage, CompletePage, PwdPage, PaymentInputPage, UserListPage, PaymentTotalPage, PayRequestPage } from "./pages";
 import PaymentMethods from "./pages/oneclick/PaymentMethodsPage"
 
 
@@ -41,7 +41,9 @@ function App() {
     { path: "/complete", element: <CompletePage />},
     { path: "/paymentmethods", element: <PaymentMethods /> },
     { path: "/dutch/userlist", element: <UserListPage />},
-    { path: "/dutch/input", element: <PaymentInputPage />}
+    { path: "/dutch/input", element: <PaymentInputPage />},
+    { path: "/dutch/total", element: <PaymentTotalPage />},
+    { path: "/dutch/request", element: <PayRequestPage />},
   ]);
 
   return <RouterProvider router={ROUTER} />;
