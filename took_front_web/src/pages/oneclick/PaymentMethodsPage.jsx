@@ -1,4 +1,3 @@
-// src/pages/oneclick/PaymentMethodsPage.jsx
 import React, { useState } from 'react';
 import { AiOutlineLeft, AiOutlineMore } from 'react-icons/ai';
 import { formatAccountNumber } from '../../utils/accountNumFormat';
@@ -55,178 +54,48 @@ const PaymentMethodsPage = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <AiOutlineLeft style={styles.backIcon} onClick={() => window.history.back()} />
-        <span style={styles.headerText}>결제수단 관리</span>
-        <AiOutlineMore style={styles.moreIcon} />
+    <div className="flex flex-col items-center p-5 h-screen font-nanum">
+      <div className="w-full flex items-center justify-center mb-5 border-b border-gray-300 pb-2 relative">
+        <AiOutlineLeft className="absolute left-3 text-2xl cursor-pointer" onClick={() => window.history.back()} />
+        <span className="text-lg font-bold">결제수단 관리</span>
+        <AiOutlineMore className="absolute right-3 text-2xl cursor-pointer" />
       </div>
-      <div style={styles.accountList}>
-        <div style={styles.accountCount}>등록 계좌 <span style={styles.accountLength}>{accounts.length}</span>개</div>
+      <div className="w-full">
+        <div className="mb-2 text-sm text-gray-600">
+          등록 계좌 <span className="font-bold">{accounts.length}</span>개
+        </div>
         {accounts.map((account, index) => (
           <div
             key={index}
-            style={{
-              ...styles.accountItem,
-              backgroundColor: draggingIndex === index ? '#f0f0f0' : '#fff',
-              opacity: draggingIndex === index ? 0.5 : 1,
-            }}
+            className={`flex items-center py-2 border-b border-gray-300 cursor-grab transition duration-200 relative ${draggingIndex === index ? 'bg-gray-200 opacity-50' : 'bg-white'}`}
             draggable
             onDragStart={(e) => onDragStart(e, index)}
             onDragOver={() => onDragOver(index)}
             onDragEnd={onDragEnd}
           >
-            <div style={styles.dragIcon}>≡</div>
-            <div style={styles.accountDetails}>
+            <div className="text-lg mr-2">≡</div>
+            <div className="flex items-center ml-2 flex-1">
               <img
                 src={getImagePath(account.bank_name)}
                 alt={`${account.bank_name} 로고`}
-                style={styles.bankLogo}
+                className="w-10 h-10 mr-2"
               />
-              <div style={styles.accountInfo}>
-                <div style={styles.bankName}>
+              <div className="flex flex-col">
+                <div className="flex items-center text-lg font-bold">
                   {account.bank_name}
-                  {index === 0 && <span style={styles.primaryBadge}>주계좌</span>}
+                  {index === 0 && <span className="bg-orange-100 text-orange-600 text-xs ml-2 px-2 py-1 rounded-full">주계좌</span>}
                 </div>
-                <div style={styles.accountNum}>{formatAccountNumber(account.account_num)}</div>
-                <div style={styles.accountName}>{account.account_name}</div>
+                <div className="text-sm text-black">{formatAccountNumber(account.account_num)}</div>
+                <div className="text-sm text-gray-500">{account.account_name}</div>
               </div>
             </div>
-            <button style={styles.deleteButton} onClick={() => handleDelete(index)}>삭제</button>
+            <button className="border border-gray-400 bg-white text-sm text-black cursor-pointer rounded-full px-3 py-1 absolute right-2" onClick={() => handleDelete(index)}>삭제</button>
           </div>
         ))}
       </div>
-      <button style={styles.addAccountButton}>+ 결제 수단 추가</button>
+      <button className="w-[calc(100%-40px)] py-3 rounded-full border-none text-white text-lg font-bold cursor-pointer bg-orange-500 mt-5 absolute bottom-5 left-1/2 transform -translate-x-1/2">+ 결제 수단 추가</button>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '20px',
-    fontFamily: "'Nanum Gothic', sans-serif",
-    height: '100vh',
-  },
-  header: {
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: '20px',
-    borderBottom: '1px solid #ddd',
-    paddingBottom: '10px',
-    position: 'relative',
-  },
-  backIcon: {
-    position: 'absolute',
-    left: '10px',
-    fontSize: '24px',
-    cursor: 'pointer',
-  },
-  moreIcon: {
-    position: 'absolute',
-    right: '10px',
-    fontSize: '24px',
-    cursor: 'pointer',
-  },
-  headerText: {
-    fontSize: '18px',
-    fontWeight: 'bold',
-  },
-  accountList: {
-    width: '100%',
-  },
-  accountCount: {
-    marginBottom: '10px',
-    fontSize: '14px',
-    color: '#666',
-  },
-  accountLength: {
-    marginBottom: '10px',
-    fontSize: '14px',
-    color: '#666',
-    fontWeight: 'bold',
-  },
-  accountItem: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '10px 0',
-    borderBottom: '1px solid #ddd',
-    cursor: 'grab',
-    transition: 'background-color 0.2s, opacity 0.2s',
-    position: 'relative',
-  },
-  dragIcon: {
-    fontSize: '20px',
-    marginRight: '10px',
-  },
-  accountDetails: {
-    display: 'flex',
-    alignItems: 'center',
-    marginLeft: '10px',
-    flex: 1,
-  },
-  bankLogo: {
-    width: '40px',
-    height: '40px',
-    marginRight: '10px',
-  },
-  accountInfo: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  bankName: {
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: '16px',
-    fontWeight: 'bold',
-  },
-  primaryBadge: {
-    backgroundColor: 'rgba(255, 127, 80, 0.24)',
-    color: '#FF7F50',
-    fontSize: '10px',
-    marginLeft: '10px',
-    padding: '2px 5px',
-    borderRadius: '10px',
-  },
-  accountNum: {
-    fontSize: '14px',
-    color: 'black',
-  },
-  accountName: {
-    fontSize: '14px',
-    color: '#999',
-  },
-  deleteButton: {
-    border: '1px solid rgba(0, 0, 0, 0.22)',
-    background: '#fff',
-    fontSize: '14px',
-    color: '#000',
-    cursor: 'pointer',
-    borderRadius: '10px',
-    padding: '5px 10px',
-    position: 'absolute',
-    right: '10px',
-  },
-  addAccountButton: {
-    width: 'calc(100% - 40px)',
-    padding: '12px',
-    borderRadius: '20px',
-    border: 'none',
-    color: 'white',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    backgroundColor: '#FF7F50',
-    marginTop: '20px',
-    position: 'absolute',
-    bottom: '20px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-  },
 };
 
 export default PaymentMethodsPage;
