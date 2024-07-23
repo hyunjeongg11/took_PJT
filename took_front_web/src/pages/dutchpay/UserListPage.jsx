@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getUserStyle, getMyStyle } from "../../utils/getCharacterPostion";
 import questionIcon from "../../assets/payment/question.svg"
 import { Link } from "react-router-dom"

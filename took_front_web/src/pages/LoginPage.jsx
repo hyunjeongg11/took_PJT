@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import kakaoImage from "../assets/login/kakao.svg";
 import googleImage from "../assets/login/google.png";
 import BackButton from "../components/common/BackButton.jsx";
