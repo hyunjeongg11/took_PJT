@@ -2111,7 +2111,9 @@ __metadata:
     prettier: "npm:3.3.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    react-icons: "npm:^5.2.1"
     react-router-dom: "npm:^6.24.1"
+    swiper: "npm:^11.1.5"
     tailwindcss: "npm:^3.4.4"
     vite: "npm:^5.3.1"
     zustand: "npm:^4.5.4"
@@ -3585,6 +3587,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-icons@npm:^5.2.1":
+  version: 5.2.1
+  resolution: "react-icons@npm:5.2.1"
+  peerDependencies:
+    react: "*"
+  checksum: 10c0/9d52b975afaf27dab07dcaefd50497ba43cc57076fc26ccac5142965e01c7fd0c503a62ea31c3bb710e0b2959a4620c2fed12c3c86960ad8ceb63de7f0085f3a
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -4153,6 +4164,13 @@ __metadata:
   version: 1.0.0
   resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
   checksum: 10c0/6c4032340701a9950865f7ae8ef38578d8d7053f5e10518076e6554a9381fa91bd9c6850193695c141f32b21f979c985db07265a758867bac95de05f7d8aeb39
+  languageName: node
+  linkType: hard
+
+"swiper@npm:^11.1.5":
+  version: 11.1.5
+  resolution: "swiper@npm:11.1.5"
+  checksum: 10c0/a5cd20c9d858a98ccc70a71b38799e7597c03da27143379365bbcd4dbed750d48c02ff2cf8a6a39870f65e1d2fec9aac1a715486a8a5878b578869fbc3b5c953
   languageName: node
   linkType: hard
 
