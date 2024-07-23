@@ -1,10 +1,7 @@
 package org.example.delivery_api.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.delivery_api.dto.DeliveryGuestCreateRequest;
-import org.example.delivery_api.dto.DeliveryGuestDeleteRequest;
-import org.example.delivery_api.dto.DeliveryGuestIsJoinRequest;
-import org.example.delivery_api.dto.DeliveryGuestSelectResponse;
+import org.example.delivery_api.dto.*;
 import org.example.delivery_api.entity.Delivery;
 import org.example.delivery_api.entity.DeliveryGuest;
 import org.example.delivery_api.repository.DeliveryGuestRepository;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -77,5 +75,22 @@ public class DeliveryGuestService {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
         DeliveryGuest deliveryGuest = deliveryGuestRepository.findByDeliveryAndUserSeq(delivery, request.getUserSeq());
         return deliveryGuest != null;
+    }
+    
+    // 참가중인 방 목록
+    @Transactional
+    public List<DeliverySelectResponse> getJoinList(Long userSeq) {
+        List<DeliveryGuest> deliveryGuests = deliveryGuestRepository.findAllByUserSeq(userSeq);
+
+        // deliveryGuests의 delivery에서 deliverySeq만 뽑아서 리스트로 만들기
+        List<Long> deliverySeqs = deliveryGuests.stream()
+                .map(deliveryGuest -> deliveryGuest.getDelivery().getDeliverySeq())
+                .collect(Collectors.toList());
+
+        List<Delivery> deliveries = deliveryRepository.findByDeliverySeqIn(deliverySeqs);
+
+        return deliveries.stream()
+                .map(DeliverySelectResponse::new)
+                .toList();
     }
 }

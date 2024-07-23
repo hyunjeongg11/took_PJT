@@ -31,4 +31,6 @@ public class DeliveryGuest {
     // 픽업 여부를 나타내는 필드
     @Column(nullable = false)
     private boolean pickUp;
+
+
 }

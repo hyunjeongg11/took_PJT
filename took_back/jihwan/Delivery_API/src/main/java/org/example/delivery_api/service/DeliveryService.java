@@ -113,13 +113,4 @@ public class DeliveryService {
         delivery.setStatus(Delivery.Status.valueOf(request.getStatus()));
         deliveryRepository.save(delivery);
     }
-
-    // 참가중인 방 리스트 조회
-    @Transactional
-    public List<DeliverySelectResponse> getJoinList(Long userSeq) {
-        List<Delivery> deliveryList = deliveryRepository.findAllByUserSeq(userSeq);
-        return deliveryList.stream()
-                .map(DeliverySelectResponse::new)
-                .collect(Collectors.toList());
-    }
 }

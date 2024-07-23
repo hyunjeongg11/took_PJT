@@ -14,4 +14,6 @@ public interface DeliveryGuestRepository extends JpaRepository<DeliveryGuest, Lo
     DeliveryGuest findByDeliveryGuestSeq(Long deliveryGuestSeq);
 
     DeliveryGuest findByDeliveryAndUserSeq(Delivery delivery, Long userSeq);
+
+    List<DeliveryGuest> findAllByUserSeq(Long userSeq);
 }

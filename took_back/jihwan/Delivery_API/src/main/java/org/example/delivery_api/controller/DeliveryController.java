@@ -130,7 +130,7 @@ public class DeliveryController {
     // 참가중인 방 리스트 조회
     @GetMapping("list/{userSeq}")
     ResponseEntity<List<DeliverySelectResponse>> getJoinList(@PathVariable Long userSeq) {
-        List<DeliverySelectResponse> response = deliveryService.getJoinList(userSeq);
+        List<DeliverySelectResponse> response = deliveryGuestService.getJoinList(userSeq);
         return ResponseEntity.ok(response);
     }
 
