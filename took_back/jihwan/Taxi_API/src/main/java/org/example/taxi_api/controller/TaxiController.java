@@ -23,9 +23,9 @@ public class TaxiController {
      * @return 응답 엔티티
      */
     @PostMapping("/create")
-    ResponseEntity<?> createTaxi(@RequestBody TaxiCreateRequest request) {
-        taxiService.createTaxi(request);
-        return ResponseEntity.noContent().build();
+    ResponseEntity<TaxiSelectResponse> createTaxi(@RequestBody TaxiCreateRequest request) {
+        TaxiSelectResponse response = taxiService.createTaxi(request);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -104,11 +104,19 @@ public class TaxiController {
         taxiService.setCost(request);
         return ResponseEntity.noContent().build();
     }
-
+    
+    // 최종 비용 계산
     @PostMapping("/finalCost")
     ResponseEntity<TaxiFinalCostResponse> finalCost(@RequestBody TaxiFInalCostRequest request) {
         TaxiFinalCostResponse response = taxiService.finalCost(request);
         return ResponseEntity.ok(response);
+    }
+
+    // 정산방 연결
+    @PutMapping("/setParty")
+    ResponseEntity<?> setParty(@RequestBody TaxiSetPartyRequest request) {
+        taxiService.setParty(request);
+        return ResponseEntity.noContent().build();
     }
 
 

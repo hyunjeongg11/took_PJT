@@ -7,6 +7,8 @@ public class DeliveryCreateRequest {
 
     private Long userSeq;
 
+    private Long roomSeq;
+
     private String storeName;
 
     private String pickupPlace;

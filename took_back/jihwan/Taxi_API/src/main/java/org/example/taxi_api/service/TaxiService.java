@@ -23,7 +23,7 @@ public class TaxiService {
      * @param request TaxiCreateRequest 객체로, 택시 생성에 필요한 정보를 담고 있습니다.
      */
     @Transactional
-    public void createTaxi(TaxiCreateRequest request) {
+    public TaxiSelectResponse createTaxi(TaxiCreateRequest request) {
         // Taxi 엔티티를 빌더 패턴을 사용하여 생성합니다.
         Taxi taxi = Taxi.builder()
                 .gender(request.isGender())  // 성별 여부 설정
@@ -37,7 +37,8 @@ public class TaxiService {
                 .userSeq(request.getUserSeq())  // 작성자 설정
                 .build();
         // 생성된 Taxi 엔티티를 데이터베이스에 저장합니다.
-        taxiRepository.save(taxi);
+        Taxi response = taxiRepository.save(taxi);
+        return new TaxiSelectResponse(response);
     }
 
     /**
@@ -163,5 +164,13 @@ public class TaxiService {
 
         response.setUsers(userList);
         return response;
+    }
+    
+    // 정산방 연결
+    @Transactional
+    public void setParty(TaxiSetPartyRequest request) {
+        Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
+        taxi.setPartySeq(request.getPartySeq());
+        taxiRepository.save(taxi);
     }
 }

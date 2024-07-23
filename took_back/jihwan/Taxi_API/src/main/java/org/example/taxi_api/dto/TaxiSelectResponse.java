@@ -15,6 +15,8 @@ public class TaxiSelectResponse {
 
     private Long userSeq;
 
+    private Long partySeq;
+
     private double startLat;
 
     private double startLon;
@@ -39,6 +41,7 @@ public class TaxiSelectResponse {
         this.taxiSeq = taxi.getTaxiSeq();
         this.roomSeq = taxi.getRoomSeq();
         this.userSeq = taxi.getUserSeq();
+        this.partySeq = taxi.getPartySeq();
         this.startLat = taxi.getStartLat();
         this.startLon = taxi.getStartLon();
         this.gender = taxi.isGender();

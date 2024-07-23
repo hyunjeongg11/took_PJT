@@ -30,6 +30,14 @@ public class Delivery {
     @Column(nullable = false)
     private Long userSeq;
 
+    // 채팅방 번호
+    @Column(nullable = false)
+    private Long roomSeq;
+
+    // 정산 번호
+    @Column
+    private Long partySeq;
+
     // 가게 이름 필드
     @Column(nullable = false)
     private String storeName;

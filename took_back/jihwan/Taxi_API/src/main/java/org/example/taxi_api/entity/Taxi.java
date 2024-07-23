@@ -32,6 +32,9 @@ public class Taxi {
     private Long userSeq;  // 사용자 번호
 
     @Column
+    private Long partySeq; // 정산 참조 번호
+
+    @Column
     private double startLat;  // 출발지 위도
 
     @Column
