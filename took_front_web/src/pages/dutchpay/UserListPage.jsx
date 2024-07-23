@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getUserStyle, getMyStyle } from "../../utils/getCharacterPostion";
 import questionIcon from "../../assets/payment/question.svg"
 import { Link } from "react-router-dom"
@@ -8,9 +8,7 @@ import { Link } from "react-router-dom"
 const res_data = [
   { name: "정희수", img_no: 6 },
   { name: "조현정", img_no: 1 },
-  { name: "차민주", img_no: 2 },
-  { name: "김태훈", img_no: 3 },
-  { name: "공지환", img_no: 4 },
+  
   { name: "이재찬", img_no: 5 }, 
   
 ];

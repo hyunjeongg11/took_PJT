@@ -1,4 +1,13 @@
-export function formatNumber(number) {
-  if (number == null) return '0'; 
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+
+export const formatNumber = (number) => {
+  if (typeof number === 'number') {
+      return number.toLocaleString(); 
+  }
+  
+  if (typeof number === 'string') {
+      number = parseFloat(number.replace(/,/g, ''));
+      return isNaN(number) ? '' : number.toLocaleString(); 
+  }
+
+  return '';
+};

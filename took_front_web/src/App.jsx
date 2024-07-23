@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import {MainPage, LoginPage, PaymentPage, SignupPage, LocationSettingPage, ModifyPwdPage, MyPage, NotificationSetting, TookDetailsPage, TookHistoryPage, UserInfoPage, AccountCompletePage, AccountPage, AgreementDetailPage, AgreementPage, VerificationPage, SelectPage, CompletePage, PwdPage, PaymentInputPage, UserListPage } from "./pages";
+
+import {MainPage, LoginPage, PaymentPage, SignupPage, LocationSettingPage, ModifyPwdPage, MyPage, NotificationSetting, TookDetailsPage, UserInfoPage, AccountCompletePage, AccountPage, AgreementDetailPage, AgreementPage, VerificationPage, SelectPage, CompletePage, PwdPage, PaymentInputPage, UserListPage, PaymentTotalPage, PayRequestPage } from "./pages";
 import PaymentMethods from "./pages/oneclick/PaymentMethodsPage"
 import MyTookMoneyPage from "./pages/oneclick/MyTookMoneyPage"
 import CreateDeliveryPage from "./pages/delivery/CreateDeliveryPage"
@@ -46,6 +47,8 @@ function App() {
     { path: "/paymentmethods", element: <PaymentMethods /> },
     { path: "/dutch/userlist", element: <UserListPage />},
     { path: "/dutch/input", element: <PaymentInputPage />},
+    { path: "/dutch/total", element: <PaymentTotalPage />},
+    { path: "/dutch/request", element: <PayRequestPage />},
     { path: "/mytookmoney", element: <MyTookMoneyPage />},
     { path: "/create/delivery", element: <CreateDeliveryPage />},
   ]);
