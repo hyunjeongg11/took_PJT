@@ -63,7 +63,7 @@ const MyTookMoneyPage = () => {
       <div className="mx-4">
         <div className="bg-[#FBFBFB] p-4 rounded-2xl shadow-lg">
           <div className="flex items-center justify-between text-lg font-bold mb-2">
-            송금 내역
+            거래내역
             <AiOutlineRight className="text-xl" />
           </div>
           {transactions.map((transaction, index) => (
@@ -85,7 +85,7 @@ const MyTookMoneyPage = () => {
       <div className="mt-4 mx-4">
         <div className="bg-white p-4 rounded-2xl shadow-lg">
           <div className="flex items-center justify-between text-lg font-bold mb-2">
-            정산 현황
+            <div>나의 <span className='font-dela'> took</span></div>
             <AiOutlineRight className="text-xl" />
           </div>
           {settlements.map((settlement, index) => (
