@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {MainPage, LoginPage, PaymentPage, SignupPage, LocationSettingPage, ModifyPwdPage, MyPage, NotificationSetting, TookDetailsPage, UserInfoPage, AccountCompletePage, AccountPage, AgreementDetailPage, AgreementPage, VerificationPage, SelectPage, CompletePage, PwdPage} from "./pages";
+import PaymentMethods from "./pages/oneclick/PaymentMethodsPage"
+
 
 
 function App() {
@@ -36,7 +38,8 @@ function App() {
     { path: "/notification", element: <NotificationSetting /> },
     { path: "/location", element: <LocationSettingPage /> },
     { path: "/tookDetails", element: <TookDetailsPage /> },
-    { path: "/complete", element: <CompletePage />}
+    { path: "/complete", element: <CompletePage />},
+    { path: "/paymentmethods", element: <PaymentMethods /> },
   ]);
 
   return <RouterProvider router={ROUTER} />;
