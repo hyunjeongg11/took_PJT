@@ -49,6 +49,10 @@ public class Delivery {
     // 배달 팁 필드
     @Column(nullable = false)
     private String deliveryTip;
+    
+    // 배달 시간
+    @Column(nullable = false)
+    private LocalDateTime deliveryTime;
 
     // 배달 내용 필드
     @Column(nullable = false)

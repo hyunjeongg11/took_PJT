@@ -6,44 +6,35 @@ import org.example.delivery_api.entity.Delivery;
 import java.time.LocalDateTime;
 
 @Data
-public class DeliveryCreateResponse {
-
+public class DeliverySelectResponse {
     private Long deliverySeq;
-
     private Long userSeq;
-
     private Long roomSeq;
-
+    private Long partySeq;
     private String storeName;
-
     private String pickupPlace;
-
     private String deliveryTip;
-
-    private LocalDateTime deliveryTime;
-
     private String content;
-
-    private int count = 1;
-
-    private Delivery.Status status;
-
+    private String notice;
+    private String deliveryTime;
+    private String status;
+    private int count;
     private LocalDateTime createdAt;
-
     private LocalDateTime finishTime;
 
-    public DeliveryCreateResponse(Delivery delivery) {
+    public DeliverySelectResponse(Delivery delivery) {
         this.deliverySeq = delivery.getDeliverySeq();
-        this.userSeq = delivery.getDeliverySeq();
+        this.userSeq = delivery.getUserSeq();
         this.roomSeq = delivery.getRoomSeq();
+        this.partySeq = delivery.getPartySeq();
         this.storeName = delivery.getStoreName();
         this.pickupPlace = delivery.getPickupPlace();
         this.deliveryTip = delivery.getDeliveryTip();
-        this.deliveryTime = delivery.getDeliveryTime();
         this.content = delivery.getContent();
-        this.status = delivery.getStatus();
+        this.deliveryTime = delivery.getDeliveryTime().toString();
+        this.status = delivery.getStatus().name();
+        this.count = delivery.getCount();
         this.createdAt = delivery.getCreatedAt();
         this.finishTime = delivery.getFinishTime();
     }
 }
-
