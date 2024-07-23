@@ -26,6 +26,11 @@ function MainPage() {
             User Info
           </button>
         </Link>
+        <Link to="/account" className="block w-full">
+          <button className="w-full px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-700 transition">
+           계좌정보등록
+          </button>
+        </Link>
         
         <Link to="/complete" className="block w-full">
           <button className="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 transition">
