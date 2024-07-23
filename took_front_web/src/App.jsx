@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {MainPage, LoginPage, PaymentPage, SignupPage, LocationSettingPage, ModifyPwdPage, MyPage, NotificationSetting, TookDetailsPage, TookHistoryPage, UserInfoPage, AccountCompletePage, AccountPage, AgreementDetailPage, AgreementPage, VerificationPage, SelectPage, CompletePage, PwdPage, PaymentInputPage, UserListPage } from "./pages";
 import PaymentMethods from "./pages/oneclick/PaymentMethodsPage"
+import CreateDeliveryPage from "./pages/delivery/CreateDeliveryPage"
+
 
 
 
@@ -42,7 +44,8 @@ function App() {
     { path: "/complete", element: <CompletePage />},
     { path: "/paymentmethods", element: <PaymentMethods /> },
     { path: "/dutch/userlist", element: <UserListPage />},
-    { path: "/dutch/input", element: <PaymentInputPage />}
+    { path: "/dutch/input", element: <PaymentInputPage />},
+    { path: "/create/delivery", element: <CreateDeliveryPage />},
   ]);
 
   return <RouterProvider router={ROUTER} />;
