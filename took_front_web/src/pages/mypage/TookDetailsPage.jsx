@@ -17,7 +17,7 @@ const users = [
   { name: "이재찬", icon: userProfile4, amount: 23250, status: "완료", orderAmount: 22000, deliveryTip: 1250, isMe: false }
 ];
 
-function TookDetailsPage({ type = "배달" }) {
+function TookDetailsPage({ type = "배달", date = "6.24 (월) 18:55" }) {
   const renderUserDetails = (user, index) => {
     const isCompleted = user.status === "완료";
     return (
@@ -38,7 +38,7 @@ function TookDetailsPage({ type = "배달" }) {
           </div>
         </div>
         {type === "배달" || type === "공동구매" ? (
-          <div className="text-sm mb-2">
+          <div className="text-sm text-gray-500 mb-2">
             <div className="flex justify-between mb-2">
               <span>주문금액</span>
               <span className="font-normal">{user.orderAmount.toLocaleString()}원</span>
@@ -59,7 +59,7 @@ function TookDetailsPage({ type = "배달" }) {
       <div className="flex items-center px-4 py-3">
         <BackButton />
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
-          {type} 상세내역
+          took 상세내역
         </div>
       </div>
 
@@ -67,6 +67,7 @@ function TookDetailsPage({ type = "배달" }) {
 
       <div className="flex flex-col mt-4 px-4 font-bold">
         <div className="bg-[#FBFBFB] p-5 rounded-xl shadow-lg border border-inherit max-h-[550px] overflow-y-scroll">
+          <div className="text-gray-500 mb-4 text-sm">{date}</div>
           <div className="flex items-center mb-4">
             <img src={type === "배달" ? deliveryIcon : taxiIcon} alt="Took" className="w-14 h-14" />
             <div className="ml-4">
@@ -74,7 +75,7 @@ function TookDetailsPage({ type = "배달" }) {
               <div className="text-lg font-bold">{users.reduce((acc, user) => acc + user.amount, 0).toLocaleString()}원</div>
             </div>
             <div className="ml-auto">
-              <img src={users.some(user => user.status === "미완료") ? incompleteIcon : completeIcon} alt="정산 상태" className="w-16 h-16" />
+              <img src={users.some(user => user.status === "미완료") ? incompleteIcon : completeIcon} alt="정산 상태" className="w-17 h-16" />
             </div>
           </div>
 
