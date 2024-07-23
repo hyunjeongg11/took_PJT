@@ -6,7 +6,7 @@ import { Link } from "react-router-dom"
 
 
 const res_data = [
-  { name: "정희수", img_no: 0 },
+  { name: "정희수", img_no: 6 },
   { name: "조현정", img_no: 1 },
   { name: "차민주", img_no: 2 },
   { name: "김태훈", img_no: 3 },
