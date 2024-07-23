@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
+import { AiOutlineRight } from "react-icons/ai";
 import { MdBackspace } from "react-icons/md";
+import BackButton from "../../components/common/BackButton";
 
 function AccountPage() {
   const navigate = useNavigate();
@@ -35,17 +36,21 @@ function AccountPage() {
   };
 
   const handleAccountChange = (e) => {
-    setAccount(e.target.value);
+    const value = e.target.value.replace(/[^0-9]/g, "");
+    setAccount(value);
     setShowKeypad(false);
   };
 
-  const handleAliasChange = (e) => setAlias(e.target.value);
+  const handleAliasChange = (e) => {
+    setAlias(e.target.value);
+    setShowKeypad(false); 
+  };
 
   const handleNextClick = () => {
-    console.log("bank_name: ", bank);
-    console.log("account_num: ", account);
-    console.log("account_pwd : ", password);
-    console.log("accountName : ", alias );
+    console.log("bankName: ", bank);
+    console.log("accountNum: ", account);
+    console.log("accountPwd: ", password);
+    console.log("accountAlias: ", alias);
     if (isFormValid) {
       navigate("/agreement", { state: { bank, account, alias } });
     }
@@ -72,71 +77,67 @@ function AccountPage() {
   const isFormValid = bank !== "" && account !== "" && password.length === 4;
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <AiOutlineLeft style={styles.backIcon} onClick={() => navigate(-1)} />
-        <span style={styles.headerText}>계좌 등록</span>
+    <div className="flex flex-col items-center p-5 relative h-screen font-[Nanum_Gothic]">
+      <div className="w-full flex items-center justify-between mb-5 border-b border-gray-300 pb-2">
+        <BackButton />
+        <span className="text-lg font-bold mx-auto">계좌 등록</span>
+        <div className="w-6"></div> {/* 오른쪽 여백 확보용 */}
       </div>
-      <div style={styles.form}>
-        <label style={styles.label}>
-          <span style={styles.labelText}>
-            <span style={styles.circleFilled}>1</span> 본인 명의 계좌 번호 등록
+      <div className="w-full mb-5">
+        <label className="flex flex-col mb-2">
+          <span className="text-lg font-bold mb-4">
+            <span className="inline-block w-5 h-5 rounded-full bg-[#FF7F50] text-white text-center leading-5 mr-2">1</span>
+            본인 명의 계좌 번호 등록
           </span>
-          <div style={styles.selectBox} onClick={() => navigate('/select', { state: { savedAccount: account, savedPassword: password } })}>
-            <span style={{ color: bank ? 'black' : '#999' }}>{bank || '은행 / 증권사'}</span>
-            <AiOutlineRight style={styles.selectIcon} />
+          <div className="flex items-center justify-between h-14 rounded-lg border border-gray-300 px-3 text-base cursor-pointer" onClick={() => navigate('/select', { state: { savedAccount: account, savedPassword: password } })}>
+            <span className={`${bank ? 'text-black' : 'text-gray-400'}`}>{bank || '은행 / 증권사'}</span>
+            <AiOutlineRight className="text-2xl text-gray-400" />
           </div>
         </label>
-        <label style={styles.label}>
+        <label className="flex flex-col mb-2">
           <input
             type="text"
             placeholder="계좌 번호 등록"
             value={account}
             onChange={handleAccountChange}
-            style={styles.input}
+            className="h-14 rounded-lg border border-gray-300 px-3 text-base outline-none placeholder-gray-400"
             onFocus={() => setShowKeypad(false)}
           />
         </label>
-        <label style={styles.label}>
+        <label className="flex flex-col mb-2">
           <input
             type="password"
             placeholder="계좌 비밀번호 (4자리)"
             value={password.replace(/./g, "●")}
             onFocus={handlePasswordFocus}
             readOnly
-            style={styles.input}
+            className="h-14 rounded-lg border border-gray-300 px-3 text-base outline-none cursor-pointer"
           />
         </label>
-        <div style={styles.infoTextContainer}>
+        <div className="mb-10">
           <input
             type="text"
             placeholder="(선택) 계좌별칭 등록 / 최대16글자"
             value={alias}
             onChange={handleAliasChange}
+            onFocus={() => setShowKeypad(false)}
             maxLength="16"
-            style={{ ...styles.infoText, color: alias ? 'black' : '#999' }}
+            className={`text-sm w-full border-b border-gray-300 py-2 outline-none ${alias ? 'text-black' : 'text-gray-400'}`}
           />
         </div>
       </div>
-      <div style={styles.steps}>
-        <div style={styles.step}>
-          <span style={styles.circleEmpty}>2</span> 약관 동의
+      <div className="w-full mb-5">
+        <div className="text-lg font-bold text-gray-500 mb-5">
+          <span className="inline-block w-5 h-5 rounded-full border border-gray-300 text-center leading-5 mr-2">2</span>
+          약관 동의
         </div>
-        <div style={styles.step}>
-          <span style={styles.circleEmpty}>3</span> 본인 인증
+        <div className="text-lg font-bold text-gray-500">
+          <span className="inline-block w-5 h-5 rounded-full border border-gray-300 text-center leading-5 mr-2">3</span>
+          본인 인증
         </div>
       </div>
       <button
-        style={{
-          ...styles.button,
-          backgroundColor: isFormValid ? "#FF7F50" : "rgba(255, 127, 80, 0.5)",
-          boxShadow: isFormValid ? "0px 4px 8px rgba(0, 0, 0, 0.2)" : "none",
-          position: "absolute",
-          bottom: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "calc(100% - 40px)"
-        }}
+        className={`py-3 rounded-full text-white text-lg font-bold cursor-pointer transition-all duration-300 ${isFormValid ? "bg-[#FF7F50] shadow-md" : "bg-[#FF7F50]/50 shadow-none"} absolute bottom-5 left-1/2 transform -translate-x-1/2 w-[calc(100%-40px)]`}
         disabled={!isFormValid}
         onMouseOver={(e) =>
           isFormValid && (e.currentTarget.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.2)")
@@ -147,20 +148,20 @@ function AccountPage() {
         다음
       </button>
       {showKeypad && (
-        <div style={styles.keypad}>
+        <div className="fixed bottom-0 left-0 w-full bg-[#FF7F50] grid grid-cols-4 gap-2 p-2 z-50">
           {keypadNumbers.map((number) => (
             <button
               key={number}
               onClick={() => handleKeypadClick(number.toString())}
-              style={styles.key}
+              className="bg-[#FF7F50] border-none text-white text-xl py-3 rounded-lg text-center cursor-pointer outline-none"
             >
               {number}
             </button>
           ))}
-          <button onClick={() => handleKeypadClick("backspace")} style={styles.key}>
+          <button onClick={() => handleKeypadClick("backspace")} className="bg-[#FF7F50] border-none text-white text-xl py-3 rounded-lg text-center cursor-pointer outline-none ml-6">
             <MdBackspace size={24} />
           </button>
-          <button onClick={() => handleKeypadClick("confirm")} style={styles.key}>
+          <button onClick={() => handleKeypadClick("confirm")} className="bg-[#FF7F50] border-none text-white text-xl py-3 rounded-lg text-center cursor-pointer outline-none">
             확인
           </button>
         </div>
@@ -168,157 +169,5 @@ function AccountPage() {
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    padding: "20px",
-    fontFamily: "'Nanum Gothic', sans-serif",
-    position: "relative",
-    height: "100vh",
-  },
-  header: {
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: "20px",
-    borderBottom: "1px solid #ddd",
-    paddingBottom: "10px",
-    position: "relative",
-  },
-  backIcon: {
-    position: "absolute",
-    left: "10px",
-    fontSize: "24px",
-    cursor: "pointer",
-  },
-  headerText: {
-    fontSize: "18px",
-    fontWeight: "bold",
-  },
-  form: {
-    width: "100%",
-    marginBottom: "20px",
-  },
-  label: {
-    display: "flex",
-    flexDirection: "column",
-    marginBottom: "10px",
-  },
-  labelText: {
-    fontSize: "16px",
-    color: "black",
-    fontWeight: "bold",
-    marginBottom: "15px",
-  },
-  circleFilled: {
-    display: "inline-block",
-    width: "20px",
-    height: "20px",
-    borderRadius: "50%",
-    backgroundColor: "#FF7F50",
-    color: "white",
-    textAlign: "center",
-    lineHeight: "20px",
-    marginRight: "10px",
-  },
-  circleEmpty: {
-    display: "inline-block",
-    width: "20px",
-    height: "20px",
-    borderRadius: "50%",
-    color: "#666",
-    border: "1px solid #ddd",
-    textAlign: "center",
-    lineHeight: "20px",
-    marginRight: "10px",
-  },
-  selectBox: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: "55px",
-    borderRadius: "10px",
-    border: "1px solid #ddd",
-    padding: "0 10px",
-    fontSize: "15px",
-    cursor: "pointer",
-    color: "#999",
-    fontFamily: "'Nanum Gothic', sans-serif",
-  },
-  selectIcon: {
-    fontSize: "20px",
-    color: "#999",
-  },
-  input: {
-    height: "55px",
-    borderRadius: "10px",
-    border: "1px solid #ddd",
-    padding: "0 10px",
-    fontSize: "15px",
-    outline: "none",
-    fontFamily: "'Nanum Gothic', sans-serif",
-    '::placeholder': {
-      color: '#999',
-    },
-  },
-  infoTextContainer: {
-    marginBottom: "40px",
-  },
-  infoText: {
-    fontSize: "12px",
-    width: "100%",
-    border: "none",
-    borderBottom: "1px solid #ddd",
-    padding: "10px 0",
-    outline: "none",
-  },
-  steps: {
-    width: "100%",
-    marginBottom: "20px",
-  },
-  step: {
-    fontSize: "16px",
-    fontWeight: "bold",
-    color: "#666",
-    marginBottom: "20px",
-  },
-  button: {
-    padding: "12px",
-    borderRadius: "20px",
-    border: "none",
-    color: "white",
-    fontSize: "16px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    transition: "background-color 0.3s ease, box-shadow 0.3s ease",
-  },
-  keypad: {
-    position: "fixed",
-    bottom: 0,
-    left: 0,
-    width: "100%",
-    backgroundColor: "#FF7F50",
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gridGap: "10px",
-    padding: "10px",
-    zIndex: 1000,
-  },
-  key: {
-    backgroundColor: "#FF7F50",
-    border: "none",
-    color: "white",
-    fontSize: "24px",
-    padding: "15px",
-    borderRadius: "10px",
-    textAlign: "center",
-    cursor: "pointer",
-    outline: "none",
-  },
-};
 
 export default AccountPage;
