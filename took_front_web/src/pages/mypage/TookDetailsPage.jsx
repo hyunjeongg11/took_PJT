@@ -1,5 +1,6 @@
 import React from "react";
 import BackButton from "../../components/common/BackButton";
+import { Link } from "react-router-dom";
 import completeIcon from "../../assets/payment/complete.png"; // 정산 완료 아이콘 경로
 import incompleteIcon from "../../assets/payment/incomplete.png"; // 정산 미완료 아이콘 경로
 import deliveryIcon from "../../assets/payment/deliveryTook.png"; // 배달 took 아이콘 경로
