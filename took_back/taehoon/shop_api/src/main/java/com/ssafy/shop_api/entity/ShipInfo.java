@@ -1,5 +1,6 @@
 package com.ssafy.shop_api.entity;
 
+import com.ssafy.shop_api.dto.UpdateShipRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,5 +25,10 @@ public class ShipInfo {
     private String courier; // 택배사 이름
 
     @Column(nullable = false)
-    private int invoiceNum; // 송장 번호
+    private String invoiceNum; // 송장 번호
+
+    public void update(UpdateShipRequest request){
+        this.courier = request.getCourier();
+        this.invoiceNum = request.getInvoiceNum();
+    }
 }

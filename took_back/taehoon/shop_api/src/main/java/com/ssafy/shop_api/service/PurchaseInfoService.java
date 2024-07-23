@@ -1,8 +1,6 @@
 package com.ssafy.shop_api.service;
 
-import com.ssafy.shop_api.dto.ProductResponse;
-import com.ssafy.shop_api.dto.PurchaseInfoResponse;
-import com.ssafy.shop_api.dto.UpdatePurchaseRequest;
+import com.ssafy.shop_api.dto.*;
 import com.ssafy.shop_api.entity.Product;
 import com.ssafy.shop_api.entity.PurchaseInfo;
 import com.ssafy.shop_api.entity.Shop;
@@ -23,51 +21,62 @@ public class PurchaseInfoService {
     private final PurchaseInfoRepository purchaseInfoRepository;
     private final ProductRepository productRepository;
 
-    // 물품 리스트 조회
-    public List<Product> findProductById(Long id) {
-        return productRepository.findAllById(id);
-    }
-
-
-    public void savePurchaseInfo(PurchaseInfo request) {
-        for (Product product : request.getProductList()){
-            product(request);
+    public void savePurchaseInfo(AddPurchaseInfo request) {
+        PurchaseInfo purchaseInfo = purchaseInfoRepository.save(request.toEntity());
+        long purchaseSeq =  purchaseInfo.getPurchaseSeq();
+        for (AddProduct p: request.getProductList()){
+            Product product = p.toEntity();
+            product.setPurchaseSeq(purchaseSeq);
+            productRepository.save(product);
         }
-        PurchaseInfo purchaseInfo = purchaseInfoRepository.save(request);
-        for (Product product: request.
-    }
-    public List<PurchaseInfo> findByShopSeq(long id) {
-        List<PurchaseInfo> list = purchaseInfoRepository.findByShopSeq(id);
-        for (PurchaseInfo purchaseInfo : list){
-            List<Product> products = productRepository.findByPurchaseInfo(purchaseInfo);
-            for (Product product : products){
-                product.setPurchaseInfo(null);
-            }
-            purchaseInfo.setProductList(products);
-        }
-        return list;
     }
 
-    public PurchaseInfo findById(long id) {
-        PurchaseInfo purchaseInfo = purchaseInfoRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
-        List<Product> products = productRepository.findByPurchaseInfo(purchaseInfo);
-        for (Product product : products){
-            product.setPurchaseInfo(null);
+    public PurchaseInfoListResponse findByShopSeq(long id) {
+        List<PurchaseInfo> purchaseInfoList = purchaseInfoRepository.findByShopSeq(id);
+        List<PurchaseInfoResponse> result = new ArrayList<>();
+        int total = 0;
+        for (PurchaseInfo purchaseInfo : purchaseInfoList) {
+            long purchaseSeq = purchaseInfo.getPurchaseSeq();
+            List<Product> productList = productRepository.findByPurchaseSeq(purchaseSeq);
+            List<ProductResponse> productResponseList = productList.stream()
+                    .map(ProductResponse::new)
+                    .collect(Collectors.toList());
+            PurchaseInfoResponse purchaseInfoResponse = new PurchaseInfoResponse(purchaseInfo);
+            purchaseInfoResponse.setProductList(productResponseList);
+            result.add(purchaseInfoResponse);
+            total += purchaseInfoResponse.getTotal();
         }
-        purchaseInfo.setProductList(products);
-        return purchaseInfo;
+        PurchaseInfoListResponse response = new PurchaseInfoListResponse(result, total);
+        return response;
     }
-
+    public PurchaseInfoResponse findById(long shopSeq, long userSeq) {
+        PurchaseInfo purchaseInfo = purchaseInfoRepository.findByShopSeqAndUserSeq(shopSeq, userSeq);
+        long purchaseSeq = purchaseInfo.getPurchaseSeq();
+        List<Product> productList = productRepository.findByPurchaseSeq(purchaseSeq);
+        List<ProductResponse> productResponseList = productList.stream()
+                .map(ProductResponse::new)
+                .collect(Collectors.toList());
+        PurchaseInfoResponse purchaseInfoResponse = new PurchaseInfoResponse(purchaseInfo);
+        purchaseInfoResponse.setProductList(productResponseList);
+        return purchaseInfoResponse;
+    }
     public void delete(long id) {
         purchaseInfoRepository.deleteById(id);
     }
 
     @Transactional
-    public PurchaseInfo update(long id, UpdatePurchaseRequest request) {
+    public void update(long id, UpdatePurchaseRequest request) {
         PurchaseInfo purchaseInfo = purchaseInfoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
-        purchaseInfo.update(request.getPrice(), request.getShipCost(), request.getProductList());
-        return purchaseInfo;
+
+        purchaseInfo.update(request.getPrice(), request.getShipCost());
+
+        productRepository.deleteByPurchaseSeq(id);
+        for (UpdateProductRequest p : request.getProductList()){
+            Product product = p.toEntity();
+            product.setPurchaseSeq(id);
+            productRepository.save(product);
+        }
     }
+
 }

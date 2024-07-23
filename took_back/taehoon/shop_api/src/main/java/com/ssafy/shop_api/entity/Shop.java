@@ -26,7 +26,7 @@ public class Shop {
     @Column(nullable = false)
     private Long userSeq;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Long roomSeq;
 
     @Column(nullable = false)

@@ -1,18 +1,16 @@
 package com.ssafy.shop_api.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.util.List;
+
 
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Product {
 
     @Id
@@ -20,10 +18,10 @@ public class Product {
     private Long productSeq;
 
     @Column(nullable = false)
-    private Long productlistSeq;
+    private String productName;
 
     @Column(nullable = false)
-    private String productName;
+    private Long purchaseSeq;
 
     @Column
     private String optionDetails;
@@ -32,9 +30,14 @@ public class Product {
     private String etc;
 
     @Builder
-    public Product(Long ProductSeq, String productName, String optionDetails, String etc) {
+    public Product(Long ProductSeq,Long purchaseSeq, String productName, String optionDetails, String etc) {
         this.productSeq = ProductSeq;
+        this.purchaseSeq = purchaseSeq;
         this.productName = productName;
+        this.optionDetails = optionDetails;
+        this.etc = etc;
+    }
+    public void update(String optionDetails, String etc) {
         this.optionDetails = optionDetails;
         this.etc = etc;
     }

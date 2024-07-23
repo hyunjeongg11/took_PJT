@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface PurchaseInfoRepository extends JpaRepository<PurchaseInfo, Long> {
     List<PurchaseInfo> findByShopSeq(Long shopSeq);
+    PurchaseInfo findByShopSeqAndUserSeq(Long shopSeq, Long userSeq);
 }

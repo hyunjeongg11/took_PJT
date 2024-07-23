@@ -1,32 +1,34 @@
 package com.ssafy.shop_api.dto;
 
-import com.ssafy.shop_api.entity.Product;
 import com.ssafy.shop_api.entity.PurchaseInfo;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Getter
+@Setter
 public class PurchaseInfoResponse {
 
-    private final Long purchaseSeq;
+    private Long purchaseSeq;
 
-    private final Long userSeq;
+    private Long userSeq;
 
-    private final Long shopSeq;
+    private Long shopSeq;
 
-    private final int price;
+    private int price;
 
-    private final int shipCost;
+    private int shipCost;
 
-    private final List<Product> productList;
+    private List<ProductResponse> productList;
+    private int total;
 
     public PurchaseInfoResponse(PurchaseInfo purchaseInfo) {
         this.purchaseSeq = purchaseInfo.getPurchaseSeq();
         this.userSeq = purchaseInfo.getUserSeq();
         this.shopSeq = purchaseInfo.getShopSeq();
         this.price = purchaseInfo.getPrice();
-        this.productList = purchaseInfo.getProductList();
         this.shipCost = purchaseInfo.getShipCost();
+        this.total = this.price +this.shipCost;
     }
 }

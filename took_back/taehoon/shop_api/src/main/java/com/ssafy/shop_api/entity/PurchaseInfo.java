@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -32,10 +33,14 @@ public class PurchaseInfo {
     @Column(nullable = false)
     private int shipCost = 0;
 
-    @Column(nullable = false)
-    private long productlistSeq;
-
-    public void update(int price, int shipCost, List<Product> productList) {
+    @Builder
+    public PurchaseInfo(Long userSeq, Long shopSeq, int price, int shipCost) {
+        this.userSeq = userSeq;
+        this.shopSeq = shopSeq;
+        this.price = price;
+        this.shipCost = shipCost;
+    }
+    public void update(int price, int shipCost) {
         this.price = price;
         this.shipCost = shipCost;
     }

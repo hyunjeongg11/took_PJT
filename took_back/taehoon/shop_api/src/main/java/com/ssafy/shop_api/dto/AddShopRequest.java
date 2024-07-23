@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class AddShopRequest {
+
+    private Long roomSeq;
+
     private Long userSeq;
 
     private String title;

@@ -11,9 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class UpdatePurchaseRequest {
+
     private int price;
 
     private int shipCost;
 
-    private List<Product> productList;
+    private List<UpdateProductRequest> productList;
 }
