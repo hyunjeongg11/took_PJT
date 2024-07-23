@@ -50,6 +50,13 @@ public class TaxiController {
         return ResponseEntity.ok(taxi);
     }
 
+    // 참가 중인 택시 조회
+    @GetMapping("/joined/{userSeq}")
+    ResponseEntity<TaxiSelectResponse> getJoinedTaxi(@PathVariable Long userSeq) {
+        TaxiSelectResponse taxi = taxiService.getJoinedTaxi(userSeq);
+        return ResponseEntity.ok(taxi);
+    }
+
     /**
      * 택시 정보를 업데이트합니다.
      * @param request 택시 정보 업데이트 요청 데이터

@@ -3,6 +3,8 @@ package org.example.taxi_api.service;
 import lombok.RequiredArgsConstructor;
 import org.example.taxi_api.dto.*;
 import org.example.taxi_api.entity.Taxi;
+import org.example.taxi_api.entity.TaxiGuest;
+import org.example.taxi_api.repository.TaxiGuestRepository;
 import org.example.taxi_api.repository.TaxiRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class TaxiService {
 
     private final TaxiRepository taxiRepository;  // TaxiRepository를 통해 데이터베이스 작업을 처리합니다.
+    private final TaxiGuestRepository taxiGuestRepository;
 
     /**
      * 새로운 Taxi 엔티티를 생성하고 데이터베이스에 저장합니다.
@@ -172,5 +175,13 @@ public class TaxiService {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
         taxi.setPartySeq(request.getPartySeq());
         taxiRepository.save(taxi);
+    }
+
+    // 참가중인 택시방
+    @Transactional
+    public TaxiSelectResponse getJoinedTaxi(Long userSeq) {
+        TaxiGuest guest = taxiGuestRepository.findByUserSeq(userSeq);
+        Taxi taxi = taxiRepository.findByTaxiSeq(guest.getTaxi().getTaxiSeq());
+        return new TaxiSelectResponse(taxi);
     }
 }
