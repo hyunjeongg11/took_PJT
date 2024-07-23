@@ -11,13 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-/node_modules
-/.pnp
-.pnp.js
-./install-state.gz
-/coverage
 
-/build
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
