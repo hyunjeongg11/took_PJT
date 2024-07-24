@@ -1,4 +1,4 @@
-
+// src/utils/format.js
 export const formatNumber = (number) => {
   if (typeof number === 'number') {
       return number.toLocaleString(); 
@@ -11,3 +11,5 @@ export const formatNumber = (number) => {
 
   return '';
 };
+
+export default formatNumber;

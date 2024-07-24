@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { AiOutlineLeft, AiOutlineMore } from 'react-icons/ai';
 import { formatAccountNumber } from '../../utils/accountNumFormat';
+import BackButton from "../../components/common/BackButton";
 
-const initialAccounts = [
+
+const tempData = [
   { bank_name: '국민은행', account_num: '1234567891011', account_name: '별명 미설정' },
   { bank_name: '신한은행', account_num: '9876543210123', account_name: 'Deep Dream' },
   { bank_name: '우리은행', account_num: '1231231231231', account_name: '우리 계좌' },
@@ -24,7 +25,7 @@ const getImagePath = (bankName) => {
 };
 
 const PaymentMethodsPage = () => {
-  const [accounts, setAccounts] = useState(initialAccounts);
+  const [accounts, setAccounts] = useState(tempData);
   const [draggingIndex, setDraggingIndex] = useState(null);
 
   const onDragStart = (e, index) => {
@@ -55,10 +56,9 @@ const PaymentMethodsPage = () => {
 
   return (
     <div className="flex flex-col items-center p-5 h-screen font-nanum">
-      <div className="w-full flex items-center justify-center mb-5 border-b border-gray-300 pb-2 relative">
-        <AiOutlineLeft className="absolute left-3 text-2xl cursor-pointer" onClick={() => window.history.back()} />
-        <span className="text-lg font-bold">결제수단 관리</span>
-        <AiOutlineMore className="absolute right-3 text-2xl cursor-pointer" />
+      <div className="w-full flex items-center justify-between mb-5 border-b border-gray-300 pb-2 ">
+          <BackButton />
+        <span className="text-lg font-bold mx-auto">결제수단 관리</span>
       </div>
       <div className="w-full">
         <div className="mb-2 text-sm text-gray-600">
@@ -83,7 +83,7 @@ const PaymentMethodsPage = () => {
               <div className="flex flex-col">
                 <div className="flex items-center text-lg font-bold">
                   {account.bank_name}
-                  {index === 0 && <span className="bg-orange-100 text-orange-600 text-xs ml-2 px-2 py-1 rounded-full">주계좌</span>}
+                  {index === 0 && <span className="bg-orange-100 text-main text-xs ml-2 px-2 py-1 rounded-full">주계좌</span>}
                 </div>
                 <div className="text-sm text-black">{formatAccountNumber(account.account_num)}</div>
                 <div className="text-sm text-gray-500">{account.account_name}</div>
@@ -93,7 +93,7 @@ const PaymentMethodsPage = () => {
           </div>
         ))}
       </div>
-      <button className="w-[calc(100%-40px)] py-3 rounded-full border-none text-white text-lg font-bold cursor-pointer bg-orange-500 mt-5 absolute bottom-5 left-1/2 transform -translate-x-1/2">+ 결제 수단 추가</button>
+      <button className="w-[calc(100%-40px)] py-3 rounded-full border-none text-white text-lg font-bold cursor-pointer bg-main-500 mt-5 absolute bottom-5 left-1/2 transform -translate-x-1/2">+ 결제 수단 추가</button>
     </div>
   );
 };

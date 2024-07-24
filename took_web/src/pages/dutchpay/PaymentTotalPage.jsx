@@ -40,16 +40,16 @@ function PaymentTotalPage() {
 
     return (
         <div className="flex flex-col items-center px-14 py-20 bg-white max-w-[360px]">
-            <div className="text-4xl text-orange-400">
-                <span className="text-3xl font-bold text-orange-400">정산 </span>
-                <span className="text-orange-400 font-dela">took !</span>
+            <div className="text-4xl text-main">
+                <span className="text-3xl font-bold text-main">정산 </span>
+                <span className="text-main font-dela">took !</span>
             </div>
-            <div className="mt-4 text-sm text-orange-400">
+            <div className="mt-4 text-sm text-main">
                 정산 정보를 확인해주세요
             </div>
             <div className="flex flex-col gap-5 self-stretch mt-16">
                 <div className="flex flex-col items-center">
-                    <div className="self-center text-xs font-bold text-orange-400">
+                    <div className="self-center text-xs font-bold text-main">
                         [{phase}차]
                     </div>
                     <div className="flex flex-wrap items-center justify-center gap-2 mt-3 relative" style={{ width: '150px', height: '150px' }}>
@@ -67,15 +67,15 @@ function PaymentTotalPage() {
                             />
                         ))}
                     </div>
-                    <div className="mt-5 text-base font-extrabold text-orange-400">
+                    <div className="mt-5 text-base font-extrabold text-main">
                         {totalAmount.toLocaleString()}원
                     </div>
                 </div>
             </div>
-            <div className="mt-16 text-4xl font-extrabold text-orange-400">
+            <div className="mt-16 text-4xl font-extrabold text-main">
                 {totalSum.toLocaleString()}원
             </div>
-            <div className="px-16 py-3.5 mt-10 max-w-full text-base font-extrabold text-white whitespace-nowrap bg-orange-400 rounded-2xl shadow-sm w-[197px]">
+            <div className="px-16 py-3.5 mt-10 max-w-full text-base font-extrabold text-white whitespace-nowrap bg-main rounded-2xl shadow-sm w-[197px]">
                 요청하기
             </div>
         </div>

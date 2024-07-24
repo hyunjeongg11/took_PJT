@@ -65,7 +65,7 @@ const PaymentCard = ({ payments, setPayments }) => {
                             <img
                                 loading="lazy"
                                 src="https://cdn.builder.io/api/v1/image/assets/TEMP/f3f9a2394cc2191cd008c8dab3edbceb90b6adf5025fc60fcb23c80910d0f59b?"
-                                className="shrink-0 aspect-[0.82] fill-orange-400 w-2 mt-2 opacity-80"
+                                className="shrink-0 aspect-[0.82] fill-main w-2 mt-2 opacity-80"
                             />
                         </div>
                     </div>
