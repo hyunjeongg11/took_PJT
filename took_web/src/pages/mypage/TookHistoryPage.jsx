@@ -49,7 +49,7 @@ function TookHistoryPage() {
       <div className="flex items-center px-4 py-3">
         <BackButton />
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
-          took 히스토리
+          <span className='font-dela'>took</span> 히스토리
         </div>
       </div>
 
