@@ -4,16 +4,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.housing.back.dto.request.account.AccountLinkRequestDto;
+import com.housing.back.dto.request.account.ChangeMainRequestDto;
 import com.housing.back.dto.response.ResponseDto;
 import com.housing.back.dto.response.account.AccountLinkResponseDto;
+import com.housing.back.dto.response.account.ChangeMainResponseDto;
 import com.housing.back.entity.AccountEntity;
 import com.housing.back.entity.BankEntity;
 import com.housing.back.entity.UserEntity;
 import com.housing.back.repository.AccountRepository;
-import com.housing.back.repository.BankRepositoryCustom;
 import com.housing.back.repository.UserRepository;
+import com.housing.back.repository.custom.AccountRepositoryCustom;
+import com.housing.back.repository.custom.BankRepositoryCustom;
 import com.housing.back.service.AccountService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,6 +27,7 @@ public class AccountServiceImpl implements AccountService{
     private final UserRepository userRepository;
     private final BankRepositoryCustom bankRepositoryCustom;
     private final AccountRepository accountRepository;
+    private final AccountRepositoryCustom accountRepositoryCustom;
 
     @Override
     public ResponseEntity<? super AccountLinkResponseDto> saveAccount(AccountLinkRequestDto dto) {
@@ -41,10 +46,9 @@ public class AccountServiceImpl implements AccountService{
                 // 정보 저장
                 String accountName = dto.getAccountName();
                 UserEntity user = userRepository.findById(dto.getUserSeq()) .orElseThrow(() -> new IllegalArgumentException("User not found"));
-                
-                System.out.println("계좌의 가명을 출력합니다.: " +accountName);
-                
-                AccountEntity account = new AccountEntity(accountName,user,bank);
+                Boolean main = dto.getMain();
+
+                AccountEntity account = new AccountEntity(accountName,main,user,bank);
 
                 if(accountName==null){
                     accountName = bank.getBankName()+" 계좌";
@@ -64,6 +68,23 @@ public class AccountServiceImpl implements AccountService{
         }
 
         return AccountLinkResponseDto.success();
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseEntity<? super ChangeMainResponseDto> changeMain(ChangeMainRequestDto dto) {
+        
+        try{
+
+            accountRepositoryCustom.changeMain(dto.getUserSeq());
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return ChangeMainResponseDto.success();
     }
     
 }

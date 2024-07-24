@@ -1,4 +1,4 @@
-package com.housing.back.repository;
+package com.housing.back.repository.custom;
 
 
 import com.housing.back.dto.request.user.KakaoChangeRequestDto;

@@ -14,6 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,6 +47,9 @@ public class MemberEntity {
     @ManyToOne
     @JoinColumn(name="user_seq")
     private UserEntity user;
+
+    @Column(name = "created_at", nullable = true)
+    private LocalDateTime createdAt;
 
 
     public MemberEntity(MemberSaveRequestDto dto, PartyEntity party,UserEntity user){

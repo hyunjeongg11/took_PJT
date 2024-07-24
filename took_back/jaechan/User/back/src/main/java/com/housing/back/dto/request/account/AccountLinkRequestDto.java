@@ -10,8 +10,7 @@ public class AccountLinkRequestDto {
 
     private Long userSeq;
 
-    @NotBlank
-    private String bankName;
+    private Boolean main;
     
     @NotBlank
     private String accountNum;

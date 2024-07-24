@@ -4,7 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import com.housing.back.entity.QAccountEntity;
 import com.housing.back.entity.QUserEntity;
-import com.housing.back.repository.AccountRepositoryCustom;
+import com.housing.back.repository.custom.AccountRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -17,18 +17,22 @@ public class AccountRepositoryCustomImpl implements AccountRepositoryCustom{
     
     private final JPAQueryFactory queryFactory;
 
-    @Override
-    public String FindAccountNum(String userId) {
-        
-    QAccountEntity account = QAccountEntity.accountEntity;
-    QUserEntity user = QUserEntity.userEntity;
 
-    Long userId = queryFactory.select(account.accountNum)
-                              .from(accountEntity)
-                              .join(accountEntity.user, userEntity)
-                              .where(userEntity.userId.eq(userId))
-                              .fetchOne();
+    @Override
+    public Long FindBankSeq(Long userSeq) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'FindBankSeq'");
     }
 
-    
+    @Override
+    public void changeMain(Long userSeq) {
+        
+        QAccountEntity account = QAccountEntity.accountEntity;
+
+        queryFactory.update(account)
+                    .set(account.main, false)
+                    .where(account.user.userSeq.eq(userSeq))
+                    .execute();
+    }
+
 }

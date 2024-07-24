@@ -25,9 +25,11 @@ public class AccountEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountSeq;
 
-
     @Column(name="account_name")
     private String accountName;
+
+    @Column(name = "main")
+    private Boolean main;
 
     @ManyToOne
     @JoinColumn(name="user_seq")
@@ -39,11 +41,12 @@ public class AccountEntity {
     private BankEntity bank;
 
 
-    public AccountEntity(String accountName, UserEntity user, BankEntity bank){
+    public AccountEntity(String accountName, Boolean main,UserEntity user, BankEntity bank){
 
         this.accountName = accountName;
         this.user = user;
         this.bank = bank;
+        this.main = main;
     }
 
 

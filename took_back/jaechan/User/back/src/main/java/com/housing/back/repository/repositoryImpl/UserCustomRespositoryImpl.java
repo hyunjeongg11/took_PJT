@@ -4,7 +4,6 @@ package com.housing.back.repository.repositoryImpl;
 import com.housing.back.entity.QUserEntity;
 import org.springframework.stereotype.Repository;
 
-import com.housing.back.repository.UserCustomRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.transaction.Transactional;
@@ -13,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import com.housing.back.dto.request.user.KakaoChangeRequestDto;
 import com.housing.back.entity.UserEntity.Gender;
 import com.housing.back.entity.UserEntity.LoginStatus;
+import com.housing.back.repository.custom.UserCustomRepository;
 
 
 @Repository
@@ -22,7 +22,6 @@ public class UserCustomRespositoryImpl implements UserCustomRepository{
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    @Transactional
     public void kakaoChange(KakaoChangeRequestDto dto) {
        
         QUserEntity userEntity = QUserEntity.userEntity;

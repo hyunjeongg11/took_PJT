@@ -6,9 +6,10 @@ import org.springframework.stereotype.Service;
 import com.housing.back.dto.request.user.KakaoChangeRequestDto;
 import com.housing.back.dto.response.ResponseDto;
 import com.housing.back.dto.response.user.KakaoChangeResponseDto;
-import com.housing.back.repository.UserCustomRepository;
+import com.housing.back.repository.custom.UserCustomRepository;
 import com.housing.back.service.UserService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -19,6 +20,7 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
+    @Transactional
     public ResponseEntity<? super KakaoChangeResponseDto> kakaoChange(KakaoChangeRequestDto dto) {
         
         try{

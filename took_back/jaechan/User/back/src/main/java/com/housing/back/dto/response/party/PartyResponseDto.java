@@ -5,6 +5,9 @@ import org.springframework.http.ResponseEntity;
 
 import com.housing.back.dto.response.ResponseDto;
 
+import lombok.Getter;
+
+@Getter
 public class PartyResponseDto extends ResponseDto {
 
   private PartyResponseDto() {

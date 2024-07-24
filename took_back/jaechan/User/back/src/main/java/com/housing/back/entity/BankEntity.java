@@ -45,4 +45,18 @@ public class BankEntity {
     @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<AccountEntity> accounts;
 
+    public boolean minus(int money){
+
+        if(this.balance >= money){
+            this.balance-=money;
+            return true;
+        }
+
+        return false;
+    }
+
+    public void plus(int money){
+        this.balance+=money;
+    }
+
 }

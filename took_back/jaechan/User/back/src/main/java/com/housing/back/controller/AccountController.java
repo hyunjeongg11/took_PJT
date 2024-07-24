@@ -2,8 +2,10 @@ package com.housing.back.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.housing.back.dto.response.account.ChangeMainResponseDto;
 import com.housing.back.dto.response.account.AccountLinkResponseDto;
 import com.housing.back.dto.request.account.AccountLinkRequestDto;
+import com.housing.back.dto.request.account.ChangeMainRequestDto;
 import com.housing.back.service.AccountService;
 
 import jakarta.validation.Valid;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -30,8 +33,17 @@ public class AccountController {
     @RequestBody @Valid AccountLinkRequestDto requestBody
     ) 
     {
-        System.out.println("권한을 부여받고 컨트롤러에 진입하였습니다.");
         ResponseEntity<? super AccountLinkResponseDto> response = accountService.saveAccount(requestBody);
+        return response;
+    }
+
+    @GetMapping("/change-mainAccount")
+    public ResponseEntity<? super ChangeMainResponseDto> ChangeMainAccount
+    (
+    @RequestBody @Valid ChangeMainRequestDto requestBody
+    ){
+
+        ResponseEntity<? super ChangeMainResponseDto> response = accountService.changeMain(requestBody);
         return response;
     }
     

@@ -3,8 +3,9 @@ package com.housing.back.repository.repositoryImpl;
 import org.springframework.stereotype.Repository;
 
 import com.housing.back.entity.BankEntity;
+import com.housing.back.entity.QAccountEntity;
 import com.housing.back.entity.QBankEntity;
-import com.housing.back.repository.BankRepositoryCustom;
+import com.housing.back.repository.custom.BankRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,22 @@ public class BankRepositoryCustomImpl implements BankRepositoryCustom{
             .fetchOne();
 
         return result;
+    }
+
+    @Override
+    public Long findBankSeqByUserSeq(Long userSeq) {
+        
+        QAccountEntity account = QAccountEntity.accountEntity;
+
+        Long result = null;
+
+        result = jpaQueryFactory.select(account.bank.bankSeq)
+                                .from(account)
+                                .where(account.user.userSeq.eq(userSeq).and(account.main.isTrue()))
+                                .fetchOne();
+
+        return result;
+                
     }
 
 
