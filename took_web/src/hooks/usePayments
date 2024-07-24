@@ -1,3 +1,6 @@
-const usePayments = () => {};
+const usePayments = () => {
+
+
+}
 
 export default usePayments;

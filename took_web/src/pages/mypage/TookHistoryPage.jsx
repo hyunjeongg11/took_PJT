@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import BackButton from '../../components/common/BackButton';
-import { useNavigate } from 'react-router-dom';
+import BackButton from "../../components/common/BackButton";
+import { useNavigate } from "react-router-dom";
 
 function CreateDeliveryPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    storeName: '',
-    deliveryAddress: '',
-    deliveryTip: '',
-    orderTime: '',
-    additionalInfo: '',
+    storeName: "",
+    deliveryAddress: "",
+    deliveryTip: "",
+    orderTime: "",
+    additionalInfo: ""
   });
 
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
@@ -19,19 +19,19 @@ function CreateDeliveryPage() {
     const { name, value } = e.target;
     setForm({
       ...form,
-      [name]: value,
+      [name]: value
     });
   };
 
   const handleSubmit = () => {
-    if (Object.values(form).some((field) => field === '')) {
+    if (Object.values(form).some(field => field === "")) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 2000); // 2초 후 알림 메시지 숨김
     } else {
       setShowCompletionMessage(true);
       setTimeout(() => {
         setShowCompletionMessage(false);
-        navigate('/some-path'); // 등록 후 이동할 경로 설정
+        navigate("/some-path"); // 등록 후 이동할 경로 설정
       }, 2000); // 2초 후에 완료 메시지 사라짐
     }
   };
@@ -43,10 +43,7 @@ function CreateDeliveryPage() {
         <div className="mt-2 flex-grow text-center text-lg font-bold text-black">
           배달 <span className="font-dela">took</span> 작성하기
         </div>
-        <button
-          className="text-white bg-[#FF7F50] px-3 py-1.5 rounded-full text-sm font-bold"
-          onClick={handleSubmit}
-        >
+        <button className="text-white bg-[#FF7F50] px-3 py-1.5 rounded-full text-sm font-bold" onClick={handleSubmit}>
           등록
         </button>
       </div>
@@ -63,9 +60,7 @@ function CreateDeliveryPage() {
             placeholder="원하는 배달 가게 이름을 입력해주세요."
             className="flex-grow bg-transparent py-2 placeholder-gray-300 focus:outline-none focus:border-[#FF7F50]"
           />
-          <button className="text-white bg-neutral-400/75 px-3 py-1.5 ml-2 mb-1 rounded-full text-sm font-bold">
-            검색
-          </button>
+          <button className="text-white bg-neutral-400/75 px-3 py-1.5 ml-2 mb-1 rounded-full text-sm font-bold">검색</button>
         </div>
         <div className="flex items-center mb-4 border-b border-gray-300">
           <input
@@ -76,9 +71,7 @@ function CreateDeliveryPage() {
             placeholder="배달 수령 장소를 입력해주세요."
             className="flex-grow bg-transparent py-2 placeholder-gray-300 focus:outline-none focus:border-[#FF7F50]"
           />
-          <button className="text-white bg-neutral-400/75 px-3 py-1.5 ml-2 mb-1 rounded-full text-sm font-bold">
-            검색
-          </button>
+          <button className="text-white bg-neutral-400/75 px-3 py-1.5 ml-2 mb-1 rounded-full text-sm font-bold">검색</button>
         </div>
         <div className="border-b border-gray-300 mb-4">
           <input

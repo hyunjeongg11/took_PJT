@@ -5,7 +5,7 @@ const Button = ({
   textColor,
   handleClick,
   image,
-  style,
+  style
 }) => {
   return (
     <button

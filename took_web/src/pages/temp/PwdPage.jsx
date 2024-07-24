@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function PwdPage() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [isError, setIsError] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
   const navigate = useNavigate();
 
-  const correctPassword = '123456'; // 지금은 기본 비밀번호 "123456"으로 설정
+  const correctPassword = "123456";  // 지금은 기본 비밀번호 "123456"으로 설정
 
   const handleButtonClick = (value) => {
     if (input.length < 6) {
@@ -21,27 +21,27 @@ function PwdPage() {
 
   const handleInputChange = () => {
     if (input.length === 6) {
-      console.log(input); // 최종 입력된 비밀번호 콘솔에 출력
+      console.log(input);  // 최종 입력된 비밀번호 콘솔에 출력
       if (input === correctPassword) {
-        alert('비밀번호가 맞습니다!');
-        setInput('');
+        alert("비밀번호가 맞습니다!");
+        setInput("");
         setIsError(false);
         setAttemptCount(0); // 성공 시 시도 횟수 초기화
       } else {
         setIsError(true);
-        setAttemptCount((prev) => prev + 1);
-        setInput('');
+        setAttemptCount(prev => prev + 1);
+        setInput("");
       }
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     handleInputChange();
   }, [input]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (attemptCount >= 5) {
-      alert('비밀번호 입력 횟수 초과!');
+      alert("비밀번호 입력 횟수 초과!");
       // 추가적인 처리 (예: 화면 전환, 잠금 등)
     }
   }, [attemptCount]);
@@ -50,12 +50,7 @@ function PwdPage() {
     const dots = [];
     for (let i = 0; i < 6; i++) {
       dots.push(
-        <span
-          key={i}
-          style={i < input.length ? styles.activeDot : styles.inactiveDot}
-        >
-          ●
-        </span>
+        <span key={i} style={i < input.length ? styles.activeDot : styles.inactiveDot}>●</span>
       );
     }
     return dots;
@@ -73,45 +68,30 @@ function PwdPage() {
             width="24px"
             height="24px"
           >
-            <path d="M0 0h24v24H0V0z" fill="none" />
-            <path d="M18.3 5.71a1 1 0 00-1.41 0L12 10.59 7.11 5.7a1 1 0 00-1.41 1.41L10.59 12l-4.89 4.88a1 1 0 001.41 1.41L12 13.41l4.89 4.88a1 1 0 001.41-1.41L13.41 12l4.89-4.88a1 1 0 000-1.41z" />
+            <path d="M0 0h24v24H0V0z" fill="none"/>
+            <path d="M18.3 5.71a1 1 0 00-1.41 0L12 10.59 7.11 5.7a1 1 0 00-1.41 1.41L10.59 12l-4.89 4.88a1 1 0 001.41 1.41L12 13.41l4.89 4.88a1 1 0 001.41-1.41L13.41 12l4.89-4.88a1 1 0 000-1.41z"/>
           </svg>
         </div>
       </div>
       <div style={styles.subheader}>
         {isError ? (
           <div style={styles.errorMessage}>
-            비밀번호가 맞지 않아요 <br /> 다시 입력해주세요{' '}
-            <span style={styles.attemptCount}> {attemptCount}/5</span>
+            비밀번호가 맞지 않아요 <br /> 다시 입력해주세요 <span style={styles.attemptCount}> {attemptCount}/5</span>
           </div>
         ) : (
-          '간편 비밀번호 입력'
+          "간편 비밀번호 입력"
         )}
       </div>
       <div style={styles.passwordDots}>{renderDots()}</div>
       <div style={styles.keypad}>
         {Array.from({ length: 9 }, (_, i) => (
-          <button
-            key={i + 1}
-            style={styles.keypadButton}
-            onClick={() => handleButtonClick(i + 1)}
-          >
+          <button key={i + 1} style={styles.keypadButton} onClick={() => handleButtonClick(i + 1)}>
             {i + 1}
           </button>
         ))}
         <div style={styles.emptySpace}></div>
-        <button
-          style={styles.keypadButton}
-          onClick={() => handleButtonClick(0)}
-        >
-          0
-        </button>
-        <button
-          style={{ ...styles.keypadButton, ...styles.deleteButton }}
-          onClick={handleDelete}
-        >
-          ⌫
-        </button>
+        <button style={styles.keypadButton} onClick={() => handleButtonClick(0)}>0</button>
+        <button style={{ ...styles.keypadButton, ...styles.deleteButton }} onClick={handleDelete}>⌫</button>
       </div>
     </div>
   );
@@ -126,7 +106,7 @@ const styles = {
     height: '100vh',
     backgroundColor: '#FF7F50',
     fontFamily: "'Nanum Gothic', sans-serif",
-    position: 'relative',
+    position: 'relative'
   },
   headerContainer: {
     width: '100%',
@@ -146,7 +126,7 @@ const styles = {
   closeIcon: {
     position: 'absolute',
     right: '20px',
-    top: '-20px', // Adjust this value to move the icon further upwards
+    top: '-20px',  // Adjust this value to move the icon further upwards
     cursor: 'pointer',
   },
   subheader: {
@@ -167,7 +147,7 @@ const styles = {
   passwordDots: {
     display: 'flex',
     justifyContent: 'center',
-    marginBottom: '20px',
+    marginBottom: '20px'
   },
   inactiveDot: {
     fontSize: '1.3rem',
@@ -201,7 +181,7 @@ const styles = {
   },
   emptySpace: {
     gridColumn: 'span 1',
-  },
+  }
 };
 
 export default PwdPage;

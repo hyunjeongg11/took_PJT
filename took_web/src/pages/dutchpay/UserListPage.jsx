@@ -1,33 +1,29 @@
-import { useEffect, useState } from 'react';
-import {
-  calculateCenterPosition,
-  calculateElementPosition,
-} from '../../utils/positionUtils';
-import questionIcon from '../../assets/payment/question.svg';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { getUserStyle, getMyStyle } from "../../utils/getCharacterPostion";
+import questionIcon from "../../assets/payment/question.svg"
+import { Link } from "react-router-dom"
+
+
 
 const res_data = [
-  { name: '정희수', img_no: 6 },
-  { name: '조현정', img_no: 1 },
-  { name: '차민주', img_no: 2 },
-  { name: '김태훈', img_no: 3 },
-  { name: '공지환', img_no: 4 },
-  { name: '이재찬', img_no: 5 },
+  { name: "정희수", img_no: 6 },
+  { name: "조현정", img_no: 1 },
+  
+  { name: "이재찬", img_no: 5 }, 
+  
 ];
 
 const UserListPage = () => {
   const [users, setUsers] = useState([]);
   const [showHelp, setShowHelp] = useState(false);
 
+
   const imageSize = Math.max(5, 40 - (users.length - 8) * 1.6);
   const fontSize = Math.max(imageSize / 3, 12);
 
   useEffect(() => {
     const fetchUsers = () => {
-      const updatedUsers = res_data.map((user) => ({
-        ...user,
-        selected: false,
-      }));
+      const updatedUsers = res_data.map((user) => ({ ...user, selected: false }));
       setUsers(updatedUsers);
     };
     fetchUsers();
@@ -42,7 +38,7 @@ const UserListPage = () => {
   };
   const handleHelpClick = () => {
     setShowHelp(true);
-    setTimeout(() => setShowHelp(false), 5000);
+    setTimeout(() => setShowHelp(false), 5000); 
   };
 
   return (
@@ -66,34 +62,30 @@ const UserListPage = () => {
       )}
       <div className="relative w-96 h-96">
         {users.map((user, index) => {
+          
           return (
             <div
               key={index}
               className={`absolute flex flex-col items-center cursor-pointer transition-opacity ${
-                user.selected ? 'opacity-100' : 'opacity-40'
+                user.selected ? "opacity-100" : "opacity-40"
               }`}
               onClick={() => handleSelect(index)}
-              style={calculateElementPosition(index, users.length, imageSize)}
+              style={getUserStyle(index, users.length, imageSize)}
             >
               <img
                 src={`/src/assets/profile/img${user.img_no}.png`}
                 alt={user.name}
-                className={`${user.selected ? 'animate-shake' : 'animate-none'}`}
+                className={`${user.selected ? "animate-shake" : "animate-none"}`}
                 style={{ width: `${imageSize}px`, height: `${imageSize}px` }}
               />
-              <span
-                className={`mt-1 text-white `}
-                style={{ fontSize: `${fontSize}px` }}
-              >
-                {user.name}
-              </span>
+              <span className={`mt-1 text-white `} style={{ fontSize: `${fontSize}px` }}>{user.name}</span>
             </div>
           );
         })}
 
         <div
           className="absolute flex flex-col items-center cursor-pointer transition-opacity"
-          style={calculateCenterPosition(imageSize)}
+          style={getMyStyle(imageSize)}
         >
           <img
             src={`/src/assets/profile/img10.png`}
@@ -104,10 +96,11 @@ const UserListPage = () => {
         </div>
       </div>
       <Link to="/dutch/input">
-        <button className="bg-white px-12 py-2 shadow font-bold text-main rounded-full">
-          정산하러 가기
-        </button>
+      <button className="bg-white px-12 py-2 shadow font-bold text-main rounded-full">
+        정산하러 가기
+      </button>
       </Link>
+      
     </div>
   );
 };

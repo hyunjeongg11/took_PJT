@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 function MainPage() {
   return (
@@ -28,23 +28,23 @@ function MainPage() {
         </Link>
         <Link to="/account" className="block w-full">
           <button className="w-full px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-700 transition">
-            계좌정보등록
+           계좌정보등록
           </button>
         </Link>
-
+        
         <Link to="/complete" className="block w-full">
           <button className="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 transition">
-            3번째 화면
+           3번째 화면
           </button>
         </Link>
         <Link to="/paymentTemp" className="block w-full">
           <button className="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 transition">
-            1번째 화면
+           1번째 화면
           </button>
         </Link>
         <Link to="/pwd" className="block w-full">
           <button className="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 transition">
-            2번째 화면
+           2번째 화면
           </button>
         </Link>
       </div>
