@@ -68,3 +68,4 @@ public class Taxi {
     @OneToMany(mappedBy = "taxi", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TaxiGuest> taxiGuests;  // 택시 게스트 목록
 }
+ 
