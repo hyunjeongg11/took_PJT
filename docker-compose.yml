@@ -7,7 +7,7 @@ services:
       MYSQL_USER: turtle
       MYSQL_PASSWORD: took5678%^&*
     ports:
-      - "3306:3306"
+      - "3307:3306"
 
   redis:
     image: redis:latest
