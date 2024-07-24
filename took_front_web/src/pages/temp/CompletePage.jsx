@@ -17,18 +17,18 @@ function CompletePage({ userName = '사용자', amount }) {
   const maskedName = maskName(userName);
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        to <span style={styles.headerHighlighted}>{maskedName}</span>,&nbsp; ok!
+    <div className="flex flex-col items-center justify-center h-[90vh] bg-white font-[Nanum_Gothic]">
+      <div className="font-[Dela_Gothic_One] text-2xl font-bold text-[#FF7F50] mb-15 text-center">
+        to <span className="font-[Nanum_Gothic] font-bold text-black text-[1.8rem]">{maskedName}</span>,&nbsp; ok!
       </div>
-      <img src={송금완료} alt="송금 완료" style={styles.image} />
-      <div style={styles.amount}>
+      <img src={송금완료} alt="송금 완료" className="w-[150px] h-[150px] mb-5" />
+      <div className="text-[1.6rem] font-bold text-black mb-20 text-center">
         {formatNumber(amount)} 원
       </div>
       <button 
-        style={styles.button} 
-        onMouseOver={(e) => e.currentTarget.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.2)'}
-        onMouseOut={(e) => e.currentTarget.style.boxShadow = 'none'}
+        className="py-3 px-10 bg-[#FF7F50] text-white text-[1.1rem] font-bold rounded-[20px] cursor-pointer mt-0 transition-shadow duration-300"
+        onMouseOver={(e) => e.currentTarget.classList.add('shadow-md')}
+        onMouseOut={(e) => e.currentTarget.classList.remove('shadow-md')}
         onClick={() => navigate('/')}
       >
         메인으로
@@ -36,55 +36,5 @@ function CompletePage({ userName = '사용자', amount }) {
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '90vh',
-    backgroundColor: 'white',
-    fontFamily: "'Nanum Gothic', sans-serif",
-  },
-  header: {
-    fontFamily: "'Dela Gothic One', sans-serif",
-    fontSize: '2rem',
-    fontWeight: 'bold',
-    color: '#FF7F50',
-    marginBottom: '60px',
-    textAlign: 'center',
-  },
-  headerHighlighted: {
-    fontFamily: "'Nanum Gothic', sans-serif",
-    fontWeight: 'bold',
-    color: "black",
-    fontSize: '1.8rem',
-  },
-  image: {
-    width: '150px',
-    height: '150px',
-    marginBottom: '20px',
-  },
-  amount: {
-    fontSize: '1.6rem',
-    fontWeight: 'bold',
-    color: 'black',
-    marginBottom: '80px',
-    textAlign: 'center',
-  },
-  button: {
-    padding: '12px 40px',
-    backgroundColor: '#FF7F50',
-    color: 'white',
-    fontSize: '1.1rem',
-    fontWeight: 'bold',
-    border: 'none',
-    borderRadius: '20px',
-    cursor: 'pointer',
-    marginTop: '0px',
-    transition: 'box-shadow 0.3s ease', 
-  }
-};
 
 export default CompletePage;
