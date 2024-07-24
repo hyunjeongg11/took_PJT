@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
+import { AiOutlineRight } from "react-icons/ai";
+import BackButton from "../../components/common/BackButton";
 
 function AgreementPage({ checkedItems, setCheckedItems }) {
   const navigate = useNavigate();
@@ -39,88 +40,79 @@ function AgreementPage({ checkedItems, setCheckedItems }) {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <AiOutlineLeft style={styles.backIcon} onClick={() => navigate(-1)} />
-        <span style={styles.headerText}>계좌 등록</span>
+    <div className="flex flex-col items-center p-5 relative h-screen font-[Nanum_Gothic]">
+      <div className="w-full flex items-center justify-between mb-5 border-b border-gray-300 pb-2">
+        <BackButton />
+        <span className="text-lg font-bold mx-auto">계좌 등록</span>
+        <div className="w-6"></div> {/* 오른쪽 여백 확보용 */}
       </div>
-      <div style={styles.section}>
-        <div style={styles.stepContainer}>
-          <div style={styles.step} onClick={() => navigate("/account", { state: { bank, account } })}>
-            <span style={styles.circleEmpty}>1</span> 본인 명의 계좌 번호 등록
+      <div className="w-full">
+        <div className="flex flex-col mb-2">
+          <div className="text-base font-bold text-black mb-5 flex items-center cursor-pointer" onClick={() => navigate("/account", { state: { bank, account } })}>
+            <span className="inline-block w-5 h-5 rounded-full border border-gray-300 text-center leading-5 mr-2">1</span> 본인 명의 계좌 번호 등록
           </div>
-          <div style={styles.stepActive}>
-            <span style={styles.stepNumberActive}>2</span> 약관 동의
+          <div className="text-base font-bold flex items-center">
+            <span className="inline-block w-5 h-5 rounded-full bg-[#FF7F50] text-white text-center leading-5 mr-2">2</span> 약관 동의
           </div>
         </div>
-        <div style={styles.notice}>
+        <div className="text-sm text-black mb-2">
           <strong>took에 계좌를 등록하기 위해 약관을 동의해주세요</strong><br />
           설명 및 약관을 이해하였음을 확인합니다.
         </div>
-        <div style={styles.termsContainer}>
-          <div style={styles.termsLabelContainer}>
-            <label style={styles.termsLabel} onClick={handleAllCheckChange}>
-              <span style={styles.customCheckbox}>{allChecked ? "🗹" : "☐"}</span>
-              전체 동의하기
+        <div className="border border-gray-300 rounded-lg p-5 w-full bg-[#fafafa] mb-2">
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-base font-bold flex items-center mb-2 cursor-pointer" onClick={handleAllCheckChange}>
+              <span className="text-lg mr-2">{allChecked ? "🗹" : "☐"}</span> 전체 동의하기
             </label>
-            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(0)} />
+            <AiOutlineRight className="text-xl text-gray-300 cursor-pointer" onClick={() => handleNavigateDetail(0)} />
           </div>
-          <div style={styles.term}>
-            <label style={styles.termLabel} onClick={() => handleCheckChange("terms1")}>
-              <span style={styles.customCheckbox}>{checkedItems.terms1 ? "🗹" : "☐"}</span>
-              (필수) 상품 이용약관
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm flex items-center cursor-pointer" onClick={() => handleCheckChange("terms1")}>
+              <span className="text-lg mr-2">{checkedItems.terms1 ? "🗹" : "☐"}</span> (필수) 상품 이용약관
             </label>
-            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(1)} />
+            <AiOutlineRight className="text-xl text-gray-300 cursor-pointer" onClick={() => handleNavigateDetail(1)} />
           </div>
-          <div style={styles.subTerms}>
-            <div style={styles.subTerm}>- 예금거래기본약과</div>
-            <div style={styles.subTerm}>- 입출금이자유로운예금 약관</div>
+          <div className="mb-2">
+            <div className="text-sm text-gray-600 ml-5 mb-1">- 예금거래기본약과</div>
+            <div className="text-sm text-gray-600 ml-5 mb-3">- 입출금이자유로운예금 약관</div>
           </div>
-          <div style={styles.term}>
-            <label style={styles.termLabel} onClick={() => handleCheckChange("terms2")}>
-              <span style={styles.customCheckbox}>{checkedItems.terms2 ? "🗹" : "☐"}</span>
-              (필수) 불법·탈법 차명거래 금지 설명 <br /> 확인
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm flex items-center cursor-pointer" onClick={() => handleCheckChange("terms2")}>
+              <span className="text-lg mr-2">{checkedItems.terms2 ? "🗹" : "☐"}</span> (필수) 불법·탈법 차명거래 금지 설명 <br /> 확인
             </label>
-            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(2)} />
+            <AiOutlineRight className="text-xl text-gray-300 cursor-pointer" onClick={() => handleNavigateDetail(2)} />
           </div>
-          <div style={styles.term}>
-            <label style={styles.termLabel} onClick={() => handleCheckChange("terms3")}>
-              <span style={styles.customCheckbox}>{checkedItems.terms3 ? "🗹" : "☐"}</span>
-              (필수) 예금자보호법 설명 확인
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm flex items-center cursor-pointer" onClick={() => handleCheckChange("terms3")}>
+              <span className="text-lg mr-2">{checkedItems.terms3 ? "🗹" : "☐"}</span> (필수) 예금자보호법 설명 확인
             </label>
-            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(3)} />
+            <AiOutlineRight className="text-xl text-gray-300 cursor-pointer" onClick={() => handleNavigateDetail(3)} />
           </div>
-          <div style={styles.term}>
-            <label style={styles.termLabel} onClick={() => handleCheckChange("terms4")}>
-              <span style={styles.customCheckbox}>{checkedItems.terms4 ? "🗹" : "☐"}</span>
-              (선택) 개인신용정보 선택적 제공 동의
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm flex items-center cursor-pointer" onClick={() => handleCheckChange("terms4")}>
+              <span className="text-lg mr-2">{checkedItems.terms4 ? "🗹" : "☐"}</span> (선택) 개인신용정보 선택적 제공 동의
             </label>
-            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(4)} />
+            <AiOutlineRight className="text-xl text-gray-300 cursor-pointer" onClick={() => handleNavigateDetail(4)} />
           </div>
-          <div style={styles.term}>
-            <label style={styles.termLabel} onClick={() => handleCheckChange("terms5")}>
-              <span style={styles.customCheckbox}>{checkedItems.terms5 ? "🗹" : "☐"}</span>
-              (선택) 개인신용정보 선택적 수집 및 <br />이용 동의
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm flex items-center cursor-pointer" onClick={() => handleCheckChange("terms5")}>
+              <span className="text-lg mr-2">{checkedItems.terms5 ? "🗹" : "☐"}</span> (선택) 개인신용정보 선택적 수집 및 <br />이용 동의
             </label>
-            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(5)} />
+            <AiOutlineRight className="text-xl text-gray-300 cursor-pointer" onClick={() => handleNavigateDetail(5)} />
           </div>
-          <div style={styles.term}>
-            <label style={styles.termLabel} onClick={() => handleCheckChange("terms6")}>
-              <span style={styles.customCheckbox}>{checkedItems.terms6 ? "🗹" : "☐"}</span>
-              (선택) 광고성 정보 수신 동의
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm flex items-center cursor-pointer" onClick={() => handleCheckChange("terms6")}>
+              <span className="text-lg mr-2">{checkedItems.terms6 ? "🗹" : "☐"}</span> (선택) 광고성 정보 수신 동의
             </label>
-            <AiOutlineRight style={styles.rightIcon} onClick={() => handleNavigateDetail(6)} />
+            <AiOutlineRight className="text-xl text-gray-300 cursor-pointer" onClick={() => handleNavigateDetail(6)} />
           </div>
         </div>
-        <div style={styles.stepInactive}>
-        <span style={styles.circleEmpty}>3</span>본인 인증</div>
+        <div className="text-base font-bold text-gray-500 mb-2 flex items-center">
+          <span className="inline-block w-5 h-5 rounded-full border border-gray-300 text-center leading-5 mr-2">3</span> 본인 인증
+        </div>
       </div>
       <button
-        style={{
-          ...styles.button,
-          backgroundColor: isFormValid ? "#FF7F50" : "rgba(255, 127, 80, 0.5)",
-          boxShadow: isFormValid ? "0px 4px 8px rgba(0, 0, 0, 0.2)" : "none",
-        }}
+        className={`w-[calc(100%-40px)] py-3 rounded-full text-white text-lg font-bold cursor-pointer transition-all duration-300 ${isFormValid ? "bg-[#FF7F50] shadow-md" : "bg-[#FF7F50]/50"} absolute bottom-5 left-1/2 transform -translate-x-1/2`}
         disabled={!isFormValid}
         onMouseOver={(e) =>
           isFormValid && (e.currentTarget.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.2)")
@@ -133,159 +125,5 @@ function AgreementPage({ checkedItems, setCheckedItems }) {
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    padding: "20px",
-    fontFamily: "'Nanum Gothic', sans-serif",
-    position: "relative",
-    height: "100vh",
-  },
-  header: {
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: "10px",
-    borderBottom: "1px solid #ddd",
-    paddingBottom: "10px",
-    position: "relative",
-  },
-  backIcon: {
-    position: "absolute",
-    left: "10px",
-    fontSize: "24px",
-    cursor: "pointer",
-  },
-  headerText: {
-    fontSize: "18px",
-    fontWeight: "bold",
-  },
-  section: {
-    width: "100%",
-  },
-  stepContainer: {
-    display: "flex",
-    flexDirection: "column",
-    marginBottom: "10px",
-  },
-  step: {
-    fontSize: "16px",
-    fontWeight: "bold",
-    color: "black",
-    marginBottom: "20px",
-    display: "flex",
-    alignItems: "center",
-    cursor: "pointer",
-  },
-  stepActive: {
-    fontSize: "16px",
-    fontWeight: "bold",
-    display: "flex",
-    alignItems: "center",
-  },
-  stepInactive: {
-    fontSize: "16px",
-    fontWeight: "bold",
-    color: "#666",
-    marginBottom: "10px",
-    display: "flex",
-    alignItems: "center",
-  },
-  stepNumberActive: {
-    width: "20px",
-    height: "20px",
-    borderRadius: "50%",
-    backgroundColor: "#FF7F50",
-    color: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: "5px",
-  },
-  notice: {
-    fontSize: "14px",
-    color: "black",
-    marginBottom: "10px",
-  },
-  termsContainer: {
-    border: "1px solid #ddd",
-    borderRadius: "10px",
-    padding: "20px",
-    width: "100%",
-    backgroundColor: "#fafafa",
-    marginBottom: "10px",
-  },
-  termsLabelContainer: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  termsLabel: {
-    fontSize: "16px",
-    fontWeight: "bold",
-    marginBottom: "10px",
-    display: "flex",
-    alignItems: "center",
-  },
-  term: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: "10px",
-  },
-  termLabel: {
-    display: "flex",
-    alignItems: "center",
-    fontSize: "14px",
-  },
-  subTerms: {
-    marginBottom: "10px",
-  },
-  subTerm: {
-    fontSize: "14px",
-    color: "#555",
-    marginLeft: "20px",
-    marginBottom: "5px",
-  },
-  customCheckbox: {
-    fontSize: "16px",
-    marginRight: "10px",
-    cursor: "pointer",
-  },
-  rightIcon: {
-    fontSize: "18px",
-    color: "#ddd",
-  },
-  button: {
-    width: "calc(100% - 40px)",
-    padding: "12px",
-    borderRadius: "20px",
-    border: "none",
-    color: "white",
-    fontSize: "16px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    transition: "background-color 0.3s ease, box-shadow 0.3s ease",
-    position: "absolute",
-    bottom: "20px",
-    left: "50%",
-    transform: "translateX(-50%)",
-  },
-  circleEmpty: {
-    display: "inline-block",
-    width: "20px",
-    height: "20px",
-    borderRadius: "50%",
-    border: "1px solid #ddd",
-    color: "#666",
-    textAlign: "center",
-    lineHeight: "20px",
-    marginRight: "10px",
-  },
-};
 
 export default AgreementPage;
