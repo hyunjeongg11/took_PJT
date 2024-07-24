@@ -1,15 +1,4 @@
-version: '3'
-
 services:
-  jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins
-    ports:
-      - "8080:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /path/to/jenkins_home:/var/jenkins_home
-
   db:
     image: mysql:8
     environment:
