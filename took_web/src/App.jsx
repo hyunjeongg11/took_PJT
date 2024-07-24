@@ -5,7 +5,7 @@ import {MainPage, LoginPage, PaymentPage, SignupPage, LocationSettingPage, Modif
 import PaymentMethods from "./pages/oneclick/PaymentMethodsPage"
 import MyTookMoneyPage from "./pages/oneclick/MyTookMoneyPage"
 import CreateDeliveryPage from "./pages/delivery/CreateDeliveryPage"
-
+import DeliveryDetailPage from "./pages/delivery/DeliveryDetailPage"
 
 
 
@@ -51,6 +51,7 @@ function App() {
     { path: "/dutch/request", element: <PayRequestPage />},
     { path: "/mytookmoney", element: <MyTookMoneyPage />},
     { path: "/create/delivery", element: <CreateDeliveryPage />},
+    { path: "/delivery/detail", element: <DeliveryDetailPage />},
   ]);
 
   return <RouterProvider router={ROUTER} />;
