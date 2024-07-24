@@ -14,10 +14,16 @@ export default {
           '50%': { transform: 'translateY(-5px)' },
           '100%': { transform: 'translateY(0)' },
         },
+        semijump: {
+          '0%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-0.5px)' },
+          '100%': { transform: 'translateY(0)' },
+        },
       },
       animation: {
         shake: 'shake 0.6s ease-in-out infinite',
         jump: 'jump 0.6s ease-in-out infinite',
+        semijump: 'semijump 0.6s ease-in-out infinite',
       },
       colors: {
         main: "#FF7F50"

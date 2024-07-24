@@ -9,6 +9,9 @@ const res_data = [
   { name: "정희수", img_no: 6 },
   { name: "조현정", img_no: 1 },
   
+  { name: "이재찬", img_no: 5 }, { name: "정희수", img_no: 6 },
+  { name: "조현정", img_no: 1 },
+  
   { name: "이재찬", img_no: 5 }, 
   
 ];
@@ -85,12 +88,13 @@ const UserListPage = () => {
 
         <div
           className="absolute flex flex-col items-center cursor-pointer transition-opacity"
-          style={getMyStyle(imageSize)}
+          style={getMyStyle(imageSize-6)}
         >
           <img
             src={`/src/assets/profile/img10.png`}
             alt="나"
-            className="w-[30px] h-[30px] animate-jump"
+            style={{ width: `${imageSize-6}px`, height: `${imageSize-6}px` }}
+            className=" animate-jump"
           />
           <span className="text-xs mt-1 text-white">나</span>
         </div>

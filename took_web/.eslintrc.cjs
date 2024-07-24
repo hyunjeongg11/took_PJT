@@ -21,12 +21,10 @@ module.exports = {
     'prettier/prettier': [
       'error',
       {
-        singleQuote: true,
         tabWidth: 2,
         semi: true,
-        endOfLine: 'auto'
+        endOfLine: 'auto',
       },
-
     ],
     'react/react-in-jsx-scope': 'off',
     "react/prop-types": "off" 

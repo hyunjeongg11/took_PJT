@@ -1,75 +1,87 @@
 import React, { useState, useEffect } from "react";
 import { formatNumber } from "../../utils/format";
 
-const PaymentCard = ({ payments, setPayments }) => {
-    const [totalAmount, setTotalAmount] = useState("");
+const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
+    const [totalAmount, setTotalAmount] = useState(payment.totalAmount);
 
     useEffect(() => {
-        // totalAmount가 비어 있지 않은 경우만 처리
-        if (totalAmount !== "") {
-            // 문자열을 숫자로 변환
+        if (totalAmount !== payment.totalAmount) {
             const total = parseFloat(totalAmount.replace(/,/g, ''));
-            if (!isNaN(total) && total >= 0) {
-                const numOfPayments = payments.length;
-                const averageAmount = Math.ceil(total / numOfPayments);
-                const remainingAmount = total - (averageAmount * (numOfPayments - 1));
+            const numOfPayments = payment.users.length;
+            const averageAmount = Math.floor(total / numOfPayments);
+            const remainingAmount = total - (averageAmount * (numOfPayments - 1));
 
-                const updatedPayments = payments.map((payment, index) => {
-                    return { ...payment, amount: formatNumber(index === numOfPayments - 1 ? remainingAmount : averageAmount) };
-                });
-                setPayments(updatedPayments);
-            }
+            const updatedUsers = payment.users.map((user, index) => ({
+                ...user,
+                amount: formatNumber(index === numOfPayments - 1 ? remainingAmount : averageAmount)
+            }));
+
+            setPayment({ ...payment, users: updatedUsers, totalAmount });
         }
-    }, [totalAmount, payments, setPayments]);
+    }, [totalAmount, payment, setPayment]);
 
     const handleAmountChange = (index, amount) => {
-        const updatedPayments = [...payments];
-        updatedPayments[index].amount = formatNumber(amount);
-        setPayments(updatedPayments);
+        const numericAmount = parseFloat(amount.replace(/,/g, '')) || 0;
+        const updatedUsers = payment.users.map((user, idx) => 
+            idx === index ? { ...user, amount: formatNumber(numericAmount) } : user
+        );
+
+        setPayment({ ...payment, users: updatedUsers });
     };
 
     return (
-        <div className="mt-4 mb-6 text-main">
-            <div className="flex items-center gap-2 mb-10 font-extrabold text-3xl">
+        <div className="px-12 pb-6 bg-white ">
+            
+            <div className="border-gray-300 border rounded-2xl shadow-md p-6 ">
+                <button
+                onClick={onCardDelete} // 클릭 시 카드 삭제
+                className="relative top-0 left-0  rounded-full p-1 text-main"
+            >
+                <span className="text-xl">×</span>
+            </button>
+            <div className="flex gap-x-2 mb-3 text-right text-main font-extrabold text-2xl">
                 <input
                     type="text"
                     value={totalAmount}
                     onChange={(e) => setTotalAmount(formatNumber(e.target.value))}
                     placeholder=""
-                    className="px-2 py-1 border-b-[1px] border-main border-opacity-40 text-center w-full max-w-xs"
+                    className="mx-1  text-right  w-full max-w-xs"
                 />
                 <span>원</span>
             </div>
             <div className="text-main p-1 text-xs mb-2 underline">인원 추가</div>
-            <div className="flex flex-col gap-4 self-stretch mt-2">
-                {payments.map((payInfo, index) => (
-                    <div key={index} className="flex items-center justify-between gap-5">
-                        <div className="flex items-center gap-3 text-sm font-semibold">
-                            <img
-                                loading="lazy"
-                                srcSet={`/src/assets/profile/img${payInfo.img_no}.png`}
-                                className="w-8 h-8"
-                                alt={payInfo.name}
-                            />
-                            <div className="w-24">{payInfo.name}</div>
+            <div className="flex flex-col gap-3 overflow-y-scroll h-[30vh] scroll-m-1">
+                    {payment.users.map((user, index) => (
+                        <div key={index} className="flex items-center justify-between gap-1">
+                            <div className="flex items-center gap-2 text-sm font-semibold">
+                                <img
+                                    loading="lazy"
+                                    src={`/src/assets/profile/img${user.img_no}.png`}
+                                    className="w-6 h-6 animate-shake"
+                                    alt={user.name}
+                                />
+                                <div className="w-24 text-xs">{user.name}</div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <input
+                                    type="text"
+                                    value={user.amount || ""}
+                                    onChange={(e) => handleAmountChange(index, e.target.value)}
+                                    placeholder=""
+                                    className="w-full max-w-xs px-2 py-1 border-b-[1px] border-main border-opacity-50 text-right font-semibold"
+                                    style={{ minWidth: "80px" }}
+                                />
+                                <img
+                                    onClick={() => onDelete(index)}
+                                    loading="lazy"
+                                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/f3f9a2394cc2191cd008c8dab3edbceb90b6adf5025fc60fcb23c80910d0f59b?"
+                                    className="shrink-0 aspect-[0.82] fill-orange-400 w-2 mt-2 opacity-80"
+                                    alt="icon"
+                                />
+                            </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <input
-                                type="text"
-                                value={payInfo.amount || ""}
-                                onChange={(e) => handleAmountChange(index, e.target.value)}
-                                placeholder=""
-                                className="w-full max-w-xs px-2 py-1 border-b-[1px] border-main border-opacity-50 text-right font-semibold"
-                                style={{ minWidth: "80px" }}
-                            />
-                            <img
-                                loading="lazy"
-                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/f3f9a2394cc2191cd008c8dab3edbceb90b6adf5025fc60fcb23c80910d0f59b?"
-                                className="shrink-0 aspect-[0.82] fill-orange-400 w-2 mt-2 opacity-80"
-                            />
-                        </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
     );
