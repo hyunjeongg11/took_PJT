@@ -6,6 +6,7 @@ import PaymentMethods from "./pages/oneclick/PaymentMethodsPage"
 import MyTookMoneyPage from "./pages/oneclick/MyTookMoneyPage"
 import CreateDeliveryPage from "./pages/delivery/CreateDeliveryPage"
 import DeliveryDetailPage from "./pages/delivery/DeliveryDetailPage"
+import DeliveryListPage from './pages/delivery/DeliveryListPage'
 
 
 
@@ -52,6 +53,7 @@ function App() {
     { path: "/mytookmoney", element: <MyTookMoneyPage />},
     { path: "/create/delivery", element: <CreateDeliveryPage />},
     { path: "/delivery/detail", element: <DeliveryDetailPage />},
+    { path: "/delivery/list", element: <DeliveryListPage />},
   ]);
 
   return <RouterProvider router={ROUTER} />;
