@@ -1,0 +1,40 @@
+plugins {
+    id 'java'  // Java 플러그인
+    id 'org.springframework.boot' version '3.3.1'  // Spring Boot 플러그인
+    id 'io.spring.dependency-management' version '1.1.5'  // Spring Dependency Management 플러그인
+}
+
+group = 'com.took'  // 프로젝트 그룹
+version = '0.0.1-SNAPSHOT'  // 프로젝트 버전
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)  // Java 언어 버전 설정
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor  // compileOnly 구성에서 annotationProcessor 의존성 상속
+    }
+}
+
+repositories {
+    mavenCentral()  // Maven 중앙 저장소 사용
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  // Spring Boot JPA 스타터 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'  // Spring Boot Redis 스타터 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-web'  // Spring Boot 웹 스타터 의존성
+    runtimeOnly 'com.mysql:mysql-connector-j'  // MySQL 커넥터 의존성 추가 (실행 시에만 사용)
+    compileOnly 'org.projectlombok:lombok'  // Lombok 컴파일 타임 의존성
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'  // Spring Boot 개발 도구 의존성 (개발 시에만 사용)
+    annotationProcessor 'org.projectlombok:lombok'  // Lombok 어노테이션 프로세서 의존성
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'  // Spring Boot 테스트 스타터 의존성
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  // JUnit 플랫폼 런처 의존성 (테스트 실행 시에만 사용)
+}
+
+tasks.named('test') {
+    useJUnitPlatform()  // JUnit 플랫폼을 사용하여 테스트 실행
+}
