@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.took.backend.BackendApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-07-24T03:35:51" hostname="DESKTOP-USLS0BK" time="0.569">
+  <properties/>
+  <testcase name="contextLoads()" classname="com.took.backend.BackendApplicationTests" time="0.569"/>
+  <system-out><![CDATA[12:35:49.903 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.took.backend.BackendApplicationTests]: BackendApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+12:35:49.980 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.took.backend.BackendApplication for test class com.took.backend.BackendApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.2)
+
+2024-07-24T12:35:50.287+09:00  INFO 20744 --- [backend] [    Test worker] c.took.backend.BackendApplicationTests   : Starting BackendApplicationTests using Java 17.0.12 with PID 20744 (started by SSAFY in C:\Users\SSAFY\공지환\공통 프로젝트\backend)
+2024-07-24T12:35:50.288+09:00  INFO 20744 --- [backend] [    Test worker] c.took.backend.BackendApplicationTests   : No active profile set, falling back to 1 default profile: "default"
+2024-07-24T12:35:51.114+09:00  INFO 20744 --- [backend] [    Test worker] c.took.backend.BackendApplicationTests   : Started BackendApplicationTests in 1.006 seconds (process running for 1.834)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
