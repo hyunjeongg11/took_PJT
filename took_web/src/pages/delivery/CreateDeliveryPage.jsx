@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const InputField = ({ label, name, value, onChange, placeholder, type = "text", min }) => (
   <div>
-    <div className="text-sm font-bold leading-5 text-neutral-600">{label}</div>
+    <div className="text-base font-bold leading-8 text-neutral-600">{label}</div>
     <div className="flex items-center mb-4 border-b border-gray-300">
       <input
         type={type}
@@ -23,7 +23,7 @@ const InputField = ({ label, name, value, onChange, placeholder, type = "text", 
 
 const TextAreaField = ({ label, name, value, onChange, placeholder }) => (
   <div className="flex-grow">
-    <div className="text-sm font-bold leading-5 text-neutral-600">{label}</div>
+    <div className="text-base font-bold leading-5 text-neutral-600">{label}</div>
     <textarea
       name={name}
       value={value}
@@ -33,6 +33,34 @@ const TextAreaField = ({ label, name, value, onChange, placeholder }) => (
     />
   </div>
 );
+
+const Modal = ({ show, message, onConfirm, onCancel }) => {
+  if (!show) return null;
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white px-6 py-4 rounded-lg shadow-lg text-center">
+        <div className="text-base font-bold mb-2">안내</div>
+        <div className="mb-4 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
+
+        <div className="text-base mb-4">{message}</div>
+        <div className="flex justify-center">
+          <button
+            className="bg-gray-200 font-bold text-[#3D3D3D] px-10 py-2 rounded-2xl mx-2"
+            onClick={onCancel}
+          >
+            취소
+          </button>
+          <button
+            className="bg-main font-bold text-white px-10 py-2 rounded-2xl mx-2"
+            onClick={onConfirm}
+          >
+            확인
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 function CreateDeliveryPage() {
   const navigate = useNavigate();
@@ -46,24 +74,38 @@ function CreateDeliveryPage() {
 
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({
       ...form,
-      [name]: value
+      [name]: value,
     });
   };
 
+  const handleBackClick = () => {
+    if (Object.values(form).some((field) => field !== '')) {
+      setShowModal(true);
+    } else {
+      navigate(-1);
+    }
+  };
+
+  const handleConfirmExit = () => {
+    setShowModal(false);
+    navigate(-1);
+  };
+
   const handleSubmit = () => {
-    if (Object.values(form).some(field => field === "")) {
+    if (Object.values(form).some((field) => field === '')) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 2000); // 2초 후 알림 메시지 숨김
     } else {
       setShowCompletionMessage(true);
       setTimeout(() => {
         setShowCompletionMessage(false);
-        navigate("/some-path"); // 등록 후 이동할 경로 설정
+        navigate("/"); // 등록 후 이동할 경로 설정
       }, 2000); // 2초 후에 완료 메시지 사라짐
     }
   };
@@ -71,11 +113,16 @@ function CreateDeliveryPage() {
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-4 py-3">
-        <BackButton />
+        <button onClick={handleBackClick}>
+          <BackButton />
+        </button>
         <div className="mt-2 ml-12 flex-grow text-center text-lg font-bold text-black">
           배달 <span className="font-dela">took</span> 작성하기
         </div>
-        <button className="text-white mt-2 bg-[#FF7F50] px-3 py-1.5 rounded-full text-sm font-bold" onClick={handleSubmit}>
+        <button
+          className="text-white mt-2 bg-[#FF7F50] px-3 py-1.5 rounded-full text-sm font-bold"
+          onClick={handleSubmit}
+        >
           등록
         </button>
       </div>
@@ -98,7 +145,7 @@ function CreateDeliveryPage() {
           placeholder="배달 수령 장소를 입력해주세요."
         />
         <InputField
-          label="배달 예상팁"
+          label="예상 배달팁"
           name="deliveryTip"
           type="number"
           value={form.deliveryTip}
@@ -123,7 +170,6 @@ function CreateDeliveryPage() {
         />
       </div>
 
-
       {showAlert && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white px-6 py-4 rounded-lg shadow-lg text-center font-bold text-base ">
@@ -139,6 +185,13 @@ function CreateDeliveryPage() {
           </div>
         </div>
       )}
+
+      <Modal
+        show={showModal}
+        message="작성 중인 글쓰기를 종료하시겠습니까?"
+        onConfirm={handleConfirmExit}
+        onCancel={() => setShowModal(false)}
+      />
     </div>
   );
 }

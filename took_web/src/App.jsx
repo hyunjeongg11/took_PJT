@@ -8,7 +8,8 @@ import CreateDeliveryPage from "./pages/delivery/CreateDeliveryPage"
 import TransactionHistoryPage from "./pages/oneclick/TransactionHistoryPage"
 import TransactionDetailPage from "./pages/oneclick/TransactionDetailPage"
 import MyTookPage from "./pages/oneclick/MyTookPage"
-
+import DeliveryDetailPage from "./pages/delivery/DeliveryDetailPage"
+import DeliveryListPage from './pages/delivery/DeliveryListPage'
 
 
 
@@ -57,6 +58,8 @@ function App() {
     { path: "/dutch/request", element: <PayRequestPage />},
     { path: "/mytookmoney", element: <MyTookMoneyPage />},
     { path: "/create/delivery", element: <CreateDeliveryPage />},
+    { path: "/delivery/detail", element: <DeliveryDetailPage />},
+    { path: "/delivery/list", element: <DeliveryListPage />},
   ]);
 
   return <RouterProvider router={ROUTER} />;

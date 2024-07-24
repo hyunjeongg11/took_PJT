@@ -24,8 +24,9 @@ export default {
       },
       fontFamily: {
         dela: ['"Dela Gothic One"', "sans-serif"],
-        nanum: ['"Noto Sans KR"', "sans-serif"]
-      }
+        nanum: ['"Noto Sans KR"', "sans-serif"],
+        noto: ['Noto Serif', 'serif'],
+      },
     },
     fontFamily: {
       sans: ['"Nanum Gothic"', "sans-serif"]
