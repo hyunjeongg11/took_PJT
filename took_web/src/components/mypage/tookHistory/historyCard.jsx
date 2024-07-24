@@ -14,7 +14,7 @@ const categoryIcons = {
 
 const HistoryCard = ({ category, totalCost, status, createdAt, totalMembers, settledMembers }) => {
   return (
-    <div className="flex flex-col font-bold bg-[#FBFBFB] border border-slate-100 p-4 mb-4 rounded-2xl shadow-lg">
+    <div className={`flex flex-col font-bold bg-[#FBFBFB] border border-slate-100 p-4 mb-4 rounded-2xl shadow-lg ${status === "정산완료" ? "opacity-50" : ""}`}>
       <div className="flex justify-between items-center mb-3 text-sm text-gray-500">
         <div className="flex items-center">
           <span className='mr-4'>{createdAt}</span>

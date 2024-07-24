@@ -5,6 +5,9 @@ import {MainPage, LoginPage, PaymentPage, SignupPage, LocationSettingPage, Modif
 import PaymentMethods from "./pages/oneclick/PaymentMethodsPage"
 import MyTookMoneyPage from "./pages/oneclick/MyTookMoneyPage"
 import CreateDeliveryPage from "./pages/delivery/CreateDeliveryPage"
+import TransactionHistoryPage from "./pages/oneclick/TransactionHistoryPage"
+import TransactionDetailPage from "./pages/oneclick/TransactionDetailPage"
+import MyTookPage from "./pages/oneclick/MyTookPage"
 
 
 
@@ -44,7 +47,10 @@ function App() {
     { path: "/tookDetails", element: <TookDetailsPage /> },
     { path: "/tookHistory", element: <TookHistoryPage /> },
     { path: "/complete", element: <CompletePage />},
-    { path: "/paymentmethods", element: <PaymentMethods /> },
+    { path: "/payment-methods", element: <PaymentMethods /> },
+    { path: "/transaction-history", element: <TransactionHistoryPage /> },
+    { path: "/transaction-detail", element: <TransactionDetailPage /> },
+    { path: "/mytook", element: <MyTookPage /> },
     { path: "/dutch/userlist", element: <UserListPage />},
     { path: "/dutch/input", element: <PaymentInputPage />},
     { path: "/dutch/total", element: <PaymentTotalPage />},

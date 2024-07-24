@@ -47,11 +47,11 @@ const getProfileImagePath = (imgNo) => {
 const MyTookMoneyPage = () => {
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
-      <div className="flex items-center px-4 py-3">
+      <div className="flex items-center border-b border-gray-300 px-4 py-3 mb-3">
         <BackButton />
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
           나의 툭머니
-        </div>
+        </div> 
       </div>
       <div className="flex items-center justify-between mb-5 p-3 bg-[#FBFBFB] rounded-lg shadow-md mx-4">
         <span className="text-black text-sm">등록 계좌</span>
