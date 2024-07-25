@@ -3,9 +3,9 @@ import getProfileImagePath from '../../utils/getProfileImagePath';
 import formatNumber from '../../utils/format';
 import { formatDateWithoutTime } from '../../utils/formatDate';
 
-const SendMoneyCard = ({ imgNo, userName, cost, createdAt, status }) => {
+const SendMoneyCard = ({ imgNo, userName, cost, createdAt, status, onClick }) => {
   return (
-    <div className={`flex flex-col justify-between p-5 mb-4 bg-white border border-slate-100 rounded-2xl shadow-lg ${status ? 'opacity-50' : ''}`}>
+    <div className={`flex flex-col font-[Nanum_Gothic] justify-between p-5 mb-4 bg-white border border-slate-100 rounded-2xl shadow-lg ${status ? 'opacity-50' : ''}`}>
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center">
           <img src={getProfileImagePath(imgNo)} alt={userName} className="w-10 h-10 mr-4" />
@@ -17,9 +17,9 @@ const SendMoneyCard = ({ imgNo, userName, cost, createdAt, status }) => {
         <div className="text-xs text-gray-500">{formatDateWithoutTime(createdAt)}</div>
       </div>
       {status ? (
-        <div className="text-xs text-gray-500 text-right text-end">송금완료</div>
+        <div className="text-xs text-gray-500 font-[Nanum_Gothic] text-right text-end font-nanum">송금완료</div>
       ) : (
-        <button className="text-s text-white bg-main py-2 px-12 rounded-2xl self-center">송금하기</button>
+        <button className="text-s text-white font-[Nanum_Gothic] font-semibold bg-main py-2 px-12 rounded-2xl self-center" onClick={onClick}>송금하기</button>
       )}
     </div>
   );

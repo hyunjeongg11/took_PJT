@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import BackButton from "../../components/common/BackButton";
 import HistoryCard from '../../components/mypage/tookHistory/historyCard';
 import SendMoneyCard from '../../components/payment/SendMoneyCard';
+import SlideCard from '../../components/payment/SlideCard';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import formatNumber from '../../utils/format';
 import { formatDate } from '../../utils/formatDate';
@@ -80,6 +81,8 @@ const groupByMonth = (items, dateKey) => {
 
 function MyTookPage() {
   const [selectedTab, setSelectedTab] = useState('받을 돈');
+  const [showSlide, setShowSlide] = useState(false);
+  const [selectedMember, setSelectedMember] = useState(null);
   const myUserSeq = 1;
 
   const filteredParties = tempParties.filter(party => {
@@ -99,6 +102,11 @@ function MyTookPage() {
 
   const sendMoneyData = groupedMembers;
 
+  const handleSendMoneyClick = (member) => {
+    setSelectedMember(member);
+    setShowSlide(true);
+  };
+
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen font-[Nanum Gothic]">
       <div className="flex items-center px-4 py-3">
@@ -107,6 +115,7 @@ function MyTookPage() {
           나의 <span className='font-dela'>took</span>
         </div>
       </div>
+          <div className=" w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
       <div className="flex justify-around mt-4 border-b-2 border-gray-200">
         <button
           className={`py-2 ${selectedTab === '받을 돈' ? 'border-b-2 border-black font-bold' : 'text-gray-500'}`}
@@ -144,15 +153,22 @@ function MyTookPage() {
                   key={member.member_seq} 
                   {...member} 
                   status={member.status}
+                  onClick={() => handleSendMoneyClick(member)}
                 />
               ))}
             </div>
           ))
         )}
       </div>
+
+      {showSlide && selectedMember && (
+        <SlideCard
+          member={selectedMember}
+          onClose={() => setShowSlide(false)}
+        />
+      )}
     </div>
   );
 }
 
 export default MyTookPage;
-
