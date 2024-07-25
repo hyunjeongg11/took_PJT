@@ -33,6 +33,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'  // Lombok 어노테이션 프로세서 의존성
     testImplementation 'org.springframework.boot:spring-boot-starter-test'  // Spring Boot 테스트 스타터 의존성
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  // JUnit 플랫폼 런처 의존성 (테스트 실행 시에만 사용)
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'  // Spring WebSocket 의존성 추가
 
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'  // QueryDSL JPA 모듈 추가 (Jakarta 버전)
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"  // QueryDSL APT 설정 (Jakarta 버전)
