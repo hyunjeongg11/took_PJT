@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 // 서비스 클래스 정의
@@ -29,6 +30,8 @@ public class DeliveryService {
                 .roomSeq(request.getRoomSeq()) // 채팅방 연결
                 .storeName(request.getStoreName()) // 가게 이름 설정
                 .pickupPlace(request.getPickupPlace()) // 픽업 장소 설정
+                .pickupLat(request.getPickupLat()) // 픽업 장소 위도 설정
+                .pickupLon(request.getPickupLon()) // 픽업 장소 경도 설정
                 .deliveryTip(request.getDeliveryTip()) // 배달 팁 설정
                 .deliveryTime(request.getDeliveryTime()) // 배달 시간 설정
                 .content(request.getContent()) // 배달 내용 설정
@@ -55,6 +58,8 @@ public class DeliveryService {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
         delivery.setStoreName(request.getStoreName());
         delivery.setPickupPlace(request.getPickupPlace());
+        delivery.setPickupLat(request.getPickupLat());
+        delivery.setPickupLon(request.getPickupLon());
         delivery.setDeliveryTip(request.getDeliveryTip());
         delivery.setContent(request.getContent());
         delivery.setDeliveryTime(LocalDateTime.parse(request.getDeliveryTime()));
@@ -91,12 +96,23 @@ public class DeliveryService {
         deliveryRepository.save(delivery);
     }
 
-    // 배달 글 리스트 조회
+    // 배달 글 리스트 조회 (거리 기반)
     @Transactional
     public List<DeliverySelectResponse> getList(DeliveryListSelectRequest request) {
-        List<Delivery> deliveryList = deliveryRepository.findByUserSeqIn(request.getUserSeqs());
+        List<Delivery> deliveryList = deliveryRepository.findAll();
+
         return deliveryList.stream()
-                .map(DeliverySelectResponse::new)
+                .map(delivery -> {
+                    double deliveryLat = delivery.getPickupLat();
+                    double deliveryLon = delivery.getPickupLon();
+                    double distance = calculateDistance(request.getLat(), request.getLon(), deliveryLat, deliveryLon);
+                    if (distance <= 1000) { // 거리 범위를 1000m로 설정
+                        return new DeliverySelectResponse(delivery);
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull) // null 값 필터링
                 .collect(Collectors.toList());
     }
 
@@ -113,5 +129,21 @@ public class DeliveryService {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
         delivery.setStatus(Delivery.Status.valueOf(request.getStatus()));
         deliveryRepository.save(delivery);
+    }
+
+    // 두 지점 간의 거리 계산 (단위: m)
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        } else {
+            double theta = lon1 - lon2;
+            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2))
+                    + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                    * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 60 * 1.1515 * 1.609344;  // km 단위로 변환
+            return (dist * 1000);  // m 단위로 변환
+        }
     }
 }

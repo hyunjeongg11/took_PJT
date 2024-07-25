@@ -13,6 +13,8 @@ public class DeliverySelectResponse {
     private Long partySeq;
     private String storeName;
     private String pickupPlace;
+    private double pickupLat;
+    private double pickupLon;
     private String deliveryTip;
     private String content;
     private String notice;
@@ -29,6 +31,8 @@ public class DeliverySelectResponse {
         this.partySeq = delivery.getPartySeq();
         this.storeName = delivery.getStoreName();
         this.pickupPlace = delivery.getPickupPlace();
+        this.pickupLat = delivery.getPickupLat();
+        this.pickupLon = delivery.getPickupLon();
         this.deliveryTip = delivery.getDeliveryTip();
         this.content = delivery.getContent();
         this.deliveryTime = delivery.getDeliveryTime().toString();

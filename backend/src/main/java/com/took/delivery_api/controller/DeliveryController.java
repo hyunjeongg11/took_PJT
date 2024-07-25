@@ -77,7 +77,6 @@ public class DeliveryController {
         return ResponseEntity.ok(response);
     }
 
-
     // 배달 글 상세 조회
     @GetMapping("/{deliverySeq}")
     ResponseEntity<DeliverySelectResponse> getDetail(@PathVariable Long deliverySeq) {

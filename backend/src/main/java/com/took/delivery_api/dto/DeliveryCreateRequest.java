@@ -15,6 +15,10 @@ public class DeliveryCreateRequest {
 
     private String pickupPlace;
 
+    private double pickupLat;
+
+    private double pickupLon;
+
     private String deliveryTip;
 
     private LocalDateTime deliveryTime;

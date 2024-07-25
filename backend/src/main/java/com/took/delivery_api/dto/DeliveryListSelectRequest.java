@@ -6,6 +6,6 @@ import java.util.List;
 
 @Data
 public class DeliveryListSelectRequest {
-
-    private List<Long> userSeqs;
+    private double lat;
+    private double lon;
 }

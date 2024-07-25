@@ -46,6 +46,12 @@ public class Delivery {
     @Column(nullable = false)
     private String pickupPlace;
 
+    @Column(nullable = false)
+    private double pickupLat;
+
+    @Column(nullable = false)
+    private double pickupLon;
+
     // 배달 팁 필드
     @Column(nullable = false)
     private String deliveryTip;

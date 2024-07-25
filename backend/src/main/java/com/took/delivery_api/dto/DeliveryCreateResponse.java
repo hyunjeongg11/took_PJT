@@ -19,6 +19,10 @@ public class DeliveryCreateResponse {
 
     private String pickupPlace;
 
+    private double pickupLat;
+
+    private double pickupLon;
+
     private String deliveryTip;
 
     private LocalDateTime deliveryTime;
@@ -39,6 +43,8 @@ public class DeliveryCreateResponse {
         this.roomSeq = delivery.getRoomSeq();
         this.storeName = delivery.getStoreName();
         this.pickupPlace = delivery.getPickupPlace();
+        this.pickupLat = delivery.getPickupLat();
+        this.pickupLon = delivery.getPickupLon();
         this.deliveryTip = delivery.getDeliveryTip();
         this.deliveryTime = delivery.getDeliveryTime();
         this.content = delivery.getContent();
