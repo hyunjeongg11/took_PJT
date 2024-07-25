@@ -1,10 +1,11 @@
 package com.took.util;
 
-import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -15,17 +16,26 @@ import java.util.UUID;
 @Component
 public class ApiUtil {
 
+    @Getter
+    private static String kakaoApiKey;
+
+    private static String smsApiKey;
+    private static String smsApiSecret;
+
     @Value("${kakao.api.key}")
-    private static String KAKAO_API_KEY;
+    private String propertyKakaoApiKey;
 
     @Value("${sms.api.key}")
-    private static String apiKey;
+    private String propertySmsApiKey;
 
     @Value("${sms.api.secret}")
-    private static String apiSecret;
+    private String propertySmsApiSecret;
 
-    public static String getKakaoApiKey() {
-        return KAKAO_API_KEY;
+    @PostConstruct
+    private void init() {
+        kakaoApiKey = propertyKakaoApiKey;
+        smsApiKey = propertySmsApiKey;
+        smsApiSecret = propertySmsApiSecret;
     }
 
     public static String generateSignature() throws Exception {
@@ -33,9 +43,9 @@ public class ApiUtil {
         String date = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toString().split("\\[")[0];
 
         Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-        SecretKeySpec secret_key = new SecretKeySpec(apiSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        SecretKeySpec secret_key = new SecretKeySpec(smsApiSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         sha256_HMAC.init(secret_key);
         String signature = new String(Hex.encodeHex(sha256_HMAC.doFinal((date + salt).getBytes(StandardCharsets.UTF_8))));
-        return "HMAC-SHA256 ApiKey=" + apiKey + ", Date=" + date + ", salt=" + salt + ", signature=" + signature;
+        return "HMAC-SHA256 ApiKey=" + smsApiKey + ", Date=" + date + ", salt=" + salt + ", signature=" + signature;
     }
 }

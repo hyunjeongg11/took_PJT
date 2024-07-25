@@ -23,16 +23,15 @@ public class KakaoNaviService {
     private final RestTemplate restTemplate; // RestTemplate을 사용하여 외부 API 호출을 처리합니다.
 
     private static final String URL = "https://apis-navi.kakaomobility.com/v1/waypoints/directions";
-    private static final String KAKAO_API_KEY = ApiUtil.getKakaoApiKey();
 
     /**
      * 예상 비용을 계산합니다.
      * @param request 예상 비용 계산을 위한 요청 데이터 (출발지와 도착지의 위도와 경도)
      * @return 예상 비용 응답 데이터 (택시 비용 + 톨 비용)
-     * @throws Exception 예외가 발생할 경우
      */
-    public ExpectCostResponse calculateCost(ExpectCostRequest request) throws Exception {
-        HttpHeaders headers = createHeaders();
+    public ExpectCostResponse calculateCost(ExpectCostRequest request) {
+        String kakaoApiKey = ApiUtil.getKakaoApiKey();
+        HttpHeaders headers = createHeaders(kakaoApiKey);
         Map<String, Object> kakaoRequest = createKakaoRequest(request.getStartLon(), request.getStartLat(), request.getEndLon(), request.getEndLat(), new ArrayList<>());
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(kakaoRequest, headers);
@@ -46,10 +45,10 @@ public class KakaoNaviService {
      * 모든 사용자의 예상 비용을 계산합니다.
      * @param request 경로와 사용자들의 비용 정보가 담긴 요청 데이터
      * @return 사용자들의 비용 정보가 담긴 응답 데이터
-     * @throws Exception 예외가 발생할 경우
      */
-    public AllExpectCostResponse calculateAllCost(AllExpectCostRequest request) throws Exception {
-        HttpHeaders headers = createHeaders();
+    public AllExpectCostResponse calculateAllCost(AllExpectCostRequest request) {
+        String kakaoApiKey = ApiUtil.getKakaoApiKey();
+        HttpHeaders headers = createHeaders(kakaoApiKey);
 
         List<Map<String, Object>> waypoints = new ArrayList<>();
         for (int i = 1; i < request.getLocations().size() - 1; i++) {
@@ -149,9 +148,9 @@ public class KakaoNaviService {
      * HTTP 헤더를 생성합니다.
      * @return 설정된 HTTP 헤더
      */
-    private HttpHeaders createHeaders() {
+    private HttpHeaders createHeaders(String kakaoApiKey) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "KakaoAK " + KAKAO_API_KEY);
+        headers.set("Authorization", "KakaoAK " + kakaoApiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
         return headers;
     }
