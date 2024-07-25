@@ -12,7 +12,7 @@ import DeliveryDetailPage from "./pages/delivery/DeliveryDetailPage"
 import DeliveryListPage from './pages/delivery/DeliveryListPage'
 import DeliveryPayInputPage from './pages/delivery/DeliveryPayInputPage'
 import DeliveryCompletePage from './pages/delivery/DeliveryCompletePage'
-
+import DeliveryStatusPage from './pages/delivery/DeliveryStatusPage'
 
 
 function App() {
@@ -64,6 +64,7 @@ function App() {
     { path: "/delivery/list", element: <DeliveryListPage />},
     { path: "/delivery/input", element: <DeliveryPayInputPage />},
     { path: "/delivery/complete", element: <DeliveryCompletePage />},
+    { path: "/delivery/status", element: <DeliveryStatusPage />},
   ]);
 
   return <RouterProvider router={ROUTER} />;
