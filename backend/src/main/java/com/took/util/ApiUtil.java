@@ -1,8 +1,9 @@
-package com.took.sms_api.util;
+package com.took.util;
 
+import jakarta.annotation.PostConstruct;
+import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -11,16 +12,21 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Hex;
-
 @Component
 public class ApiUtil {
+
+    @Value("${kakao.api.key}")
+    private static String KAKAO_API_KEY;
 
     @Value("${sms.api.key}")
     private static String apiKey;
 
     @Value("${sms.api.secret}")
     private static String apiSecret;
+
+    public static String getKakaoApiKey() {
+        return KAKAO_API_KEY;
+    }
 
     public static String generateSignature() throws Exception {
         String salt = UUID.randomUUID().toString().replaceAll("-", "");

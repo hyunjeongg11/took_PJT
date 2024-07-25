@@ -4,7 +4,7 @@ import com.took.taxi_api.dto.AllExpectCostRequest;
 import com.took.taxi_api.dto.AllExpectCostResponse;
 import com.took.taxi_api.dto.ExpectCostRequest;
 import com.took.taxi_api.dto.ExpectCostResponse;
-import com.took.taxi_api.util.ApiUtil;
+import com.took.util.ApiUtil;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.*;

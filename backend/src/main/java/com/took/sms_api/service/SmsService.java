@@ -3,7 +3,7 @@ package com.took.sms_api.service;
 
 import com.took.sms_api.entity.Identity;
 import com.took.sms_api.repository.IdentityRepository;
-import com.took.sms_api.util.ApiUtil;
+import com.took.util.ApiUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
