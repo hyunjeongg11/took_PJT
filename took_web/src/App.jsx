@@ -10,6 +10,7 @@ import TransactionDetailPage from "./pages/oneclick/TransactionDetailPage"
 import MyTookPage from "./pages/oneclick/MyTookPage"
 import DeliveryDetailPage from "./pages/delivery/DeliveryDetailPage"
 import DeliveryListPage from './pages/delivery/DeliveryListPage'
+import DeliveryPayInputPage from './pages/delivery/DeliveryPayInputPage'
 
 
 
@@ -57,9 +58,10 @@ function App() {
     { path: "/dutch/total", element: <PaymentTotalPage />},
     { path: "/dutch/request", element: <PayRequestPage />},
     { path: "/mytookmoney", element: <MyTookMoneyPage />},
-    { path: "/create/delivery", element: <CreateDeliveryPage />},
+    { path: "/delivery/create", element: <CreateDeliveryPage />},
     { path: "/delivery/detail", element: <DeliveryDetailPage />},
     { path: "/delivery/list", element: <DeliveryListPage />},
+    { path: "/delivery/input", element: <DeliveryPayInputPage />},
   ]);
 
   return <RouterProvider router={ROUTER} />;
