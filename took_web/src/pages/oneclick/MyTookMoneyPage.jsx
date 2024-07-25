@@ -6,19 +6,19 @@ import BackButton from "../../components/common/BackButton";
 import HistoryCard from '../../components/mypage/tookHistory/historyCard';
 
 // 임의의 데이터
-const accounts = [
+const tempAccounts = [
   { bankName: '국민은행', AccountNum: '1234567891011' },
   { bankName: '신한은행', AccountNum: '9876543210123' },
   { bankName: '우리은행', AccountNum: '1231231231231' },
 ];
 
-const transactions = [
+const tempHistory = [
   { userName: '조*정', imgNo: 1, createdAt: '24.06.12', cost: 6600, type: '받기' },
   { userName: '차*주', imgNo: 2, createdAt: '24.06.04', cost: 20000, type: '송금' },
   { userName: '이*찬', imgNo: 3, createdAt: '24.05.28', cost: 5400, type: '송금' },
 ];
 
-const settlements = [
+const tempParty = [
   { party_idx: 1, category: '택시', totalMembers: 3, totalCost: 20500, status: "정산완료", createdAt: "7.6 (토) 01:49" },
   { party_idx: 2, category: '배달', totalMembers: 4, totalCost: 71600, status: "정산완료", createdAt: "6.24 (월) 18:55" },
 ];
@@ -47,17 +47,17 @@ const getProfileImagePath = (imgNo) => {
 const MyTookMoneyPage = () => {
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
-      <div className="flex items-center px-4 py-3">
+      <div className="flex items-center border-b border-gray-300 px-4 py-3 mb-3">
         <BackButton />
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
           나의 툭머니
-        </div>
+        </div> 
       </div>
       <div className="flex items-center justify-between mb-5 p-3 bg-[#FBFBFB] rounded-lg shadow-md mx-4">
         <span className="text-black text-sm">등록 계좌</span>
         <div className="flex items-center text-sm font-bold">
-          <img src={getImagePath(accounts[0].bankName)} alt="은행 로고" className="w-6 h-6 mr-2" />
-          {accounts[0].bankName} 외 {accounts.length - 1}개
+          <img src={getImagePath(tempAccounts[0].bankName)} alt="은행 로고" className="w-6 h-6 mr-2" />
+          {tempAccounts[0].bankName} 외 {tempAccounts.length - 1}개
         </div>
       </div>
       <div className="mx-4">
@@ -66,7 +66,7 @@ const MyTookMoneyPage = () => {
             거래내역
             <AiOutlineRight className="text-xl" />
           </div>
-          {transactions.map((transaction, index) => (
+          {tempHistory.map((transaction, index) => (
             <div key={index} className="flex justify-between py-3 border-b border-gray-300 mb-3">
               <div className="flex items-center">
                 <img src={getProfileImagePath(transaction.imgNo)} alt={transaction.userName} className="w-9 h-9 mr-5" />
@@ -88,7 +88,7 @@ const MyTookMoneyPage = () => {
             <div>나의 <span className='font-dela'> took</span></div>
             <AiOutlineRight className="text-xl" />
           </div>
-          {settlements.map((settlement, index) => (
+          {tempParty.map((settlement, index) => (
             <HistoryCard key={index} {...settlement} />
           ))}
         </div>

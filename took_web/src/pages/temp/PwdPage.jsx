@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { MdBackspace } from "react-icons/md";
 
 function PwdPage() {
   const [input, setInput] = useState("");
@@ -50,138 +51,49 @@ function PwdPage() {
     const dots = [];
     for (let i = 0; i < 6; i++) {
       dots.push(
-        <span key={i} style={i < input.length ? styles.activeDot : styles.inactiveDot}>●</span>
+        <span key={i} className={`text-2xl mx-1 ${i < input.length ? 'text-white' : 'text-gray-400'}`}>●</span>
       );
     }
     return dots;
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.headerContainer}>
-        <div style={styles.header}>took!</div>
-        <div style={styles.closeIcon} onClick={() => navigate(-1)}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="white"
-            width="24px"
-            height="24px"
-          >
+    <div className="flex flex-col items-center justify-center h-screen bg-[#FF7F50] font-[Nanum_Gothic] relative">
+      <div className="w-full flex justify-center items-center px-5 relative">
+        <div className="font-dela text-4xl text-white mb-5 text-center">took!</div>
+        <div className="absolute right-5 top-[-20px] cursor-pointer" onClick={() => navigate(-1)}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
             <path d="M0 0h24v24H0V0z" fill="none"/>
             <path d="M18.3 5.71a1 1 0 00-1.41 0L12 10.59 7.11 5.7a1 1 0 00-1.41 1.41L10.59 12l-4.89 4.88a1 1 0 001.41 1.41L12 13.41l4.89 4.88a1 1 0 001.41-1.41L13.41 12l4.89-4.88a1 1 0 000-1.41z"/>
           </svg>
         </div>
       </div>
-      <div style={styles.subheader}>
+      <div className="text-xl text-white mb-5 text-center font-bold">
         {isError ? (
-          <div style={styles.errorMessage}>
-            비밀번호가 맞지 않아요 <br /> 다시 입력해주세요 <span style={styles.attemptCount}> {attemptCount}/5</span>
+          <div>
+            비밀번호가 맞지 않아요 <br /> 다시 입력해주세요 <span className="text-black"> {attemptCount}/5</span>
           </div>
         ) : (
           "간편 비밀번호 입력"
         )}
       </div>
-      <div style={styles.passwordDots}>{renderDots()}</div>
-      <div style={styles.keypad}>
+      <div className="flex justify-center mb-5">
+        {renderDots()}
+      </div>
+      <div className="grid grid-cols-3 gap-5 mt-10 w-4/5">
         {Array.from({ length: 9 }, (_, i) => (
-          <button key={i + 1} style={styles.keypadButton} onClick={() => handleButtonClick(i + 1)}>
+          <button key={i + 1} className="text-3xl py-5 text-white bg-transparent border-none cursor-pointer font-bold text-center" onClick={() => handleButtonClick(i + 1)}>
             {i + 1}
           </button>
         ))}
-        <div style={styles.emptySpace}></div>
-        <button style={styles.keypadButton} onClick={() => handleButtonClick(0)}>0</button>
-        <button style={{ ...styles.keypadButton, ...styles.deleteButton }} onClick={handleDelete}>⌫</button>
+        <div className="col-span-1"></div>
+        <button className="text-3xl py-5 text-white bg-transparent border-none cursor-pointer font-bold text-center" onClick={() => handleButtonClick(0)}>0</button>
+        <button className="text-3xl py-5 text-white bg-transparent border-none cursor-pointer font-bold text-center ml-7" onClick={handleDelete}>
+          <MdBackspace size={24} />
+        </button>
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100vh',
-    backgroundColor: '#FF7F50',
-    fontFamily: "'Nanum Gothic', sans-serif",
-    position: 'relative'
-  },
-  headerContainer: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '0 20px',
-    position: 'relative',
-  },
-  header: {
-    fontFamily: "'Dela Gothic One', sans-serif",
-    fontSize: '2rem',
-    color: 'white',
-    marginBottom: '10px',
-    textAlign: 'center',
-  },
-  closeIcon: {
-    position: 'absolute',
-    right: '20px',
-    top: '-20px',  // Adjust this value to move the icon further upwards
-    cursor: 'pointer',
-  },
-  subheader: {
-    fontSize: '1.2rem',
-    color: 'white',
-    marginBottom: '20px',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  errorMessage: {
-    color: 'white',
-    textAlign: 'center',
-    whiteSpace: 'pre-line',
-  },
-  attemptCount: {
-    color: 'black',
-  },
-  passwordDots: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: '20px'
-  },
-  inactiveDot: {
-    fontSize: '1.3rem',
-    color: 'gray',
-    margin: '0 5px',
-  },
-  activeDot: {
-    fontSize: '1.3rem',
-    color: 'white',
-    margin: '0 5px',
-  },
-  keypad: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '20px',
-    alignItems: 'center',
-    marginTop: '40px',
-  },
-  keypadButton: {
-    fontSize: '1.5rem',
-    padding: '20px',
-    color: 'white',
-    backgroundColor: 'transparent',
-    border: 'none',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  deleteButton: {
-    textAlign: 'center',
-  },
-  emptySpace: {
-    gridColumn: 'span 1',
-  }
-};
 
 export default PwdPage;

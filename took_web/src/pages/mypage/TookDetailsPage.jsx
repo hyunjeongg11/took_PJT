@@ -60,7 +60,7 @@ function TookDetailsPage({ type = "배달", date = "6.24 (월) 18:55" }) {
       <div className="flex items-center px-4 py-3">
         <BackButton />
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
-          took 상세내역
+          <span className="font-dela">took</span> 상세내역
         </div>
       </div>
 
