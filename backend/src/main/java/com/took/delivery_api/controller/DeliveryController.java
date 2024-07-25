@@ -120,7 +120,7 @@ public class DeliveryController {
     }
 
     // 배달 픽업 여부 변경
-    @GetMapping("/guest/setPickUp/{deliveryGuestSeq}")
+    @GetMapping("/guest/setPick Up/{deliveryGuestSeq}")
     ResponseEntity<?> setPickUp(@PathVariable Long deliveryGuestSeq) {
         deliveryGuestService.setPickUp(deliveryGuestSeq);
         return ResponseEntity.noContent().build();
