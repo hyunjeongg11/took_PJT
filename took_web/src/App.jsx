@@ -11,6 +11,7 @@ import MyTookPage from "./pages/oneclick/MyTookPage"
 import DeliveryDetailPage from "./pages/delivery/DeliveryDetailPage"
 import DeliveryListPage from './pages/delivery/DeliveryListPage'
 import DeliveryPayInputPage from './pages/delivery/DeliveryPayInputPage'
+import DeliveryCompletePage from './pages/delivery/DeliveryCompletePage'
 
 
 
@@ -62,6 +63,7 @@ function App() {
     { path: "/delivery/detail", element: <DeliveryDetailPage />},
     { path: "/delivery/list", element: <DeliveryListPage />},
     { path: "/delivery/input", element: <DeliveryPayInputPage />},
+    { path: "/delivery/complete", element: <DeliveryCompletePage />},
   ]);
 
   return <RouterProvider router={ROUTER} />;
