@@ -1,6 +1,7 @@
 package com.took.taxi_api.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.took.taxi_api.entity.QTaxi;
 import com.took.taxi_api.entity.Taxi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
