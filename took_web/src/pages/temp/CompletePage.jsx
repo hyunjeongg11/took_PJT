@@ -1,35 +1,43 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import 송금완료 from '../../assets/payment/송금완료.png';
-import { formatNumber } from '../../utils/format'; // 숫자 포맷팅 함수 import
+import { formatNumber } from '../../utils/format';
+import { maskName } from '../../utils/formatName';
 
-function CompletePage({ userName = '사용자', amount = 0 }) {
+function CompletePage() {
   const navigate = useNavigate();
+  
+  // 임시 데이터
+  const tempMember = { userName: '조현정', cost: 6500, bank: '국민은행', accountNumber: '12345678910' };
 
-  const maskName = (name) => {
-    if (name.length <= 2) return name;
-    const firstChar = name[0];
-    const lastChar = name[name.length - 1];
-    const middleChars = name.slice(1, -1).replace(/./g, '*');
-    return `${firstChar}${middleChars}${lastChar}`;
-  };
-
-  const maskedName = maskName(userName);
+  const maskedName = maskName(tempMember.userName);
 
   return (
-    <div className="flex flex-col items-center justify-center h-[90vh] bg-white font-[Nanum_Gothic]">
-      <div className="text-2xl font-bold text-[#FF7F50] mb-16 text-center">
+    <div className="flex flex-col items-center justify-between h-[90vh] bg-white font-[Nanum_Gothic] pb-10 pt-20"> {/* 상단에 padding-top 추가 */}
+      <div className="text-4xl font-bold text-[#FF7F50] mb-16 text-center">
         <span className="font-dela">to</span> <span className="font-[Nanum_Gothic] font-bold text-black text-[1.8rem]">{maskedName}</span>,&nbsp; <span className="font-dela">ok!</span>
       </div>
-      <img src={송금완료} alt="송금 완료" className="w-[150px] h-[150px] mb-5" />
-      <div className="text-[1.6rem] font-bold text-black mb-20 text-center">
-        {formatNumber(amount)} 원
+      <div className="flex flex-col items-center mb-20"> {/* 하단에 margin-bottom 추가 */}
+        <img src={송금완료} alt="송금 완료" className="w-[150px] h-[150px] mb-5" />
+        <div className="text-sm text-center mb-1">
+          {maskName(tempMember.userName)} 님에게
+        </div>
+        <div className="text-sm mb-5">
+          <span className="font-extrabold">{formatNumber(tempMember.cost)}</span>원을 보냈어요.
+        </div>
+        <div className="w-64 border-t border-b border-gray-300 py-2 mt-5">
+          <div className="flex justify-between w-full mt-1 mb-1 px-1">
+            <div className="text-sm">출금 계좌</div>
+            <div className="text-sm">{tempMember.bank}({tempMember.accountNumber.slice(-4)})</div>
+          </div>
+        </div>
       </div>
       <button 
-        className="py-3 px-10 bg-[#FF7F50] text-white text-[1.1rem] font-bold rounded-[20px] cursor-pointer mt-10 transition-shadow duration-300"
+        className={`w-[calc(100%-40px)] py-3 rounded-full bg-[#FF7F50] text-white text-lg font-bold cursor-pointer mb-5`}
         onMouseOver={(e) => e.currentTarget.classList.add('shadow-md')}
         onMouseOut={(e) => e.currentTarget.classList.remove('shadow-md')}
         onClick={() => navigate('/')}
+        style={{ position: 'absolute', bottom: '10px' }} // 버튼을 화면 하단으로 이동
       >
         메인으로
       </button>
