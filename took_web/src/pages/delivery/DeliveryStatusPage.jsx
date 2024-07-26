@@ -1,24 +1,22 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import BackButton from "../../components/common/BackButton";
-import completeIcon from "../../assets/payment/complete.png"; // 정산 완료 아이콘 경로
-import incompleteIcon from "../../assets/payment/incomplete.png"; // 정산 미완료 아이콘 경로
 import deliveryIcon from "../../assets/payment/deliveryTook.png"; // 배달 took 아이콘 경로
-import taxiIcon from "../../assets/payment/taxiTook.png"; // 택시 took 아이콘 경로
 import userProfile1 from "../../assets/profile/img5.png"; // 사용자 프로필 아이콘 경로
 import userProfile2 from "../../assets/profile/img6.png"; // 사용자 프로필 아이콘 경로
 import userProfile3 from "../../assets/profile/img9.png"; // 사용자 프로필 아이콘 경로
 import userProfile4 from "../../assets/profile/img11.png"; // 사용자 프로필 아이콘 경로
 import isMeIcon from "../../assets/payment/isMe.png"; // 본인 아이콘 경로
 
-const users = [
+const temp_users = [
   { name: "차민주", icon: userProfile1, status: "완료", isMe: true },
   { name: "공지환", icon: userProfile2, status: "미완료", isMe: false },
   { name: "조현정", icon: userProfile3, status: "완료", isMe: false },
   { name: "이재찬", icon: userProfile4, status: "완료", isMe: false }
 ];
 
-function TookDetailsPage({date = "6.24 (월) 18:55"}) {
+const temp_date = "6.24 (월) 18:55"
+
+function TookDetailsPage() {
   const renderUserDetails = (user, index) => {
     const isCompleted = user.status === "완료";
     return (
@@ -31,13 +29,13 @@ function TookDetailsPage({date = "6.24 (월) 18:55"}) {
               {user.isMe && <img src={isMeIcon} alt="본인" className="ml-2 w-9.5 h-5" />}
             </div>
             <div className="text-right">
-              <button className={`py-3 px-4 rounded-full text-sm font-bold ${isCompleted ? 'bg-[#FF7F50] text-white' : 'bg-neutral-300 text-white'}`}>
+              <button className={`py-2.5 w-24 rounded-full text-sm font-bold ${isCompleted ? 'bg-[#FF7F50] text-white' : 'bg-neutral-400 text-white'}`}>
                 {isCompleted ? '확인 완료' : '미확인'}
               </button>
             </div>
           </div>
         </div>
-        {index < users.length - 1 && <div className="border-b border-dashed border-gray-300 my-2"></div>}
+        {index < temp_users.length - 1 && <div className="border-b border-dashed border-gray-300 my-2"></div>}
       </div>
     );
   };
@@ -55,15 +53,15 @@ function TookDetailsPage({date = "6.24 (월) 18:55"}) {
 
       <div className="flex flex-col mt-4 px-4 font-bold">
         <div className="bg-[#FBFBFB] p-5 rounded-xl shadow-lg border border-inherit max-h-[550px] overflow-y-scroll">
-          <div className="text-gray-500 mb-4 text-sm">{date}</div>
+          <div className="text-gray-500 mb-4 text-sm">{temp_date}</div>
           <div className="flex items-center mb-4">
             <img src={deliveryIcon} alt="Took" className="w-14 h-14" />
             <div className="ml-4">
-              <div className="text-sm text-black">총 {users.length}명</div>
+              <div className="text-base text-black">총 {temp_users.length}명</div>
             </div>
           </div>
 
-          {users.map((user, index) => renderUserDetails(user, index))}
+          {temp_users.map((user, index) => renderUserDetails(user, index))}
         </div>
       </div>
     </div>
