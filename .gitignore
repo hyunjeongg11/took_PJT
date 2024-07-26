@@ -1,0 +1,5 @@
+# application.properties 파일을 무시
+application.properties
+
+# docker-compose.yml 파일을 무시
+docker-compose.yml
