@@ -1,9 +1,12 @@
 package com.ssafy.shop_api.service;
 
+import com.ssafy.shop_api.dto.AddShopGuest;
 import com.ssafy.shop_api.dto.AddShopRequest;
 import com.ssafy.shop_api.dto.UpdateShopRequest;
 import com.ssafy.shop_api.dto.UpdateStatusShopRequest;
 import com.ssafy.shop_api.entity.Shop;
+import com.ssafy.shop_api.entity.ShopGuest;
+import com.ssafy.shop_api.repository.ShopGuestRepository;
 import com.ssafy.shop_api.repository.ShopRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +19,10 @@ import java.util.List;
 public class ShopService {
 
     private final ShopRepository shopRepository;
+    private final ShopGuestRepository shopGuestRepository;
 
     public Shop save(AddShopRequest request) {
+
         return shopRepository.save(request.toEntity());
     }
 
@@ -59,5 +64,20 @@ public class ShopService {
         shop.setStatus(request.getStatus());
 
         return shop;
+    }
+
+    public boolean userEnterShop(AddShopGuest request) {
+        ShopGuest shopGuest = shopGuestRepository.findByShopSeqAndUserSeq(request.getShopSeq(), request.getUserSeq());
+        if (shopGuest == null){
+            Shop shop = shopRepository.findById(request.getShopSeq());
+            shopGuestRepository.save(request.toEntity());
+
+            shop.setCount(shop.getCount() + 1);
+            return true;
+        }
+        else{
+            return false;
+        }
+
     }
 }

@@ -39,6 +39,15 @@ public class Shop {
     private int hit;
 
     @Column(nullable = false)
+    private double lat;
+
+    @Column(nullable = false)
+    private double log;
+
+    @Column
+    private int count;
+
+    @Column(nullable = false)
     private String item;
 
     @Column(nullable = false)

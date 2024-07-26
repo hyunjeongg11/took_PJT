@@ -1,9 +1,6 @@
 package com.ssafy.shop_api.controller;
 
-import com.ssafy.shop_api.dto.AddShopRequest;
-import com.ssafy.shop_api.dto.ShopResponse;
-import com.ssafy.shop_api.dto.UpdateShopRequest;
-import com.ssafy.shop_api.dto.UpdateStatusShopRequest;
+import com.ssafy.shop_api.dto.*;
 import com.ssafy.shop_api.entity.Shop;
 import com.ssafy.shop_api.service.ShopService;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +32,7 @@ public class ShopController {
                 .map(ShopResponse::new)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok()
+                return ResponseEntity.ok()
                 .body(shops);
     }
 
@@ -45,6 +42,11 @@ public class ShopController {
 
         return ResponseEntity.ok()
                 .body(new ShopResponse(shop));
+    }
+
+    @GetMapping("/enter")
+    public ResponseEntity<?> userEnterShop(@RequestBody AddShopGuest request) {
+        return ResponseEntity.ok(shopService.userEnterShop(request));
     }
 
     @DeleteMapping("/delete/{id}")
