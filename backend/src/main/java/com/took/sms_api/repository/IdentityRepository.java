@@ -1,13 +1,10 @@
 package com.took.sms_api.repository;
 
-
 import com.took.sms_api.entity.Identity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-@Repository
-public interface IdentityRepository extends JpaRepository<Identity, Integer> {
+public interface IdentityRepository extends CrudRepository<Identity, String> {
     Optional<Identity> findByPhoneNumber(String phoneNumber);
 }

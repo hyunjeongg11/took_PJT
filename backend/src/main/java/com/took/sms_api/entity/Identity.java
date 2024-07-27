@@ -2,42 +2,28 @@ package com.took.sms_api.entity;
 
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.*;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
+import org.springframework.data.redis.core.index.Indexed;
 
-@EntityListeners(AuditingEntityListener.class)
-@Entity
+
 @Getter
-@Setter
+@ToString
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@RedisHash("Identity")
 public class Identity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "identity_idx", updatable = false)
-    private int identityIdx;
 
-    @Column(name = "phone_number", nullable = false)
+    @Id
     private String phoneNumber;
 
-    @Column(name = "code", nullable = false)
+    @Indexed
     private int code;
 
-
-    @Builder // 빌더 패턴을 사용하여 객체를 생성할 수 있는 빌더 메서드를 자동으로 생성하는 애노테이션
-    public Identity(String phoneNumber, int code) {
-        this.phoneNumber = phoneNumber;
-        this.code = code;
-    }
-
-    // 엔티티의 필드 값을 업데이트하는 메서드
-    public void update(String phoneNumber, int code) {
-        this.phoneNumber = phoneNumber;
-        this.code = code;
-    }
-
+    @TimeToLive
+    private Long expiration; // 유효 기간을 초 단위로 설정
 }
 
 

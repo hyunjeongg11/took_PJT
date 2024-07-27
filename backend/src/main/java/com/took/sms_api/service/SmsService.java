@@ -1,6 +1,5 @@
 package com.took.sms_api.service;
 
-
 import com.took.sms_api.entity.Identity;
 import com.took.sms_api.repository.IdentityRepository;
 import com.took.util.ApiUtil;
@@ -74,11 +73,16 @@ public class SmsService {
      */
     public void createOrUpdateIdentity(String phoneNumber) {
         int code = generateVerificationCode(); // 인증 코드 생성
-        Optional<Identity> identityOpt = identityRepository.findByPhoneNumber(phoneNumber); // 전화번호로 Identity 조회
-        Identity identity = identityOpt.orElse(new Identity()); // Identity가 없으면 새로 생성
-        identity.setPhoneNumber(phoneNumber); // 전화번호 설정
-        identity.setCode(code); // 인증 코드 설정
-        identityRepository.save(identity); // Identity 저장
+        Long expiration = 180L; // 유효 기간을 3분(180초)으로 설정
+
+        // 새로운 Identity 객체 생성 및 저장
+        Identity identity = Identity.builder()
+                .phoneNumber(phoneNumber)
+                .code(code)
+                .expiration(expiration)
+                .build();
+        identityRepository.save(identity);
+
         sendSms(phoneNumber, code); // SMS 전송
     }
 
@@ -90,13 +94,10 @@ public class SmsService {
      * @return 인증 코드가 일치하면 true, 일치하지 않으면 false
      */
     public boolean verifyCode(String phoneNumber, int code) {
-        Optional<Identity> identityOpt = identityRepository.findByPhoneNumber(phoneNumber); // 전화번호로 Identity 조회
+        Optional<Identity> identityOpt = identityRepository.findById(phoneNumber); // 전화번호로 Identity 조회
         if (identityOpt.isPresent()) {
             Identity identity = identityOpt.get();
-            if (identity.getCode() == code) {
-                identityRepository.delete(identity); // 인증에 성공하면 행을 삭제
-                return true;
-            }
+            return identity.getCode() == code;
         }
         return false; // Identity가 없으면 false 반환
     }
