@@ -24,8 +24,9 @@ public class SmsService {
      */
     public int generateVerificationCode() {
         SecureRandom random = new SecureRandom();
-        return random.nextInt(1000000); // 0부터 999999 사이의 랜덤 숫자를 생성합니다.
+        return 100000 + random.nextInt(900000); // 100000부터 999999 사이의 랜덤 숫자를 생성합니다.
     }
+
 
     /**
      * 주어진 전화번호로 인증 코드를 SMS로 전송합니다.
