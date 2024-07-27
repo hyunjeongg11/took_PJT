@@ -48,22 +48,14 @@ public class DeliveryService {
     @Transactional
     public void setParty(DeliverySerPartyRequest request) {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
-        delivery.setPartySeq(request.getPartySeq());
-        deliveryRepository.save(delivery);
+        delivery.updateParty(request.getPartySeq());
     }
     
     // 글 수정
     @Transactional
     public void modifyDelivery(DeliveryModifyRequest request) {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
-        delivery.setStoreName(request.getStoreName());
-        delivery.setPickupPlace(request.getPickupPlace());
-        delivery.setPickupLat(request.getPickupLat());
-        delivery.setPickupLon(request.getPickupLon());
-        delivery.setDeliveryTip(request.getDeliveryTip());
-        delivery.setContent(request.getContent());
-        delivery.setDeliveryTime(LocalDateTime.parse(request.getDeliveryTime()));
-        deliveryRepository.save(delivery);
+        delivery.updateDelivery(request);
     }
 
     // 글 삭제
@@ -76,24 +68,21 @@ public class DeliveryService {
     @Transactional
     public void createNotice(DeliveryNoticeCreateRequest request) {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
-        delivery.setNotice(request.getNotice());
-        deliveryRepository.save(delivery);
+        delivery.updateNotice(request.getNotice());
     }
     
     // 공지사항 수정
     @Transactional
     public void modifyNotice(DeliveryNoticeCreateRequest request) {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
-        delivery.setNotice(request.getNotice());
-        deliveryRepository.save(delivery);
+        delivery.updateNotice(request.getNotice());
     }
 
     // 공지사항 삭제
     @Transactional
     public void deleteNotice(Long deliverySeq) {
         Delivery delivery = deliveryRepository.findByDeliverySeq(deliverySeq);
-        delivery.setNotice(null);
-        deliveryRepository.save(delivery);
+        delivery.updateNotice(null);
     }
 
     // 배달 글 리스트 조회 (거리 기반)
@@ -127,8 +116,7 @@ public class DeliveryService {
     @Transactional
     public void setStatus(DeliverySetStatusRequest request) {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
-        delivery.setStatus(Delivery.Status.valueOf(request.getStatus()));
-        deliveryRepository.save(delivery);
+        delivery.updateStatus(request.getStatus());
     }
 
     // 두 지점 간의 거리 계산 (단위: m)

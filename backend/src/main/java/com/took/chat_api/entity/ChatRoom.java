@@ -1,16 +1,14 @@
 package com.took.chat_api.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity  // JPA 엔티티임을 나타내는 어노테이션
-@Data  // Lombok 어노테이션으로, getter, setter, toString, equals, hashCode 메서드를 자동으로 생성
+@Getter
+@ToString
 @NoArgsConstructor  // Lombok 어노테이션으로, 기본 생성자를 자동으로 생성
 @AllArgsConstructor  // Lombok 어노테이션으로, 모든 필드를 매개변수로 받는 생성자를 자동으로 생성
 @Builder

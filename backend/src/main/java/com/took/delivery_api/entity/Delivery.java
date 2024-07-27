@@ -1,16 +1,15 @@
 package com.took.delivery_api.entity;
 
+import com.took.delivery_api.dto.DeliveryModifyRequest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 // 엔티티 클래스 정의
 @Entity
-@Data
+@Getter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -84,4 +83,32 @@ public class Delivery {
     // 종료 시간 필드
     @Column(nullable = false)
     private LocalDateTime finishTime;
+
+    // 업데이트 메서드 추가
+    public void updateDelivery(DeliveryModifyRequest request) {
+        this.storeName = request.getStoreName();
+        this.pickupPlace = request.getPickupPlace();
+        this.pickupLat = request.getPickupLat();
+        this.pickupLon = request.getPickupLon();
+        this.deliveryTip = request.getDeliveryTip();
+        this.content = request.getContent();
+        this.deliveryTime = request.getDeliveryTime();
+    }
+
+    public void updateParty(Long partySeq) {
+        this.partySeq = partySeq;
+    }
+
+    public void updateNotice(String notice) {
+        this.notice = notice;
+    }
+
+    public void updateStatus(String status) {
+        this.status = Status.valueOf(status);
+    }
+
+    public void updateCount(int i) {
+        this.count += i;
+    }
+
 }

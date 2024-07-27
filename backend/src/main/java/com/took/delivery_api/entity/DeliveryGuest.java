@@ -1,14 +1,12 @@
 package com.took.delivery_api.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 // 엔티티 클래스 정의
 @Entity
-@Data
+@Getter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,4 +31,7 @@ public class DeliveryGuest {
     private boolean pickUp;
 
 
+    public void updatePickUp(boolean pickUp) {
+        this.pickUp = pickUp;
+    }
 }

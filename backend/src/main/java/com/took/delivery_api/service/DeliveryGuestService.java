@@ -32,8 +32,7 @@ public class DeliveryGuestService {
                 .pickUp(false)
                 .build());
 
-        delivery.setCount(delivery.getCount() + 1);
-        deliveryRepository.save(delivery);
+        delivery.updateCount(1);
     }
 
     // 파티 퇴장
@@ -41,8 +40,7 @@ public class DeliveryGuestService {
     public void leaveParty(DeliveryGuestDeleteRequest request) {
         deliveryGuestRepository.deleteById(request.getDeliveryGuestSeq());
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
-        delivery.setCount(delivery.getCount() - 1);
-        deliveryRepository.save(delivery);
+        delivery.updateCount(-1);
     }
 
     // 파티 참가자 리스트
@@ -66,8 +64,7 @@ public class DeliveryGuestService {
     @Transactional
     public void setPickUp(Long deliveryGuestSeq) {
         DeliveryGuest deliveryGuest = deliveryGuestRepository.findByDeliveryGuestSeq(deliveryGuestSeq);
-        deliveryGuest.setPickUp(true);
-        deliveryGuestRepository.save(deliveryGuest);
+        deliveryGuest.updatePickUp(true);
     }
 
     // 해당 방 참가 여부
