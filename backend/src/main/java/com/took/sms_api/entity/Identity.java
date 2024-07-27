@@ -1,11 +1,12 @@
 package com.took.sms_api.entity;
 
 
-import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 import org.springframework.data.redis.core.index.Indexed;
+import org.springframework.data.annotation.Id;
+
 
 
 @Getter
