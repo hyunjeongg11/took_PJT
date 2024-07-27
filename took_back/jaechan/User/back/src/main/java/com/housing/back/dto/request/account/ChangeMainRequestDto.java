@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class ChangeMainRequestDto {
 
     private Long userSeq;
-    
+    private Long accountSeq;
 }

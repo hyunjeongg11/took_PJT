@@ -6,4 +6,5 @@ public interface BankRepositoryCustom {
     
     BankEntity isMatched(String accountNum,String accountPwd);
     Long findBankSeqByUserSeq(Long userSeq);
+    Long findBalanceByBankSeq(Long bankSeq);
 }

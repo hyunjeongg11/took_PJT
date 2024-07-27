@@ -1,7 +1,14 @@
 package com.housing.back.repository.custom;
 
+import java.util.List;
+
+import com.housing.back.entity.AccountEntity;
+
+
 public interface AccountRepositoryCustom {
  
-    Long FindBankSeq(Long userSeq);
-    void changeMain(Long userSeq);
+    List<AccountEntity> findAccountsByUserSeq(Long userSeq);
+    void isMain(Long userSeq);
+    void changeMain(Long userSeq,Long accountSeq);
+    Long findBankSeqByAccountSeq(Long accountSeq);
 } 

@@ -9,4 +9,5 @@ public interface MemberRepositoryCustom {
     boolean isLeader(Long userSeq);
     MemberEntity findMemberByUserSeq(Long userSeq);
     List<MemberEntity> findAllMemberByPartySeq(Long partySeq);
+    List<MemberEntity> partyDetail(Long userSeq, Long partySeq);
 }

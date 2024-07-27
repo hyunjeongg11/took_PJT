@@ -156,8 +156,11 @@ public class PartyServiceImpl implements PartyService {
         Long userSeq = dto.getUserSeq();
         Long partySeq =dto.getPartySeq();
 
-        // partyㄴ
-        List<MemberEntity> partyDetailList = partyRepository.memberRepositoryCustom(userSeq,partySeq);
+        // party리스트 넘기기
+        // userSeq를 불러온 이유? 내꺼는 올라오면 안되기 때문
+        List<MemberEntity> partyDetailList = memberRepositoryCustom.partyDetail(userSeq,partySeq);
+
+        return PartyDetailResponseDto.success(partyDetailList);
     }
 
 }

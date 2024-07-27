@@ -1,6 +1,6 @@
 package com.housing.back.entity;
 
-import org.hibernate.annotations.Collate;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 
 @Getter
 @NoArgsConstructor
@@ -31,11 +32,12 @@ public class AccountEntity {
     @Column(name = "main")
     private Boolean main;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name="user_seq")
     private UserEntity user;
 
-
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name="bank_seq", nullable = false)
     private BankEntity bank;
@@ -48,6 +50,8 @@ public class AccountEntity {
         this.bank = bank;
         this.main = main;
     }
+
+
 
 
 }

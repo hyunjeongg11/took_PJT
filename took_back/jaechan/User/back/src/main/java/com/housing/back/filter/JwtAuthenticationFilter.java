@@ -50,6 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
                 String userId = jwtProvider.validate(token);
 
+
                 if(userId ==null){
                     // 넘어가기
                     filterChain.doFilter(request, response);
@@ -64,6 +65,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 // 다중 권한 소지자일 경우
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 authorities.add(new SimpleGrantedAuthority(role));
+
+                
                 
                 // 빈콘텍스트 제작완
                 SecurityContext securityContext =  SecurityContextHolder.createEmptyContext();

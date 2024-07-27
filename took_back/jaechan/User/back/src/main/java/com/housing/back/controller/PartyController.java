@@ -99,7 +99,8 @@ public class PartyController {
     (
     @RequestBody @Valid PartyDetailRequestDto requestBody
     ) {
-        ResponseEntity<? super PartyDetailResponseDto> response = partyService.partyDetail();
+        ResponseEntity<? super PartyDetailResponseDto> response = partyService.partyDetail(requestBody);
+        return response;
     }
     
     

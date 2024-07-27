@@ -14,14 +14,12 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 
 @Entity(name = "party")
 @Table(name="party")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Getter
 public class PartyEntity {
 

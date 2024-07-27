@@ -11,6 +11,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 
+import java.lang.reflect.Member;
 import java.time.LocalDateTime;
 
 @Repository
@@ -66,6 +67,20 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom{
                         .selectFrom(member)
                         .where((member.party.partySeq.eq(partySeq)))
                         .fetch();
+        return result;
+    }
+
+    @Override
+    public List<MemberEntity> partyDetail(Long userSeq, Long partySeq) {
+        
+        QMemberEntity member = QMemberEntity.memberEntity;
+
+        List<MemberEntity> result = null;
+
+        result = jpaQueryFactory.selectFrom(member)
+                                .where(member.party.partySeq.eq(partySeq).and(member.user.userSeq.ne(userSeq)))
+                                .fetch();
+
         return result;
     }
 

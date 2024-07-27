@@ -1,5 +1,6 @@
 package com.housing.back.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.housing.back.dto.request.member.MemberSaveRequestDto;
 
 import jakarta.persistence.Column;
@@ -40,10 +41,12 @@ public class MemberEntity {
     @Column(name="is_leader")
     private boolean isLeader;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "party_seq")
     private PartyEntity party;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name="user_seq")
     private UserEntity user;

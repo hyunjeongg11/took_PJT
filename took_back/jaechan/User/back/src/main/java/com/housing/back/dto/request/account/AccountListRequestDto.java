@@ -1,4 +1,4 @@
-package com.housing.back.dto.request.party;
+package com.housing.back.dto.request.account;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PartyDetailRequestDto {
+public class AccountListRequestDto {
 
-    private Long partySeq;
     private Long userSeq;
     
 }
