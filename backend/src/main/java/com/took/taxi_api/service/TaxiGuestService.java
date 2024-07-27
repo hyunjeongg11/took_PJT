@@ -35,8 +35,7 @@ public class TaxiGuestService {
                 .build();
         taxiGuestRepository.save(taxiGuest);
 
-        taxi.setCount(taxi.getCount() + 1);
-        taxiRepository.save(taxi);
+        taxi.updateCount(1);
     }
 
     /**
@@ -49,8 +48,7 @@ public class TaxiGuestService {
         TaxiGuest guest = taxiGuestRepository.findByUserSeqAndTaxi(request.getUserSeq(), taxi);
         taxiGuestRepository.delete(guest);
 
-        taxi.setCount(taxi.getCount() - 1);
-        taxiRepository.save(taxi);
+        taxi.updateCount(-1);
     }
 
     /**
@@ -118,12 +116,7 @@ public class TaxiGuestService {
     @Transactional
     public void setDestinationAndCost(GuestSetDestinationAndCostRequest request) {
         TaxiGuest taxiGuest = taxiGuestRepository.findByGuestSeq(request.getGuestSeq());
-        taxiGuest.setDestiName(request.getDestiName());
-        taxiGuest.setDestiLat(request.getDestiLat());
-        taxiGuest.setDestiLon(request.getDestiLon());
-        taxiGuest.setCost(request.getCost());
-        taxiGuest.setRouteRank(request.getRouteRank());
-        taxiGuestRepository.save(taxiGuest);
+        taxiGuest.updateDestiAndCost(request.getDestiName(), request.getDestiLat(), request.getDestiLon(), request.getCost(), request.getRouteRank());
     }
 
     /**
@@ -135,7 +128,7 @@ public class TaxiGuestService {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
         List<TaxiGuest> guests = taxiGuestRepository.findByTaxiAndDestiName(taxi, request.getDestiName());
         for (TaxiGuest guest : guests) {
-            guest.setRouteRank(request.getRouteRank());
+            guest.updateRouteRank(request.getRouteRank());
         }
         taxiGuestRepository.saveAll(guests);
     }

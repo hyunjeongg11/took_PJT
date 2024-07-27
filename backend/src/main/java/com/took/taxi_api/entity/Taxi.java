@@ -1,16 +1,14 @@
 package com.took.taxi_api.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -67,5 +65,33 @@ public class Taxi {
 
     @OneToMany(mappedBy = "taxi", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TaxiGuest> taxiGuests;  // 택시 게스트 목록
+
+    public void updateTaxi(Long master, int max, boolean gender) {
+        this.master = master;
+        this.max = max;
+        this.gender = gender;
+    }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+    }
+
+    public void updateStart(double startLat, double startLon, int cost) {
+        this.startLat = startLat;
+        this.startLon = startLon;
+        this.cost = cost;
+    }
+
+    public void updateCost(int cost) {
+        this.cost = cost;
+    }
+
+    public void updateParty(Long partySeq) {
+        this.partySeq = partySeq;
+    }
+
+    public void updateCount(int i) {
+        this.count += i;
+    }
 }
  

@@ -1,13 +1,11 @@
 package com.took.taxi_api.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,4 +36,16 @@ public class TaxiGuest {
 
     @Column(nullable = false)
     private int routeRank;  // 경로 순위
+
+    public void updateDestiAndCost(String destiName, double destiLat, double destiLon, int cost, int routeRank) {
+        this.destiName = destiName;
+        this.destiLat = destiLat;
+        this.destiLon = destiLon;
+        this.cost = cost;
+        this.routeRank = routeRank;
+    }
+
+    public void updateRouteRank(int routeRank) {
+        this.routeRank = routeRank;
+    }
 }

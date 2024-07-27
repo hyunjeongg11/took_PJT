@@ -86,10 +86,7 @@ public class TaxiService {
     @Transactional
     public void setTaxi(TaxiSetRequest request) {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
-        taxi.setMaster(request.getMaster());
-        taxi.setMax(request.getMax());
-        taxi.setGender(request.isGender());
-        taxiRepository.save(taxi);
+        taxi.updateTaxi(request.getMaster(), request.getMax(), request.isGender());
     }
 
     /**
@@ -101,18 +98,17 @@ public class TaxiService {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
         switch (taxi.getStatus()) {
             case OPEN:
-                taxi.setStatus(Taxi.Status.FILLED);
+                taxi.updateStatus(Taxi.Status.FILLED);
                 break;
             case FILLED:
-                taxi.setStatus(Taxi.Status.BOARD);
+                taxi.updateStatus(Taxi.Status.BOARD);
                 break;
             case BOARD:
-                taxi.setStatus(Taxi.Status.DONE);
+                taxi.updateStatus(Taxi.Status.DONE);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + taxi.getStatus());
         }
-        taxiRepository.save(taxi);
     }
 
     /**
@@ -122,10 +118,7 @@ public class TaxiService {
     @Transactional
     public void startTaxi(TaxiStartRequest request) {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
-        taxi.setStartLat(request.getStartLat());
-        taxi.setStartLon(request.getStartLon());
-        taxi.setCost(request.getCost());
-        taxiRepository.save(taxi);
+        taxi.updateStart(request.getStartLat(), request.getStartLon(), request.getCost());
     }
 
     @Transactional
@@ -135,8 +128,7 @@ public class TaxiService {
      */
     public void setCost(TaxiSetCostRequest request) {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
-        taxi.setCost(request.getCost());
-        taxiRepository.save(taxi);
+        taxi.updateCost(request.getCost());
     }
 
 
@@ -148,8 +140,7 @@ public class TaxiService {
     @Transactional
     public TaxiFinalCostResponse finalCost(TaxiFInalCostRequest request) {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
-        taxi.setCost(request.getAllCost());
-        taxiRepository.save(taxi);
+        taxi.updateCost(request.getAllCost());
 
         TaxiFinalCostResponse response = new TaxiFinalCostResponse();
         List<TaxiFinalCostResponse.User> userList = new ArrayList<>();
@@ -174,8 +165,7 @@ public class TaxiService {
     @Transactional
     public void setParty(TaxiSetPartyRequest request) {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
-        taxi.setPartySeq(request.getPartySeq());
-        taxiRepository.save(taxi);
+        taxi.updateParty(request.getPartySeq());
     }
 
     // 참가중인 택시방
