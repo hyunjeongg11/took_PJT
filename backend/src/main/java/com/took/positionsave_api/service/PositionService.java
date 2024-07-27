@@ -47,6 +47,7 @@ public class PositionService {
                 .userSeq(request.getUserSeq())  // request에서 userId 가져옴
                 .lat(request.getLat())        // request에서 위도 가져옴
                 .lon(request.getLon())        // request에서 경도 가져옴
+                .expiration(3600L)            // TTL 값 설정 (1시간)
                 .build();
 
         positionRepository.save(position);  // Position 저장
