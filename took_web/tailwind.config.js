@@ -27,6 +27,7 @@ export default {
       },
       colors: {
         main: '#FF7F50',
+        secondary: '#FFF7ED',
       },
       fontFamily: {
         dela: ['"Dela Gothic One"', 'sans-serif'],

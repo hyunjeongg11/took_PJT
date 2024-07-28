@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import getProfileImagePath from '../../utils/getProfileImagePath';
 
 const temp_data = {
   1: {
@@ -72,7 +73,7 @@ function PaymentTotalPage() {
                   <img
                     key={user.img_no}
                     loading="lazy"
-                    src={`/src/assets/profile/img${user.img_no}.png`}
+                    src={getProfileImagePath(user.img_no)}
                     className="w-6 h-6 absolute"
                     alt={`User ${user.img_no}`}
                     style={{
