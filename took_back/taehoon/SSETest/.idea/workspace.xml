@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0d9344dd-7013-4654-af00-09697d898595" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../S11P12E205/took_back/taehoon/shop_api/HELP.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../S11P12E205/took_back/taehoon/shop_api/HELP.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../S11P12E205/took_back/taehoon/shop_api/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../../S11P12E205/took_back/taehoon/shop_api/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../S11P12E205/took_back/taehoon/shop_api/src/main/java/com/ssafy/shop_api/ShopApiApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../S11P12E205/took_back/taehoon/shop_api/src/main/java/com/ssafy/shop_api/ShopApiApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../S11P12E205/took_back/taehoon/shop_api/src/test/java/com/ssafy/shop_api/ShopApiApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../S11P12E205/took_back/taehoon/shop_api/src/test/java/com/ssafy/shop_api/ShopApiApplicationTests.java" afterDir="false" />
-    </list>
+    <list default="true" id="0d9344dd-7013-4654-af00-09697d898595" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,17 +15,34 @@
       <ProjectState />
     </projectState>
   </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="SSETest" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
         <option value="HTML File" />
+        <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
@@ -53,9 +65,9 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.SseTestApplication.executor": "Run",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "dev-be",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/SSAFY/workspace/spring/SSETest",
+    "last_opened_file_path": "C:/SSAFY/workspace/2학기/S11P12E205/took_back/taehoon/SSETest",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -114,6 +126,7 @@
       <workItem from="1721284106180" duration="3000" />
       <workItem from="1721284184097" duration="674000" />
       <workItem from="1721285699591" duration="71000" />
+      <workItem from="1722174903261" duration="1628000" />
     </task>
     <servers />
   </component>

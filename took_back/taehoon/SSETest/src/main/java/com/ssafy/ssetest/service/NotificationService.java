@@ -1,5 +1,6 @@
 package com.ssafy.ssetest.service;
 
+import com.ssafy.ssetest.dto.Notification;
 import com.ssafy.ssetest.repository.NotificationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -17,7 +18,7 @@ public class NotificationService {
     }
     
     // 알림 등록 메서드
-    private SseEmitter createEmitter(String id) {
+    private SseEmitter createEmitter(Long id) {
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
         notificationRepository.save(id, emitter);
 
@@ -28,31 +29,32 @@ public class NotificationService {
     }
     
     // 알림 전송 메서드
-    private void sendEvent(String sendId, Object data) {
-        SseEmitter emitter = notificationRepository.get(sendId);
+    private void sendEvent(long userSeq, Object data) {
+        SseEmitter emitter = notificationRepository.get(userSeq);
         
         // 알림 설정이 된 Id이면 보냄
         if (emitter != null) {
             try {
-                
                 // sendId에서 알림 이벤트 발생
-                emitter.send(SseEmitter.event().id(sendId).name("알림").data(data));
+                emitter.send(SseEmitter.event().id(String.valueOf(userSeq)).name("알림").data(data));
             } catch (IOException exception) {
-                notificationRepository.deleteById(sendId);
+                notificationRepository.deleteById(userSeq);
                 emitter.completeWithError(exception);
             }
         }
     }
     
     // 알림 설정
-    public SseEmitter subscribe(String userId) {
-        SseEmitter emitter = createEmitter(userId);
-        return emitter;
+    public SseEmitter subscribe(Long userSeq) {
+        return createEmitter(userSeq);
     }
 
     // 알림 보내기
-    public void sendNotification(String userId, String message) {
-        sendEvent(userId, message);
+    public void sendNotification(Notification notification) {
+        String message = notification.getMessage();
+        for (Long userSeq : notification.getList()){
+            sendEvent(userSeq, message);
+        }
     }
 
 }

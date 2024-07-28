@@ -28,7 +28,7 @@ public class ChatRoomService {
         ChatRoom chatRoom = new ChatRoom(name, creator);
         chatRoom = chatRoomRepository.save(chatRoom);
 
-        notificationService.sendNotification(recipientId, creatorId + " 님이 만든 채팅방이 생성되었습니다 ");
+//        notificationService.sendNotification(recipientId, creatorId + " 님이 만든 채팅방이 생성되었습니다 ");
 
         return chatRoom;
     }

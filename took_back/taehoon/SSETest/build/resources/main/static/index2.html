@@ -10,12 +10,12 @@
 <button id="unsubscribeButton">알림 해제</button>
 <div id="events"></div>
 <script>
-    const userId = "zxader";  // B 사용자의 ID를 여기에 설정
+    const userSeq = 2;  // B 사용자의 ID를 여기에 설정
     let eventSource = null;
 
     // 알림 등록 버튼 클릭 이벤트 핸들러
     document.getElementById("subscribeButton").addEventListener("click", function() {
-        eventSource = new EventSource('/noti/subscribe/' + userId);
+        eventSource = new EventSource('/noti/subscribe/' + userSeq);
 
         eventSource.onmessage = function(event) {
             alert("메시지: " + event.data);
