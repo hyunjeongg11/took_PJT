@@ -18,7 +18,7 @@ const SlideCard = ({ member, onClose }) => {
   const handleStop = (e, data) => {
     if (data.x >= 200) { // 동그라미가 충분히 오른쪽으로 이동했는지 확인
       setSlid(true);
-      setTimeout(() => {
+      setTimeout(() => {  
         // 실제 송금 기능을 여기에 추가하면 됩니다.
         onClose();
       }, 1000);

@@ -9,6 +9,7 @@ import TransactionHistoryPage from "./pages/oneclick/TransactionHistoryPage"
 import TransactionDetailPage from "./pages/oneclick/TransactionDetailPage"
 import MyTookPage from "./pages/oneclick/MyTookPage"
 import SendInputPage from "./pages/oneclick/SendInputPage"
+import SendDetailPage from "./pages/oneclick/SendDetailPage"
 import DeliveryDetailPage from "./pages/delivery/DeliveryDetailPage"
 import DeliveryListPage from './pages/delivery/DeliveryListPage'
 import DeliveryPayInputPage from './pages/delivery/DeliveryPayInputPage'
@@ -56,6 +57,7 @@ function App() {
     { path: "/transaction-detail", element: <TransactionDetailPage /> },
     { path: "/mytook", element: <MyTookPage /> },
     { path: "/sendinput", element: <SendInputPage /> },
+    { path: "/senddetail", element: <SendDetailPage /> },
     { path: "/dutch/userlist", element: <UserListPage />},
     { path: "/dutch/input", element: <PaymentInputPage />},
     { path: "/dutch/total", element: <PaymentTotalPage />},
