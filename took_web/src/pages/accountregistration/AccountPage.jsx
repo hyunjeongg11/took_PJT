@@ -1,18 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { AiOutlineRight } from "react-icons/ai";
-import { MdBackspace } from "react-icons/md";
-import BackButton from "../../components/common/BackButton";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { AiOutlineRight } from 'react-icons/ai';
+import { MdBackspace } from 'react-icons/md';
+import BackButton from '../../components/common/BackButton';
 
 function AccountPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { selectedName, savedAccount, savedPassword } = location.state || { selectedName: "", savedAccount: "", savedPassword: "" };
+  const { selectedName, savedAccount, savedPassword } = location.state || {
+    selectedName: '',
+    savedAccount: '',
+    savedPassword: '',
+  };
 
   const [bank, setBank] = useState(selectedName);
-  const [account, setAccount] = useState(savedAccount || "");
-  const [password, setPassword] = useState(savedPassword || "");
-  const [alias, setAlias] = useState("");
+  const [account, setAccount] = useState(savedAccount || '');
+  const [password, setPassword] = useState(savedPassword || '');
+  const [alias, setAlias] = useState('');
   const [showKeypad, setShowKeypad] = useState(false);
   const [keypadNumbers, setKeypadNumbers] = useState([]);
 
@@ -36,30 +40,30 @@ function AccountPage() {
   };
 
   const handleAccountChange = (e) => {
-    const value = e.target.value.replace(/[^0-9]/g, "");
+    const value = e.target.value.replace(/[^0-9]/g, '');
     setAccount(value);
     setShowKeypad(false);
   };
 
   const handleAliasChange = (e) => {
     setAlias(e.target.value);
-    setShowKeypad(false); 
+    setShowKeypad(false);
   };
 
   const handleNextClick = () => {
-    console.log("bankName: ", bank);
-    console.log("accountNum: ", account);
-    console.log("accountPwd: ", password);
-    console.log("accountAlias: ", alias);
+    console.log('bankName: ', bank);
+    console.log('accountNum: ', account);
+    console.log('accountPwd: ', password);
+    console.log('accountAlias: ', alias);
     if (isFormValid) {
-      navigate("/agreement", { state: { bank, account, alias } });
+      navigate('/agreement', { state: { bank, account, alias } });
     }
   };
 
   const handleKeypadClick = (value) => {
-    if (value === "backspace") {
+    if (value === 'backspace') {
       setPassword(password.slice(0, -1));
-    } else if (value === "confirm") {
+    } else if (value === 'confirm') {
       setShowKeypad(false);
     } else if (password.length < 4) {
       setPassword(password + value);
@@ -67,14 +71,14 @@ function AccountPage() {
   };
 
   const handlePasswordFocus = () => {
-    setPassword("");
+    setPassword('');
     setShowKeypad(true);
     if (document.activeElement) {
       document.activeElement.blur(); // Remove focus from the current input to close the native keyboard
     }
   };
 
-  const isFormValid = bank !== "" && account !== "" && password.length === 4;
+  const isFormValid = bank !== '' && account !== '' && password.length === 4;
 
   return (
     <div className="flex flex-col items-center p-5 relative h-screen font-[Nanum_Gothic]">
@@ -86,11 +90,22 @@ function AccountPage() {
       <div className="w-full mb-5">
         <label className="flex flex-col mb-2">
           <span className="text-lg font-bold mb-4">
-            <span className="inline-block w-5 h-5 rounded-full bg-[#FF7F50] text-white text-center leading-5 mr-2">1</span>
+            <span className="inline-block w-5 h-5 rounded-full bg-[#FF7F50] text-white text-center leading-5 mr-2">
+              1
+            </span>
             본인 명의 계좌 번호 등록
           </span>
-          <div className="flex items-center justify-between h-14 rounded-lg border border-gray-300 px-3 text-base cursor-pointer" onClick={() => navigate('/select', { state: { savedAccount: account, savedPassword: password } })}>
-            <span className={`${bank ? 'text-black' : 'text-gray-400'}`}>{bank || '은행 / 증권사'}</span>
+          <div
+            className="flex items-center justify-between h-14 rounded-lg border border-gray-300 px-3 text-base cursor-pointer"
+            onClick={() =>
+              navigate('/select', {
+                state: { savedAccount: account, savedPassword: password },
+              })
+            }
+          >
+            <span className={`${bank ? 'text-black' : 'text-gray-400'}`}>
+              {bank || '은행 / 증권사'}
+            </span>
             <AiOutlineRight className="text-2xl text-gray-400" />
           </div>
         </label>
@@ -108,7 +123,7 @@ function AccountPage() {
           <input
             type="password"
             placeholder="계좌 비밀번호 (4자리)"
-            value={password.replace(/./g, "●")}
+            value={password.replace(/./g, '●')}
             onFocus={handlePasswordFocus}
             readOnly
             className="h-14 rounded-lg border border-gray-300 px-3 text-base outline-none cursor-pointer"
@@ -128,21 +143,26 @@ function AccountPage() {
       </div>
       <div className="w-full mb-5">
         <div className="text-lg font-bold text-gray-500 mb-5">
-          <span className="inline-block w-5 h-5 rounded-full border border-gray-300 text-center leading-5 mr-2">2</span>
+          <span className="inline-block w-5 h-5 rounded-full border border-gray-300 text-center leading-5 mr-2">
+            2
+          </span>
           약관 동의
         </div>
         <div className="text-lg font-bold text-gray-500">
-          <span className="inline-block w-5 h-5 rounded-full border border-gray-300 text-center leading-5 mr-2">3</span>
+          <span className="inline-block w-5 h-5 rounded-full border border-gray-300 text-center leading-5 mr-2">
+            3
+          </span>
           본인 인증
         </div>
       </div>
       <button
-        className={`py-3 rounded-full text-white text-lg font-bold cursor-pointer transition-all duration-300 ${isFormValid ? "bg-[#FF7F50] shadow-md" : "bg-[#FF7F50]/50 shadow-none"} absolute bottom-5 left-1/2 transform -translate-x-1/2 w-[calc(100%-40px)]`}
+        className={`py-3 rounded-full text-white text-lg font-bold cursor-pointer transition-all duration-300 ${isFormValid ? 'bg-[#FF7F50] shadow-md' : 'bg-[#FF7F50]/50 shadow-none'} absolute bottom-5 left-1/2 transform -translate-x-1/2 w-[calc(100%-40px)]`}
         disabled={!isFormValid}
         onMouseOver={(e) =>
-          isFormValid && (e.currentTarget.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.2)")
+          isFormValid &&
+          (e.currentTarget.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.2)')
         }
-        onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
+        onMouseOut={(e) => (e.currentTarget.style.boxShadow = 'none')}
         onClick={handleNextClick}
       >
         다음
@@ -158,10 +178,16 @@ function AccountPage() {
               {number}
             </button>
           ))}
-          <button onClick={() => handleKeypadClick("backspace")} className="bg-[#FF7F50] border-none text-white text-xl py-3 rounded-lg text-center cursor-pointer outline-none ml-6">
+          <button
+            onClick={() => handleKeypadClick('backspace')}
+            className="bg-[#FF7F50] border-none text-white text-xl py-3 rounded-lg text-center cursor-pointer outline-none ml-6"
+          >
             <MdBackspace size={24} />
           </button>
-          <button onClick={() => handleKeypadClick("confirm")} className="bg-[#FF7F50] border-none text-white text-xl py-3 rounded-lg text-center cursor-pointer outline-none">
+          <button
+            onClick={() => handleKeypadClick('confirm')}
+            className="bg-[#FF7F50] border-none text-white text-xl py-3 rounded-lg text-center cursor-pointer outline-none"
+          >
             확인
           </button>
         </div>

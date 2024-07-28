@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const InputButton = ({
   label,
@@ -6,8 +6,8 @@ const InputButton = ({
   value,
   onChange,
   placeholder,
-  styleClass, 
-  error
+  styleClass,
+  error,
 }) => {
   return (
     <div className={`mt-8 ${styleClass}`}>
@@ -21,9 +21,7 @@ const InputButton = ({
         className="mt-1.5 text-xs leading-5 text-neutral-600 text-opacity-30 border-b-2 w-full"
         placeholder={placeholder}
       />
-       {error && (
-          <p className="text-red-500 text-xs mt-1">{error}</p>
-        )}
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   );
 };

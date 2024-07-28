@@ -76,7 +76,7 @@ function DeliveryDetailPage() {
   };
 
   return (
-   <div className="flex flex-col max-w-[360px] mx-auto relative h-screen">
+    <div className="flex flex-col max-w-[360px] mx-auto relative h-screen">
       <div className="flex bg-main items-center px-4 py-3">
         <BackButton />
         <div className="mt-2.5 mb-2 flex-grow text-center text-lg font-bold text-white">
@@ -86,24 +86,38 @@ function DeliveryDetailPage() {
 
       <div className="p-4">
         <div className="flex items-center mb-4">
-          <img src={temp_data.userIcon} alt="avatar" className="w-10 h-10 mr-4" />
+          <img
+            src={temp_data.userIcon}
+            alt="avatar"
+            className="w-10 h-10 mr-4"
+          />
           <div>
             <div className="text-base font-bold">{temp_data.userName}</div>
-            <div className="text-xs text-gray-500">{formatTime(temp_data.createdAt)}</div>
+            <div className="text-xs text-gray-500">
+              {formatTime(temp_data.createdAt)}
+            </div>
           </div>
         </div>
 
         <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
 
         <div className="mb-10 px-2">
-          <div className="text-xl font-bold mb-1 mt-3">{temp_data.storeName}</div>
+          <div className="text-xl font-bold mb-1 mt-3">
+            {temp_data.storeName}
+          </div>
           <div className="text-gray-700 mb-3">{temp_data.pickupPlace}</div>
           <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
-          <div className="text-gray-700 my-3">배달팁 : {temp_data.deliveryTip}원</div>
+          <div className="text-gray-700 my-3">
+            배달팁 : {temp_data.deliveryTip}원
+          </div>
           <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
-          <div className="text-gray-700 my-3">배달 주문 시간 : {formatDeliveryTime(temp_data.deliveryTime)}</div>
+          <div className="text-gray-700 my-3">
+            배달 주문 시간 : {formatDeliveryTime(temp_data.deliveryTime)}
+          </div>
           <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
-          <div className="text-gray-700 whitespace-pre-line leading-7">{temp_data.content}</div>
+          <div className="text-gray-700 whitespace-pre-line leading-7">
+            {temp_data.content}
+          </div>
         </div>
 
         <div className="flex justify-center">

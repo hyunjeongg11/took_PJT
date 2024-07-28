@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import BackButton from "../../components/common/BackButton";
-import { useNavigate } from "react-router-dom";
-import { MdBackspace } from "react-icons/md";
+import React, { useState } from 'react';
+import BackButton from '../../components/common/BackButton';
+import { useNavigate } from 'react-router-dom';
+import { MdBackspace } from 'react-icons/md';
 
 const tempUser = '주최자'; // 유저에 따라 다른 창이 뜸
-// const tempUser = '참여자'; 
+// const tempUser = '참여자';
 
 function DeliveryPayInputPage() {
   const [orderAmount, setOrderAmount] = useState('');

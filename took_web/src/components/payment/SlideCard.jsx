@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Draggable from 'react-draggable';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import getProfileImagePath from '../../utils/getProfileImagePath';
-import formatNumber from '../../utils/format';
-import { AiOutlineClose } from "react-icons/ai";
+import { formatNumber } from '../../utils/format';
+import { AiOutlineClose } from 'react-icons/ai';
 
 const SlideCard = ({ member, onClose }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -16,7 +16,8 @@ const SlideCard = ({ member, onClose }) => {
   }, [position]);
 
   const handleStop = (e, data) => {
-    if (data.x >= 200) { // 동그라미가 충분히 오른쪽으로 이동했는지 확인
+    if (data.x >= 200) {
+      // 동그라미가 충분히 오른쪽으로 이동했는지 확인
       setSlid(true);
       setTimeout(() => {
         // 실제 송금 기능을 여기에 추가하면 됩니다.
@@ -39,9 +40,15 @@ const SlideCard = ({ member, onClose }) => {
           onClick={onClose}
         />
         <div className="font-[Nanum_Gothic] flex flex-col items-center mb-4">
-          <img src={getProfileImagePath(member.imgNo)} alt={member.userName} className="w-14 h-14 mb-4 animate-shake" />
+          <img
+            src={getProfileImagePath(member.imgNo)}
+            alt={member.userName}
+            className="w-14 h-14 mb-4 animate-shake"
+          />
           <div className="text-xl font-bold mb-1">{member.userName} 님에게</div>
-          <div className="text-2xl font-bold mb-1">{formatNumber(member.cost)}원</div>
+          <div className="text-2xl font-bold mb-1">
+            {formatNumber(member.cost)}원
+          </div>
           <div className="text-xl font-bold mb-1">보낼까요?</div>
           <div
             className="text-xs text-gray-500 font-[Nanum_Gothic] text-center underline cursor-pointer mb-4"
@@ -51,8 +58,8 @@ const SlideCard = ({ member, onClose }) => {
           </div>
         </div>
         <div className="relative w-full h-14 bg-gray-200 rounded-full overflow-hidden z-10">
-          <div 
-            className={`absolute top-0 left-0 bottom-0 bg-main transition-all duration-100 rounded-r-full`} 
+          <div
+            className={`absolute top-0 left-0 bottom-0 bg-main transition-all duration-100 rounded-r-full`}
             style={{ width: `${backgroundWidth + 28}px` }}
           />
           <div className="absolute inset-0 flex items-center justify-center font-[Nanum_Gothic] text-gray-300 font-semibold z-20">
@@ -65,7 +72,10 @@ const SlideCard = ({ member, onClose }) => {
             onStop={handleStop}
             onDrag={handleDrag}
           >
-            <div className="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center cursor-pointer border border-gray-300 absolute z-30" style={{ top: '-2px', left: '-1px' }}>
+            <div
+              className="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center cursor-pointer border border-gray-300 absolute z-30"
+              style={{ top: '-2px', left: '-1px' }}
+            >
               <div className="text-main text-lg font-bold">{'>>'}</div>
             </div>
           </Draggable>

@@ -1,15 +1,19 @@
-import React from "react";
-import BackButton from "../../components/common/BackButton";
-import SelectArrow from "../../assets/payment/selectArrow.png";
-import ProfileImg from "../../assets/profile/img11.png";
-import { formatNumber } from '../../utils/format'; 
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import BackButton from '../../components/common/BackButton';
+import SelectArrow from '../../assets/payment/selectArrow.png';
+import ProfileImg from '../../assets/profile/img11.png';
+import { formatNumber } from '../../utils/format';
+import { useNavigate } from 'react-router-dom';
 
-function PaymentPage({ userName="사용자", amount, account="국민은행 8910" }) {
+function PaymentPage({
+  userName = '사용자',
+  amount,
+  account = '국민은행 8910',
+}) {
   const navigate = useNavigate();
 
   const handleSendMoney = () => {
-    console.log("송금");
+    console.log('송금');
   };
 
   return (
