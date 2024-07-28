@@ -44,11 +44,6 @@ public class ShopController {
                 .body(new ShopResponse(shop));
     }
 
-    @GetMapping("/enter")
-    public ResponseEntity<?> userEnterShop(@RequestBody AddShopGuest request) {
-        return ResponseEntity.ok(shopService.userEnterShop(request));
-    }
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteShop(@PathVariable long id) {
         shopService.delete(id);
@@ -73,5 +68,28 @@ public class ShopController {
 
         return ResponseEntity.ok()
                 .body(updateStatusShop);
+    }
+
+    @PostMapping("/enter")
+    public ResponseEntity<?> userEnterShop(@RequestBody AddShopGuest request) {
+        return ResponseEntity.ok(shopService.userEnterShop(request));
+    }
+
+    @DeleteMapping("/exit/{shopSeq}/{userSeq}")
+    public ResponseEntity<?> userExitShop(@PathVariable long shopSeq, @PathVariable long userSeq){
+        shopService.exit(shopSeq,userSeq);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/pickUp/{shopSeq}/{userSeq}")
+    public ResponseEntity<?> userPickUp(@PathVariable long shopSeq, @PathVariable long userSeq) {
+        shopService.pickUp(shopSeq, userSeq);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/pickUpCheck/{shopSeq}")
+    public ResponseEntity<?> pickUpCheck(@PathVariable long shopSeq){
+        boolean check = shopService.pickUpCheck(shopSeq);
+        return ResponseEntity.ok(check);
     }
 }

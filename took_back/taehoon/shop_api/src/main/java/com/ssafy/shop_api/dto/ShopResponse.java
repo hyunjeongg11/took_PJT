@@ -16,6 +16,10 @@ public class ShopResponse {
     private final String site;
     private final String item;
     private final String place;
+    private final double lat;
+    private final double lon;
+    private final int count;
+    private final int maxCount;
     private final Shop.statusType status;
     private final LocalDateTime createAt;
 
@@ -31,5 +35,9 @@ public class ShopResponse {
         this.status = shop.getStatus();
         this.createAt = shop.getCreateAt();
         this.site = shop.getSite();
+        this.lat = shop.getLat();
+        this.lon = shop.getLon();
+        this.count = shop.getCount();
+        this.maxCount = shop.getMaxCount();
     }
 }

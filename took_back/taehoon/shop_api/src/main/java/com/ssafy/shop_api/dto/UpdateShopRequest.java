@@ -17,4 +17,6 @@ public class UpdateShopRequest {
     private String site;
 
     private String place;
+
+    private int maxCount;
 }

@@ -24,14 +24,27 @@ public class AddShopRequest {
 
     private String place;
 
+    private int count = 1;
+
+    private double lat;
+
+    private double lon;
+
+    private int maxCount;
+
     public Shop toEntity() {
         return Shop.builder()
+                .roomSeq(roomSeq)
                 .userSeq(userSeq)
                 .title(title)
                 .content(content)
                 .item(item)
                 .site(site)
                 .place(place)
+                .count(count)
+                .lat(lat)
+                .lon(lon)
+                .maxCount(maxCount)
                 .build();
     }
 }

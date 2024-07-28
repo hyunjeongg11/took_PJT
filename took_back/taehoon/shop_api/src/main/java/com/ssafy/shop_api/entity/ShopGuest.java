@@ -23,7 +23,7 @@ public class ShopGuest {
     @Column(nullable = false)
     private Long shopSeq;
 
-    @Column(nullable = false)
+    @Column
     private boolean pickUp;
 
 }

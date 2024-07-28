@@ -22,8 +22,13 @@ public class ShopService {
     private final ShopGuestRepository shopGuestRepository;
 
     public Shop save(AddShopRequest request) {
-
-        return shopRepository.save(request.toEntity());
+        Shop shop = shopRepository.save(request.toEntity());
+        System.out.println(shop.toString());
+        ShopGuest shopGuest = new ShopGuest();
+        shopGuest.setShopSeq(shop.getShopSeq());
+        shopGuest.setUserSeq(shop.getUserSeq());
+        shopGuestRepository.save(shopGuest);
+        return shop;
     }
 
     public List<Shop> findShopsByIds(List<Long> id) {
@@ -51,7 +56,7 @@ public class ShopService {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
 
-        shop.update(request.getTitle(), request.getContent(), request.getItem(), request.getSite(), request.getPlace());
+        shop.update(request.getTitle(), request.getContent(), request.getItem(), request.getSite(), request.getPlace(), request.getMaxCount());
 
         return shop;
     }
@@ -67,17 +72,46 @@ public class ShopService {
     }
 
     public boolean userEnterShop(AddShopGuest request) {
-        ShopGuest shopGuest = shopGuestRepository.findByShopSeqAndUserSeq(request.getShopSeq(), request.getUserSeq());
+            ShopGuest shopGuest = shopGuestRepository.findByShopSeqAndUserSeq(request.getShopSeq(), request.getUserSeq());
         if (shopGuest == null){
-            Shop shop = shopRepository.findById(request.getShopSeq());
-            shopGuestRepository.save(request.toEntity());
-
-            shop.setCount(shop.getCount() + 1);
-            return true;
+            Shop shop = shopRepository.findById(request.getShopSeq())
+                    .orElseThrow(() -> new IllegalArgumentException("not found : " + request.getShopSeq()));;
+            if (shop.getMaxCount() > shop.getCount()){
+                shop.setCount(shop.getCount() + 1);
+                shopGuestRepository.save(request.toEntity());
+                return true;
+            }
+            else {
+                return false;
+            }
         }
         else{
             return false;
         }
 
+    }
+    public void exit(long shopSeq, long userSeq){
+        shopGuestRepository.deleteByShopSeqAndUserSeq(shopSeq, userSeq);
+        Shop shop = shopRepository.findById(shopSeq)
+                .orElseThrow(() -> new IllegalArgumentException("not found : " + shopSeq));
+        shop.setCount(shop.getCount() - 1);
+        shopRepository.save(shop);
+    }
+
+    public void pickUp(long shopSeq, long userSeq) {
+
+        ShopGuest shopGuest = shopGuestRepository.findByShopSeqAndUserSeq(shopSeq, userSeq);
+        shopGuest.setPickUp(true);
+        shopGuestRepository.save(shopGuest);
+    }
+
+    public boolean pickUpCheck(long shopSeq) {
+        List<ShopGuest> list = shopGuestRepository.findAllByShopSeq(shopSeq);
+        for (ShopGuest shopGuest : list){
+            if (!shopGuest.isPickUp()){
+                return false;
+            }
+        }
+        return true;
     }
 }

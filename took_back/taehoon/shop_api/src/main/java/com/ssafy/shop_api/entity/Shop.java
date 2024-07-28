@@ -42,7 +42,7 @@ public class Shop {
     private double lat;
 
     @Column(nullable = false)
-    private double log;
+    private double lon;
 
     @Column
     private int count;
@@ -62,6 +62,9 @@ public class Shop {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createAt;
+
+    @Column
+    private int maxCount;
 
     @PrePersist
     protected void onCreate() {
@@ -85,12 +88,13 @@ public class Shop {
         this.createAt = createAt;
     }
 
-    public void update(String title, String content, String item, String site, String place) {
+    public void update(String title, String content, String item, String site, String place, int maxCount) {
         this.title = title;
         this.content = content;
         this.item = item;
         this.site = site;
         this.place = place;
+        this.maxCount = maxCount;
     }
 
 }
