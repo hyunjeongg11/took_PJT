@@ -32,6 +32,9 @@ public class AccountEntity {
     @Column(name = "main")
     private Boolean main;
 
+    @Column(name="easyPwd",nullable=true)
+    private String easyPwd;
+
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name="user_seq")

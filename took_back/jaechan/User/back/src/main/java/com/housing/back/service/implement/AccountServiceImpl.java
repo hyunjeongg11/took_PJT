@@ -5,14 +5,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.housing.back.dto.request.account.AccountBalanceRequestDto;
+import com.housing.back.dto.request.account.AccountEasyPwdRequestDto;
 import com.housing.back.dto.request.account.AccountLinkRequestDto;
 import com.housing.back.dto.request.account.AccountListRequestDto;
 import com.housing.back.dto.request.account.ChangeMainRequestDto;
 import com.housing.back.dto.response.ResponseDto;
 import com.housing.back.dto.response.account.AccountBalanceResponseDto;
+import com.housing.back.dto.response.account.AccountEasyPwdResponseDto;
 import com.housing.back.dto.response.account.AccountLinkResponseDto;
 import com.housing.back.dto.response.account.AccountListResponsetDto;
 import com.housing.back.dto.response.account.ChangeMainResponseDto;
+import com.housing.back.dto.response.account.CheckEasyPwdResponseDto;
 import com.housing.back.entity.AccountEntity;
 import com.housing.back.entity.BankEntity;
 import com.housing.back.entity.UserEntity;
@@ -115,7 +118,7 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public ResponseEntity<? super AccountBalanceResponseDto> balance(AccountBalanceRequestDto dto) {
-        
+     
         Long bankSeq = null;
         Long balance = null;
 
@@ -131,5 +134,63 @@ public class AccountServiceImpl implements AccountService{
 
         return AccountBalanceResponseDto.success(balance);
 
+    }
+
+
+    @Transactional
+    @Override
+    public ResponseEntity<String> deleteAccount(Long accountSeq) {
+        
+        try{
+
+            accountRepository.deleteById(accountSeq);
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.ok("DBE!");
+        }
+
+        return ResponseEntity.ok("Done!");
+    }
+
+
+    @Transactional
+    @Override
+    public ResponseEntity<? super AccountEasyPwdResponseDto> updateEasyPwd(AccountEasyPwdRequestDto requestBody) {
+        
+
+
+        try{
+
+            accountRepositoryCustom.updateEasyPwd(requestBody.getAccountSeq(),requestBody.getEasyPwd());
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return AccountEasyPwdResponseDto.success();
+
+    }
+
+
+    @Override
+    public ResponseEntity<? super CheckEasyPwdResponseDto> checkEasyPwd(AccountEasyPwdRequestDto requestBody) {
+        
+
+        boolean result = false;
+
+        try{
+
+            String easyPwd = accountRepositoryCustom.checkEasyPwd(requestBody.getAccountSeq());
+
+            if(easyPwd.equals(requestBody.getEasyPwd())) result = true;
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return CheckEasyPwdResponseDto.success(result);
     }
 }

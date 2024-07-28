@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.housing.back.entity.UserEntity;
 import com.housing.back.provider.JwtProvider;
 import com.housing.back.repository.UserRepository;
-
+import com.housing.back.service.TokenBlacklistService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,15 +34,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
 
+            // 블랙박스 검정
+            String header = request.getHeader("Authorization");
+            if(header==null || !header.startsWith("Bearer")){
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            String token = header.substring(7);
+            if(tokenBlacklistService.isTokenBlacklisted(token)){
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"중복된 토큰입니다.");
+                return;
+            }
+
+
             try{
 
-                String token = parseVearerToken(request);
+                token = parseVearerToken(request);
                 if(token == null){
                     filterChain.doFilter(request, response);
                     return;

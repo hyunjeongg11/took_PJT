@@ -166,11 +166,14 @@ public class AuthServiceImpl implements AuthService {
 
         String accessToken = null;
         String refreshToken = null;
+        Long userSeq = null;
+    
 
         try {
 
             String userId = dto.getUserId();
             UserEntity userEntity = userRepository.findByUserId(userId);
+           
 
             if (userEntity == null)
                 return SignInResponseDto.signInFail();
@@ -187,13 +190,15 @@ public class AuthServiceImpl implements AuthService {
 
             accessToken = jwtProvider.createAccessToken(userId);
             refreshToken = jwtProvider.createRefreshToken(userId);
+            userSeq = userEntity.getUserSeq();
 
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
 
-        return SignInResponseDto.success(accessToken, refreshToken);
+
+        return SignInResponseDto.success(accessToken, refreshToken,userSeq);
     }
 
     @Override

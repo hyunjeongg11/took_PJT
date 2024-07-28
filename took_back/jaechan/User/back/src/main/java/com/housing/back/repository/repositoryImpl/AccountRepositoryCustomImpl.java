@@ -76,4 +76,29 @@ public class AccountRepositoryCustomImpl implements AccountRepositoryCustom {
         return bankSeq;
     }
 
+    @Override
+    public void updateEasyPwd(Long accountSeq, String easyPwd) {
+        
+        QAccountEntity account = QAccountEntity.accountEntity;
+
+        queryFactory.update(account)
+                .set(account.easyPwd,easyPwd)
+                .where(account.accountSeq.eq(accountSeq))
+                .execute();
+    }
+
+    @Override
+    public String checkEasyPwd(Long accountSeq) {
+       
+        String result = null;
+
+        QAccountEntity account = QAccountEntity.accountEntity;
+
+        result = queryFactory.select(account.easyPwd)
+                            .from(account)
+                            .where(account.accountSeq.eq(accountSeq))
+                            .fetchOne();
+        return result;
+    }
+
 }

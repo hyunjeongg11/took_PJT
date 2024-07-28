@@ -18,14 +18,16 @@ public class SignInResponseDto extends ResponseDto{
 
     private String accessToken;
     private String refreshToken;
+    private Long userSeq;
 
-    private SignInResponseDto(String accessToken){
+    private SignInResponseDto(String accessToken,Long userSeq){
         this.accessToken = accessToken;
+        this.userSeq = userSeq;
     }
     
-    public static ResponseEntity<SignInResponseDto> success(String accessToekn,String refreshToken){
+    public static ResponseEntity<SignInResponseDto> success(String accessToekn,String refreshToken,Long userSeq){
 
-        SignInResponseDto responseBody = new SignInResponseDto(accessToekn);
+        SignInResponseDto responseBody = new SignInResponseDto(accessToekn,userSeq);
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                                             .httpOnly(true)
