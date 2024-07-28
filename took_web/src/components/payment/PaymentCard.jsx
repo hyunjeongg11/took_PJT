@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { formatNumber } from '../../utils/format';
+import getProfileImagePath from '../../utils/getProfileImagePath';
 
 const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
   const [totalAmount, setTotalAmount] = useState(payment.totalAmount);
@@ -60,7 +61,7 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <img
                   loading="lazy"
-                  src={`/src/assets/profile/img${user.img_no}.png`}
+                  src={getProfileImagePath(user.img_no)}
                   className="w-6 h-6 animate-shake"
                   alt={user.name}
                 />
@@ -69,22 +70,24 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
               <div className="flex items-center gap-3">
                 <input
                   type="text"
-                  value={payInfo.amount || ''}
+                  value={user.amount || ''}
                   onChange={(e) => handleAmountChange(index, e.target.value)}
                   placeholder=""
                   className="w-full max-w-xs px-2 py-1 border-b-[1px] border-main border-opacity-50 text-right font-semibold"
                   style={{ minWidth: '80px' }}
                 />
                 <img
+                  onClick={() => onDelete(index)}
                   loading="lazy"
                   src="https://cdn.builder.io/api/v1/image/assets/TEMP/f3f9a2394cc2191cd008c8dab3edbceb90b6adf5025fc60fcb23c80910d0f59b?"
-                  className="shrink-0 aspect-[0.82] fill-main w-2 mt-2 opacity-80"
+                  className="shrink-0 aspect-[0.82] fill-orange-400 w-2 mt-2 opacity-80"
+                  alt="icon"
                 />
               </div>
             </div>
           ))}
-        </div>{' '}
-      </div>{' '}
+        </div>
+      </div>
     </div>
   );
 };

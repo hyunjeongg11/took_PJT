@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getUserStyle, getMyStyle } from '../../utils/getCharacterPostion';
 import questionIcon from '../../assets/payment/question.svg';
 import { Link } from 'react-router-dom';
+import getProfileImagePath from '../../utils/getProfileImagePath';
 
 const res_data = [
   { name: '정희수', img_no: 6 },
@@ -75,7 +76,7 @@ const UserListPage = () => {
               style={getUserStyle(index, users.length, imageSize)}
             >
               <img
-                src={`/src/assets/profile/img${user.img_no}.png`}
+                src={getProfileImagePath(user.img_no)}
                 alt={user.name}
                 className={`${user.selected ? 'animate-shake' : 'animate-none'}`}
                 style={{ width: `${imageSize}px`, height: `${imageSize}px` }}

@@ -25,6 +25,10 @@ import {
   PaymentTotalPage,
   PayRequestPage,
   TookHistoryPage,
+  BuyListPage,
+  BuyDetailPage,
+  BuyJoinPage,
+  BuyFormPage,
 } from './pages';
 import PaymentMethods from './pages/oneclick/PaymentMethodsPage';
 import MyTookMoneyPage from './pages/oneclick/MyTookMoneyPage';
@@ -101,6 +105,10 @@ function App() {
     { path: '/delivery/input', element: <DeliveryPayInputPage /> },
     { path: '/delivery/complete', element: <DeliveryCompletePage /> },
     { path: '/delivery/status', element: <DeliveryStatusPage /> },
+    { path: '/groupbuy/list', element: <BuyListPage /> },
+    { path: '/groupbuy/:id', element: <BuyDetailPage /> },
+    { path: '/groupbuy/join/:id', element: <BuyJoinPage /> },
+    { path: '/groupbuy/form', element: <BuyFormPage /> },
   ]);
 
   return <RouterProvider router={ROUTER} />;
