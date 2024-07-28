@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0d9344dd-7013-4654-af00-09697d898595" name="Changes" comment="" />
+    <list default="true" id="0d9344dd-7013-4654-af00-09697d898595" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../../../backend/src/main/java/com/took/noti_api/controller/NotificationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../backend/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/../../../backend/.gradle/file-system.probe" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -67,7 +70,7 @@
     "Spring Boot.SseTestApplication.executor": "Run",
     "git-widget-placeholder": "dev-be",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/SSAFY/workspace/2학기/S11P12E205/took_back/taehoon/SSETest",
+    "last_opened_file_path": "C:/SSAFY/workspace/2학기/S11P12E205/backend",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -126,7 +129,8 @@
       <workItem from="1721284106180" duration="3000" />
       <workItem from="1721284184097" duration="674000" />
       <workItem from="1721285699591" duration="71000" />
-      <workItem from="1722174903261" duration="1628000" />
+      <workItem from="1722174903261" duration="2784000" />
+      <workItem from="1722178511405" duration="466000" />
     </task>
     <servers />
   </component>
