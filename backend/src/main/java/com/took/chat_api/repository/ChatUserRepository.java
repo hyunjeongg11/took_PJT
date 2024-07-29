@@ -3,6 +3,7 @@ package com.took.chat_api.repository;
 
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.entity.ChatUser;
+import com.took.user_api.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +15,5 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
     List<ChatUser> findByChatRoom(ChatRoom chatRoom);
 
     // 특정 사용자가 특정 채팅방에 있는지 확인하는 메서드
-    ChatUser findByUserSeqAndChatRoom(Long userId, ChatRoom chatRoom);
+    ChatUser findByUserAndChatRoom(UserEntity user, ChatRoom chatRoom);
 }

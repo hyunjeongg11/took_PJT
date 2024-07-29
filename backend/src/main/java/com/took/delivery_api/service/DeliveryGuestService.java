@@ -75,14 +75,17 @@ public class DeliveryGuestService {
     @Transactional
     public boolean isJoin(DeliveryGuestIsJoinRequest request) {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
-        DeliveryGuest deliveryGuest = deliveryGuestRepository.findByDeliveryAndUserSeq(delivery, request.getUserSeq());
+        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        DeliveryGuest deliveryGuest = deliveryGuestRepository.findByDeliveryAndUser(delivery,user);
         return deliveryGuest != null;
     }
     
     // 참가중인 방 목록
     @Transactional
     public List<DeliverySelectResponse> getJoinList(Long userSeq) {
-        List<DeliveryGuest> deliveryGuests = deliveryGuestRepository.findAllByUserSeq(userSeq);
+        UserEntity user = userRepository.findByUserSeq(userSeq);
+
+        List<DeliveryGuest> deliveryGuests = deliveryGuestRepository.findAllByUser(user);
 
         // deliveryGuests의 delivery에서 deliverySeq만 뽑아서 리스트로 만들기
         List<Long> deliverySeqs = deliveryGuests.stream()

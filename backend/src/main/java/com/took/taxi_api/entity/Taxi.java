@@ -2,6 +2,7 @@ package com.took.taxi_api.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.took.chat_api.entity.ChatRoom;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,12 +27,14 @@ public class Taxi {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long taxiSeq;  // 택시 번호
 
-    @Column(nullable = false)
-    private Long roomSeq;  // 채팅방 참조 번호
+    @JsonBackReference
+    @OneToOne
+    @JoinColumn(name = "room_seq", nullable = false)
+    private ChatRoom chatRoom;  // 채팅방 참조 번호
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "userSeq", nullable = false)
+    @JoinColumn(name = "user_seq", nullable = false)
     private UserEntity user;  // 사용자 참조
 
     @Column

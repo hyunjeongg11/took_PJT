@@ -1,5 +1,7 @@
 package com.took.taxi_api.service;
 
+import com.took.chat_api.entity.ChatRoom;
+import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.taxi_api.dto.*;
 import com.took.taxi_api.entity.Taxi;
 import com.took.taxi_api.entity.TaxiGuest;
@@ -24,6 +26,7 @@ public class TaxiService {
     private final TaxiRepository taxiRepository;  // TaxiRepository를 통해 데이터베이스 작업을 처리합니다.
     private final TaxiGuestRepository taxiGuestRepository;
     private final UserRepository userRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     /**
      * 새로운 Taxi 엔티티를 생성하고 데이터베이스에 저장합니다.
@@ -32,6 +35,7 @@ public class TaxiService {
     @Transactional
     public TaxiSelectResponse createTaxi(TaxiCreateRequest request) {
         UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        ChatRoom chatRoom = chatRoomRepository.findById(request.getRoomSeq()).orElseThrow();
         // Taxi 엔티티를 빌더 패턴을 사용하여 생성합니다.
         Taxi taxi = Taxi.builder()
                 .gender(request.isGender())  // 성별 여부 설정
@@ -41,7 +45,7 @@ public class TaxiService {
                 .createdAt(LocalDateTime.now())  // 생성 일시를 현재 시간으로 설정
                 .finishTime(LocalDateTime.now().plusHours(1))  // 종료 일시에 현재 시간에서 1시간을 더한 값으로 설정
                 .master(request.getUserSeq())  // 결제자 설정
-                .roomSeq(request.getRoomSeq())  // 채팅방 참조 설정
+                .chatRoom(chatRoom)  // 채팅방 참조 설정
                 .user(user)  // 작성자 설정
                 .build();
         // 생성된 Taxi 엔티티를 데이터베이스에 저장합니다.
@@ -56,7 +60,8 @@ public class TaxiService {
      */
     @Transactional
     public List<TaxiSelectResponse> listTaxi(TaxiListSelectRequest request) {
-        List<Taxi> taxis = taxiRepository.findTaxisByUserSeqs(request.getUserSeqs());
+        List<UserEntity> users = userRepository.findByUserSeqIn(request.getUserSeqs());
+        List<Taxi> taxis = taxiRepository.findTaxisByUsers(users);
         return taxis.stream()
                 .map(TaxiSelectResponse::new)
                 .collect(Collectors.toList());
@@ -126,9 +131,9 @@ public class TaxiService {
     }
 
     @Transactional
-    /**
-     * 택시의 예상or실제 비용을 설정합니다.
-     * @param request TaxiSetCostRequest 객체로, 택시 비용 설정에 필요한 정보를 담고 있습니다.
+    /*
+      택시의 예상or실제 비용을 설정합니다.
+      @param request TaxiSetCostRequest 객체로, 택시 비용 설정에 필요한 정보를 담고 있습니다.
      */
     public void setCost(TaxiSetCostRequest request) {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
@@ -175,7 +180,8 @@ public class TaxiService {
     // 참가중인 택시방
     @Transactional
     public TaxiSelectResponse getJoinedTaxi(Long userSeq) {
-        TaxiGuest guest = taxiGuestRepository.findByUserSeq(userSeq);
+        UserEntity user = userRepository.findByUserSeq(userSeq);
+        TaxiGuest guest = taxiGuestRepository.findByUser(user);
         Taxi taxi = taxiRepository.findByTaxiSeq(guest.getTaxi().getTaxiSeq());
         return new TaxiSelectResponse(taxi);
     }

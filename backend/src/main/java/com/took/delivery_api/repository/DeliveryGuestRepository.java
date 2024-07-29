@@ -3,6 +3,7 @@ package com.took.delivery_api.repository;
 
 import com.took.delivery_api.entity.Delivery;
 import com.took.delivery_api.entity.DeliveryGuest;
+import com.took.user_api.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +15,7 @@ public interface DeliveryGuestRepository extends JpaRepository<DeliveryGuest, Lo
 
     DeliveryGuest findByDeliveryGuestSeq(Long deliveryGuestSeq);
 
-    DeliveryGuest findByDeliveryAndUserSeq(Delivery delivery, Long userSeq);
+    DeliveryGuest findByDeliveryAndUser(Delivery delivery, UserEntity user);
 
-    List<DeliveryGuest> findAllByUserSeq(Long userSeq);
+    List<DeliveryGuest> findAllByUser(UserEntity user);
 }

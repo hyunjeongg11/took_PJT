@@ -1,6 +1,7 @@
 package com.took.delivery_api.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.took.chat_api.entity.ChatRoom;
 import com.took.delivery_api.dto.DeliveryModifyRequest;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
@@ -35,8 +36,10 @@ public class Delivery {
     private UserEntity user;
 
     // 채팅방 번호
-    @Column(nullable = false)
-    private Long roomSeq;
+    @JsonBackReference
+    @OneToOne
+    @JoinColumn(name = "room_seq", nullable = false)
+    private ChatRoom chatRoom;
 
     // 정산 번호
     @Column

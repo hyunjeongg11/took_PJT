@@ -33,10 +33,11 @@ public class ChatUserService {
      */
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
     public boolean checkChatUser(ChatUserCreateRequest chatUserCreateRequest) {
+        UserEntity user = userRepository.findById(chatUserCreateRequest.getUserSeq()).orElseThrow();
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(chatUserCreateRequest.getRoomSeq()).orElseThrow();
         // 해당 유저의 채팅방 소속 여부를 확인
-        ChatUser checkedChatUser = chatUserRepository.findByUserSeqAndChatRoom(chatUserCreateRequest.getUserSeq(), chatRoom);
+        ChatUser checkedChatUser = chatUserRepository.findByUserAndChatRoom(user, chatRoom);
         // 유저가 존재하지 않으면 true 반환
         return checkedChatUser == null;
     }
@@ -68,10 +69,11 @@ public class ChatUserService {
      */
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
     public void leaveChatRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
+        UserEntity user = userRepository.findById(chatUserDeleteRequest.getUserSeq()).orElseThrow();
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(chatUserDeleteRequest.getRoomSeq()).orElseThrow();
         // 채팅 유저 객체를 사용자 ID와 채팅방으로 조회
-        ChatUser chatUser = chatUserRepository.findByUserSeqAndChatRoom(chatUserDeleteRequest.getUserSeq(), chatRoom);
+        ChatUser chatUser = chatUserRepository.findByUserAndChatRoom(user, chatRoom);
         // 조회된 채팅 유저 객체가 존재할 경우 삭제
         if (chatUser != null) {
             chatUserRepository.delete(chatUser);
@@ -84,10 +86,11 @@ public class ChatUserService {
      * @param chatUserDeleteRequest 유저의 방 퇴장 요청 정보를 담은 객체
      */
     public void kickUserFromRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
+        UserEntity user = userRepository.findById(chatUserDeleteRequest.getUserSeq()).orElseThrow();
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(chatUserDeleteRequest.getRoomSeq()).orElseThrow();
         // 채팅 유저 객체를 사용자 ID와 채팅방으로 조회
-        ChatUser chatUser = chatUserRepository.findByUserSeqAndChatRoom(chatUserDeleteRequest.getUserSeq(), chatRoom);
+        ChatUser chatUser = chatUserRepository.findByUserAndChatRoom(user, chatRoom);
         // 조회된 채팅 유저 객체가 존재할 경우 삭제
         if (chatUser != null) {
             chatUserRepository.delete(chatUser);

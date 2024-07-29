@@ -50,7 +50,8 @@ public class TaxiGuestService {
     @Transactional
     public void deleteGuest(GuestDeleteRequest request) {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
-        TaxiGuest guest = taxiGuestRepository.findByUserSeqAndTaxi(request.getUserSeq(), taxi);
+        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        TaxiGuest guest = taxiGuestRepository.findByUserAndTaxi(user, taxi);
         taxiGuestRepository.delete(guest);
 
         taxi.updateCount(-1);
@@ -100,7 +101,8 @@ public class TaxiGuestService {
      */
     @Transactional
     public GuestSelectResponse getGuest(Long userSeq) {
-        TaxiGuest guest = taxiGuestRepository.findByUserSeq(userSeq);
+        UserEntity user = userRepository.findByUserSeq(userSeq);
+        TaxiGuest guest = taxiGuestRepository.findByUser(user);
         return new GuestSelectResponse(guest);
     }
 
@@ -111,7 +113,8 @@ public class TaxiGuestService {
      */
     @Transactional
     public boolean isJoined(Long userSeq) {
-        return taxiGuestRepository.existsByUserSeq(userSeq);
+        UserEntity user = userRepository.findByUserSeq(userSeq);
+        return taxiGuestRepository.existsByUser(user);
     }
 
     /**

@@ -2,8 +2,10 @@ package com.took.chat_api.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.chat_api.entity.ChatMessage;
+import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.entity.QChatMessage;
 import com.took.chat_api.entity.QChatUser;
+import com.took.user_api.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 
 
@@ -17,12 +19,12 @@ public class ChatMessageRepositoryCustomImpl implements ChatMessageRepositoryCus
     /**
      * 주어진 방 번호와 유저 ID를 기반으로 해당 유저의 방 참가 시간 이후에 생성된 모든 메시지를 조회합니다.
      *
-     * @param roomSeq 조회할 채팅방의 고유 번호
-     * @param userSeq 조회할 유저의 번호
+     * @param chatRoom 조회할 채팅방의 고유 번호
+     * @param user 조회할 유저의 번호
      * @return 해당 유저의 방 참가 시간 이후에 생성된 메시지 리스트
      */
     @Override
-    public List<ChatMessage> findMessagesByRoomSeqAndUserJoinTime(Long roomSeq, Long userSeq) {
+    public List<ChatMessage> findMessagesByRoomSeqAndUserJoinTime(ChatRoom chatRoom, UserEntity user) {
         QChatMessage chatMessage = QChatMessage.chatMessage;  // QueryDSL을 사용한 ChatMessage 엔티티의 메타데이터
         QChatUser chatUser = QChatUser.chatUser;  // QueryDSL을 사용한 ChatUser 엔티티의 메타데이터
 
@@ -30,9 +32,9 @@ public class ChatMessageRepositoryCustomImpl implements ChatMessageRepositoryCus
         return queryFactory.selectFrom(chatMessage)
                 // ChatUser 엔티티와 조인
                 .join(chatUser).on(chatMessage.chatRoom.roomSeq.eq(chatUser.chatRoom.roomSeq)
-                        .and(chatUser.user.userSeq.eq(userSeq)))
+                        .and(chatUser.user.userSeq.eq(user.getUserSeq())))
                 // 채팅방 번호가 일치하고, 메시지 생성 시간이 유저의 방 참가 시간 이후인 경우 필터링
-                .where(chatMessage.chatRoom.roomSeq.eq(roomSeq)
+                .where(chatMessage.chatRoom.roomSeq.eq(chatRoom.getRoomSeq())
                         .and(chatMessage.createdAt.after(chatUser.joinTime)))
                 // 결과를 리스트로 반환
                 .fetch();

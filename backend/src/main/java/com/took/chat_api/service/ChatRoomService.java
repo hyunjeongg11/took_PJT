@@ -70,7 +70,9 @@ public class ChatRoomService {
      */
     @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
     public List<ChatRoomFilterResponse> findRoomsByCategoryAndUsers(ChatRoomFilterRequest chatRoomFilterRequest) {
-        List<ChatRoom> chatRooms = chatRoomRepository.findByCategoryAndUserSeqIn(chatRoomFilterRequest.getCategory(), chatRoomFilterRequest.getUserSeqs());
+        List<UserEntity> users = userRepository.findByUserSeqIn(chatRoomFilterRequest.getUserSeqs());
+
+        List<ChatRoom> chatRooms = chatRoomRepository.findByCategoryAndUserSeqIn(chatRoomFilterRequest.getCategory(), users);
         return chatRooms.stream()
                 .map(ChatRoomFilterResponse::new)
                 .collect(Collectors.toList());
