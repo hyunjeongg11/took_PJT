@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:14 AS build
 
 # 애플리케이션 디렉토리 생성
 WORKDIR /app
@@ -13,5 +13,8 @@ COPY . .
 # 애플리케이션 빌드
 RUN npm run build
 
-# 애플리케이션 실행
-CMD ["npx", "react-scripts", "start"]
+# Nginx 설정
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
