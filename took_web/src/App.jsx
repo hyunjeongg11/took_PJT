@@ -43,6 +43,7 @@ import DeliveryListPage from './pages/delivery/DeliveryListPage';
 import DeliveryPayInputPage from './pages/delivery/DeliveryPayInputPage';
 import DeliveryCompletePage from './pages/delivery/DeliveryCompletePage';
 import DeliveryStatusPage from './pages/delivery/DeliveryStatusPage';
+import TaxiCostInputPage from './pages/taxi/TaxiCostInputPage';
 
 function App() {
   const [checkedItems, setCheckedItems] = useState({
@@ -110,6 +111,7 @@ function App() {
     { path: '/groupbuy/:id', element: <BuyDetailPage /> },
     { path: '/groupbuy/join/:id', element: <BuyJoinPage /> },
     { path: '/groupbuy/form', element: <BuyFormPage /> },
+    { path: '/taxi/input', element: <TaxiCostInputPage /> },
   ]);
 
   return <RouterProvider router={ROUTER} />;
