@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { MdBackspace } from "react-icons/md";
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import BackButton from "../../components/common/BackButton";
-import formatNumber from '../../utils/format'; // formatNumber 함수를 불러옵니다.
+import { formatNumber } from '../../utils/format'; // formatNumber 함수를 불러옵니다.
 
 function SendInputPage() {
   const [input, setInput] = useState("");
