@@ -8,21 +8,27 @@ import changeOrderIcon from '../../assets/taxi/changeOrder.png';
 const tempData = [
   {
     userName: '차민주',
+    userId: 1,
     userProfileIcon: userProfileIcon2,
+    gender: '여성',
     userDestination: '부산 강서구 녹산산단335로 7 송정삼정그린코아더시티',
-    estimatedCost: 13800,
+    expectedCost: 13800,
   },
   {
     userName: '조현정',
+    userId: 2,
     userProfileIcon: userProfileIcon1,
+    gender: '여성',
     userDestination: '부산 강서구 명지국제5로 170-5 명일초등학교',
-    estimatedCost: 11500,
+    expectedCost: 11500,
   },
 ];
 
 const tempUser = {
+  userName: '차민주',
+  userId: 1,
   gender: '여성',
-}; 
+};
 
 function TaxiChattingSettingPage() {
   const [destinations, setDestinations] = useState(tempData);
@@ -175,29 +181,12 @@ function TaxiChattingSettingPage() {
         </div>
       </div>
 
-      <CheckExpectedCost isOpen={isPopupOpen} onClose={closePopup}>
-        <div className="text-center mb-4">
-          <div className="text-lg font-bold">총 {userCount}명</div>
-          <div className="text-lg font-bold">32,600원</div>
-        </div>
-        <div className="mb-4">
-          {destinations.map((item, index) => (
-            <div key={index} className="flex items-center mb-2">
-              <img
-                src={item.userProfileIcon}
-                alt={`${item.userName} 프로필 사진`}
-                className="w-8 h-8 rounded-full mr-2"
-              />
-              <div className="flex-grow">
-                <div className="text-sm font-bold">{item.userName}</div>
-                <div className="text-sm">
-                  예상금액 {item.estimatedCost.toLocaleString()}원
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </CheckExpectedCost>
+      <CheckExpectedCost
+        isOpen={isPopupOpen}
+        onClose={closePopup}
+        destinations={destinations}
+        tempUser={tempUser}
+      />
     </div>
   );
 }
