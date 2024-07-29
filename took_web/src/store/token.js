@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 
 export const useToken = create((set) => ({
-    jwt: '',
-    setToken: (token) => set(() => ({ jwt: token})),
+  accessToken: '',
+  refreshToken: '',
+  setAccessToken: (token) => set(() => ({ accessToken: token })),
+  setRefreshToken: (token) => set(() => ({ refreshToken: token })),
 }));

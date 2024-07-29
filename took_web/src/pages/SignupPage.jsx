@@ -3,9 +3,16 @@ import BackButton from '../components/common/BackButton';
 import { isValidEmail, isValidPassword } from '../utils/validation';
 import InputButton from '../components/signup/InputButton';
 import GenderInput from '../components/signup/GenderInput';
-import { formatPhoneNumber, removeHyphens } from '../utils/formatPhoneNumber';
+import { formatPhoneNumber, removeHyphens } from '../utils/format';
+import {
+  signUpApi,
+  validIdApi,
+  emailCertificateApi,
+  checkEmailCodeApi,
+} from '../apis/user';
 function SignupPage() {
   const [id, setId] = useState('');
+  const [isIdValid, setIsIdValid] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
@@ -13,6 +20,7 @@ function SignupPage() {
   const [gender, setGender] = useState('남');
   const [birth, setBirth] = useState('');
   const [email, setEmail] = useState('');
+  const [isEmailValid, setIsEmailValid] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState(null);
@@ -20,8 +28,76 @@ function SignupPage() {
   const [nameError, setNameError] = useState('');
   const [birthError, setBirthError] = useState('');
   const [phoneNumberError, setPhoneNumberError] = useState('');
+  const [certificationNumber, setCertificationNumber] = useState('');
+  const [certificationError, setCertificationError] = useState('');
+  const [isCertificated, setIsCertificated] = useState(false);
 
-  const handleSignupClick = (e) => {
+  const checkEmailNumber = async () => {
+    if (certificationNumber === '') {
+      setCertificationError('인증번호를 입력하세요.');
+      return;
+    }
+    try {
+      const result = await checkEmailCodeApi({
+        userId: id,
+        email,
+        certificationNumber,
+      });
+      console.log(result);
+      if (result.code == 'su') {
+        setIsCertificated(true);
+        setCertificationError('');
+      } else {
+        setCertificationError('인증번호가 틀렸습니다.');
+        setIsCertificated(false);
+      }
+    } catch (error) {
+      setIdError('아이디 중복 검사 중 오류가 발생했습니다.');
+      setIsIdValid(false);
+    }
+  };
+
+  const handleCheckEmail = async () => {
+    if (email === '') {
+      setEmailError('이메일을 입력해주세요.');
+      return;
+    } else if (!isValidEmail(email)) {
+      setEmailError('유효한 이메일 주소를 입력하세요.');
+      return;
+    }
+
+    try {
+      const result = await emailCertificateApi({ userId: id, email });
+      console.log(result);
+      alert('이메일이 전송되었습니다');
+    } catch (error) {
+      setEmailError('이메일 인증 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleValidateId = async () => {
+    if (id === '') {
+      setIdError('아이디를 입력해주세요.');
+      setIsIdValid(false);
+    } else {
+      try {
+        const result = await validIdApi({ id });
+        alert(result.code);
+        if (result.code == 'su') {
+          setIdError('');
+          setIsIdValid(true);
+        } else {
+          setIdError('이미 사용 중인 아이디입니다.');
+          setIsIdValid(false);
+        }
+      } catch (error) {
+        setIdError('아이디 중복 검사 중 오류가 발생했습니다.');
+        setIsIdValid(false);
+      }
+    }
+  };
+
+  const handleSignupClick = async (e) => {
     e.preventDefault();
     let valid = true;
 
@@ -51,11 +127,11 @@ function SignupPage() {
       setConfirmPasswordError('');
     }
 
-    if (id === '') {
-      setIdError('아이디를 입력해주세요.');
-      valid = false;
-    } else {
+    if (isIdValid) {
       setIdError('');
+    } else {
+      setIdError('아이디 중복확인이 필요합니다');
+      valid = false;
     }
 
     if (name === '') {
@@ -83,14 +159,21 @@ function SignupPage() {
     }
 
     if (valid) {
-      console.log('아이디:', id);
-      console.log('비밀번호:', password);
-      console.log('비밀번호 확인:', confirmPassword);
-      console.log('이름:', name);
-      console.log('성별:', gender);
-      console.log('이메일:', email);
-      console.log('생년월일:', birth);
-      console.log('휴대폰 번호:', removeHyphens(phoneNumber));
+      try {
+        const res = await signUpApi({
+          userId: id,
+          password,
+          userName: name,
+          email,
+          gender: gender === '남' ? 'T' : 'F',
+          certificationNumber,
+          phoneNumber: removeHyphens(phoneNumber),
+          birth,
+        });
+        console.log(res);
+      } catch (error) {
+        alert('회원가입 중 오류가 발생했습니다.');
+      }
     }
   };
   return (
@@ -120,15 +203,26 @@ function SignupPage() {
             label="아이디"
             type="text"
             value={id}
-            onChange={(e) => setId(e.target.value)}
+            onChange={(e) => {
+              setId(e.target.value);
+              setIsIdValid(false);
+            }}
             placeholder="아이디를 입력해주세요"
             styleClass="flex-grow"
             error={idError}
           />
-
-          <div className="justify-center ml-1 self-end p-2 text-xs font-bold tracking-normal leading-3 text-center whitespace-nowrap rounded bg-neutral-600 text-zinc-100">
-            중복확인
-          </div>
+          {isIdValid ? (
+            <div className="justify-center ml-1 self-end p-2 text-xs font-bold tracking-normal leading-3 text-center whitespace-nowrap rounded bg-neutral-600 text-zinc-100">
+              인증완료
+            </div>
+          ) : (
+            <div
+              onClick={handleValidateId}
+              className="justify-center ml-1 self-end p-2 text-xs font-bold tracking-normal leading-3 text-center whitespace-nowrap rounded bg-neutral-600 text-zinc-100"
+            >
+              중복확인
+            </div>
+          )}
         </div>
 
         <InputButton
@@ -149,14 +243,13 @@ function SignupPage() {
           placeholder="비밀번호를 한 번 더 입력해주세요"
           error={confirmPasswordError}
         />
-
         <InputButton
-          label="이메일"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="예: took@took.com"
-          error={emailError}
+          label="휴대폰 번호"
+          type="text"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
+          placeholder="숫자만 입력해주세요"
+          error={phoneNumberError}
         />
 
         <InputButton
@@ -170,20 +263,50 @@ function SignupPage() {
 
         <div className="flex ">
           <InputButton
-            label="휴대폰 번호"
-            type="text"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
-            placeholder="숫자만 입력해주세요"
+            label="이메일"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="예: took@took.com"
             styleClass="flex-grow"
-            error={phoneNumberError}
+            error={emailError}
           />
-
-          <div className="justify-center ml-1 self-end p-2 text-xs font-bold tracking-normal leading-3 text-center whitespace-nowrap rounded bg-neutral-600 text-zinc-100">
-            인증하기
-          </div>
+          {isEmailValid ? (
+            <div className="justify-center ml-1 self-end p-2 text-xs font-bold tracking-normal leading-3 text-center whitespace-nowrap rounded bg-neutral-600 text-zinc-100">
+              전송완료
+            </div>
+          ) : (
+            <div
+              onClick={handleCheckEmail}
+              className="justify-center ml-1 self-end p-2 text-xs font-bold tracking-normal leading-3 text-center whitespace-nowrap rounded bg-neutral-600 text-zinc-100"
+            >
+              인증요청
+            </div>
+          )}
         </div>
-
+        <div className="flex">
+          <InputButton
+            label="이메일 인증 번호"
+            type="number"
+            value={certificationNumber}
+            onChange={(e) => setCertificationNumber(e.target.value)}
+            placeholder="418908"
+            styleClass="flex-grow"
+            error={certificationError}
+          />
+          {isCertificated ? (
+            <div className="justify-center ml-1 self-end p-2 text-xs font-bold tracking-normal leading-3 text-center whitespace-nowrap rounded bg-neutral-600 text-zinc-100">
+              인증완료
+            </div>
+          ) : (
+            <div
+              onClick={checkEmailNumber}
+              className="justify-center ml-1 self-end p-2 text-xs font-bold tracking-normal leading-3 text-center whitespace-nowrap rounded bg-neutral-600 text-zinc-100"
+            >
+              인증하기
+            </div>
+          )}
+        </div>
         <button
           className="w-full mb-6 bg-main text-white font-bold text-lg py-3 mt-8 px-4 rounded-2xl shadow-md focus:outline-none focus:shadow-outline"
           type="submit"
