@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/shops")
+@RequestMapping("/api/shops")
 public class ShopController {
 
     private final ShopService shopService;

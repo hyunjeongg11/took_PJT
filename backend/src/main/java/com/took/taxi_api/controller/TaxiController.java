@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/taxi")
-public class TaxiController {
+public class    TaxiController {
 
     private final TaxiService taxiService;  // 택시 서비스
     private final TaxiGuestService taxiGuestService;  // 택시 게스트 서비스

@@ -2,7 +2,10 @@ package com.took.user_api.repository.repositoryImpl;
 
 
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.took.config.QuerydslConfiguration;
+import com.took.user_api.dto.LocationDto;
 import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
 import com.took.user_api.entity.QUserEntity;
 import com.took.user_api.entity.UserEntity;
@@ -10,12 +13,15 @@ import com.took.user_api.repository.custom.UserCustomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Repository
 @RequiredArgsConstructor
 public class UserCustomRespositoryImpl implements UserCustomRepository {
 
-    private final JPAQueryFactory jpaQueryFactory;
+    private final JPAQueryFactory queryFactory;
+    private final QuerydslConfiguration querydslConfiguration;
 
     @Override
     public void kakaoChange(KakaoChangeRequestDto dto) {
@@ -28,7 +34,7 @@ public class UserCustomRespositoryImpl implements UserCustomRepository {
         String phoneNumber = dto.getPhoneNumber();
         String userId = dto.getUserId();
 
-        jpaQueryFactory.update(userEntity)
+        queryFactory.update(userEntity)
         .where(userEntity.userSeq.eq(Long.valueOf(userSeq)))
         .set(userEntity.userId, userId)
         .set(userEntity.userName,userName)
@@ -38,9 +44,20 @@ public class UserCustomRespositoryImpl implements UserCustomRepository {
         .execute();
     }
 
-    
+    @Override
+    public List<Tuple> getAllLocation() {
 
-    
+        QUserEntity user = QUserEntity.userEntity;
 
-    
+        List<Tuple> result = null;
+
+        result= queryFactory.select(user.lat, user.lng,user.userSeq)
+                .from(user)
+                .fetch();
+
+        return result;
+
+    }
+
+
 }

@@ -166,6 +166,11 @@ public class UserEntity {
         this.imageNo = (int)Math.random()*20+1;
     }
 
+    public UserEntity(Double lat,Double lng){
+        this.lat = lat;
+        this.lng = lng;
+    }
+
     public enum LoginStatus {
         KAKAO, TOOK
     }

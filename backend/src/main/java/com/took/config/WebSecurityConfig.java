@@ -49,16 +49,24 @@ public class WebSecurityConfig {
                                 // 일단 세션 안쓰게끔
                                 .authorizeHttpRequests(request -> request
 
-                                                .requestMatchers("/", "/api/v1/auth/**","/oauth2/**").permitAll()
+//                                                로그인 전에 이뤄지는 작업은 인증이 푤요하지 않다.
+                                                .requestMatchers("/", "/api/auth/**","/oauth2/**").permitAll()
+
                                                 // 접두사는 제외 하고 USER만 적어준다.w
-                                                .requestMatchers("/api/v1/user/**").hasRole("USER")
-                                                // api/v1/user/로의 접근은 USER인 것만 가능하다.
-                                                .requestMatchers("/api/v1/account/**").hasRole("USER")
-                                                // 접근 권한이 User인 사람들 접근 가능하게!
-                                                .requestMatchers("/api/v1/pay/**").hasRole("USER")
-                                                // 접근 권한이 USER인 사람들이 pay에 접근가능하게
-                                                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                                                // 나머지 모든 request에 대해서는 인증을 하겠다.
+                                                .requestMatchers("/api/user/**").hasRole("USER")
+                                                .requestMatchers("/api/account/**").hasRole("USER")
+                                                .requestMatchers("/api/pay/**").hasRole("USER")
+                                                .requestMatchers("/api/chat/**").hasRole("USER")
+                                                .requestMatchers("/api/delivery/**").hasRole("USER")
+                                                .requestMatchers("/api/noti/**").hasRole("USER")
+                                                .requestMatchers("/api/position/**").hasRole("USER")
+                                                .requestMatchers("/api/purchase/**").hasRole("USER")
+                                                .requestMatchers("/api/ship/**").hasRole("USER")
+                                                .requestMatchers("/api/shops/**").hasRole("USER")
+                                                .requestMatchers("/api/sms/**").hasRole("USER")
+                                                .requestMatchers("/api/navi/**").hasRole("USER")
+                                                .requestMatchers("/api/taxi/**").hasRole("USER")
+                                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                                                 .anyRequest().authenticated()
                                 ).oauth2Login(oauth2 -> oauth2

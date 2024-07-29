@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/ship")
+@RequestMapping("/api/ship")
 public class ShipInfoController {
 
     private final ShipService shipService;

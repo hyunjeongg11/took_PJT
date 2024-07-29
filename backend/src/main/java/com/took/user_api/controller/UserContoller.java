@@ -1,8 +1,10 @@
 package com.took.user_api.controller;
 
 
+import com.took.user_api.dto.LocationDto;
 import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
 import com.took.user_api.dto.request.user.UserInfoRequestDto;
+import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
 import com.took.user_api.dto.response.user.KakaoChangeResponseDto;
 import com.took.user_api.dto.response.user.UserInfoResponseDto;
 import com.took.user_api.service.UserService;
@@ -16,10 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-
-
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserContoller {
 
@@ -71,6 +71,16 @@ public class UserContoller {
         //TODO: process POST request
         
         return entity;
+    }
+
+    @PostMapping("/delivery-near-user")
+    public ResponseEntity<? super DeliNearUserResponseDto> deliveryNearUser
+            (@RequestBody LocationDto requestBody) {
+
+        ResponseEntity<? super DeliNearUserResponseDto> nearList = userService.searchNearUser(requestBody);
+
+        return nearList;
+
     }
     
     
