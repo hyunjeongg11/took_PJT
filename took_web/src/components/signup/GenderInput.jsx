@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 function GenderInput({ gender, setGender }) {
   return (
@@ -9,15 +9,15 @@ function GenderInput({ gender, setGender }) {
           <input
             type="radio"
             value="남"
-            checked={gender === "남"}
-            onChange={() => setGender("남")}
+            checked={gender === '남'}
+            onChange={() => setGender('남')}
             className="hidden"
           />
           <div
             className={`cursor-pointer flex items-center justify-center w-20 h-7 text-xs font-bold leading-5 text-center rounded-lg ${
-              gender === "남"
-                ? "bg-main text-white"
-                : "bg-gray-200 text-neutral-600"
+              gender === '남'
+                ? 'bg-main text-white'
+                : 'bg-gray-200 text-neutral-600'
             }`}
           >
             남
@@ -27,15 +27,15 @@ function GenderInput({ gender, setGender }) {
           <input
             type="radio"
             value="여"
-            checked={gender === "여"}
-            onChange={() => setGender("여")}
+            checked={gender === '여'}
+            onChange={() => setGender('여')}
             className="hidden"
           />
           <div
             className={`cursor-pointer flex items-center justify-center w-20 h-7 text-xs font-bold leading-5 text-center rounded-lg ${
-              gender === "여"
-                ? "bg-main text-white"
-                : "bg-gray-200 text-neutral-600"
+              gender === '여'
+                ? 'bg-main text-white'
+                : 'bg-gray-200 text-neutral-600'
             }`}
           >
             여

@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import kakaoImage from "../assets/login/kakao.svg";
-import googleImage from "../assets/login/google.png";
-import BackButton from "../components/common/BackButton.jsx";
-import Button from "../components/login/Button.jsx";
+import React, { useState } from 'react';
+import kakaoImage from '../assets/login/kakao.svg';
+import googleImage from '../assets/login/google.png';
+import BackButton from '../components/common/BackButton.jsx';
+import Button from '../components/login/Button.jsx';
 
 function LoginPage() {
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleLoginClick = e => {
+  const handleLoginClick = (e) => {
     e.preventDefault();
-    console.log("id:", userName);
-    console.log("pwd:", password);
+    console.log('id:', userName);
+    console.log('pwd:', password);
     // TODO: 로그인 API 호출
   };
   return (
@@ -25,7 +25,7 @@ function LoginPage() {
               className="appearance-none block w-full  placeholder-main text-main placeholder:text-opacity-50 text-base placeholder:text-sm border-b-2 border-opacity-60 border-main pt-2 pb-1 px-1 my-4 leading-tight focus:outline-none focus:bg-white focus:border-main"
               type="text"
               value={userName}
-              onChange={e => setUserName(e.target.value)}
+              onChange={(e) => setUserName(e.target.value)}
               placeholder="아이디"
             />
             <input
@@ -33,7 +33,7 @@ function LoginPage() {
               type="password"
               placeholder="비밀번호"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 

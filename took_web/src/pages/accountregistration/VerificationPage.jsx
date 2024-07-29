@@ -1,26 +1,26 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import BackButton from "../../components/common/BackButton";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import BackButton from '../../components/common/BackButton';
 
 function VerificationPage() {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
+  const [name, setName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
   const [requestSent, setRequestSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const [verificationStatus, setVerificationStatus] = useState("");
+  const [verificationStatus, setVerificationStatus] = useState('');
   const [isValidCode, setIsValidCode] = useState(false);
 
   const handleNameChange = (e) => setName(e.target.value);
   const handlePhoneNumberChange = (e) => {
-    const value = e.target.value.replace(/[^0-9]/g, ""); // 숫자만 허용
+    const value = e.target.value.replace(/[^0-9]/g, ''); // 숫자만 허용
     if (value.length <= 15) {
       setPhoneNumber(value);
     }
   };
   const handleVerificationCodeChange = (e) => {
-    const value = e.target.value.replace(/[^0-9]/g, ""); // 숫자만 허용
+    const value = e.target.value.replace(/[^0-9]/g, ''); // 숫자만 허용
     if (value.length <= 6) {
       setVerificationCode(value);
     }
@@ -29,33 +29,33 @@ function VerificationPage() {
   const handleRequestClick = () => {
     if (name && phoneNumber) {
       setRequestSent(true);
-      setVerificationStatus("");
+      setVerificationStatus('');
       setIsVerified(false);
     } else {
-      setVerificationStatus("이름과 휴대폰 번호를 입력해주세요.");
+      setVerificationStatus('이름과 휴대폰 번호를 입력해주세요.');
     }
   };
 
   const handleVerifyClick = () => {
     if (!verificationCode) {
-      setVerificationStatus("인증번호를 입력해주세요.");
+      setVerificationStatus('인증번호를 입력해주세요.');
       setIsVerified(false);
       setIsValidCode(false);
       return;
     }
 
-    console.log("user_name :", name);
-    console.log("phone_number :", phoneNumber);
-    console.log("code :", verificationCode);
+    console.log('user_name :', name);
+    console.log('phone_number :', phoneNumber);
+    console.log('code :', verificationCode);
 
-    if (verificationCode === "123456") {
+    if (verificationCode === '123456') {
       setIsVerified(true);
       setIsValidCode(true);
-      setVerificationStatus("인증이 완료되었습니다.");
+      setVerificationStatus('인증이 완료되었습니다.');
     } else {
       setIsVerified(false);
       setIsValidCode(false);
-      setVerificationStatus("잘못된 인증번호를 입력하였습니다.");
+      setVerificationStatus('잘못된 인증번호를 입력하였습니다.');
     }
   };
 
@@ -71,13 +71,22 @@ function VerificationPage() {
       <div className="w-full">
         <div className="flex flex-col mb-5">
           <div className="text-base font-bold text-gray-500 mb-5 flex items-center">
-            <span className="inline-block w-5 h-5 rounded-full border border-gray-300 text-center leading-5 mr-2">1</span> 본인 명의 계좌 번호 등록
+            <span className="inline-block w-5 h-5 rounded-full border border-gray-300 text-center leading-5 mr-2">
+              1
+            </span>{' '}
+            본인 명의 계좌 번호 등록
           </div>
           <div className="text-base font-bold text-gray-500 mb-5 flex items-center">
-            <span className="inline-block w-5 h-5 rounded-full border border-gray-300 text-center leading-5 mr-2">2</span> 약관 동의
+            <span className="inline-block w-5 h-5 rounded-full border border-gray-300 text-center leading-5 mr-2">
+              2
+            </span>{' '}
+            약관 동의
           </div>
           <div className="text-base font-bold flex items-center">
-            <span className="inline-block w-5 h-5 rounded-full bg-[#FF7F50] text-white text-center leading-5 mr-2">3</span> 본인 인증
+            <span className="inline-block w-5 h-5 rounded-full bg-[#FF7F50] text-white text-center leading-5 mr-2">
+              3
+            </span>{' '}
+            본인 인증
           </div>
         </div>
         <label className="flex flex-col mb-3">
@@ -106,7 +115,7 @@ function VerificationPage() {
               className="bg-[#FF7F50] text-white rounded-lg px-4 h-12 cursor-pointer"
               onClick={handleRequestClick}
             >
-              {requestSent ? "재전송" : "인증 요청"}
+              {requestSent ? '재전송' : '인증 요청'}
             </button>
           </div>
         </label>
@@ -130,15 +139,20 @@ function VerificationPage() {
             </div>
           </label>
         )}
-        <div className={`text-sm mt-3 ${isValidCode ? "text-black" : "text-red-500"}`}>{verificationStatus}</div>
+        <div
+          className={`text-sm mt-3 ${isValidCode ? 'text-black' : 'text-red-500'}`}
+        >
+          {verificationStatus}
+        </div>
       </div>
       <button
-        className={`w-[calc(100%-40px)] py-3 rounded-full text-white text-lg font-bold cursor-pointer transition-all duration-300 ${isFormValid ? "bg-[#FF7F50] shadow-md" : "bg-[#FF7F50]/50"} absolute bottom-5 left-1/2 transform -translate-x-1/2`}
+        className={`w-[calc(100%-40px)] py-3 rounded-full text-white text-lg font-bold cursor-pointer transition-all duration-300 ${isFormValid ? 'bg-[#FF7F50] shadow-md' : 'bg-[#FF7F50]/50'} absolute bottom-5 left-1/2 transform -translate-x-1/2`}
         disabled={!isFormValid}
         onMouseOver={(e) =>
-          isFormValid && (e.currentTarget.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.2)")
+          isFormValid &&
+          (e.currentTarget.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.2)')
         }
-        onMouseOut={(e) => (e.currentTarget.style.boxShadow = "none")}
+        onMouseOut={(e) => (e.currentTarget.style.boxShadow = 'none')}
         onClick={() => navigate('/accountcomplete')}
       >
         다음

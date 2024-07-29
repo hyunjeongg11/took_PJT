@@ -1,10 +1,20 @@
 import React, { useState } from 'react';
-import BackButton from "../../components/common/BackButton";
-import { useNavigate } from "react-router-dom";
+import BackButton from '../../components/common/BackButton';
+import { useNavigate } from 'react-router-dom';
 
-const InputField = ({ label, name, value, onChange, placeholder, type = "text", min }) => (
+const InputField = ({
+  label,
+  name,
+  value,
+  onChange,
+  placeholder,
+  type = 'text',
+  min,
+}) => (
   <div>
-    <div className="text-base font-bold leading-8 text-neutral-600">{label}</div>
+    <div className="text-base font-bold leading-8 text-neutral-600">
+      {label}
+    </div>
     <div className="flex items-center mb-4 border-b border-gray-300">
       <input
         type={type}
@@ -15,15 +25,21 @@ const InputField = ({ label, name, value, onChange, placeholder, type = "text", 
         className="flex-grow bg-transparent py-2 placeholder-gray-300 focus:outline-none focus:border-[#FF7F50]"
         min={min}
       />
-      {type === "text" && <button className="text-white bg-neutral-400/75 mb-1 px-3 py-1.5 rounded-full text-sm font-bold ml-2">검색</button>}
-      {type === "number" && <span className="text-neutral-600 ml-2">원</span>}
+      {type === 'text' && (
+        <button className="text-white bg-neutral-400/75 mb-1 px-3 py-1.5 rounded-full text-sm font-bold ml-2">
+          검색
+        </button>
+      )}
+      {type === 'number' && <span className="text-neutral-600 ml-2">원</span>}
     </div>
   </div>
 );
 
 const TextAreaField = ({ label, name, value, onChange, placeholder }) => (
   <div className="flex-grow">
-    <div className="text-base font-bold leading-5 text-neutral-600">{label}</div>
+    <div className="text-base font-bold leading-5 text-neutral-600">
+      {label}
+    </div>
     <textarea
       name={name}
       value={value}
@@ -65,11 +81,11 @@ const Modal = ({ show, message, onConfirm, onCancel }) => {
 function CreateDeliveryPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    storeName: "",
-    deliveryAddress: "",
-    deliveryTip: "",
-    orderTime: "",
-    additionalInfo: ""
+    storeName: '',
+    deliveryAddress: '',
+    deliveryTip: '',
+    orderTime: '',
+    additionalInfo: '',
   });
 
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
@@ -105,7 +121,7 @@ function CreateDeliveryPage() {
       setShowCompletionMessage(true);
       setTimeout(() => {
         setShowCompletionMessage(false);
-        navigate("/"); // 등록 후 이동할 경로 설정
+        navigate('/'); // 등록 후 이동할 경로 설정
       }, 2000); // 2초 후에 완료 메시지 사라짐
     }
   };

@@ -8,7 +8,7 @@ export default {
           '0%': { transform: 'rotate(-3deg)' },
           '50%': { transform: 'rotate(3deg)' },
           '100%': { transform: 'rotate(-3deg)' },
-        }, 
+        },
         jump: {
           '0%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-5px)' },
@@ -26,17 +26,18 @@ export default {
         semijump: 'semijump 0.6s ease-in-out infinite',
       },
       colors: {
-        main: "#FF7F50"
+        main: '#FF7F50',
+        secondary: '#FFF7ED',
       },
       fontFamily: {
-        dela: ['"Dela Gothic One"', "sans-serif"],
-        nanum: ['"Noto Sans KR"', "sans-serif"],
+        dela: ['"Dela Gothic One"', 'sans-serif'],
+        nanum: ['"Noto Sans KR"', 'sans-serif'],
         noto: ['Noto Serif', 'serif'],
       },
     },
     fontFamily: {
-      sans: ['"Nanum Gothic"', "sans-serif"]
-    }
+      sans: ['"Nanum Gothic"', 'sans-serif'],
+    },
   },
-  plugins: []
+  plugins: [],
 };

@@ -57,7 +57,6 @@ const temp_data_location = [
 const temp_address = '강서구 녹산동';
 const temp_location = '강서구 명지동';
 
-
 const DeliveryListPage = () => {
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState('주소지');
@@ -66,19 +65,26 @@ const DeliveryListPage = () => {
     navigate('/create/delivery');
   };
 
-  const data = selectedOption === '주소지' ? temp_data_address : temp_data_location;
-  const addressText = selectedOption === '주소지' ? temp_address : temp_location;
+  const data =
+    selectedOption === '주소지' ? temp_data_address : temp_data_location;
+  const addressText =
+    selectedOption === '주소지' ? temp_address : temp_location;
 
   return (
     <div className="flex flex-col max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-4 mt-4">
         <div className="mt-2.5 mb-1 ml-4 flex-grow text-left text-3xl font-bold text-main">
-          배달 <span className="font-dela">took<span className="font-noto">!</span></span>
+          배달{' '}
+          <span className="font-dela">
+            took<span className="font-noto">!</span>
+          </span>
         </div>
       </div>
       <div className="px-6">
         <div className="flex justify-between items-center mb-4">
-          <div className="text-xl text-black ml-2 font-bold mt-2">{addressText}</div>
+          <div className="text-xl text-black ml-2 font-bold mt-2">
+            {addressText}
+          </div>
         </div>
 
         <div className="flex justify-between mb-7">
@@ -99,7 +105,11 @@ const DeliveryListPage = () => {
             </button>
           </div>
           <button className="bg-white border flex border-neutral-400 text-gray-900 py-2 px-4 rounded-full text-sm font-bold">
-            <img src={mapIcon} alt="지도보기" className="w-4.5 h-3.5 mr-2 mt-1" />
+            <img
+              src={mapIcon}
+              alt="지도보기"
+              className="w-4.5 h-3.5 mr-2 mt-1"
+            />
             <span>지도 보기</span>
           </button>
         </div>
@@ -107,8 +117,12 @@ const DeliveryListPage = () => {
         {data.map((item, index) => (
           <div key={index} className="my-4">
             <div className="text-lg font-bold text-black">{item.storeName}</div>
-            <div className="text-black font-bold text-sm mb-1">{item.pickupPlace}</div>
-            <div className="text-neutral-500 font-bold text-xs">배달팁 : {item.deliveryTip}원</div>
+            <div className="text-black font-bold text-sm mb-1">
+              {item.pickupPlace}
+            </div>
+            <div className="text-neutral-500 font-bold text-xs">
+              배달팁 : {item.deliveryTip}원
+            </div>
             <div className="my-4 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
           </div>
         ))}

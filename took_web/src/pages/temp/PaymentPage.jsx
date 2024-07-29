@@ -1,15 +1,20 @@
-import React from "react";
-import BackButton from "../../components/common/BackButton";
-import SelectArrow from "../../assets/payment/selectArrow.png";
-import ProfileImg from "../../assets/profile/img11.png";
-import { formatNumber } from '../../utils/format'; 
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import BackButton from '../../components/common/BackButton';
+import SelectArrow from '../../assets/payment/selectArrow.png';
+import ProfileImg from '../../assets/profile/img11.png';
+import { formatNumber } from '../../utils/format';
+import { useNavigate } from 'react-router-dom';
 
-function PaymentPage({ userName="사용자", amount, account="국민은행 8910" }) {
+function PaymentPage({
+  userName = '사용자',
+  amount,
+  account = '국민은행 8910',
+  accountBalance = 1620,  // 계좌 잔액 기본값 추가
+}) {
   const navigate = useNavigate();
 
   const handleSendMoney = () => {
-    console.log("송금");
+    console.log('송금');
   };
 
   return (
@@ -37,16 +42,18 @@ function PaymentPage({ userName="사용자", amount, account="국민은행 8910"
             {formatNumber(amount)}원
           </div>
           <div className="mt-1 text-xl font-bold text-black">
-            <span className="font-dela text-orange-500">took!</span> 할까요?
+            <span className="font-dela text-main">took!</span> 할까요?
           </div>
         </div>
       </div>
 
-      <div className="mb-8">
+      <div className="mb-8 text-xs">
         <div className="flex items-center justify-between w-full px-8">
-          <div className="text-gray-500 text-sm font-bold">출금계좌</div>
+          <div className="text-gray-500 font-bold">출금계좌</div>
           <button className="flex items-center space-x-1">
-            <span className="text-black text-sm font-bold">{account}</span>
+            <span className="text-black font-bold mr-1">
+              {account} ({formatNumber(accountBalance)}원)
+            </span>
             <img src={SelectArrow} alt="selectArrow" />
           </button>
         </div>
@@ -59,7 +66,7 @@ function PaymentPage({ userName="사용자", amount, account="국민은행 8910"
             취소
           </button>
           <button
-            className="flex-grow text-lg font-bold text-white py-4 rounded-full bg-orange-500 shadow-md hover:shadow-lg transition-shadow duration-300"
+            className="flex-grow text-lg font-bold text-white py-4 rounded-full bg-main shadow-md hover:shadow-lg transition-shadow duration-300"
             onClick={handleSendMoney}
           >
             송금하기
