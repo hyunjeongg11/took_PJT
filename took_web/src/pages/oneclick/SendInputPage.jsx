@@ -1,77 +1,76 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import 송금완료 from '../../assets/payment/송금완료.png';
-import { formatNumber } from '../../utils/format';
-import { maskName } from '../../utils/formatName';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { MdBackspace } from "react-icons/md";
+import getProfileImagePath from '../../utils/getProfileImagePath';
+import BackButton from "../../components/common/BackButton";
+import formatNumber from '../../utils/format'; // formatNumber 함수를 불러옵니다.
 
-function CompletePage() {
+function SendInputPage() {
+  const [input, setInput] = useState("");
   const navigate = useNavigate();
 
-  // 임시 데이터
-  const tempMember = {
-    userName: '조현정',
-    cost: 6500,
-    bank: '국민은행',
-    accountNumber: '12345678910',
+  const handleButtonClick = (value) => {
+    const newInput = input + value;
+    setInput(newInput);
+    console.log(formatNumber(newInput)); // 입력한 돈을 콘솔에 출력
   };
 
-  const maskedName = maskName(tempMember.userName);
+  const tempMember = { member_seq: 1, party_seq: 1, user_seq: 1, userName: '조현정', imgNo: 1, cost: 6600, status: false, receive: false, isLeader: false, createdAt: "2024-07-06T01:49:00" }
+
+  const handleDelete = () => {
+    const newInput = input.slice(0, -1);
+    setInput(newInput);
+    console.log(formatNumber(newInput)); // 입력한 돈을 콘솔에 출력
+  };
+
+  const isConfirmDisabled = input.length === 0;
 
   return (
-    <div className="flex flex-col items-center justify-between h-[90vh] bg-white font-[Nanum_Gothic] pb-10 pt-20">
-      {' '}
-      {/* 상단에 padding-top 추가 */}
-      <div className="text-4xl font-bold text-[#FF7F50] mb-16 text-center">
-        <span className="font-dela">to</span>{' '}
-        <span className="font-[Nanum_Gothic] font-bold text-black text-[1.8rem]">
-          {maskedName}
-        </span>
-        ,&nbsp; <span className="font-dela">ok!</span>
+    <div className="flex flex-col items-center justify-center bg-white font-[Nanum_Gothic] relative">
+   <div className="flex items-center px-4 py-3">
+        <BackButton /> 
+        <div className="flex-grow text-center text-lg font-bold text-black mt-3">
+            정산하기
+        </div>
       </div>
-      <div className="flex flex-col items-center mb-20">
-        {' '}
-        {/* 하단에 margin-bottom 추가 */}
-        <img
-          src={송금완료}
-          alt="송금 완료"
-          className="w-[150px] h-[150px] mb-5"
-        />
-        <div className="text-sm text-center mb-1">
-          {maskName(tempMember.userName)} 님에게
+      <div className="mt-3 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
+
+      <div className="flex flex-col items-center mb-4">
+        <img src={getProfileImagePath(1)} alt="profile" className="w-16 h-16 mb-2 mt-8 animate-shake" />
+        <div className="text-sm mb-5">{tempMember.userName}</div>
+        <div className="text-2xl font-bold mb-1">{tempMember.userName} 님에게</div>
+        <div className={`text-2xl font-bold ${input.length === 0 ? 'text-gray-300' : 'text-black'} mb-5`}>
+          {input.length === 0 ? '얼마를 보낼까요?' : `${formatNumber(input)} 원`}
         </div>
-        <div className="text-sm mb-5">
-          <span className="font-extrabold">
-            {formatNumber(tempMember.cost)}
-          </span>
-          원을 보냈어요.
-        </div>
-        <div className="w-64 border-t border-b border-gray-300 py-2 mt-5">
-          <div className="flex justify-between w-full mt-1 mb-1 px-1">
-            <div className="text-sm">출금 계좌</div>
-            <div className="text-sm">
-              {tempMember.bank}({tempMember.accountNumber.slice(-4)})
-            </div>
-          </div>
-        </div>
+      </div>
+      <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-90 border-neutral-400 min-h-[0.5px]" />
+      <div className="grid grid-cols-3 gap-2 mt-1 w-4/5  pt-3 mb-2">
+        {Array.from({ length: 9 }, (_, i) => ( 
+          <button key={i + 1} className="text-2xl py-4 bg-transparent border-none cursor-pointer font-extrabold text-center" onClick={() => handleButtonClick(i + 1)}>
+            {i + 1}
+          </button>
+        ))}
+        <div></div>
+        <button className="text-2xl py-4 bg-transparent border-none cursor-pointer font-extrabold text-center" onClick={() => handleButtonClick(0)}>0</button>
+        <button className="text-2xl py-4 bg-transparent border-none cursor-pointer font-extrabold text-center" onClick={handleDelete}>
+          <MdBackspace size={24} className="ml-7" />
+        </button>
       </div>
       <button
-        className={`w-[calc(100%-40px)] py-3 rounded-full bg-[#FF7F50] text-white text-lg font-bold cursor-pointer mt-auto mb-5`} // 여기에 mt-auto 추가
-        onMouseOver={(e) => e.currentTarget.classList.add('shadow-md')}
-        onMouseOut={(e) => e.currentTarget.classList.remove('shadow-md')}
-        onClick={() => navigate('/')}
-      >
-        메인으로
-      </button>
-      <style>
-        {`
-          @import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap');
-          .font-dela {
-            font-family: 'Dela Gothic One', sans-serif;
+        className={`w-[calc(100%-40px)] py-3 rounded-full text-white text-lg font-bold cursor-pointer l ${isConfirmDisabled ? 'bg-main/50' : 'bg-main'} text-white font-bold`}
+        disabled={isConfirmDisabled}
+        onClick={() => {
+          if (!isConfirmDisabled) {
+            // 실제 금액 전송 기능을 여기에 추가
+            // alert(`송금할 금액: ${formatNumber(input)} 원`);
+            navigate('/payment');
           }
-        `}
-      </style>
+        }}
+      >
+        확인
+      </button>
     </div>
   );
 }
 
-export default CompletePage;
+export default SendInputPage;

@@ -1,5 +1,22 @@
-import React, { useState } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+import React, { useState } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import {MainPage, LoginPage, PaymentPage, SignupPage, LocationSettingPage, ModifyPwdPage, MyPage, NotificationSetting, TookDetailsPage, UserInfoPage, AccountCompletePage, AccountPage, AgreementDetailPage, AgreementPage, VerificationPage, SelectPage, CompletePage, PwdPage, PaymentInputPage, UserListPage, PaymentTotalPage, PayRequestPage, TookHistoryPage } from "./pages";
+import PaymentMethods from "./pages/oneclick/PaymentMethodsPage"
+import MyTookMoneyPage from "./pages/oneclick/MyTookMoneyPage"
+import CreateDeliveryPage from "./pages/delivery/CreateDeliveryPage"
+import TransactionHistoryPage from "./pages/oneclick/TransactionHistoryPage"
+import TransactionDetailPage from "./pages/oneclick/TransactionDetailPage"
+import MyTookPage from "./pages/oneclick/MyTookPage"
+import SendInputPage from "./pages/oneclick/SendInputPage"
+import SendDetailPage from "./pages/oneclick/SendDetailPage"
+import DeliveryDetailPage from "./pages/delivery/DeliveryDetailPage"
+import DeliveryListPage from './pages/delivery/DeliveryListPage'
+import DeliveryPayInputPage from './pages/delivery/DeliveryPayInputPage'
+import DeliveryCompletePage from './pages/delivery/DeliveryCompletePage'
+import DeliveryStatusPage from './pages/delivery/DeliveryStatusPage'
+
 
 import {
   MainPage,
