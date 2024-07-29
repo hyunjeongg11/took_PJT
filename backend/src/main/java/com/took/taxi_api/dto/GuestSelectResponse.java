@@ -26,7 +26,7 @@ public class GuestSelectResponse {
     public GuestSelectResponse(TaxiGuest taxiGuest) {
         this.guestSeq = taxiGuest.getGuestSeq();
         this.taxiSeq = taxiGuest.getTaxi().getTaxiSeq();
-        this.userSeq = taxiGuest.getUserSeq();
+        this.userSeq = taxiGuest.getUser().getUserSeq();
         this.destiName = taxiGuest.getDestiName();
         this.destiLat = taxiGuest.getDestiLat();
         this.destiLon = taxiGuest.getDestiLon();

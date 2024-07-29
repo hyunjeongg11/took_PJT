@@ -20,7 +20,7 @@ public class DestinationListResponse {
     private int routeRank;
 
     public DestinationListResponse(TaxiGuest taxiGuest) {
-        this.userSeq = taxiGuest.getUserSeq();
+        this.userSeq = taxiGuest.getUser().getUserSeq();
         this.cost = taxiGuest.getCost();
         this.destiName = taxiGuest.getDestiName();
         this.destiLat = taxiGuest.getDestiLat();

@@ -14,7 +14,7 @@ public class DeliveryGuestSelectResponse {
     public DeliveryGuestSelectResponse(DeliveryGuest deliveryGuest) {
         this.deliveryGuestSeq = deliveryGuest.getDeliveryGuestSeq();
         this.deliverySeq = deliveryGuest.getDelivery().getDeliverySeq();
-        this.userSeq = deliveryGuest.getUserSeq();
+        this.userSeq = deliveryGuest.getUser().getUserSeq();
         this.pickUp = deliveryGuest.isPickUp();
     }
 }

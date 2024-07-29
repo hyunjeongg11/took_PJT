@@ -16,7 +16,7 @@ public class ChatUserCreateResponse {
     public ChatUserCreateResponse(ChatUser chatUser) {
         this.chatUserSeq = chatUser.getChatUserSeq();
         this.roomSeq = chatUser.getChatRoom().getRoomSeq();
-        this.userSeq = chatUser.getUserSeq();
+        this.userSeq = chatUser.getUser().getUserSeq();
         this.joinTime = chatUser.getJoinTime();
     }
 }

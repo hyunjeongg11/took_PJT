@@ -16,7 +16,7 @@ public class ChatMessageCreateResponse {
     public ChatMessageCreateResponse(ChatMessage chatMessage) {
         this.roomSeq = chatMessage.getChatRoom().getRoomSeq();
         this.type = String.valueOf(chatMessage.getType());
-        this.userSeq = chatMessage.getUserSeq();
+        this.userSeq = chatMessage.getUser().getUserSeq();
         this.message = chatMessage.getMessage();
         this.createdAt = chatMessage.getCreatedAt();
     }
