@@ -118,8 +118,11 @@ public class ShopService {
 
     @Transactional
     public void pickUp(long shopSeq, long userSeq) {
+        Shop shop = shopRepository.findById(shopSeq)
+                .orElseThrow(() -> new IllegalArgumentException("not found : " + shopSeq));
 
-        ShopGuest shopGuest = shopGuestRepository.findByShopSeqAndUserSeq(shopSeq, userSeq);
+        UserEntity user = userRepository.findByUserSeq(userSeq);
+        ShopGuest shopGuest = shopGuestRepository.findByShopAndUser(shop, user);
         shopGuest.updatePickUp(true);
         shopGuestRepository.save(shopGuest);
     }
