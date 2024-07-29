@@ -40,7 +40,7 @@ public class DeliveryCreateResponse {
     public DeliveryCreateResponse(Delivery delivery) {
         this.deliverySeq = delivery.getDeliverySeq();
         this.userSeq = delivery.getDeliverySeq();
-        this.roomSeq = delivery.getRoomSeq();
+        this.roomSeq = delivery.getChatRoom().getRoomSeq();
         this.storeName = delivery.getStoreName();
         this.pickupPlace = delivery.getPickupPlace();
         this.pickupLat = delivery.getPickupLat();

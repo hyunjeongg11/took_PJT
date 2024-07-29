@@ -27,7 +27,7 @@ public class DeliverySelectResponse {
     public DeliverySelectResponse(Delivery delivery) {
         this.deliverySeq = delivery.getDeliverySeq();
         this.userSeq = delivery.getUser().getUserSeq();
-        this.roomSeq = delivery.getRoomSeq();
+        this.roomSeq = delivery.getChatRoom().getRoomSeq();
         this.partySeq = delivery.getPartySeq();
         this.storeName = delivery.getStoreName();
         this.pickupPlace = delivery.getPickupPlace();

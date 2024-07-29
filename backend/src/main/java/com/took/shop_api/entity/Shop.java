@@ -2,6 +2,7 @@ package com.took.shop_api.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.took.chat_api.entity.ChatRoom;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,8 +43,10 @@ public class Shop {
     @JoinColumn(name = "user_seq", nullable = false)
     private UserEntity user;
 
-    @Column(nullable = false)
-    private Long roomSeq;
+    @JsonBackReference
+    @OneToOne
+    @JoinColumn(name = "room_seq", nullable = false)
+    private ChatRoom chatRoom;
 
     @Column(nullable = false)
     private String title;
