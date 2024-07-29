@@ -59,8 +59,7 @@ function TaxiChattingSettingPage() {
     setDraggingIndex(null);
   };
 
-  const handleCreateChatRoom = () => {
-    // todo: 채팅방 생성 로직을 추가
+  const handleCheckExpectedCost = () => {
     setIsPopupOpen(true);
   };
 
@@ -102,7 +101,7 @@ function TaxiChattingSettingPage() {
                     <img
                       src={item.userProfileIcon}
                       alt={`${item.userName} 프로필 사진`}
-                      className="w-9 h-9 rounded-full mb-1"
+                      className="w-9 h-9 mb-1"
                     />
                     <span className="text-xs font-bold">{item.userName}</span>
                   </div>
@@ -124,7 +123,7 @@ function TaxiChattingSettingPage() {
         </div>
 
         <button
-          onClick={handleCreateChatRoom}
+          onClick={handleCheckExpectedCost}
           className="py-3 px-4 mx-auto bg-main text-white font-bold text-sm rounded-xl shadow-md"
         >
           예상비용 확인하기
