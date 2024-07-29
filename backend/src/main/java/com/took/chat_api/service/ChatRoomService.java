@@ -72,7 +72,7 @@ public class ChatRoomService {
     public List<ChatRoomFilterResponse> findRoomsByCategoryAndUsers(ChatRoomFilterRequest chatRoomFilterRequest) {
         List<UserEntity> users = userRepository.findByUserSeqIn(chatRoomFilterRequest.getUserSeqs());
 
-        List<ChatRoom> chatRooms = chatRoomRepository.findByCategoryAndUserSeqIn(chatRoomFilterRequest.getCategory(), users);
+        List<ChatRoom> chatRooms = chatRoomRepository.findByCategoryAndUserIn(chatRoomFilterRequest.getCategory(), users);
         return chatRooms.stream()
                 .map(ChatRoomFilterResponse::new)
                 .collect(Collectors.toList());

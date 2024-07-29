@@ -43,14 +43,6 @@ public class PurchaseInfo {
     @OneToMany(mappedBy = "purchaseInfo",cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Product> products;
 
-//    @Builder
-//    public PurchaseInfo(Long userSeq, Long shopSeq, int price, int shipCost) {
-//        this.userSeq = userSeq;
-//        this.shopSeq = shopSeq;
-//        this.price = price;
-//        this.shipCost = shipCost;
-//    }
-
     public void update(int price, int shipCost) {
         this.price = price;
         this.shipCost = shipCost;
