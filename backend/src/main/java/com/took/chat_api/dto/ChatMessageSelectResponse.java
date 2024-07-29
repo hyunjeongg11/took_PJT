@@ -15,7 +15,7 @@ public class ChatMessageSelectResponse {
 
     public ChatMessageSelectResponse(ChatMessage chatMessage) {
         this.type = String.valueOf(chatMessage.getType());
-        this.userSeq = chatMessage.getUserSeq();
+        this.userSeq = chatMessage.getUser().getUserSeq();
         this.message = chatMessage.getMessage();
         this.createdAt = chatMessage.getCreatedAt();
     }

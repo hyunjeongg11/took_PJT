@@ -25,8 +25,8 @@ public class PurchaseInfoResponse {
 
     public PurchaseInfoResponse(PurchaseInfo purchaseInfo) {
         this.purchaseSeq = purchaseInfo.getPurchaseSeq();
-        this.userSeq = purchaseInfo.getUserSeq();
-        this.shopSeq = purchaseInfo.getShopSeq();
+        this.userSeq = purchaseInfo.getUser().getUserSeq();
+        this.shopSeq = purchaseInfo.getShop().getShopSeq();
         this.price = purchaseInfo.getPrice();
         this.shipCost = purchaseInfo.getShipCost();
         this.total = this.price +this.shipCost;

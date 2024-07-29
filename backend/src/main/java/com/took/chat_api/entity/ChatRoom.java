@@ -2,6 +2,8 @@ package com.took.chat_api.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.took.delivery_api.entity.Delivery;
+import com.took.taxi_api.entity.Taxi;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,4 +44,12 @@ public class ChatRoom {
     @JsonManagedReference
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // 일대다 관계 설정
     private List<ChatUser> users;  // 채팅방에 속한 사용자들
+
+    @JsonManagedReference
+    @OneToOne(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // 일대일 관계 설정
+    private Delivery delivery;  // 채팅방에 속한 배달 정보
+
+    @JsonManagedReference
+    @OneToOne(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // 일대일 관계 설정
+    private Taxi taxi;  // 채팅방에 속한 택시 정보
 }

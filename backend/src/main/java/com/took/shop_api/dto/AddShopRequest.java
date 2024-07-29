@@ -31,20 +31,4 @@ public class AddShopRequest {
     private double lon;
 
     private int maxCount;
-
-    public Shop toEntity() {
-        return Shop.builder()
-                .roomSeq(roomSeq)
-                .userSeq(userSeq)
-                .title(title)
-                .content(content)
-                .item(item)
-                .site(site)
-                .place(place)
-                .count(count)
-                .lat(lat)
-                .lon(lon)
-                .maxCount(maxCount)
-                .build();
-    }
 }

@@ -14,10 +14,5 @@ public class AddShopGuest {
 
     private long userSeq;
 
-    public ShopGuest toEntity() {
-        return ShopGuest.builder()
-                .shopSeq(shopSeq)
-                .userSeq(userSeq)
-                .build();
-    }
+
 }

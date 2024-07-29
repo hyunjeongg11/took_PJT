@@ -5,6 +5,8 @@ import com.took.delivery_api.entity.Delivery;
 import com.took.delivery_api.entity.DeliveryGuest;
 import com.took.delivery_api.repository.DeliveryGuestRepository;
 import com.took.delivery_api.repository.DeliveryRepository;
+import com.took.user_api.entity.UserEntity;
+import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -20,15 +22,17 @@ public class DeliveryGuestService {
 
     private final DeliveryRepository deliveryRepository;
     private final DeliveryGuestRepository deliveryGuestRepository;
+    private final UserRepository userRepository;
 
     
     // 파티 참가
     @Transactional
     public void joinParty(DeliveryGuestCreateRequest request) {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
+        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
         deliveryGuestRepository.save(DeliveryGuest.builder()
                 .delivery(delivery)
-                .userSeq(request.getUserSeq())
+                .user(user)
                 .pickUp(false)
                 .build());
 
@@ -71,14 +75,17 @@ public class DeliveryGuestService {
     @Transactional
     public boolean isJoin(DeliveryGuestIsJoinRequest request) {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
-        DeliveryGuest deliveryGuest = deliveryGuestRepository.findByDeliveryAndUserSeq(delivery, request.getUserSeq());
+        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        DeliveryGuest deliveryGuest = deliveryGuestRepository.findByDeliveryAndUser(delivery,user);
         return deliveryGuest != null;
     }
     
     // 참가중인 방 목록
     @Transactional
     public List<DeliverySelectResponse> getJoinList(Long userSeq) {
-        List<DeliveryGuest> deliveryGuests = deliveryGuestRepository.findAllByUserSeq(userSeq);
+        UserEntity user = userRepository.findByUserSeq(userSeq);
+
+        List<DeliveryGuest> deliveryGuests = deliveryGuestRepository.findAllByUser(user);
 
         // deliveryGuests의 delivery에서 deliverySeq만 뽑아서 리스트로 만들기
         List<Long> deliverySeqs = deliveryGuests.stream()

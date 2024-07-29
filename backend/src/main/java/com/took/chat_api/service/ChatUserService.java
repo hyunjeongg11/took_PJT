@@ -8,6 +8,8 @@ import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.entity.ChatUser;
 import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.chat_api.repository.ChatUserRepository;
+import com.took.user_api.entity.UserEntity;
+import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ public class ChatUserService {
 
     private final ChatUserRepository chatUserRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final UserRepository userRepository;
 
     /**
      * 유저가 이미 채팅방에 존재하는지 확인하는 메서드
@@ -30,10 +33,11 @@ public class ChatUserService {
      */
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
     public boolean checkChatUser(ChatUserCreateRequest chatUserCreateRequest) {
+        UserEntity user = userRepository.findById(chatUserCreateRequest.getUserSeq()).orElseThrow();
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(chatUserCreateRequest.getRoomSeq()).orElseThrow();
         // 해당 유저의 채팅방 소속 여부를 확인
-        ChatUser checkedChatUser = chatUserRepository.findByUserSeqAndChatRoom(chatUserCreateRequest.getUserSeq(), chatRoom);
+        ChatUser checkedChatUser = chatUserRepository.findByUserAndChatRoom(user, chatRoom);
         // 유저가 존재하지 않으면 true 반환
         return checkedChatUser == null;
     }
@@ -47,10 +51,11 @@ public class ChatUserService {
     public ChatUserCreateResponse enterChatRoom(ChatUserCreateRequest chatUserCreateRequest) {
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(chatUserCreateRequest.getRoomSeq()).orElseThrow();
+        UserEntity user = userRepository.findById(chatUserCreateRequest.getUserSeq()).orElseThrow();
         // 새로운 채팅 유저 객체 생성 및 설정
         ChatUser chatUser = ChatUser.builder()
                 .chatRoom(chatRoom)
-                .userSeq(chatUserCreateRequest.getUserSeq())
+                .user(user)
                 .joinTime(LocalDateTime.now())
                 .build();
         // 채팅 유저 객체를 저장하고 반환
@@ -64,10 +69,11 @@ public class ChatUserService {
      */
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
     public void leaveChatRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
+        UserEntity user = userRepository.findById(chatUserDeleteRequest.getUserSeq()).orElseThrow();
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(chatUserDeleteRequest.getRoomSeq()).orElseThrow();
         // 채팅 유저 객체를 사용자 ID와 채팅방으로 조회
-        ChatUser chatUser = chatUserRepository.findByUserSeqAndChatRoom(chatUserDeleteRequest.getUserSeq(), chatRoom);
+        ChatUser chatUser = chatUserRepository.findByUserAndChatRoom(user, chatRoom);
         // 조회된 채팅 유저 객체가 존재할 경우 삭제
         if (chatUser != null) {
             chatUserRepository.delete(chatUser);
@@ -80,10 +86,11 @@ public class ChatUserService {
      * @param chatUserDeleteRequest 유저의 방 퇴장 요청 정보를 담은 객체
      */
     public void kickUserFromRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
+        UserEntity user = userRepository.findById(chatUserDeleteRequest.getUserSeq()).orElseThrow();
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(chatUserDeleteRequest.getRoomSeq()).orElseThrow();
         // 채팅 유저 객체를 사용자 ID와 채팅방으로 조회
-        ChatUser chatUser = chatUserRepository.findByUserSeqAndChatRoom(chatUserDeleteRequest.getUserSeq(), chatRoom);
+        ChatUser chatUser = chatUserRepository.findByUserAndChatRoom(user, chatRoom);
         // 조회된 채팅 유저 객체가 존재할 경우 삭제
         if (chatUser != null) {
             chatUserRepository.delete(chatUser);
@@ -103,7 +110,7 @@ public class ChatUserService {
         // ChatUser 리스트를 ChatUserSelectResponse 리스트로 변환
         return users.stream()
                 .map(user -> ChatUserSelectResponse.builder()
-                        .userSeq(user.getUserSeq())
+                        .userSeq(user.getUser().getUserSeq())
                         .build())
                 .collect(Collectors.toList());
     }

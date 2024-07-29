@@ -17,7 +17,7 @@ public class ChatRoomCategorySelectResponse {
     public ChatRoomCategorySelectResponse(ChatRoom chatRoom) {
         this.roomSeq = chatRoom.getRoomSeq();
         this.roomTitle = chatRoom.getRoomTitle();
-        this.userSeq = chatRoom.getUserSeq();
+        this.userSeq = chatRoom.getUser().getUserSeq();
         this.createdAt = chatRoom.getCreatedAt();
         this.category = chatRoom.getCategory();
     }

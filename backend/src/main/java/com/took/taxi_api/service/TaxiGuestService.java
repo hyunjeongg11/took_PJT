@@ -5,6 +5,8 @@ import com.took.taxi_api.entity.Taxi;
 import com.took.taxi_api.entity.TaxiGuest;
 import com.took.taxi_api.repository.TaxiGuestRepository;
 import com.took.taxi_api.repository.TaxiRepository;
+import com.took.user_api.entity.UserEntity;
+import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ public class TaxiGuestService {
 
     private final TaxiRepository taxiRepository;  // TaxiRepository를 통해 데이터베이스 작업을 처리합니다.
     private final TaxiGuestRepository taxiGuestRepository;  // TaxiGuestRepository를 통해 데이터베이스 작업을 처리합니다.
+    private final UserRepository userRepository;
 
     /**
      * 새로운 TaxiGuest 엔티티를 생성하고 데이터베이스에 저장합니다.
@@ -27,7 +30,9 @@ public class TaxiGuestService {
     @Transactional
     public void joinGuest(GuestCreateRequest request) {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
-        TaxiGuest taxiGuest = TaxiGuest.builder().taxi(taxi).userSeq(request.getUserSeq())
+        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+
+        TaxiGuest taxiGuest = TaxiGuest.builder().taxi(taxi).user(user)
                 .cost(request.getCost())
                 .destiName(request.getDestiName())
                 .destiLat(request.getDestiLat()).destiLon(request.getDestiLon())
@@ -45,7 +50,8 @@ public class TaxiGuestService {
     @Transactional
     public void deleteGuest(GuestDeleteRequest request) {
         Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
-        TaxiGuest guest = taxiGuestRepository.findByUserSeqAndTaxi(request.getUserSeq(), taxi);
+        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        TaxiGuest guest = taxiGuestRepository.findByUserAndTaxi(user, taxi);
         taxiGuestRepository.delete(guest);
 
         taxi.updateCount(-1);
@@ -95,7 +101,8 @@ public class TaxiGuestService {
      */
     @Transactional
     public GuestSelectResponse getGuest(Long userSeq) {
-        TaxiGuest guest = taxiGuestRepository.findByUserSeq(userSeq);
+        UserEntity user = userRepository.findByUserSeq(userSeq);
+        TaxiGuest guest = taxiGuestRepository.findByUser(user);
         return new GuestSelectResponse(guest);
     }
 
@@ -106,7 +113,8 @@ public class TaxiGuestService {
      */
     @Transactional
     public boolean isJoined(Long userSeq) {
-        return taxiGuestRepository.existsByUserSeq(userSeq);
+        UserEntity user = userRepository.findByUserSeq(userSeq);
+        return taxiGuestRepository.existsByUser(user);
     }
 
     /**

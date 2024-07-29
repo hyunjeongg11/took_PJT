@@ -1,5 +1,6 @@
 package com.took.shop_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.took.shop_api.dto.UpdateShipRequest;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,8 +17,11 @@ public class ShipInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shipSeq;
 
-    @Column(nullable = false)
-    private Long shopSeq;
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "shop_seq", nullable = false)
+    private Shop shop;
 
     @Column(nullable = false)
     private String courier; // 택배사 이름

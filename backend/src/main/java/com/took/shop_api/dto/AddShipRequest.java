@@ -13,11 +13,4 @@ public class AddShipRequest {
     private String courier;
     private String invoiceNum;
 
-    public ShipInfo toEntity() {
-        return ShipInfo.builder()
-                .shopSeq(shopSeq)
-                .courier(courier)
-                .invoiceNum(invoiceNum)
-                .build();
-    }
 }

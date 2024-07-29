@@ -3,6 +3,8 @@ package com.took.chat_api.service;
 import com.took.chat_api.dto.*;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.repository.ChatRoomRepository;
+import com.took.user_api.entity.UserEntity;
+import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final UserRepository userRepository;
 
     /**
      * 채팅방 생성
@@ -25,9 +28,11 @@ public class ChatRoomService {
      */
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
     public ChatRoomCreateResponse createChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
+        UserEntity user = userRepository.findByUserSeq(chatRoomCreateRequest.getUserSeq());  // 사용자 번호로 사용자 조회
+
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomTitle(chatRoomCreateRequest.getRoomTitle())
-                .userSeq(chatRoomCreateRequest.getUserSeq())
+                .user(user)
                 .category(chatRoomCreateRequest.getCategory())
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -65,7 +70,9 @@ public class ChatRoomService {
      */
     @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
     public List<ChatRoomFilterResponse> findRoomsByCategoryAndUsers(ChatRoomFilterRequest chatRoomFilterRequest) {
-        List<ChatRoom> chatRooms = chatRoomRepository.findByCategoryAndUserSeqIn(chatRoomFilterRequest.getCategory(), chatRoomFilterRequest.getUserSeqs());
+        List<UserEntity> users = userRepository.findByUserSeqIn(chatRoomFilterRequest.getUserSeqs());
+
+        List<ChatRoom> chatRooms = chatRoomRepository.findByCategoryAndUserSeqIn(chatRoomFilterRequest.getCategory(), users);
         return chatRooms.stream()
                 .map(ChatRoomFilterResponse::new)
                 .collect(Collectors.toList());
