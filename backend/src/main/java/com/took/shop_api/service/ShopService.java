@@ -48,7 +48,8 @@ public class ShopService {
 
     @Transactional
     public List<Shop> findShopsByIds(List<Long> id) {
-        return shopRepository.findByUserSeqInAndStatus(id, Shop.statusType.OPEN);
+        List<UserEntity> user = userRepository.findAllById(id);
+        return shopRepository.findByUserInAndStatus(user, Shop.statusType.OPEN);
     }
 
     @Transactional
@@ -84,10 +85,10 @@ public class ShopService {
 
     @Transactional
     public boolean userEnterShop(AddShopGuest request) {
-            ShopGuest shopGuest = shopGuestRepository.findByShopSeqAndUserSeq(request.getShopSeq(), request.getUserSeq());
+        Shop shop = shopRepository.findById(request.getShopSeq()).orElseThrow();
+        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        ShopGuest shopGuest = shopGuestRepository.findByShopAndUser(shop, user);
         if (shopGuest == null){
-            Shop shop = shopRepository.findById(request.getShopSeq())
-                    .orElseThrow(() -> new IllegalArgumentException("not found : " + request.getShopSeq()));;
             if (shop.getMaxCount() > shop.getCount()){
                 shop.updateCount(1);
                 shopGuest = ShopGuest.builder().
@@ -110,9 +111,10 @@ public class ShopService {
 
     @Transactional
     public void exit(long shopSeq, long userSeq){
-        shopGuestRepository.deleteByShopSeqAndUserSeq(shopSeq, userSeq);
-        Shop shop = shopRepository.findById(shopSeq)
-                .orElseThrow(() -> new IllegalArgumentException("not found : " + shopSeq));
+        Shop shop = shopRepository.findById(shopSeq).orElseThrow();
+        UserEntity user = userRepository.findByUserSeq(userSeq);
+        shopGuestRepository.deleteByShopAndUser(shop, user);
+
         shop.updateCount(-1);
     }
 
@@ -129,7 +131,8 @@ public class ShopService {
 
     @Transactional
     public boolean pickUpCheck(long shopSeq) {
-        List<ShopGuest> list = shopGuestRepository.findAllByShopSeq(shopSeq);
+        Shop shop = shopRepository.findById(shopSeq).orElseThrow();
+        List<ShopGuest> list = shopGuestRepository.findAllByShop(shop);
         for (ShopGuest shopGuest : list){
             if (!shopGuest.isPickUp()){
                 return false;

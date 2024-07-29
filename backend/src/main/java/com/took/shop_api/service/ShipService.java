@@ -30,7 +30,8 @@ public class ShipService {
 
     @Transactional
     public ShipInfo findByShopSeq(Long id){
-        return shipRepository.findByShopSeq(id);
+        Shop shop = shopRepository.findById(id).orElseThrow();
+        return shipRepository.findByShop(shop);
     }
 
     @Transactional

@@ -31,7 +31,6 @@ public class PurchaseInfoService {
         UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
         Shop shop = shopRepository.findById(request.getShopSeq()).orElseThrow();
 
-
         PurchaseInfo purchaseInfo = purchaseInfoRepository.save(PurchaseInfo.builder()
                 .user(user)
                 .shop(shop)
@@ -53,12 +52,13 @@ public class PurchaseInfoService {
 
     @Transactional
     public PurchaseInfoListResponse findByShopSeq(long id) {
-        List<PurchaseInfo> purchaseInfoList = purchaseInfoRepository.findByShopSeq(id);
+
+        Shop shop = shopRepository.findById(id).orElseThrow();
+        List<PurchaseInfo> purchaseInfoList = purchaseInfoRepository.findByShop(shop);
         List<PurchaseInfoResponse> result = new ArrayList<>();
         int total = 0;
         for (PurchaseInfo purchaseInfo : purchaseInfoList) {
-            long purchaseSeq = purchaseInfo.getPurchaseSeq();
-            List<Product> productList = productRepository.findByPurchaseSeq(purchaseSeq);
+            List<Product> productList = productRepository.findByPurchaseInfo(purchaseInfo);
             List<ProductResponse> productResponseList = productList.stream()
                     .map(ProductResponse::new)
                     .collect(Collectors.toList());
@@ -73,9 +73,10 @@ public class PurchaseInfoService {
 
     @Transactional
     public PurchaseInfoResponse findById(long shopSeq, long userSeq) {
-        PurchaseInfo purchaseInfo = purchaseInfoRepository.findByShopSeqAndUserSeq(shopSeq, userSeq);
-        long purchaseSeq = purchaseInfo.getPurchaseSeq();
-        List<Product> productList = productRepository.findByPurchaseSeq(purchaseSeq);
+        Shop shop = shopRepository.findById(shopSeq).orElseThrow();
+        UserEntity user = userRepository.findById(userSeq).orElseThrow();
+        PurchaseInfo purchaseInfo = purchaseInfoRepository.findByShopAndUser(shop, user);
+        List<Product> productList = productRepository.findByPurchaseInfo(purchaseInfo);
         List<ProductResponse> productResponseList = productList.stream()
                 .map(ProductResponse::new)
                 .collect(Collectors.toList());
@@ -96,7 +97,7 @@ public class PurchaseInfoService {
 
         purchaseInfo.update(request.getPrice(), request.getShipCost());
 
-        productRepository.deleteByPurchaseSeq(id);
+        productRepository.deleteByPurchaseInfo(purchaseInfo);
         for (UpdateProductRequest p : request.getProductList()){
             Product product = Product.builder()
                     .purchaseInfo(purchaseInfo)
