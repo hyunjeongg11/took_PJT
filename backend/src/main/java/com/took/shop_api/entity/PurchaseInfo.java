@@ -21,7 +21,7 @@ public class PurchaseInfo {
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "userSeq", nullable = false)
+    @JoinColumn(name = "user_seq", nullable = false)
     private UserEntity user;
 
     @Column(nullable = false)
