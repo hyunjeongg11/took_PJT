@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BackButton from '../../components/common/BackButton';
+import CheckExpectedCost from '../../components/taxi/CheckExpectedCost';
 import userProfileIcon1 from '../../assets/profile/img5.png';
 import userProfileIcon2 from '../../assets/profile/img6.png';
 import changeOrderIcon from '../../assets/taxi/changeOrder.png';
@@ -7,17 +8,25 @@ import changeOrderIcon from '../../assets/taxi/changeOrder.png';
 const tempData = [
   {
     userName: '차민주',
+    userId: 1,
     userProfileIcon: userProfileIcon2,
+    gender: '여성',
     userDestination: '부산 강서구 녹산산단335로 7 송정삼정그린코아더시티',
+    expectedCost: 13800,
   },
   {
     userName: '조현정',
+    userId: 2,
     userProfileIcon: userProfileIcon1,
+    gender: '여성',
     userDestination: '부산 강서구 명지국제5로 170-5 명일초등학교',
+    expectedCost: 11500,
   },
 ];
 
 const tempUser = {
+  userName: '차민주',
+  userId: 1,
   gender: '여성',
 };
 
@@ -27,6 +36,7 @@ function TaxiChattingSettingPage() {
   const [userCount, setUserCount] = useState(1);
   const [genderPreference, setGenderPreference] = useState('무관');
   const [draggingIndex, setDraggingIndex] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const onDragStart = (e, index) => {
     e.dataTransfer.effectAllowed = 'move';
@@ -51,11 +61,11 @@ function TaxiChattingSettingPage() {
 
   const handleCreateChatRoom = () => {
     // todo: 채팅방 생성 로직을 추가
-    console.log('결제자:', paymentUser);
-    console.log('모집 인원:', userCount);
-    console.log('모집 성별:', genderPreference);
-    console.log('경로 목록:', destinations);
-    // 일단 이렇게
+    setIsPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsPopupOpen(false);
   };
 
   return (
@@ -88,7 +98,7 @@ function TaxiChattingSettingPage() {
                   onDragOver={() => onDragOver(index)}
                   onDragEnd={onDragEnd}
                 >
-                  <div className="flex flex-col w-16">
+                  <div className="flex flex-col items-center w-16">
                     <img
                       src={item.userProfileIcon}
                       alt={`${item.userName} 프로필 사진`}
@@ -170,6 +180,13 @@ function TaxiChattingSettingPage() {
           </select>
         </div>
       </div>
+
+      <CheckExpectedCost
+        isOpen={isPopupOpen}
+        onClose={closePopup}
+        destinations={destinations}
+        tempUser={tempUser}
+      />
     </div>
   );
 }
