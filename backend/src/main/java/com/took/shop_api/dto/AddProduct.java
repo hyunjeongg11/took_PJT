@@ -16,11 +16,4 @@ public class AddProduct {
 
     private String etc;
 
-    public Product toEntity() {
-        return Product.builder()
-                .productName(productName)
-                .optionDetails(optionDetails)
-                .etc(etc)
-                .build();
-    }
 }

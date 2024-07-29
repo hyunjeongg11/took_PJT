@@ -21,12 +21,4 @@ public class AddPurchaseInfo {
 
     private List<AddProduct> productList;
 
-    public PurchaseInfo toEntity() {
-        return PurchaseInfo.builder()
-                .userSeq(userSeq)
-                .shopSeq(shopSeq)
-                .price(price)
-                .shipCost(shipCost)
-                .build();
-    }
 }

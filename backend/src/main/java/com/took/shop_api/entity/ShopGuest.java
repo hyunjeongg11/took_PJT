@@ -22,8 +22,10 @@ public class ShopGuest {
     @JoinColumn(name = "user_seq", nullable = false)
     private UserEntity user;
 
-    @Column(nullable = false)
-    private Long shopSeq;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "shop_seq", nullable = false)
+    private Shop shop;
 
     @Column
     private boolean pickUp;

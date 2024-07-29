@@ -1,11 +1,13 @@
 package com.took.shop_api.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -80,6 +82,18 @@ public class Shop {
     @Column
     private int maxCount;
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "shop", cascade =CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    List<ShopGuest> shopGuests;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    List<ShipInfo> shipInfos;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    List<PurchaseInfo> purchaseInfos;
+
     @PrePersist
     protected void onCreate() {
         if (this.createAt == null) {
@@ -90,18 +104,6 @@ public class Shop {
         }
     }
 
-    @Builder
-    public Shop(String title, String content, int hit, String item, String site, String place, statusType status, LocalDateTime createAt) {
-        this.title = title;
-        this.content = content;
-        this.hit = hit;
-        this.item = item;
-        this.site = site;
-        this.place = place;
-        this.status = status;
-        this.createAt = createAt;
-    }
-
     public void update(String title, String content, String item, String site, String place, int maxCount) {
         this.title = title;
         this.content = content;
@@ -110,5 +112,4 @@ public class Shop {
         this.place = place;
         this.maxCount = maxCount;
     }
-
 }

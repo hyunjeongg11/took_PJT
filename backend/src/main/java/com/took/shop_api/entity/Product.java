@@ -1,5 +1,6 @@
 package com.took.shop_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +20,11 @@ public class Product {
     @Column(nullable = false)
     private String productName;
 
-    @Column(nullable = false)
-    private Long purchaseSeq;
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "purchase_seq", nullable = false)
+    private PurchaseInfo purchaseInfo;
 
     @Column
     private String optionDetails;
@@ -28,20 +32,4 @@ public class Product {
     @Column
     private String etc;
 
-    @Builder
-    public Product(Long ProductSeq,Long purchaseSeq, String productName, String optionDetails, String etc) {
-        this.productSeq = ProductSeq;
-        this.purchaseSeq = purchaseSeq;
-        this.productName = productName;
-        this.optionDetails = optionDetails;
-        this.etc = etc;
-    }
-    public void update(String optionDetails, String etc) {
-        this.optionDetails = optionDetails;
-        this.etc = etc;
-    }
-
-    public void updatePurchaseSeq(long purchaseSeq) {
-        this.purchaseSeq = purchaseSeq;
-    }
 }

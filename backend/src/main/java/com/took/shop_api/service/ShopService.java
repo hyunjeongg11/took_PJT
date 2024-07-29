@@ -27,10 +27,21 @@ public class ShopService {
 
     @Transactional
     public Shop save(AddShopRequest request) {
-        Shop shop = shopRepository.save(request.toEntity());
+        Shop shop = Shop.builder().user(userRepository.findByUserSeq(request.getUserSeq()))
+                .roomSeq(request.getRoomSeq())
+                .title(request.getTitle())
+                .content(request.getContent())
+                .item(request.getItem())
+                .site(request.getSite())
+                .place(request.getPlace())
+                .maxCount(request.getMaxCount())
+                .lat(request.getLat())
+                .lon(request.getLon())
+                .build();
+        shopRepository.save(shop);
+
         UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
-        ShopGuest shopGuest = ShopGuest.builder().shopSeq(shop.getShopSeq())
-                        .user(user).build();
+        ShopGuest shopGuest = ShopGuest.builder().shop(shop).user(user).build();
         shopGuestRepository.save(shopGuest);
         return shop;
     }
@@ -79,7 +90,12 @@ public class ShopService {
                     .orElseThrow(() -> new IllegalArgumentException("not found : " + request.getShopSeq()));;
             if (shop.getMaxCount() > shop.getCount()){
                 shop.updateCount(1);
-                shopGuestRepository.save(request.toEntity());
+                shopGuest = ShopGuest.builder().
+                        shop(shop).
+                        user(userRepository.findByUserSeq(request.getUserSeq())).
+                        pickUp(false).
+                        build();
+                shopGuestRepository.save(shopGuest);
                 return true;
             }
             else {
