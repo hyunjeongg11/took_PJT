@@ -71,8 +71,8 @@ function TaxiCostInputPage() {
           <div className="text-gray-500 mb-4 text-sm">{formatDate(tempTaxi.created_at)}</div>
           <div className="flex items-center mb-6">
             <img src={taxiIcon} alt="Took" className="w-14 h-14" />
-            <div className="ml-4 font-bold relative">
-              <div className="text-sm text-black mb-1">총 {tempTaxi.count}명</div>
+            <div className="ml-4 relative">
+              <div className="text-sm font-bold text-black mb-1">총 {tempTaxi.count}명</div>
               <div className="text-lg flex items-center">
                 <input
                   type="text"
@@ -81,7 +81,7 @@ function TaxiCostInputPage() {
                   onChange={handleInputChange}
                   className="border-b border-gray-300 outline-none text-lg text-black w-28"
                 />
-                <span className="text-lg text-black ml-1">원</span>
+                <span className="text-lg font-bold text-black ml-1">원</span>
               </div>
             </div>
           </div>
