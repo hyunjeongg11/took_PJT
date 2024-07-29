@@ -48,6 +48,7 @@ import TaxiCostRequestPages from './pages/taxi/TaxiCostRequestPages';
 import TaxiMainPage from './pages/taxi/TaxiMainPage';
 import CreateChattingPage from './pages/taxi/CreateChattingPage';
 import TaxiChattingSettingPage from './pages/taxi/TaxiChattingSettingPage';
+import TaxiPathSettingPage from './pages/taxi/TaxiPathSettingPage';
 import CurrentPathListPage from './pages/taxi/CurrentPathListPage';
 
 function App() {
@@ -121,6 +122,7 @@ function App() {
     { path: '/taxi/main', element: <TaxiMainPage /> },
     { path: '/taxi/create', element: <CreateChattingPage /> },
     { path: '/taxi/setting', element: <TaxiChattingSettingPage /> },
+    { path: '/taxi/path', element: <TaxiPathSettingPage /> },
     { path: '/taxi/path-list', element: <CurrentPathListPage /> },
   ]);
 
