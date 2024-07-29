@@ -33,7 +33,7 @@ const CheckExpectedCost = ({ isOpen, onClose, destinations, tempUser }) => {
                 <img
                   src={item.userProfileIcon}
                   alt={`${item.userName} 프로필 사진`}
-                  className="w-9 h-9 rounded-full mr-3"
+                  className="w-9 h-9 mr-3"
                 />
                 <div className="flex-grow">
                   <div className="text-base font-bold flex items-center">
