@@ -1,20 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import BackButton from '../../components/common/BackButton';
 import SelectArrow from '../../assets/payment/selectArrow.png';
 import ProfileImg from '../../assets/profile/img11.png';
 import { formatNumber } from '../../utils/format';
+import { banks, stocks } from '../../utils/bankdata';
 import { useNavigate } from 'react-router-dom';
+import AccountCard from '../../components/payment/AccountCard';
+
+const tempData = [
+  {
+    bankName: '국민은행',
+    accountNum: '1234568910',
+    accountName: '별명 미설정',
+    balance: 1620,
+  },
+  {
+    bankName: '신한은행',
+    accountNum: '0123451234',
+    accountName: 'Deep Dream',
+    balance: 5400,
+  },
+  {
+    bankName: '우리은행',
+    accountNum: '1597535678',
+    accountName: '우리 카드',
+    balance: 3200,
+  },
+];
+
 
 function PaymentPage({
   userName = '사용자',
   amount,
-  account = '국민은행 8910',
-  accountBalance = 1620,  // 계좌 잔액 기본값 추가
 }) {
   const navigate = useNavigate();
+  const [selectedAccount, setSelectedAccount] = useState(tempData[0]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSendMoney = () => {
     console.log('송금');
+  };
+
+  const handleAccountChange = (account) => {
+    setSelectedAccount(account);
+    setIsModalOpen(false);
   };
 
   return (
@@ -50,12 +79,14 @@ function PaymentPage({
       <div className="mb-8 text-xs">
         <div className="flex items-center justify-between w-full px-8">
           <div className="text-gray-500 font-bold">출금계좌</div>
-          <button className="flex items-center space-x-1">
-            <span className="text-black font-bold mr-1">
-              {account} ({formatNumber(accountBalance)}원)
-            </span>
-            <img src={SelectArrow} alt="selectArrow" />
-          </button>
+          <div className="relative">
+            <button onClick={() => setIsModalOpen(true)} className="flex items-center space-x-1">
+              <span className="text-black font-bold mr-1">
+                {selectedAccount.bankName} ({selectedAccount.accountNum.slice(-4)}) ({formatNumber(selectedAccount.balance)}원)
+              </span>
+              <img src={SelectArrow} alt="selectArrow" />
+            </button>
+          </div>
         </div>
 
         <div className="mt-6 flex w-full space-x-6 px-6">
@@ -73,6 +104,14 @@ function PaymentPage({
           </button>
         </div>
       </div>
+      
+      {isModalOpen && (
+        <AccountCard
+          accounts={tempData}
+          onClose={() => setIsModalOpen(false)}
+          onSelect={handleAccountChange}
+        />
+      )}
     </div>
   );
 }
