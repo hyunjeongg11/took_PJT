@@ -1,0 +1,10 @@
+package com.took.user_api.dto.request.account;
+
+import lombok.Getter;
+
+@Getter
+public class AccountBalanceRequestDto {
+
+    private Long accountSeq;
+    
+}
