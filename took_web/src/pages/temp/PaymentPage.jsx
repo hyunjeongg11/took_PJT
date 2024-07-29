@@ -62,7 +62,7 @@ function PaymentPage({
           <img
             src={ProfileImg}
             alt="Watermelon"
-            className="w-20 h-20 mx-auto"
+            className="w-20 h-20 mx-auto animate-shake"
           />
           <div className="mt-10 text-xl font-bold text-black">
             {userName} 님에게
