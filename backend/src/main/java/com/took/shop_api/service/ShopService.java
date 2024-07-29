@@ -1,5 +1,7 @@
 package com.took.shop_api.service;
 
+import com.took.chat_api.entity.ChatRoom;
+import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.shop_api.dto.AddShopGuest;
 import com.took.shop_api.dto.AddShopRequest;
 import com.took.shop_api.dto.UpdateShopRequest;
@@ -24,11 +26,13 @@ public class ShopService {
     private final ShopRepository shopRepository;
     private final ShopGuestRepository shopGuestRepository;
     private final UserRepository userRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Transactional
     public Shop save(AddShopRequest request) {
+        ChatRoom chatRoom = chatRoomRepository.findById(request.getRoomSeq()).orElseThrow();
         Shop shop = Shop.builder().user(userRepository.findByUserSeq(request.getUserSeq()))
-                .roomSeq(request.getRoomSeq())
+                .chatRoom(chatRoom)
                 .title(request.getTitle())
                 .content(request.getContent())
                 .item(request.getItem())
