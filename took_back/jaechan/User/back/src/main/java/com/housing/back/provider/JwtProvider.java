@@ -10,9 +10,11 @@ import org.springframework.stereotype.Component;
 
 import com.nimbusds.jose.util.StandardCharset;
 
-
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 
 @Component
@@ -36,6 +38,38 @@ public class JwtProvider {
 
     }
 
+    // accessToken 확인
+    public String createAccessToken(String userId){
+        Date expiredDate = Date.from(Instant.now().plusMillis(3600000)); // 1시간 유효
+        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharset.UTF_8));
+
+        String jwt = Jwts.builder()
+                    .signWith(key,SignatureAlgorithm.HS256)
+                    .setSubject(userId)
+                    .setIssuedAt(new Date())
+                    .setExpiration(expiredDate)
+                    .compact();
+
+        return jwt;
+
+    }
+
+     // Refresh Token 생성
+     public String createRefreshToken(String userId) {
+        Date expiredDate = Date.from(Instant.now().plusMillis(2592000000L)); // 30일 유효
+        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharset.UTF_8));
+
+        String jwt= Jwts.builder()
+                    .signWith(key, SignatureAlgorithm.HS256)
+                    .setSubject(userId)
+                    .setIssuedAt(new Date())
+                    .setExpiration(expiredDate)
+                    .compact();
+
+        return jwt;
+    }
+
+
     // jwt 검증!
     public String validate(String jwt){
         
@@ -43,7 +77,7 @@ public class JwtProvider {
 
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharset.UTF_8));
 
-
+        
         try{
         
             subject = Jwts.parserBuilder()
@@ -53,9 +87,14 @@ public class JwtProvider {
                         .getBody().getSubject();
 
 
-        }catch(Exception exception){
-            exception.printStackTrace();
-            return null;
+        }catch (MalformedJwtException e) {
+            System.out.println("Invalid JWT token");
+        } catch (ExpiredJwtException e) {
+            System.out.println("Expired JWT token");
+        } catch (UnsupportedJwtException e) {
+            System.out.println("Unsupported JWT token");
+        } catch (IllegalArgumentException e) {
+            System.out.println("JWT token compact of handler are invalid");
         }
 
         return subject;

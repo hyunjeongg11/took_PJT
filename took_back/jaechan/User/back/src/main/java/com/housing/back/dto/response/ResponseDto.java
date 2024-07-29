@@ -35,4 +35,9 @@ public class ResponseDto {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
     }
 
+    public static ResponseEntity<ResponseDto> nomoney(){
+        ResponseDto responseBody = new ResponseDto(ResponseCode.NO_MONEY,ResponseMessage.NO_MONEY);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
+    }
+
 }

@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.housing.back.entity.UserEntity;
 import com.housing.back.provider.JwtProvider;
 import com.housing.back.repository.UserRepository;
-
+import com.housing.back.service.TokenBlacklistService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,28 +28,43 @@ import lombok.RequiredArgsConstructor;
 
 
 // 이 필터에서 Jwtprovidder을 사용해 준다.
-
 @Component
 @RequiredArgsConstructor  // 필수 요소에 대한 생성자 생성 | 필터로 만들기 위해서는 해당 필터를 상속하여 메서드를 재정의 해주어야한다.
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-         
+
+
+            // 블랙박스 검정
+            String header = request.getHeader("Authorization");
+            if(header==null || !header.startsWith("Bearer")){
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            String token = header.substring(7);
+            if(tokenBlacklistService.isTokenBlacklisted(token)){
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"중복된 토큰입니다.");
+                return;
+            }
+
+
             try{
 
-                String token = parseVearerToken(request);
-
+                token = parseVearerToken(request);
                 if(token == null){
                     filterChain.doFilter(request, response);
                     return;
                 }
 
                 String userId = jwtProvider.validate(token);
+
 
                 if(userId ==null){
                     // 넘어가기
@@ -61,10 +76,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 UserEntity userEntity = userRepository.findByUserId(userId);
                 String role = userEntity.getRole(); //role : 이때 role은 ROLE_USER,ROLE_ADMIN
 
-
                 // ROLE_DEVELOPER ,등을 리스트로 전달 할 수 있게금 가능!
+                // 다중 권한 소지자일 경우
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 authorities.add(new SimpleGrantedAuthority(role));
+
+                
                 
                 // 빈콘텍스트 제작완
                 SecurityContext securityContext =  SecurityContextHolder.createEmptyContext();

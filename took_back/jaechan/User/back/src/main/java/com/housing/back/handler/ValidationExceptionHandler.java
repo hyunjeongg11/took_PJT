@@ -11,7 +11,6 @@ import com.housing.back.dto.response.ResponseDto;
 @RestControllerAdvice
 public class ValidationExceptionHandler{
 
-
     @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
     public ResponseEntity<ResponseDto> validataionExceptionHandler(Exception exception){
         return ResponseDto.validationFail();

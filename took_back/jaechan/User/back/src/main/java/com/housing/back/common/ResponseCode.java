@@ -15,5 +15,7 @@ public interface ResponseCode {
     String MAIL_FAIL="MF";
 
     String DATABASE_ERROR="DBE";
+
+    String NO_MONEY="nm";
     
 } 
