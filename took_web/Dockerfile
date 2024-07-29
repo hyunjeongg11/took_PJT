@@ -14,12 +14,3 @@ COPY . .
 
 # 애플리케이션 빌드
 RUN npm run build
-
-# nginx 설치 및 설정
-FROM nginx:alpine
-
-COPY --from=0 /app/build /usr/share/nginx/html
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
