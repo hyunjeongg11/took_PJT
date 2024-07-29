@@ -1,4 +1,4 @@
-FROM node:14 AS build
+FROM node:16 AS build
 
 # 애플리케이션 디렉토리 생성
 WORKDIR /app
