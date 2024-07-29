@@ -1,14 +1,15 @@
 package com.took.shop_api.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Entity
-@Data
+@Getter
+@ToString
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Product {
 
     @Id

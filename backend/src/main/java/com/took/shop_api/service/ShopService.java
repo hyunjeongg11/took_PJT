@@ -8,11 +8,14 @@ import com.took.shop_api.entity.Shop;
 import com.took.shop_api.entity.ShopGuest;
 import com.took.shop_api.repository.ShopGuestRepository;
 import com.took.shop_api.repository.ShopRepository;
+import com.took.user_api.entity.UserEntity;
+import com.took.user_api.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -20,17 +23,19 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
     private final ShopGuestRepository shopGuestRepository;
+    private final UserRepository userRepository;
 
+    @Transactional
     public Shop save(AddShopRequest request) {
         Shop shop = shopRepository.save(request.toEntity());
-        System.out.println(shop.toString());
-        ShopGuest shopGuest = new ShopGuest();
-        shopGuest.setShopSeq(shop.getShopSeq());
-        shopGuest.setUserSeq(shop.getUserSeq());
+        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        ShopGuest shopGuest = ShopGuest.builder().shopSeq(shop.getShopSeq())
+                        .user(user).build();
         shopGuestRepository.save(shopGuest);
         return shop;
     }
 
+    @Transactional
     public List<Shop> findShopsByIds(List<Long> id) {
         return shopRepository.findByUserSeqInAndStatus(id, Shop.statusType.OPEN);
     }
@@ -47,6 +52,7 @@ public class ShopService {
         return shop;
     }
 
+    @Transactional
     public void delete(long id) {
         shopRepository.deleteById(id);
     }
@@ -71,6 +77,7 @@ public class ShopService {
         return shop;
     }
 
+    @Transactional
     public boolean userEnterShop(AddShopGuest request) {
             ShopGuest shopGuest = shopGuestRepository.findByShopSeqAndUserSeq(request.getShopSeq(), request.getUserSeq());
         if (shopGuest == null){
@@ -90,6 +97,8 @@ public class ShopService {
         }
 
     }
+
+    @Transactional
     public void exit(long shopSeq, long userSeq){
         shopGuestRepository.deleteByShopSeqAndUserSeq(shopSeq, userSeq);
         Shop shop = shopRepository.findById(shopSeq)
@@ -98,6 +107,7 @@ public class ShopService {
         shopRepository.save(shop);
     }
 
+    @Transactional
     public void pickUp(long shopSeq, long userSeq) {
 
         ShopGuest shopGuest = shopGuestRepository.findByShopSeqAndUserSeq(shopSeq, userSeq);
@@ -105,6 +115,7 @@ public class ShopService {
         shopGuestRepository.save(shopGuest);
     }
 
+    @Transactional
     public boolean pickUpCheck(long shopSeq) {
         List<ShopGuest> list = shopGuestRepository.findAllByShopSeq(shopSeq);
         for (ShopGuest shopGuest : list){

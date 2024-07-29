@@ -1,5 +1,7 @@
 package com.took.chat_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +19,7 @@ public class ChatUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // 자동 증가 설정
     private Long chatUserSeq;  // 유저 고유 번호
 
+    @JsonBackReference
     @ManyToOne  // 다대일 관계 설정
     @JoinColumn(name = "room_seq", nullable = false)  // 외래 키 설정 및 Not Null 설정
     private ChatRoom chatRoom;  // 유저가 속한 채팅방
@@ -24,6 +27,8 @@ public class ChatUser {
     @Column(nullable = false)  // Not Null 설정
     private LocalDateTime joinTime;  // 방에 들어간 시간
 
-    @Column(nullable = false)  // Not Null 설정
-    private Long userSeq;  // 유저 이름
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name="user_seq", nullable = false)
+    private UserEntity user;
 }

@@ -1,5 +1,7 @@
 package com.took.taxi_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,12 +17,16 @@ public class TaxiGuest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long guestSeq;  // 게스트 번호
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "taxi_seq", nullable = false)
     private Taxi taxi;  // 택시 참조
 
-    @Column(nullable = false)
-    private Long userSeq;  // 사용자 번호
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "user_seq", nullable = false)
+    private UserEntity user; // 사용자 번호
 
     @Column(nullable = false)
     private int cost;  // 비용

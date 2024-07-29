@@ -1,5 +1,7 @@
 package com.took.delivery_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,13 +20,16 @@ public class DeliveryGuest {
     private Long deliveryGuestSeq;
 
     // Delivery 엔티티와 다대일(Many-to-One) 관계 설정
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "delivery_seq", nullable = false)
     private Delivery delivery;
 
     // 사용자의 고유 식별자 필드
-    @Column(nullable = false)
-    private Long userSeq;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "user_seq", nullable = false)
+    private UserEntity user;
 
     // 픽업 여부를 나타내는 필드
     @Column(nullable = false)

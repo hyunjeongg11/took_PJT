@@ -1,5 +1,8 @@
 package com.took.chat_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,8 +21,10 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // 자동 증가 설정
     private Long roomSeq;  // 채팅방 고유 번호
 
-    @Column(nullable = false) //  유저테이블 참조
-    private Long userSeq;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "user_seq", nullable = false)  // 외래키(FK) 설정
+    private UserEntity user;
 
     @Column(nullable = false)  // Not Null 설정
     private String roomTitle;  // 채팅방 제목
@@ -30,9 +35,11 @@ public class ChatRoom {
     @Column(nullable = false) // Not Null 설정
     private int category;
 
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)  // 일대다 관계 설정
+    @JsonManagedReference
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)  // 일대다 관계 설정
     private List<ChatMessage> messages;  // 채팅방에 속한 메시지들
 
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)  // 일대다 관계 설정
+    @JsonManagedReference
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // 일대다 관계 설정
     private List<ChatUser> users;  // 채팅방에 속한 사용자들
 }

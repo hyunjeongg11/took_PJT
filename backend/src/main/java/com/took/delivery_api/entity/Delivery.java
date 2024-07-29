@@ -1,10 +1,13 @@
 package com.took.delivery_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.took.delivery_api.dto.DeliveryModifyRequest;
+import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 // 엔티티 클래스 정의
 @Entity
@@ -26,8 +29,10 @@ public class Delivery {
     private Long deliverySeq;
 
     // 사용자의 고유 식별자 필드
-    @Column(nullable = false)
-    private Long userSeq;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "user_seq", nullable = false)
+    private UserEntity user;
 
     // 채팅방 번호
     @Column(nullable = false)
@@ -83,6 +88,11 @@ public class Delivery {
     // 종료 시간 필드
     @Column(nullable = false)
     private LocalDateTime finishTime;
+
+    // 배달 손님 관계설정
+    @JsonBackReference
+    @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<DeliveryGuest> deliveryGuests;
 
     // 업데이트 메서드 추가
     public void updateDelivery(DeliveryModifyRequest request) {

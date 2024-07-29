@@ -1,5 +1,6 @@
 package com.took.chat_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,9 +25,11 @@ public class ChatMessage {
     @Enumerated(EnumType.STRING)  // Enum 값을 문자열로 데이터베이스에 저장
     private MessageType type;  // 메시지 타입
 
+    @JsonBackReference
     @ManyToOne  // 다대일 관계 설정
     @JoinColumn(name = "room_seq", nullable = false)  // 외래 키 설정 및 Not Null 설정
     private ChatRoom chatRoom;  // 메시지가 속한 채팅방
+
 
     @Column(nullable = false)  // Not Null 설정
     private Long userSeq;  // 메시지 송신자

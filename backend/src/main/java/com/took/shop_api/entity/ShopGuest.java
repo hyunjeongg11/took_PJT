@@ -1,13 +1,13 @@
 package com.took.shop_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -17,8 +17,10 @@ public class ShopGuest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shopGuestSeq;
 
-    @Column(nullable = false)
-    private Long userSeq;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "userSeq", nullable = false)
+    private UserEntity user;
 
     @Column(nullable = false)
     private Long shopSeq;

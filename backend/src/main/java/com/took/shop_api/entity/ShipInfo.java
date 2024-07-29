@@ -2,13 +2,11 @@ package com.took.shop_api.entity;
 
 import com.took.shop_api.dto.UpdateShipRequest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

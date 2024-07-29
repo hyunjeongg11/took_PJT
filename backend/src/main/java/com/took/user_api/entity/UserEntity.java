@@ -1,6 +1,16 @@
 package com.took.user_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.took.chat_api.entity.ChatRoom;
+import com.took.chat_api.entity.ChatUser;
+import com.took.delivery_api.entity.Delivery;
+import com.took.delivery_api.entity.DeliveryGuest;
+import com.took.shop_api.entity.PurchaseInfo;
+import com.took.shop_api.entity.Shop;
+import com.took.shop_api.entity.ShopGuest;
+import com.took.taxi_api.entity.Taxi;
+import com.took.taxi_api.entity.TaxiGuest;
 import com.took.user_api.dto.request.auth.SignUpRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -78,14 +88,56 @@ public class UserEntity {
 
     // 계좌와 관계 설정
     @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<AccountEntity> accounts;
 
     //party member와 관계 설정
     @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<MemberEntity> members;
 
+    // 채팅방과 관계설정
+    @JsonBackReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<ChatRoom> chatRooms;
+
+    // 채팅방 유저와 관계설정
+    @JsonBackReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<ChatUser> chatUsers;
+
+    // 배달파티와 관계설정
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<Delivery> deliveries;
+
+
+    // 배달 파티 멤버와 관계설정
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<DeliveryGuest> deliveryGuests;
+
+    // 택시파티와 관계설정
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<Taxi> taxis;
+
+    // 택시 파티 멤버와 관계설정
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<TaxiGuest> taxiGuests;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<PurchaseInfo> purchaseInfos;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<Shop> shops;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<ShopGuest> shopGuests;
 
     public UserEntity(SignUpRequestDto dto) {
         this.userId = dto.getUserId();
