@@ -40,4 +40,8 @@ public class Product {
         this.optionDetails = optionDetails;
         this.etc = etc;
     }
+
+    public void updatePurchaseSeq(long purchaseSeq) {
+        this.purchaseSeq = purchaseSeq;
+    }
 }

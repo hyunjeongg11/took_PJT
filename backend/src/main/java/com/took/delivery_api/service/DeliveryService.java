@@ -3,6 +3,8 @@ package com.took.delivery_api.service;
 import com.took.delivery_api.dto.*;
 import com.took.delivery_api.entity.Delivery;
 import com.took.delivery_api.repository.DeliveryRepository;
+import com.took.user_api.entity.UserEntity;
+import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -20,13 +22,15 @@ public class DeliveryService {
 
     // 리포지토리 주입
     private final DeliveryRepository deliveryRepository;
+    private final UserRepository userRepository;
 
     // 배달 생성 메서드
     @Transactional
     public DeliveryCreateResponse createDelivery(DeliveryCreateRequest request) {
+        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
         // 요청 데이터를 기반으로 Delivery 객체 생성
         Delivery delivery = Delivery.builder()
-                .userSeq(request.getUserSeq()) // 사용자 식별자 설정
+                .user(user) // 사용자 식별자 설정
                 .roomSeq(request.getRoomSeq()) // 채팅방 연결
                 .storeName(request.getStoreName()) // 가게 이름 설정
                 .pickupPlace(request.getPickupPlace()) // 픽업 장소 설정

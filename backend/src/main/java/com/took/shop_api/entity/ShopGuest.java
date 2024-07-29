@@ -28,4 +28,7 @@ public class ShopGuest {
     @Column
     private boolean pickUp;
 
+    public void updatePickUp(boolean pickUp) {
+        this.pickUp = pickUp;
+    }
 }

@@ -5,6 +5,8 @@ import com.took.taxi_api.entity.Taxi;
 import com.took.taxi_api.entity.TaxiGuest;
 import com.took.taxi_api.repository.TaxiGuestRepository;
 import com.took.taxi_api.repository.TaxiRepository;
+import com.took.user_api.entity.UserEntity;
+import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class TaxiService {
 
     private final TaxiRepository taxiRepository;  // TaxiRepository를 통해 데이터베이스 작업을 처리합니다.
     private final TaxiGuestRepository taxiGuestRepository;
+    private final UserRepository userRepository;
 
     /**
      * 새로운 Taxi 엔티티를 생성하고 데이터베이스에 저장합니다.
@@ -28,6 +31,7 @@ public class TaxiService {
      */
     @Transactional
     public TaxiSelectResponse createTaxi(TaxiCreateRequest request) {
+        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
         // Taxi 엔티티를 빌더 패턴을 사용하여 생성합니다.
         Taxi taxi = Taxi.builder()
                 .gender(request.isGender())  // 성별 여부 설정
@@ -38,7 +42,7 @@ public class TaxiService {
                 .finishTime(LocalDateTime.now().plusHours(1))  // 종료 일시에 현재 시간에서 1시간을 더한 값으로 설정
                 .master(request.getUserSeq())  // 결제자 설정
                 .roomSeq(request.getRoomSeq())  // 채팅방 참조 설정
-                .userSeq(request.getUserSeq())  // 작성자 설정
+                .user(user)  // 작성자 설정
                 .build();
         // 생성된 Taxi 엔티티를 데이터베이스에 저장합니다.
         Taxi response = taxiRepository.save(taxi);

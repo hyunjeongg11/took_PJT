@@ -1,6 +1,7 @@
 package com.took.chat_api.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,8 +32,10 @@ public class ChatMessage {
     private ChatRoom chatRoom;  // 메시지가 속한 채팅방
 
 
-    @Column(nullable = false)  // Not Null 설정
-    private Long userSeq;  // 메시지 송신자
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "user_seq", nullable = false)  // 외래 키 설정 및 Not Null 설정
+    private UserEntity user;  // 메시지 송신자
 
     @Column(nullable = false)  // Not Null 설정
     private String message;  // 메시지 내용

@@ -44,11 +44,7 @@ public class ShopService {
     public Shop findById(long id) {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
-
-        shop.setHit(shop.getHit() + 1);
-
-        shopRepository.save(shop);
-
+        shop.updateHit(1);
         return shop;
     }
 
@@ -71,9 +67,7 @@ public class ShopService {
     public Shop updateStatus(long id, UpdateStatusShopRequest request) {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
-
-        shop.setStatus(request.getStatus());
-
+        shop.updateStatus(request.getStatus());
         return shop;
     }
 
@@ -84,7 +78,7 @@ public class ShopService {
             Shop shop = shopRepository.findById(request.getShopSeq())
                     .orElseThrow(() -> new IllegalArgumentException("not found : " + request.getShopSeq()));;
             if (shop.getMaxCount() > shop.getCount()){
-                shop.setCount(shop.getCount() + 1);
+                shop.updateCount(1);
                 shopGuestRepository.save(request.toEntity());
                 return true;
             }
@@ -103,15 +97,14 @@ public class ShopService {
         shopGuestRepository.deleteByShopSeqAndUserSeq(shopSeq, userSeq);
         Shop shop = shopRepository.findById(shopSeq)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + shopSeq));
-        shop.setCount(shop.getCount() - 1);
-        shopRepository.save(shop);
+        shop.updateCount(-1);
     }
 
     @Transactional
     public void pickUp(long shopSeq, long userSeq) {
 
         ShopGuest shopGuest = shopGuestRepository.findByShopSeqAndUserSeq(shopSeq, userSeq);
-        shopGuest.setPickUp(true);
+        shopGuest.updatePickUp(true);
         shopGuestRepository.save(shopGuest);
     }
 

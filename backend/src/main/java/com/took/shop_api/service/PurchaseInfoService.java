@@ -20,16 +20,18 @@ public class PurchaseInfoService {
     private final PurchaseInfoRepository purchaseInfoRepository;
     private final ProductRepository productRepository;
 
+    @Transactional
     public void savePurchaseInfo(AddPurchaseInfo request) {
         PurchaseInfo purchaseInfo = purchaseInfoRepository.save(request.toEntity());
         long purchaseSeq =  purchaseInfo.getPurchaseSeq();
         for (AddProduct p: request.getProductList()){
             Product product = p.toEntity();
-            product.setPurchaseSeq(purchaseSeq);
+            product.updatePurchaseSeq(purchaseSeq);
             productRepository.save(product);
         }
     }
 
+    @Transactional
     public PurchaseInfoListResponse findByShopSeq(long id) {
         List<PurchaseInfo> purchaseInfoList = purchaseInfoRepository.findByShopSeq(id);
         List<PurchaseInfoResponse> result = new ArrayList<>();
@@ -48,6 +50,8 @@ public class PurchaseInfoService {
         PurchaseInfoListResponse response = new PurchaseInfoListResponse(result, total);
         return response;
     }
+
+    @Transactional
     public PurchaseInfoResponse findById(long shopSeq, long userSeq) {
         PurchaseInfo purchaseInfo = purchaseInfoRepository.findByShopSeqAndUserSeq(shopSeq, userSeq);
         long purchaseSeq = purchaseInfo.getPurchaseSeq();
@@ -59,6 +63,8 @@ public class PurchaseInfoService {
         purchaseInfoResponse.setProductList(productResponseList);
         return purchaseInfoResponse;
     }
+
+    @Transactional
     public void delete(long id) {
         purchaseInfoRepository.deleteById(id);
     }
@@ -73,7 +79,7 @@ public class PurchaseInfoService {
         productRepository.deleteByPurchaseSeq(id);
         for (UpdateProductRequest p : request.getProductList()){
             Product product = p.toEntity();
-            product.setPurchaseSeq(id);
+            product.updatePurchaseSeq(id);
             productRepository.save(product);
         }
     }

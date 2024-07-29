@@ -14,14 +14,17 @@ public class ShipService {
 
     private final ShipRepository shipRepository;
 
+    @Transactional
     public ShipInfo save(AddShipRequest request) {
         return shipRepository.save(request.toEntity());
     }
 
+    @Transactional
     public ShipInfo findByShopSeq(Long id){
         return shipRepository.findByShopSeq(id);
     }
 
+    @Transactional
     public void delete(Long id){
         shipRepository.deleteById(id);
     }

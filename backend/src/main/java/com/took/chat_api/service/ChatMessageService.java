@@ -8,6 +8,8 @@ import com.took.chat_api.entity.ChatMessage;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.repository.ChatMessageRepository;
 import com.took.chat_api.repository.ChatRoomRepository;
+import com.took.user_api.entity.UserEntity;
+import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final UserRepository userRepository;
 
     /**
      * 메시지 저장
@@ -33,11 +36,12 @@ public class ChatMessageService {
     public ChatMessageCreateResponse saveMessage(ChatMessageCreateRequest chatMessageCreateRequest) {
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(chatMessageCreateRequest.getRoomSeq()).orElseThrow();
+        UserEntity user = userRepository.findById(chatMessageCreateRequest.getUserSeq()).orElseThrow();
         // 현재 시간을 메시지의 생성 시간으로 설정
         ChatMessage chatMessage = ChatMessage.builder()
                 .type(ChatMessage.MessageType.valueOf(chatMessageCreateRequest.getType()))
                 .chatRoom(chatRoom)
-                .userSeq(chatMessageCreateRequest.getUserSeq())
+                .user(user)
                 .message(chatMessageCreateRequest.getMessage())
                 .createdAt(LocalDateTime.now())
                 .build();

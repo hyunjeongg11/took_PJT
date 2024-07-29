@@ -8,6 +8,8 @@ import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.entity.ChatUser;
 import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.chat_api.repository.ChatUserRepository;
+import com.took.user_api.entity.UserEntity;
+import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ public class ChatUserService {
 
     private final ChatUserRepository chatUserRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final UserRepository userRepository;
 
     /**
      * 유저가 이미 채팅방에 존재하는지 확인하는 메서드
@@ -47,10 +50,11 @@ public class ChatUserService {
     public ChatUserCreateResponse enterChatRoom(ChatUserCreateRequest chatUserCreateRequest) {
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(chatUserCreateRequest.getRoomSeq()).orElseThrow();
+        UserEntity user = userRepository.findById(chatUserCreateRequest.getUserSeq()).orElseThrow();
         // 새로운 채팅 유저 객체 생성 및 설정
         ChatUser chatUser = ChatUser.builder()
                 .chatRoom(chatRoom)
-                .userSeq(chatUserCreateRequest.getUserSeq())
+                .user(user)
                 .joinTime(LocalDateTime.now())
                 .build();
         // 채팅 유저 객체를 저장하고 반환
@@ -103,7 +107,7 @@ public class ChatUserService {
         // ChatUser 리스트를 ChatUserSelectResponse 리스트로 변환
         return users.stream()
                 .map(user -> ChatUserSelectResponse.builder()
-                        .userSeq(user.getUserSeq())
+                        .userSeq(user.getUser().getUserSeq())
                         .build())
                 .collect(Collectors.toList());
     }

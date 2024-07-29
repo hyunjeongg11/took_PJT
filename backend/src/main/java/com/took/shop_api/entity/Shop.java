@@ -15,6 +15,18 @@ import java.time.LocalDateTime;
 @Builder
 public class Shop {
 
+    public void updateHit(int i) {
+        this.hit += i;
+    }
+
+    public void updateStatus(statusType status) {
+        this.status = status;
+    }
+
+    public void updateCount(int i) {
+        this.count += i;
+    }
+
     public enum statusType {
         OPEN, IN_PROGRESS, COMPLETED
     }
