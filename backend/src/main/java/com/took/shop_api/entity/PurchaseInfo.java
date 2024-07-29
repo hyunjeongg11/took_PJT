@@ -36,8 +36,8 @@ public class PurchaseInfo {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false)
-    private int shipCost = 0;
+    @Column
+    private int shipCost;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "purchaseInfo",cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.LAZY)
