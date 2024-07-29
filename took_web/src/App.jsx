@@ -43,6 +43,8 @@ import DeliveryListPage from './pages/delivery/DeliveryListPage';
 import DeliveryPayInputPage from './pages/delivery/DeliveryPayInputPage';
 import DeliveryCompletePage from './pages/delivery/DeliveryCompletePage';
 import DeliveryStatusPage from './pages/delivery/DeliveryStatusPage';
+import TaxiCostInputPage from './pages/taxi/TaxiCostInputPage';
+import TaxiCostRequestPages from './pages/taxi/TaxiCostRequestPages';
 import TaxiMainPage from './pages/taxi/TaxiMainPage';
 import CreateChattingPage from './pages/taxi/CreateChattingPage';
 import TaxiChattingSettingPage from './pages/taxi/TaxiChattingSettingPage';
@@ -113,6 +115,8 @@ function App() {
     { path: '/groupbuy/:id', element: <BuyDetailPage /> },
     { path: '/groupbuy/join/:id', element: <BuyJoinPage /> },
     { path: '/groupbuy/form', element: <BuyFormPage /> },
+    { path: '/taxi/input', element: <TaxiCostInputPage /> },
+    { path: '/taxi/request', element: <TaxiCostRequestPages /> },
     { path: '/taxi/main', element: <TaxiMainPage /> },
     { path: '/taxi/create', element: <CreateChattingPage /> },
     { path: '/taxi/setting', element: <TaxiChattingSettingPage /> },
