@@ -44,6 +44,7 @@ import DeliveryPayInputPage from './pages/delivery/DeliveryPayInputPage';
 import DeliveryCompletePage from './pages/delivery/DeliveryCompletePage';
 import DeliveryStatusPage from './pages/delivery/DeliveryStatusPage';
 import TaxiMainPage from './pages/taxi/TaxiMainPage';
+import CreateChattingPage from './pages/taxi/CreateChattingPage';
 
 function App() {
   const [checkedItems, setCheckedItems] = useState({
@@ -112,6 +113,7 @@ function App() {
     { path: '/groupbuy/join/:id', element: <BuyJoinPage /> },
     { path: '/groupbuy/form', element: <BuyFormPage /> },
     { path: '/taxi/main', element: <TaxiMainPage /> },
+    { path: '/taxi/create', element: <CreateChattingPage /> },
   ]);
 
   return <RouterProvider router={ROUTER} />;

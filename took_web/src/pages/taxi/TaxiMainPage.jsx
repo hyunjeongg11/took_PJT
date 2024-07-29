@@ -13,7 +13,7 @@ const tempUser = {
   gender: '여성',
   location: '부산광역시 부산진구 부전동 169-1',
 };
-
+ 
 const tempData = [
   {
     userProfileIcon: userProfileIcon1,
@@ -53,7 +53,7 @@ function TaxiMainPage() {
   const navigate = useNavigate();
 
   const handleCreateTaxi = () => {
-    navigate('/create-taxi');
+    navigate('/taxi/create');
   };
 
   const handleEnterChatRoom = () => {
