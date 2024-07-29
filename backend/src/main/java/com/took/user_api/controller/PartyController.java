@@ -1,11 +1,13 @@
 package com.took.user_api.controller;
 
 
+import com.took.user_api.dto.request.account.AccountSeqRequestDto;
 import com.took.user_api.dto.request.member.MemberSaveRequestDto;
 import com.took.user_api.dto.request.party.PartyDetailRequestDto;
 import com.took.user_api.dto.request.party.PartyDoneRequestDto;
 import com.took.user_api.dto.request.party.PartyRequestDto;
 import com.took.user_api.dto.request.party.PayAllResquestDto;
+import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.member.MemberSaveResponseDto;
 import com.took.user_api.dto.response.party.*;
 import com.took.user_api.service.MemberService;
@@ -73,14 +75,7 @@ public class PartyController {
         ResponseEntity<? super PartyDoneResponseDto> response = partyService.partyDone(requestBody);
         return response;
     }
-    
-    // 미정산자 (돈이 부족해서 보내지 못했을 경우 은행 재선택을 포함하여 ~을 보낸다.)
-    @PostMapping("/re-pay")
-    public String rePay(@RequestBody String entity) {
-        
-        
-        return entity;
-    }
+
     
     // pay-history를 더 자세히 본다.
     @PostMapping("/party-detail")

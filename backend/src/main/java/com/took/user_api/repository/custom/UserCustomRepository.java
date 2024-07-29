@@ -11,4 +11,5 @@ public interface UserCustomRepository{
     
     void kakaoChange(KakaoChangeRequestDto dto);
     List<Tuple> getAllLocation(Long userSeq);
+    void changePwd(String encryptedPwd,Long userSeq);
 }

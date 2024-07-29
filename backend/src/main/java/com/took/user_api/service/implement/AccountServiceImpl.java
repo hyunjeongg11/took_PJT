@@ -3,11 +3,13 @@ package com.took.user_api.service.implement;
 
 import com.took.user_api.dto.request.account.*;
 import com.took.user_api.dto.response.ResponseDto;
+import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.account.*;
 import com.took.user_api.entity.AccountEntity;
 import com.took.user_api.entity.BankEntity;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.AccountRepository;
+import com.took.user_api.repository.BankRepository;
 import com.took.user_api.repository.UserRepository;
 import com.took.user_api.repository.custom.AccountRepositoryCustom;
 import com.took.user_api.repository.custom.BankRepositoryCustom;
@@ -23,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
+    private final BankRepository bankRepository;
     private final UserRepository userRepository;
     private final BankRepositoryCustom bankRepositoryCustom;
     private final AccountRepository accountRepository;
@@ -106,7 +109,7 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public ResponseEntity<? super AccountBalanceResponseDto> balance(AccountBalanceRequestDto dto) {
+    public ResponseEntity<? super AccountBalanceResponseDto> balance(AccountSeqRequestDto dto) {
      
         Long bankSeq = null;
         Long balance = null;
@@ -181,5 +184,26 @@ public class AccountServiceImpl implements AccountService {
         }
 
         return CheckEasyPwdResponseDto.success(result);
+    }
+
+    @Override
+    public ResponseEntity<? super VoidResponseDto> repay(RepayRequestDto requestBody) {
+
+        Long bankSeq = null;
+        BankEntity bank = null;
+
+        try{
+
+            bankSeq = accountRepositoryCustom.findBankSeqByAccountSeq(requestBody.getAccountSeq());
+            bank = bankRepository.getReferenceById(bankSeq);
+
+            if(!bank.minus(requestBody.getCost())) return ResponseDto.nomoney();
+
+//           뱅크 업데이트 필요
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
     }
 }

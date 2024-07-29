@@ -5,8 +5,10 @@ import com.querydsl.core.Tuple;
 import com.took.user_api.dto.LocationDto;
 import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
 import com.took.user_api.dto.request.user.NearUserRequestDto;
+import com.took.user_api.dto.request.user.PwdChangeRequestDto;
 import com.took.user_api.dto.request.user.UserInfoRequestDto;
 import com.took.user_api.dto.response.ResponseDto;
+import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
 import com.took.user_api.dto.response.user.KakaoChangeResponseDto;
 import com.took.user_api.dto.response.user.UserInfoResponseDto;
@@ -21,7 +23,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -36,6 +41,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserCustomRepository userCustomRepository;
     private final TokenBlacklistService tokenBlacklistService;
+
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Value("${distance.threshold}")
     private double distanceThreshold;
@@ -122,6 +129,32 @@ public class UserServiceImpl implements UserService {
         }
 
         return DeliNearUserResponseDto.success(nearList);
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<? super VoidResponseDto> changePwd(PwdChangeRequestDto requestBody) {
+
+        try{
+
+            UserEntity user = userRepository.getReferenceById(requestBody.getUserSeq());
+
+            boolean isMatched = passwordEncoder.matches(requestBody.getNowPwd(),user.getPassword());
+
+            if(!isMatched){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 일치하지 않습니다.");
+            }
+
+            String encryptedPwd = passwordEncoder.encode(requestBody.getNewPwd());
+            userCustomRepository.changePwd(encryptedPwd,requestBody.getUserSeq());
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return VoidResponseDto.success();
     }
 
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {

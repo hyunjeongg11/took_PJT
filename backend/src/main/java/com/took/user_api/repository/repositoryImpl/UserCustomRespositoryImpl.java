@@ -60,5 +60,14 @@ public class UserCustomRespositoryImpl implements UserCustomRepository {
 
     }
 
+    @Override
+    public void changePwd(String encryptedPwd, Long userSeq) {
+        QUserEntity user = QUserEntity.userEntity;
+
+        queryFactory.update(user)
+                .where(user.userSeq.eq(userSeq))
+                .set(user.password, encryptedPwd)
+                .execute();
+    }
 
 }

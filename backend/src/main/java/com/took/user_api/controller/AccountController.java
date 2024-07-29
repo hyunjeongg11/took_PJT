@@ -2,6 +2,7 @@ package com.took.user_api.controller;
 
 
 import com.took.user_api.dto.request.account.*;
+import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.account.*;
 import com.took.user_api.service.AccountService;
 import jakarta.validation.Valid;
@@ -51,7 +52,7 @@ public class AccountController {
     @PostMapping("/account-balance")
     public ResponseEntity<? super AccountBalanceResponseDto> postMethodName
     (
-        @RequestBody @Valid AccountBalanceRequestDto requestBody
+        @RequestBody @Valid AccountSeqRequestDto requestBody
     ) {
         ResponseEntity<? super AccountBalanceResponseDto> response = accountService.balance(requestBody);
         
@@ -66,6 +67,14 @@ public class AccountController {
     @PostMapping("/check-easypwd")
     public ResponseEntity<? super CheckEasyPwdResponseDto> checkEasyPwd(@RequestBody AccountEasyPwdRequestDto requestBody){
         return accountService.checkEasyPwd(requestBody);
+    }
+
+    // 미정산자 (돈이 부족해서 보내지 못했을 경우 은행 재선택을 포함하여 ~을 보낸다.)
+    @PostMapping("/re-pay")
+    public ResponseEntity<? super VoidResponseDto> rePay(@RequestBody AccountSeqRequestDto requestBody) {
+
+        ResponseEntity<? super VoidResponseDto> response = accountService.repay(requestBody);
+        return response;
     }
     
     

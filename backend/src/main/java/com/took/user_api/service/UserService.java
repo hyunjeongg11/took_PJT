@@ -4,7 +4,9 @@ package com.took.user_api.service;
 import com.took.user_api.dto.LocationDto;
 import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
 import com.took.user_api.dto.request.user.NearUserRequestDto;
+import com.took.user_api.dto.request.user.PwdChangeRequestDto;
 import com.took.user_api.dto.request.user.UserInfoRequestDto;
+import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
 import com.took.user_api.dto.response.user.KakaoChangeResponseDto;
 import com.took.user_api.dto.response.user.UserInfoResponseDto;
@@ -16,4 +18,5 @@ public interface UserService {
     void logout(String accessToken,String refreshToken,HttpServletResponse response);
     ResponseEntity<? super UserInfoResponseDto> userInfo(UserInfoRequestDto requestBody);
     ResponseEntity<? super DeliNearUserResponseDto> searchNearUser(NearUserRequestDto requestBody);
+    ResponseEntity<? super VoidResponseDto> changePwd(PwdChangeRequestDto requestBody);
 }
