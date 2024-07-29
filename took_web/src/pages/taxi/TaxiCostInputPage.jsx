@@ -25,9 +25,9 @@ const tempTaxi = {
 };
 
 const tempMember = [
-  { member_seq: 1, party_seq: 1, user_seq: 1, userName: '조현정', imgNo: 19, cost: 11500, real_cost: 12000, status: true, receive: false, is_leader: true, created_at: '2024-07-06T00:23:00' },
-  { member_seq: 2, party_seq: 1, user_seq: 2, userName: '정희수', imgNo: 9, cost: 7300, real_cost: 7500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
-  { member_seq: 3, party_seq: 1, user_seq: 3, userName: '차민주', imgNo: 15, cost: 13800, real_cost: 14500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
+  { member_seq: 1, party_seq: 1, user_seq: 1, userName: '조현정', imgNo: 19, cost: 13000, real_cost: 12000, status: true, receive: false, is_leader: true, created_at: '2024-07-06T00:23:00' },
+  { member_seq: 2, party_seq: 1, user_seq: 2, userName: '정희수', imgNo: 20, cost: 8000, real_cost: 7500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
+  { member_seq: 3, party_seq: 1, user_seq: 3, userName: '차민주', imgNo: 18, cost: 16000, real_cost: 14500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
 ];
 
 const tempParty = {
@@ -88,6 +88,7 @@ function TaxiCostInputPage() {
 
           {tempMember.map((member) => {
             const balance = member.cost - member.real_cost;
+            const formattedBalance = balance > 0 ? `+${formatNumber(balance)}` : formatNumber(balance);
             return (
               <div key={member.member_seq} className="mb-4">
                 <div className="flex items-center mb-3">
@@ -111,7 +112,7 @@ function TaxiCostInputPage() {
                         </div>
                         <div className="flex justify-between mt-2 ml-1">
                           <span className="text-sm">차액</span>
-                          <span className="text-sm font-bold text-red-500">{formatNumber(balance)} 원</span>
+                          <span className={`text-sm font-bold ${balance > 0 ? 'text-green-500' : 'text-red-500'}`}>{formattedBalance} 원</span>
                         </div>
                       </div>
                     ) : null}
