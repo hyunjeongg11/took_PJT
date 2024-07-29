@@ -14,4 +14,4 @@ COPY . .
 RUN npm run build
 
 # 애플리케이션 실행
-CMD ["npm", "start"]
+CMD ["npx", "react-scripts", "start"]

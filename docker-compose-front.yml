@@ -5,5 +5,5 @@ services:
     build:
       context: ./took_web
     ports:
-      - "5174:5173"
-    restart: always
+      - "5173:5173"
+    
