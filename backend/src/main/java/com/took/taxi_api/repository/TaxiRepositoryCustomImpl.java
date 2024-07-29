@@ -24,7 +24,7 @@ public class TaxiRepositoryCustomImpl implements TaxiRepositoryCustom {
         QTaxi taxi = QTaxi.taxi;
 
         return queryFactory.selectFrom(taxi)
-                .where(taxi.userSeq.in(userSeqs))
+                .where(taxi.user.userSeq.in(userSeqs))
                 .fetch();
     }
 }

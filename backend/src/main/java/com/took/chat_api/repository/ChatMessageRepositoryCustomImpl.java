@@ -30,7 +30,7 @@ public class ChatMessageRepositoryCustomImpl implements ChatMessageRepositoryCus
         return queryFactory.selectFrom(chatMessage)
                 // ChatUser 엔티티와 조인
                 .join(chatUser).on(chatMessage.chatRoom.roomSeq.eq(chatUser.chatRoom.roomSeq)
-                        .and(chatUser.userSeq.eq(userSeq)))
+                        .and(chatUser.user.userSeq.eq(userSeq)))
                 // 채팅방 번호가 일치하고, 메시지 생성 시간이 유저의 방 참가 시간 이후인 경우 필터링
                 .where(chatMessage.chatRoom.roomSeq.eq(roomSeq)
                         .and(chatMessage.createdAt.after(chatUser.joinTime)))

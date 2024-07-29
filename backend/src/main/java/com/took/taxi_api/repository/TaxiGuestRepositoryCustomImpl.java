@@ -43,7 +43,7 @@ public class TaxiGuestRepositoryCustomImpl implements TaxiGuestRepositoryCustom 
         QTaxiGuest taxiGuest = QTaxiGuest.taxiGuest;
 
         return queryFactory.select(Projections.fields(TaxiGuest.class,
-                        taxiGuest.userSeq,
+                        taxiGuest.user.userSeq,
                         taxiGuest.destiName,
                         taxiGuest.destiLat,
                         taxiGuest.destiLon,
@@ -66,7 +66,7 @@ public class TaxiGuestRepositoryCustomImpl implements TaxiGuestRepositoryCustom 
 
         Integer result = queryFactory.selectOne()
                 .from(taxiGuest)
-                .where(taxiGuest.userSeq.eq(userSeq))
+                .where(taxiGuest.user.userSeq.eq(userSeq))
                 .fetchFirst(); // fetchFirst()는 결과가 없으면 null을 반환
 
         return result != null;
