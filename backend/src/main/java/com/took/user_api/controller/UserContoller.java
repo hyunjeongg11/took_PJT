@@ -3,6 +3,7 @@ package com.took.user_api.controller;
 
 import com.took.user_api.dto.LocationDto;
 import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
+import com.took.user_api.dto.request.user.NearUserRequestDto;
 import com.took.user_api.dto.request.user.UserInfoRequestDto;
 import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
 import com.took.user_api.dto.response.user.KakaoChangeResponseDto;
@@ -75,7 +76,7 @@ public class UserContoller {
 
     @PostMapping("/delivery-near-user")
     public ResponseEntity<? super DeliNearUserResponseDto> deliveryNearUser
-            (@RequestBody LocationDto requestBody) {
+            (@RequestBody NearUserRequestDto requestBody) {
 
         ResponseEntity<? super DeliNearUserResponseDto> nearList = userService.searchNearUser(requestBody);
 

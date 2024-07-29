@@ -53,7 +53,6 @@ public class AuthController {
     public ResponseEntity<? super SignInResponseDto> signIn(
         @RequestBody @Valid SignInRequestDto requestBody
     ){
-
         ResponseEntity<? super SignInResponseDto> response = authService.signIn(requestBody);
         return response;
     }

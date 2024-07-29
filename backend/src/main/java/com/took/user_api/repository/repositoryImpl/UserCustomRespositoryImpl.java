@@ -45,7 +45,7 @@ public class UserCustomRespositoryImpl implements UserCustomRepository {
     }
 
     @Override
-    public List<Tuple> getAllLocation() {
+    public List<Tuple> getAllLocation(Long userSeq) {
 
         QUserEntity user = QUserEntity.userEntity;
 
@@ -53,6 +53,7 @@ public class UserCustomRespositoryImpl implements UserCustomRepository {
 
         result= queryFactory.select(user.lat, user.lng,user.userSeq)
                 .from(user)
+                .where(user.userSeq.ne(userSeq))
                 .fetch();
 
         return result;

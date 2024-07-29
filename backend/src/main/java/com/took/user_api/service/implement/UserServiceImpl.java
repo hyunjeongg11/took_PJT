@@ -4,6 +4,7 @@ package com.took.user_api.service.implement;
 import com.querydsl.core.Tuple;
 import com.took.user_api.dto.LocationDto;
 import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
+import com.took.user_api.dto.request.user.NearUserRequestDto;
 import com.took.user_api.dto.request.user.UserInfoRequestDto;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
@@ -18,9 +19,12 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import java.util.List;
@@ -32,6 +36,10 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserCustomRepository userCustomRepository;
     private final TokenBlacklistService tokenBlacklistService;
+
+    @Value("${distance.threshold}")
+    private double distanceThreshold;
+
 
     @Override
     @Transactional
@@ -85,30 +93,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<? super DeliNearUserResponseDto> searchNearUser(LocationDto requestBody) {
+    public ResponseEntity<? super DeliNearUserResponseDto> searchNearUser(NearUserRequestDto requestBody) {
 
-        List<Long> nearList = null;
+        List<Long> nearList = new ArrayList<>();
         Double myLng;
         Double myLat;
 
         try{
-
             myLng = requestBody.getLng();
             myLat = requestBody.getLat();
 
 //          위경도 정보 모두 불러와서 리턴
-            List<Tuple> userList = userCustomRepository.getAllLocation();
+            List<Tuple> userList = userCustomRepository.getAllLocation(requestBody.getUserSeq());
 
             for(Tuple user : userList){
-
                 Double lat = user.get(0, Double.class); // 첫 번째 값 (lat)
                 Double lng = user.get(1, Double.class); // 두 번째 값 (lng)
                 Long userSeq = user.get(2, Long.class); // 세 번째 값 (userSeq)
 
                 double distance = calculateDistance(myLat, myLng, lat, lng);
-
-                if(distance<=500) nearList.add(userSeq);
-
+                if(distance<=distanceThreshold) nearList.add(userSeq);
             }
 
 

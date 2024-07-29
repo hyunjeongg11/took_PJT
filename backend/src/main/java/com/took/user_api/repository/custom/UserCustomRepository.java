@@ -10,5 +10,5 @@ import java.util.List;
 public interface UserCustomRepository{
     
     void kakaoChange(KakaoChangeRequestDto dto);
-    List<Tuple> getAllLocation();
+    List<Tuple> getAllLocation(Long userSeq);
 }

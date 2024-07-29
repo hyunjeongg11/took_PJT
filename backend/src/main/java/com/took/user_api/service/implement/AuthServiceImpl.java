@@ -153,6 +153,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto dto) {
 
+
         String accessToken = null;
         String refreshToken = null;
         Long userSeq = null;
@@ -162,6 +163,7 @@ public class AuthServiceImpl implements AuthService {
 
             String userId = dto.getUserId();
             UserEntity userEntity = userRepository.findByUserId(userId);
+
            
 
             if (userEntity == null)
@@ -170,6 +172,7 @@ public class AuthServiceImpl implements AuthService {
             // 유저의 입력된 비밀번호와 DB에 저장된 암호화된 비밀번호를 matches로 비교
             String password = dto.getPassword();
             String encodedPassword = userEntity.getPassword();
+
             boolean isMatched = passwordEncoder.matches(password, encodedPassword);
 
             if (!isMatched)
