@@ -44,7 +44,7 @@ public class PositionService {
     public void savePosition(PositionCreateRequest request) {
         // Position 객체 생성
         Position position = Position.builder()
-                .userSeq(request.getUserSeq())  // request에서 userId 가져옴
+                .userSeq(String.valueOf(request.getUserSeq()))  // request에서 userId 가져옴
                 .lat(request.getLat())        // request에서 위도 가져옴
                 .lon(request.getLon())        // request에서 경도 가져옴
                 .expiration(3600L)            // TTL 값 설정 (1시간)
@@ -60,7 +60,7 @@ public class PositionService {
      * @return 조회된 위치 정보를 담은 응답 객체 (PositionSelectResponse)
      */
     public PositionSelectResponse getPosition(Long userSeq) {
-        Position position = positionRepository.findByUserSeq(userSeq).orElse(null);  // PositionRepository를 통해 userId로 위치 정보 조회
+        Position position = positionRepository.findByUserSeq(String.valueOf(userSeq)).orElse(null);  // PositionRepository를 통해 userId로 위치 정보 조회
         if (position == null) {
             return null;  // 위치 정보가 없을 경우, null 반환 (또는 NotFoundException throw 또는 적절히 처리)
         }
@@ -83,7 +83,7 @@ public class PositionService {
                             user.getLat(), user.getLon());
                     if (distance <= 1000) { // 거리 범위를 1000m로 설정
                         PositionUserListResponse response = new PositionUserListResponse();
-                        response.setUserSeq(user.getUserSeq());
+                        response.setUserSeq(Long.valueOf(user.getUserSeq()));
                         response.setDistance((int) distance); // 거리 차이를 미터 단위로 설정
                         return response;
                     } else {

@@ -16,7 +16,7 @@ public class PositionSelectResponse {
      * @param position Position 엔터티 객체
      */
     public PositionSelectResponse(Position position) {
-        this.userSeq = position.getUserSeq();  // Position 엔터티의 userId 값을 가져와 필드에 설정
+        this.userSeq = Long.valueOf(position.getUserSeq());  // Position 엔터티의 userId 값을 가져와 필드에 설정
         this.lat = position.getLat();        // Position 엔터티의 lat 값을 가져와 필드에 설정
         this.lon = position.getLon();        // Position 엔터티의 lon 값을 가져와 필드에 설정
     }
