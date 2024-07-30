@@ -16,5 +16,5 @@ RUN npm run build
 # Nginx 설정
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 5173
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
