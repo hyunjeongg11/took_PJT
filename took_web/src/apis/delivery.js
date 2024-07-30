@@ -124,6 +124,25 @@ export const deleteNoticeApi = async (deliverySeq) {
 }
 
 // 배달 글 상세 조회
+// 응답
+/* {
+    "deliverySeq": "long", // 배달 번호
+    "userSeq": "long", // 사용자 번호
+    "roomSeq": "long", // 방 번호
+    "partySeq": "long", // 파티 번호
+    "storeName": "string", // 가게 이름
+    "pickupPlace": "string", // 픽업 장소
+    "pickupLat": "double", // 픽업 장소 위도
+    "pickupLon": "double", // 픽업 장소 경도
+    "deliveryTip": "string", // 배달 팁
+    "content": "string", // 내용
+    "notice": "string", // 공지사항
+    "deliveryTime": "string", // 배달 시간
+    "status": "string", // 상태  (OPEN, DELIVERY, DONE)
+    "count": "int", // 참가 인원 수
+    "createdAt": "LocalDateTime", // 생성 시간
+    "finishTime": "LocalDateTime" // 완료 시간
+} */
 export const getDeliveryDetailApi = async (delicerySeq) {
     try {
         const response = await request.get(`/api/delivery/${deliverySeq}`);
@@ -132,3 +151,39 @@ export const getDeliveryDetailApi = async (delicerySeq) {
         return handleApiError(error);
     }
 }
+
+/* {
+	"lat": "double" // 위도
+	"lon": "dobule" // 경도
+} */
+// 배달 글 목록 조회 (배달 위치 / 현재 위치 근처의 수령지)
+/* [
+	{
+	    "deliverySeq": "long", // 배달 번호
+	    "userSeq": "long", // 사용자 번호
+	    "roomSeq": "long", // 방 번호
+	    "partySeq": "long", // 파티 번호
+	    "storeName": "string", // 가게 이름
+	    "pickupPlace": "string", // 픽업 장소
+	    "pickupLat": "double", // 픽업 장소 위도
+	    "pickupLon": "double", // 픽업 장소 경도
+	    "deliveryTip": "string", // 배달 팁
+	    "content": "string", // 내용
+	    "notice": "string", // 공지사항
+	    "deliveryTime": "string", // 배달 시간
+	    "status": "string", // 상태  (OPEN, DELIVERY, DONE)
+	    "count": "int", // 참가 인원 수
+	    "createdAt": "LocalDateTime", // 생성 시간
+	    "finishTime": "LocalDateTime" // 완료 시간
+	}
+	...
+] */
+export const getDeliveryListApi = async (params) => {
+    try {
+        const response = await request.post('/api/delivery/list', params);
+        return response.data;
+    } catch (error) {
+        return handleApiError(error);
+    }
+}
+
