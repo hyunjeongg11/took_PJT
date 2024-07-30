@@ -86,7 +86,7 @@ function SignupPage() {
     } else {
       try {
         setIsIdValid(true);
-        const result = await validIdApi({ id });
+        const result = await validIdApi({ userId: id });
         alert(result.code);
         if (result.code == 'su') {
           setIdError('');
