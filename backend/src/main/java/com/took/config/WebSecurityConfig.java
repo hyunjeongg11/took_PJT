@@ -45,7 +45,7 @@ public class WebSecurityConfig {
         configuration.addAllowedOrigin("*");
         configuration.addAllowedMethod("*"); // 필요에 따라 특정 메서드만 허용
         configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(true); // 자격 증명(쿠키 등) 허용
+//        configuration.setAllowCredentials(true); // 자격 증명(쿠키 등) 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
