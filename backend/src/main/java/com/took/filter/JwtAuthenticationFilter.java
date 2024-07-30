@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             throws ServletException, IOException {
 
             System.out.println("필터에 진입합니다.");
-
+        System.out.println("요청 path 출력"+request.getPathInfo());
         System.out.println("요청의 인증 방법을 출력합니다."+request.getAuthType());
         System.out.println("요청의 전송 방법을 출력합니다."+request.getMethod());
 
