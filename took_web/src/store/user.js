@@ -2,6 +2,7 @@ import create from 'zustand';
 
 export const useUser = create((set) => ({
   id: '',
+  seq: null,
   gender: '',
   name: '',
   email: '',
@@ -11,6 +12,11 @@ export const useUser = create((set) => ({
   setName: (name) => {
     set(() => ({
       name: name,
+    }));
+  },
+  setUserSeq: (seq) => {
+    set(() => ({
+      seq: seq,
     }));
   },
   setEmail: (email) => {

@@ -4,6 +4,7 @@ import { isValidEmail, isValidPassword } from '../utils/validation';
 import InputButton from '../components/signup/InputButton';
 import GenderInput from '../components/signup/GenderInput';
 import { formatPhoneNumber, removeHyphens } from '../utils/format';
+import { useNavigate } from 'react-router-dom';
 import {
   signUpApi,
   validIdApi,
@@ -31,6 +32,8 @@ function SignupPage() {
   const [certificationNumber, setCertificationNumber] = useState('');
   const [certificationError, setCertificationError] = useState('');
   const [isCertificated, setIsCertificated] = useState(false);
+
+  const navigate = useNavigate();
 
   const checkEmailNumber = async () => {
     if (certificationNumber === '') {
@@ -67,6 +70,7 @@ function SignupPage() {
     }
 
     try {
+      setIsEmailValid(true);
       const result = await emailCertificateApi({ userId: id, email });
       console.log(result);
       alert('이메일이 전송되었습니다');
@@ -81,11 +85,11 @@ function SignupPage() {
       setIsIdValid(false);
     } else {
       try {
+        setIsIdValid(true);
         const result = await validIdApi({ id });
         alert(result.code);
         if (result.code == 'su') {
           setIdError('');
-          setIsIdValid(true);
         } else {
           setIdError('이미 사용 중인 아이디입니다.');
           setIsIdValid(false);
@@ -101,14 +105,11 @@ function SignupPage() {
     e.preventDefault();
     let valid = true;
 
-    if (email === '') {
-      setEmailError('이메일을 입력해주세요.');
-      valid = false;
-    } else if (!isValidEmail(email)) {
-      setEmailError('유효한 이메일 주소를 입력하세요.');
-      valid = false;
-    } else {
+    if (isCertificated) {
       setEmailError('');
+    } else {
+      setEmailError('이메일 인증이 필요합니다.');
+      valid = false;
     }
 
     if (!isValidPassword(password)) {
@@ -171,6 +172,7 @@ function SignupPage() {
           birth,
         });
         console.log(res);
+        navigate('/login');
       } catch (error) {
         alert('회원가입 중 오류가 발생했습니다.');
       }

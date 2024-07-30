@@ -1,6 +1,5 @@
 import { member_request, request } from './request';
 import { handleApiError } from './errorHandling';
-import { useToken } from '../store/token';
 
 // signUpApi params
 // {
@@ -76,8 +75,8 @@ export const checkEmailCodeApi = async (params) => {
 //     "password": "P!ssw0rd"
 //     }
 // 로그인
-export const loginApi = async (params) => {
-  const { setAccessToken } = useToken();
+// 로그인
+export const loginApi = async (params, setAccessToken) => {
   try {
     const response = await request.post('/api/auth/sign-in', params);
     const accessToken = response.data.accessToken;
@@ -97,7 +96,7 @@ export const loginApi = async (params) => {
 //   }
 export const getUserInfoApi = async (params) => {
   try {
-    const response = await member_request.post('/api/user/info', params);
+    const response = await request.post('/api/user/info', params);
     return response.data;
   } catch (err) {
     return handleApiError(err);
