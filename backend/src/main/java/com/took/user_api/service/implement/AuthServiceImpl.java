@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
 
         try {
 
-            String userId = dto.getId();
+            String userId = dto.getUserId();
             boolean isExistId = userRepository.existsByUserId(userId);
 
             if (isExistId)
