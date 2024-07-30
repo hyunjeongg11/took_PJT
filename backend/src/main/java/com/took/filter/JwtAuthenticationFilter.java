@@ -39,6 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+            System.out.println("필터에 진입합니다.");
 
             // 블랙박스 검정
             String header = request.getHeader("Authorization");
@@ -53,11 +54,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 return;
             }
 
+            System.out.println("블랙박스를 빠져 나옵니다.");
 
-            try{
+
+
+        try{
 
                 token = parseVearerToken(request);
                 if(token == null){
+
+                    System.out.println("토근이 없기에 넘어갑니다.");
                     filterChain.doFilter(request, response);
                     return;
                 }
