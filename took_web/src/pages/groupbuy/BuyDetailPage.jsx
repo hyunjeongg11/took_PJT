@@ -2,6 +2,7 @@ import React from 'react';
 // import { useParams } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
+
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 const temp_data = {

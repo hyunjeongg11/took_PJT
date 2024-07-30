@@ -26,10 +26,11 @@ function BuyFormPage() {
     e.preventDefault();
     // TODO: Add form submission logic
     console.log('Form submitted:', formData);
+    navigate(-1);
   };
 
   return (
-    <div className="flex flex-col pt-20 bg-white max-w-[360px]">
+    <div className="flex flex-col pt-20 bg-white max-w-screen">
       <div className="flex flex-col px-5 w-full">
         <div className="flex gap-2 text-2xl text-main">
           <img
@@ -53,7 +54,7 @@ function BuyFormPage() {
             placeholder="제목"
             className="my-2 text-sm text-zinc-800 text-opacity-40 bg-secondary"
           ></input>
-          <div className="shrink-0 h-0.5 border border-solid border-main border-opacity-60" />
+          <hr className="border-main border-opacity-50" />
           <input
             type="text"
             placeholder="내용을 입력하세요.."
@@ -63,7 +64,7 @@ function BuyFormPage() {
 
         <div className="px-9 py-8 mt-5 bg-secondary rounded-2xl shadow-gray-400 shadow-md">
           <div className="flex flex-col gap-5">
-            <div className="flex justify-between text-sm font-bold text-main">
+            <div className="flex justify-between text-sm font-semibold  text-main">
               물품명
               <input
                 id="item"
@@ -73,10 +74,10 @@ function BuyFormPage() {
                 onChange={handleChange}
                 required
                 placeholder="물품명을 입력하세요"
-                className="text-main text-xs placeholder-gray-400 placeholder-font-light bg-secondary text-right focus:border-b-main"
+                className="text-main text-xs placeholder-gray-400 font-medium bg-secondary text-right focus:border-b-main"
               ></input>
             </div>
-            <div className="flex justify-between text-sm font-bold text-main">
+            <div className="flex justify-between text-sm font-semibold text-main">
               구매링크
               <input
                 id="site"
@@ -86,10 +87,10 @@ function BuyFormPage() {
                 onChange={handleChange}
                 required
                 placeholder="구매 링크를 입력하세요"
-                className="text-main text-xs placeholder-gray-400 placeholder-font-light bg-secondary text-right focus:border-b-main"
+                className="text-main text-xs placeholder-gray-400 font-medium bg-secondary text-right focus:border-b-main"
               ></input>
             </div>
-            <div className="flex justify-between text-sm font-bold text-main">
+            <div className="flex justify-between text-sm font-semibold text-main">
               수령장소
               <input
                 id="place"
@@ -99,10 +100,10 @@ function BuyFormPage() {
                 onChange={handleChange}
                 required
                 placeholder="수령 장소를 입력하세요"
-                className="text-main text-xs placeholder-gray-400 placeholder-font-light bg-secondary text-right focus:border-b-main"
+                className="text-main text-xs placeholder-gray-400 font-medium bg-secondary text-right focus:border-b-main"
               ></input>
             </div>
-            <div className="flex justify-between text-sm font-bold text-main">
+            <div className="flex justify-between text-sm font-semibold text-main">
               최대 모집 인원
               <input
                 id="max_person"
@@ -112,7 +113,7 @@ function BuyFormPage() {
                 onChange={handleChange}
                 required
                 placeholder="최대 모집 인원"
-                className="text-main text-xs placeholder-gray-400 placeholder-font-light bg-secondary text-right focus:border-b-main"
+                className="text-main text-xs placeholder-gray-400 font-medium bg-secondary text-right focus:border-b-main"
               ></input>
             </div>
           </div>
@@ -120,7 +121,7 @@ function BuyFormPage() {
 
         <div
           onClick={handleSubmit}
-          className="cursor-pointer z-10 px-16 py-3 mt-9 text-sm text-center font-extrabold text-white bg-main rounded-2xl shadow-gray-400 shadow-md"
+          className=" px-16 py-3 mt-9 text-sm text-center font-extrabold text-white bg-main rounded-2xl shadow-gray-400 shadow-md"
         >
           공동구매 등록하기
         </div>
