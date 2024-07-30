@@ -50,6 +50,7 @@ import CreateChattingPage from './pages/taxi/CreateChattingPage';
 import TaxiChattingSettingPage from './pages/taxi/TaxiChattingSettingPage';
 import TaxiPathSettingPage from './pages/taxi/TaxiPathSettingPage';
 import CurrentPathListPage from './pages/taxi/CurrentPathListPage';
+import ChattingListPage from './pages/chat/ChattingListPage';
 
 function App() {
   const [checkedItems, setCheckedItems] = useState({
@@ -124,6 +125,7 @@ function App() {
     { path: '/taxi/setting', element: <TaxiChattingSettingPage /> },
     { path: '/taxi/path', element: <TaxiPathSettingPage /> },
     { path: '/taxi/path-list', element: <CurrentPathListPage /> },
+    { path: '/chat/list', element: <ChattingListPage /> },
   ]);
 
   return <RouterProvider router={ROUTER} />;
