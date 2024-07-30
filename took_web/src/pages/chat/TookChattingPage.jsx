@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import tookIcon from '../../assets/chat/tookIcon.png';
+import { formatDate, formatDateOnly, formatTime } from '../../utils/formatDate';
 
 // todo: 송금 완료 (참여자)
 // 📌{정산/택시/배달/공구} took 송금이 완료되었어요.
@@ -104,40 +105,6 @@ const tempData = [
     chatTime: '2024-07-28 19:36',
   },
 ];
-
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const formattedHours = hours < 10 ? `0${hours}` : hours;
-  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-  return `${year}.${month}.${day} (${weekday}) ${formattedHours}:${formattedMinutes}`;
-}
-
-function formatDateOnly(dateString) {
-  const options = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    weekday: 'long',
-  };
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ko-KR', options);
-}
-
-function formatTime(dateString) {
-  const date = new Date(dateString);
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? '오후' : '오전';
-  const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
-  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-  return `${ampm} ${formattedHours}:${formattedMinutes}`;
-}
 
 const renderMessage = (item, handlePayment) => (
   <div key={item.chatTime} className="flex flex-row">
