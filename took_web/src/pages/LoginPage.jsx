@@ -3,16 +3,33 @@ import kakaoImage from '../assets/login/kakao.svg';
 import googleImage from '../assets/login/google.png';
 import BackButton from '../components/common/BackButton.jsx';
 import Button from '../components/login/Button.jsx';
+import { loginApi } from '../apis/user.js';
+import { useToken } from '../store/token.js';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from '../store/user.js';
 
 function LoginPage() {
-  const [userName, setUserName] = useState('');
+  const [id, setId] = useState('');
   const [password, setPassword] = useState('');
-
-  const handleLoginClick = (e) => {
+  const { setAccessToken } = useToken();
+  const { setUserSeq } = useUser();
+  const navigate = useNavigate();
+  const handleLoginClick = async (e) => {
     e.preventDefault();
-    console.log('id:', userName);
+    console.log('id:', id);
     console.log('pwd:', password);
+
     // TODO: 로그인 API 호출
+    try {
+      const response = await loginApi({ id, password }, setAccessToken);
+      console.log(response);
+      if (response.code == 'su') {
+        setUserSeq(response.userSeq);
+        navigate('/');
+      }
+    } catch (error) {
+      alert('로그인 중 오류가 발생했습니다.');
+    }
   };
   return (
     <div className="max-h-screen">
@@ -24,8 +41,8 @@ function LoginPage() {
             <input
               className="appearance-none block w-full  placeholder-main text-main placeholder:text-opacity-50 text-base placeholder:text-sm border-b-2 border-opacity-60 border-main pt-2 pb-1 px-1 my-4 leading-tight focus:outline-none focus:bg-white focus:border-main"
               type="text"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
+              value={id}
+              onChange={(e) => setId(e.target.value)}
               placeholder="아이디"
             />
             <input

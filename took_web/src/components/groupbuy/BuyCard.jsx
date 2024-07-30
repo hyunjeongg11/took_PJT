@@ -32,7 +32,7 @@ export const BuyCard = ({
           <img
             loading="lazy"
             src={getProfileImagePath(img_no)}
-            className="w-6 h-6 animate-semijump"
+            className="w-6 h-6"
             alt="Profile"
           />
           <div className="mt-2">

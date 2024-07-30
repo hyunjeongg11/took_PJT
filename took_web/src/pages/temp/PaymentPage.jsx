@@ -32,6 +32,8 @@ const tempData = [
 function PaymentPage({
   userName = '사용자',
   amount,
+  account = '국민은행 8910',
+  accountBalance = 1620, // 계좌 잔액 기본값 추가
 }) {
   const navigate = useNavigate();
   const [selectedAccount, setSelectedAccount] = useState(tempData[0]);

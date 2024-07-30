@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.19",
+    "axios": "^1.7.2",
     "postcss": "^8.4.39",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -18,7 +19,8 @@
     "react-icons": "^5.2.1",
     "react-router-dom": "^6.25.1",
     "swiper": "^11.1.6",
-    "tailwindcss": "^3.4.6"
+    "tailwindcss": "^3.4.6",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
@@ -32,5 +34,8 @@
     "eslint-plugin-react-refresh": "^0.4.7",
     "prettier": "^3.3.3",
     "vite": "^5.3.4"
-  }
+  },
+  
+    "proxy": "https://i11e205.p.ssafy.io"
+  
 }
