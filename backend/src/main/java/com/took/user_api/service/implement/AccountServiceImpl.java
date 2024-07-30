@@ -200,10 +200,15 @@ public class AccountServiceImpl implements AccountService {
             if(!bank.minus(requestBody.getCost())) return ResponseDto.nomoney();
 
 //           뱅크 업데이트 필요
+            Long bankCost = bank.getBalance();
+
+            bankRepositoryCustom.update(bankSeq,bankCost);
 
         }catch(Exception e){
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
+
+        return VoidResponseDto.success();
     }
 }

@@ -62,4 +62,15 @@ public class BankRepositoryCustomImpl implements BankRepositoryCustom {
 
     }
 
+    @Override
+    public void update(Long bankSeq, Long bankCost) {
+
+        QBankEntity bank = QBankEntity.bankEntity;
+
+        jpaQueryFactory.update(bank)
+                .set(bank.balance, bankCost)
+                .where(bank.bankSeq.eq(bankSeq))
+                .execute();
+    }
+
 }

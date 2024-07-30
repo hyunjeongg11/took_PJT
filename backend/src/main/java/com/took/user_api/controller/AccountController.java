@@ -71,7 +71,7 @@ public class AccountController {
 
     // 미정산자 (돈이 부족해서 보내지 못했을 경우 은행 재선택을 포함하여 ~을 보낸다.)
     @PostMapping("/re-pay")
-    public ResponseEntity<? super VoidResponseDto> rePay(@RequestBody AccountSeqRequestDto requestBody) {
+    public ResponseEntity<? super VoidResponseDto> rePay(@RequestBody RepayRequestDto requestBody) {
 
         ResponseEntity<? super VoidResponseDto> response = accountService.repay(requestBody);
         return response;

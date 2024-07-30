@@ -17,5 +17,5 @@ public interface AccountService {
     ResponseEntity<String> deleteAccount(Long accountSeq);
     ResponseEntity<? super AccountEasyPwdResponseDto> updateEasyPwd(AccountEasyPwdRequestDto requestBody);
     ResponseEntity<? super CheckEasyPwdResponseDto> checkEasyPwd(AccountEasyPwdRequestDto requestBody);
-    ResponseEntity<? super VoidResponseDto> repay(AccountSeqRequestDto requestBody);
+    ResponseEntity<? super VoidResponseDto> repay(RepayRequestDto requestBody);
 }
