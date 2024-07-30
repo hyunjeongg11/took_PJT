@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import taxiIcon from '../../assets/chat/taxiIcon.png';
 import deliveryIcon from '../../assets/chat/deliveryIcon.png';
@@ -7,6 +8,7 @@ import tookIcon from '../../assets/chat/tookIcon.png';
 
 const tempData = [
   {
+    chatRoomId: 1,
     chatCategory: 'taxi',
     chatUser: '명지',
     recentChatMessage: '정산 완료 되었습니다.',
@@ -14,6 +16,7 @@ const tempData = [
     unreadMessages: 2,
   },
   {
+    chatRoomId: 2,
     chatCategory: 'delivery',
     chatUser: 'BBQ 명지점',
     recentChatMessage: '메뉴 다 넣었어요!',
@@ -21,6 +24,7 @@ const tempData = [
     unreadMessages: 1,
   },
   {
+    chatRoomId: 3,
     chatCategory: 'delivery',
     chatUser: '정희수',
     recentChatMessage: '메뉴 다 정하셨나요?',
@@ -28,6 +32,7 @@ const tempData = [
     unreadMessages: 0,
   },
   {
+    chatRoomId: 4,
     chatCategory: 'taxi',
     chatUser: '공지환',
     recentChatMessage: '정산 완료 되었습니다.',
@@ -35,6 +40,7 @@ const tempData = [
     unreadMessages: 0,
   },
   {
+    chatRoomId: 5,
     chatCategory: 'buying',
     chatUser: '김태훈',
     recentChatMessage: '공구 사이트 공유 드리겠습니다~',
@@ -42,6 +48,7 @@ const tempData = [
     unreadMessages: 0,
   },
   {
+    chatRoomId: 6,
     chatCategory: 'delivery',
     chatUser: '이재찬',
     recentChatMessage: '메뉴 다 넣었어요!',
@@ -49,6 +56,7 @@ const tempData = [
     unreadMessages: 0,
   },
   {
+    chatRoomId: 7,
     chatCategory: 'took',
     chatUser: 'took',
     recentChatMessage: '최근 업데이트 세부 사항입니다.',
@@ -56,6 +64,7 @@ const tempData = [
     unreadMessages: 0,
   },
   {
+    chatRoomId: 8,
     chatCategory: 'delivery',
     chatUser: '정성찬',
     recentChatMessage: '배달 예정 기간은 일주일입니다.',
@@ -106,9 +115,14 @@ function isEnglish(str) {
 }
 
 function ChattingListPage() {
+  const navigate = useNavigate();
   const sortedTempData = tempData.sort(
     (a, b) => new Date(b.recentChatTime) - new Date(a.recentChatTime)
   );
+
+  const handleChatRoomClick = (chatRoomId) => {
+    navigate(`/chat/${chatRoomId}`);
+  };
 
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
@@ -122,10 +136,11 @@ function ChattingListPage() {
       <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
 
       <div className="flex flex-col">
-        {sortedTempData.map((chat, index) => (
+        {sortedTempData.map((chat) => (
           <div
-            key={index}
-            className="flex items-center px-6 py-4 border-b border-gray-200"
+            key={chat.chatRoomId}
+            className="flex items-center px-6 py-4 border-b border-gray-200 cursor-pointer"
+            onClick={() => handleChatRoomClick(chat.chatRoomId)}
           >
             <img
               src={getIcon(chat.chatCategory)}

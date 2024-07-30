@@ -54,7 +54,10 @@ import CreateChattingPage from './pages/taxi/CreateChattingPage';
 import TaxiChattingSettingPage from './pages/taxi/TaxiChattingSettingPage';
 import TaxiPathSettingPage from './pages/taxi/TaxiPathSettingPage';
 import CurrentPathListPage from './pages/taxi/CurrentPathListPage';
+import DeliveryChattingMainPage from './pages/chat/DeliveryChattingMainPage';
 import ChattingListPage from './pages/chat/ChattingListPage';
+import TookChattingPage from './pages/chat/TookChattingPage';
+import TaxiChattingMainPage from './pages/chat/TaxiChattingMainPage';
 
 function App() {
   const [checkedItems, setCheckedItems] = useState({
@@ -129,7 +132,10 @@ function App() {
     { path: '/taxi/setting', element: <TaxiChattingSettingPage /> },
     { path: '/taxi/path', element: <TaxiPathSettingPage /> },
     { path: '/taxi/path-list', element: <CurrentPathListPage /> },
+    { path: '/chat/delivery/main', element: <DeliveryChattingMainPage /> },
+    { path: '/chat/taxi/main', element: <TaxiChattingMainPage /> },
     { path: '/chat/list', element: <ChattingListPage /> },
+    { path: '/chat/took', element: <TookChattingPage /> },
     { path: '/groupbuy/my-purchase', element: <MyPurchasePage /> },
     { path: '/groupbuy/order', element: <OrderFormPage /> },
     { path: '/groupbuy/total/:id', element: <TotalPurchasePage /> },
