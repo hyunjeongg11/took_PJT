@@ -54,6 +54,7 @@ import CreateChattingPage from './pages/taxi/CreateChattingPage';
 import TaxiChattingSettingPage from './pages/taxi/TaxiChattingSettingPage';
 import TaxiPathSettingPage from './pages/taxi/TaxiPathSettingPage';
 import CurrentPathListPage from './pages/taxi/CurrentPathListPage';
+import ChattingMainPage from './pages/chat/ChattingMainPage';
 import ChattingListPage from './pages/chat/ChattingListPage';
 import TookChattingPage from './pages/chat/TookChattingPage';
 
@@ -130,6 +131,7 @@ function App() {
     { path: '/taxi/setting', element: <TaxiChattingSettingPage /> },
     { path: '/taxi/path', element: <TaxiPathSettingPage /> },
     { path: '/taxi/path-list', element: <CurrentPathListPage /> },
+    { path: '/chat/main', element: <ChattingMainPage /> },
     { path: '/chat/list', element: <ChattingListPage /> },
     { path: '/chat/took', element: <TookChattingPage /> },
     { path: '/groupbuy/my-purchase', element: <MyPurchasePage /> },
