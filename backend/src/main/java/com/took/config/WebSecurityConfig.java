@@ -36,6 +36,24 @@ public class WebSecurityConfig {
         private final DefaultOAuth2UserService oAuth2UserService;
         private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
+    @Bean
+    protected CorsConfigurationSource configurationSource() {
+
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // 정확한 출처만 허용
+        configuration.addAllowedOrigin("http://localhost:5173");
+        configuration.addAllowedOrigin("http://localhost:5174");
+        configuration.addAllowedMethod("*"); // 필요에 따라 특정 메서드만 허용
+        configuration.addAllowedHeader("*"); // 필요에 따라 특정 헤더만 허용
+        configuration.setAllowCredentials(true); // 자격 증명(쿠키 등) 허용
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+    }
+
         @Bean
         protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 
@@ -82,23 +100,7 @@ public class WebSecurityConfig {
                 return httpSecurity.build();
         }
 
-        @Bean
-        protected CorsConfigurationSource configurationSource() {
-        
-            CorsConfiguration configuration = new CorsConfiguration();
-        
-            // 정확한 출처만 허용
-            configuration.addAllowedOrigin("http://localhost:5173");
-            configuration.addAllowedOrigin("http://localhost:5174");
-            configuration.addAllowedMethod("*"); // 필요에 따라 특정 메서드만 허용
-            configuration.addAllowedHeader("*"); // 필요에 따라 특정 헤더만 허용
-            configuration.setAllowCredentials(true); // 자격 증명(쿠키 등) 허용
-        
-            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-            source.registerCorsConfiguration("/**", configuration);
-        
-            return source;
-        }
+
         
 }
 
