@@ -42,9 +42,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 정확한 출처만 허용
-        configuration.addAllowedOrigin("https://i11e205.p.ssafy.io");
-        configuration.addAllowedOrigin("http://localhost:5173");
-        configuration.addAllowedOrigin("http://localhost:5174");
+        configuration.addAllowedOrigin("*");
         configuration.addAllowedMethod("*"); // 필요에 따라 특정 메서드만 허용
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true); // 자격 증명(쿠키 등) 허용
@@ -58,7 +56,6 @@ public class WebSecurityConfig {
         @Bean
         protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 
-            System.out.println("chain에서 확인합니다.");
                 httpSecurity
                                 .cors(cors -> cors
                                                 .configurationSource(configurationSource()))
