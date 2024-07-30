@@ -15,7 +15,7 @@ const BackButton = () => {
       className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
       onClick={handleBackClick}
     />
-  );
+  ); 
 };
 
 const temp_data = {

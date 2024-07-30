@@ -32,6 +32,8 @@ const tempData = [
 function PaymentPage({
   userName = '사용자',
   amount,
+  account = '국민은행 8910',
+  accountBalance = 1620, // 계좌 잔액 기본값 추가
 }) {
   const navigate = useNavigate();
   const [selectedAccount, setSelectedAccount] = useState(tempData[0]);
@@ -62,7 +64,7 @@ function PaymentPage({
           <img
             src={ProfileImg}
             alt="Watermelon"
-            className="w-20 h-20 mx-auto"
+            className="w-20 h-20 mx-auto animate-shake"
           />
           <div className="mt-10 text-xl font-bold text-black">
             {userName} 님에게
