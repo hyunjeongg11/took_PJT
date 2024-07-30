@@ -1,4 +1,4 @@
-// pages/chat/ChattingMainPage.jsx
+// pages/chat/DeliveryChattingMainPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
@@ -12,6 +12,7 @@ import { MdAdd } from 'react-icons/md';
 import CalculatorModal from '../../components/chat/CalculatorModal';
 import MoneyModal from '../../components/chat/MoneyModal';
 import DeliveryModal from '../../components/chat/DeliveryModal';
+import ParticipantList from '../../components/chat/ParticipantList';
 
 const tempMember = [
   { member_seq: 1, party_seq: 1, user_seq: 1, userName: '조현정', imgNo: 19, cost: 13000, real_cost: 12000, status: true, receive: false, is_leader: true, created_at: '2024-07-06T00:23:00' },
@@ -45,17 +46,19 @@ const tempMessages = [
   { id: 8, user_seq: 4, userName: '이재찬', message: '좋은아침입니다!', timestamp: '2024-07-07T10:12:00' },
 ];
 
-function ChattingMainPage() {
+function DeliveryChattingMainPage() {
   const [messages, setMessages] = useState(tempMessages);
   const [inputMessage, setInputMessage] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [showActionIcons, setShowActionIcons] = useState(false);
   const [currentModal, setCurrentModal] = useState(null);
+  const [showParticipantList, setShowParticipantList] = useState(false);
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const actionIconsRef = useRef(null);
   const lastDateRef = useRef('');
+  const textareaRef = useRef(null);
 
   const handleSendMessage = () => {
     if (inputMessage.trim() === '') return;
@@ -115,6 +118,14 @@ function ChattingMainPage() {
     setCurrentModal(null);
   };
 
+  const handleShowParticipantList = () => {
+    setShowParticipantList(true);
+  };
+
+  const handleCloseParticipantList = () => {
+    setShowParticipantList(false);
+  };
+
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
@@ -134,6 +145,13 @@ function ChattingMainPage() {
     setShowScrollButton(!isAtBottom);
   }, [messages]);
 
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 72)}px`;
+    }
+  }, [inputMessage]);
+
   return (
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-5 py-3">
@@ -141,7 +159,7 @@ function ChattingMainPage() {
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
           {tempDelivery.storeName}
         </div>
-        <FaBars className='mt-2.5' />
+        <FaBars className='mt-2.5' onClick={handleShowParticipantList} />
       </div>
       <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
@@ -191,7 +209,7 @@ function ChattingMainPage() {
                     {msg.user_seq === 1 && !lastMessageFromSameUser && (
                       <div className="text-[9px] text-gray-400 mr-2 whitespace-nowrap">{formatTime(msg.timestamp)}</div>
                     )}
-                    <div className={`p-2 rounded-xl shadow-md ${msg.user_seq === 1 ? 'bg-main text-white' : 'bg-white text-black'}`}>
+                    <div className={`p-2 rounded-xl shadow-md ${msg.user_seq === 1 ? 'bg-main text-white' : 'bg-white text-black'}`} style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
                       <div className="text-sm">{msg.message}</div>
                     </div>
                     {msg.user_seq !== 1 && !lastMessageFromSameUser && (
@@ -216,15 +234,17 @@ function ChattingMainPage() {
           <MdAdd className={`text-gray-400 cursor-pointer mr-2 w-6 h-6 transform transition-transform ${showActionIcons ? 'rotate-45' : ''}`} />
         </button>
         <div className="relative flex-grow">
-          <input
-            type="text"
-            className="flex-grow w-full pl-4 pr-10 py-2 rounded-2xl bg-gray-100 focus:outline-none"
-            placeholder="채팅 메시지 보내기 "
-            value={inputMessage} 
+          <textarea
+            ref={textareaRef}
+            className="flex-grow w-full pl-4 pr-10 py-2 rounded-2xl bg-gray-100 focus:outline-none resize-none max-h-24"
+            placeholder="채팅 메시지 보내기"
+            value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
+            rows={1}
+            style={{ overflow: 'hidden' }}
           />
           <button
-            className={`absolute inset-y-1 right-0 px-3 py-2 ${inputMessage.trim() === '' ? 'bg-gray-300' : 'bg-main'} text-white rounded-2xl mr-2 flex items-center justify-center focus:outline-none`}
+            className={`absolute right-2 bottom-3.5 px-3 py-1.5 ${inputMessage.trim() === '' ? 'bg-gray-300' : 'bg-main'} text-white rounded-2xl flex items-center justify-center focus:outline-none`}
             onClick={handleSendMessage}
             disabled={inputMessage.trim() === ''}
           >
@@ -265,10 +285,11 @@ function ChattingMainPage() {
       )}
 
       {currentModal === 'calculator' && <CalculatorModal onClose={closeModal} tempMember={tempMember} />}
-      {currentModal === 'money' && <MoneyModal onClose={closeModal} />}
+      {currentModal === 'money' && <MoneyModal onClose={closeModal} tempMember={tempMember} />}
       {currentModal === 'delivery' && <DeliveryModal onClose={closeModal} tempMember={tempMember}/>}
+      {showParticipantList && <ParticipantList participants={tempMember} onClose={handleCloseParticipantList} />}
     </div>
   );
 }
 
-export default ChattingMainPage;
+export default DeliveryChattingMainPage;
