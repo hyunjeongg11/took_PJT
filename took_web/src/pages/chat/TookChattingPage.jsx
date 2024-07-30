@@ -1,7 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import tookIcon from '../../assets/chat/tookIcon.png';
+import { FaArrowDown } from 'react-icons/fa';
 import { formatDate, formatDateOnly, formatTime } from '../../utils/formatDate';
 
 // todo: 송금 완료 (참여자)
@@ -12,7 +13,6 @@ import { formatDate, formatDateOnly, formatTime } from '../../utils/formatDate';
 
 //  송금 내역을 확인해보세요.
 // <button>송금내역 보기</button>
-
 
 // todo: 정산 완료 (최종 정산!!) ⇒ 이건 양식 다 통일하면 될 듯(택시 차액 플러스인 경우 제외하고)
 // 📌{정산/택시/배달/공구} took 정산이 완료되었어요.  (결제자)
@@ -37,7 +37,6 @@ import { formatDate, formatDateOnly, formatTime } from '../../utils/formatDate';
 
 <button>상세보기</button> */
 
-
 // todo: 수령 확인 완료 (배달/공구)
 // 📌 {배달/공동구매} 수령 확인이 완료되었어요. (결제자)
 
@@ -51,7 +50,6 @@ import { formatDate, formatDateOnly, formatTime } from '../../utils/formatDate';
 // 정산현황에서 송금 내역을 확인해보세요.
 // <button>정산현황 보기</button>
 // <button>수령현황 보기</button>
-
 
 // todo: 주문 금액 다 모였을 때 (배달/공구)
 // 📌 {배달/공구} 주문 금액이 다 모였어요.
@@ -107,10 +105,10 @@ const tempData = [
 ];
 
 const renderMessage = (item, handlePayment) => (
-  <div key={item.chatTime} className="flex flex-row">
-    <div className="flex space-x-2 mb-3">
+  <div key={item.chatTime} className="flex flex-row max-w-[340px] w-[340px]">
+    <div className="flex space-x-2 mb-3 w-full">
       <img src={tookIcon} alt="took" className="w-9 h-9 mt-1" />
-      <div>
+      <div className="w-full">
         <div className="font-dela text-sm mb-1 ml-1">took</div>
         <div className="flex flex-col bg-main rounded-xl shadow pt-2">
           <div className="flex items-center px-4 space-x-2">
@@ -183,7 +181,6 @@ const renderMessage = (item, handlePayment) => (
   </div>
 );
 
-// 최신 메시지 표시
 const sortedTempData = [...tempData]
   .sort((a, b) => new Date(b.chatTime) - new Date(a.chatTime))
   .reverse();
@@ -191,10 +188,35 @@ const sortedTempData = [...tempData]
 function TookChattingPage() {
   const navigate = useNavigate();
   const lastDate = useRef(null);
+  const chatEndRef = useRef(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   const handlePayment = () => {
     navigate('/payment');
   };
+
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleScroll = () => {
+    if (
+      window.scrollY + window.innerHeight >=
+      document.documentElement.scrollHeight - 200
+    ) {
+      setShowScrollButton(false);
+    } else {
+      setShowScrollButton(true);
+    }
+  };
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'auto' });
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col bg-[#FFF7ED] w-full h-full mx-auto relative">
@@ -207,7 +229,7 @@ function TookChattingPage() {
 
       <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
 
-      <div className="flex flex-col items-start space-y-4 px-2 py-2">
+      <div className="flex flex-col items-start space-y-4 px-2 py-2 overflow-y-auto">
         {sortedTempData.map((item, index) => {
           const showDate = lastDate.current !== formatDateOnly(item.chatTime);
           lastDate.current = formatDateOnly(item.chatTime);
@@ -223,7 +245,17 @@ function TookChattingPage() {
             </div>
           );
         })}
+        <div ref={chatEndRef} />
       </div>
+
+      {showScrollButton && (
+        <button
+          className="fixed bottom-10 right-5 bg-main text-white rounded-full p-2 shadow-md transition-opacity duration-300"
+          onClick={scrollToBottom}
+        >
+          <FaArrowDown />
+        </button>
+      )}
     </div>
   );
 }
