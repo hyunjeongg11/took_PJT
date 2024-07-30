@@ -34,18 +34,21 @@ public class PartyServiceImpl implements PartyService {
     @Override
     @Transactional
     public ResponseEntity<? super PartyResponseDto> makeParty(PartyRequestDto dto) {
+
+        Long partySeq = null;
+        PartyEntity party = null;
         PartyEntity partyEntity = new PartyEntity(dto);
 
         try {
 
-            partyRepository.save(partyEntity);
+            party = partyRepository.save(partyEntity);
 
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
 
-        return PartyResponseDto.success();
+        return PartyResponseDto.success(party.getPartySeq());
     }
 
     @Override
@@ -72,9 +75,11 @@ public class PartyServiceImpl implements PartyService {
 
         try {
 
+            MemberEntity member = memberRepositoryCustom.findMemberByUserSeq(dto.getUserSeq());
+            if(member.isStatus()) return ResponseEntity.ok("이미 거래가 완료되었습니다. partySeq 재확인 해주세요");
+
             // 멘인 결제 은행 Seq 구해오는 함수
             Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(userSeq);
-            System.out.println("뱅크 시퀀스를 출력합니다 :" + bankSeq);
             BankEntity bank = bankRepository.getReferenceById(bankSeq);
 
             // 리더이면 모든 금액이 빠지게
@@ -82,7 +87,7 @@ public class PartyServiceImpl implements PartyService {
             // 리더는 모든 금액을 지출 (더치페이,택시,공구,등등 동일)
 
             PartyEntity party = partyRepository.getReferenceById(dto.getPartySeq());
-            MemberEntity member = memberRepositoryCustom.findMemberByUserSeq(dto.getUserSeq());
+
 
 
             if (isLeader) {

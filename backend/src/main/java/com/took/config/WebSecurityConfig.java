@@ -42,6 +42,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 정확한 출처만 허용
+        configuration.addAllowedOrigin("https://i11e205.p.ssafy.io");
         configuration.addAllowedOrigin("http://localhost:5173");
         configuration.addAllowedOrigin("http://localhost:5174");
         configuration.addAllowedMethod("*"); // 필요에 따라 특정 메서드만 허용
@@ -57,11 +58,12 @@ public class WebSecurityConfig {
         @Bean
         protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 
+            System.out.println("chain에서 확인합니다.");
                 httpSecurity
                                 .cors(cors -> cors
                                                 .configurationSource(configurationSource()))
-                                .csrf(CsrfConfigurer::disable) // 사이트 요청에 대한 설정
-                                .httpBasic(HttpBasicConfigurer::disable)
+                                .csrf(CsrfConfigurer::disable) // 사이트 요청에 대한 설정 //JWT 기반 인증이 이뤄지 때문에 csrf를 제어!
+                                .httpBasic(HttpBasicConfigurer::disable) //이것도 JWT 기반 인증이 이뤄지기 때문에 disable로 제어!
                                 .sessionManagement(sessionManagement -> sessionManagement
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 // 일단 세션 안쓰게끔
@@ -88,7 +90,7 @@ public class WebSecurityConfig {
 
                                                 .anyRequest().authenticated()
                                 ).oauth2Login(oauth2 -> oauth2
-                                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/v1/auth/oauth2"))
+                                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/auth/oauth2"))
                                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
                                         .userInfoEndpoint(endpoint->endpoint.userService(oAuth2UserService))
                                         .successHandler(oAuth2SuccessHandler)

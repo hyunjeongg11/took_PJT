@@ -31,6 +31,7 @@ public class PartyController {
     @PostMapping("/request-pay")
     public ResponseEntity<? super PartyResponseDto> RequestPay(
             @RequestBody @Valid PartyRequestDto requestBody) {
+        System.out.println("컨트롤러 출력!");
         ResponseEntity<? super PartyResponseDto> response = partyService.makeParty(requestBody);
         return response;
     }
