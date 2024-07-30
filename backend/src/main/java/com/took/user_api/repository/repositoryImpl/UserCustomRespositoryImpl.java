@@ -70,4 +70,26 @@ public class UserCustomRespositoryImpl implements UserCustomRepository {
                 .execute();
     }
 
+    @Override
+    public void changeAlramTrue(Long userSeq) {
+        QUserEntity user = QUserEntity.userEntity;
+
+        queryFactory.update(user)
+                .where(user.userSeq.eq(userSeq))
+                .set(user.alarm, true)
+                .execute();
+    }
+
+    @Override
+    public void changeAlramFalse(Long userSeq) {
+
+        QUserEntity user = QUserEntity.userEntity;
+
+        queryFactory.update(user)
+                .where(user.userSeq.eq(userSeq))
+                .set(user.alarm, false)
+                .execute();
+
+    }
+
 }

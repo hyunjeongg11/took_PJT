@@ -4,7 +4,7 @@ package com.took.user_api.controller;
 import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
 import com.took.user_api.dto.request.user.NearUserRequestDto;
 import com.took.user_api.dto.request.user.PwdChangeRequestDto;
-import com.took.user_api.dto.request.user.UserInfoRequestDto;
+import com.took.user_api.dto.request.user.UserSeqRequestDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
 import com.took.user_api.dto.response.user.KakaoChangeResponseDto;
@@ -62,7 +62,7 @@ public class UserContoller {
 
     @PostMapping("/info")
     public ResponseEntity<? super UserInfoResponseDto> UserInfo
-    (@RequestBody UserInfoRequestDto requestBody) {
+    (@RequestBody UserSeqRequestDto requestBody) {
 
         ResponseEntity<? super UserInfoResponseDto> response = userService.userInfo(requestBody);
         return response;
@@ -81,6 +81,14 @@ public class UserContoller {
 
         return nearList;
 
+    }
+
+    @GetMapping("/change-alram")
+    public ResponseEntity<? super VoidResponseDto> changeAlram(
+            @RequestBody UserSeqRequestDto requestBody
+    ){
+
+        return userService.changeAlram(requestBody);
     }
     
     

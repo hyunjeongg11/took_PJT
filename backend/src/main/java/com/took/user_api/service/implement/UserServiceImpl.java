@@ -2,11 +2,10 @@ package com.took.user_api.service.implement;
 
 
 import com.querydsl.core.Tuple;
-import com.took.user_api.dto.LocationDto;
 import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
 import com.took.user_api.dto.request.user.NearUserRequestDto;
 import com.took.user_api.dto.request.user.PwdChangeRequestDto;
-import com.took.user_api.dto.request.user.UserInfoRequestDto;
+import com.took.user_api.dto.request.user.UserSeqRequestDto;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
@@ -84,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResponseEntity<? super UserInfoResponseDto> userInfo(UserInfoRequestDto requestBody) {
+    public ResponseEntity<? super UserInfoResponseDto> userInfo(UserSeqRequestDto requestBody) {
 
         UserEntity user = null;
         try{
@@ -147,6 +146,27 @@ public class UserServiceImpl implements UserService {
 
             String encryptedPwd = passwordEncoder.encode(requestBody.getNewPwd());
             userCustomRepository.changePwd(encryptedPwd,requestBody.getUserSeq());
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return VoidResponseDto.success();
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<? super VoidResponseDto> changeAlram(UserSeqRequestDto requestBody) {
+
+        try{
+
+            UserEntity user = userRepository.getReferenceById(requestBody.getUserSeq());
+
+            if(user.getAlarm()) userCustomRepository.changeAlramFalse(requestBody.getUserSeq());
+            else userCustomRepository.changeAlramTrue(requestBody.getUserSeq());
+
 
 
         }catch (Exception e){
