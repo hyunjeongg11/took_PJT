@@ -46,17 +46,7 @@ public class WebSecurityConfig {
         configuration.addAllowedOrigin("http://localhost:5173");
         configuration.addAllowedOrigin("http://localhost:5174");
         configuration.addAllowedMethod("*"); // 필요에 따라 특정 메서드만 허용
-        configuration.addAllowedHeader("Authorization"); // 필요에 따라 특정 헤더만 허용
-        configuration.addAllowedHeader("Content-Type");
-        configuration.addAllowedHeader("Host");
-        configuration.addAllowedHeader("Cookie");
-        configuration.addAllowedHeader("Cache-Control");
-        configuration.addAllowedHeader("Accept");
-        configuration.addAllowedHeader("Accept-Encoding");
-        configuration.addAllowedHeader("User-Agent");
-        configuration.addAllowedHeader("Accept");
-        configuration.addAllowedHeader("Accept-Encoding");
-        configuration.addAllowedHeader("Connection");
+        configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true); // 자격 증명(쿠키 등) 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
