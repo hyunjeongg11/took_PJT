@@ -41,21 +41,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
             System.out.println("필터에 진입합니다.");
 
-            // 블랙박스 검정
-            String header = request.getHeader("Authorization");
-            if(header==null || !header.startsWith("Bearer")){
-                filterChain.doFilter(request, response);
-                return;
-            }
 
-            String token = header.substring(7);
-            if(tokenBlacklistService.isTokenBlacklisted(token)){
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"중복된 토큰입니다.");
-                return;
-            }
+        // 블랙박스 검정
+        String header = request.getHeader("Authorization");
+        if(header==null || !header.startsWith("Bearer")){
+            System.out.println("다음으로 넘어갑니다.");
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            System.out.println("블랙박스를 빠져 나옵니다.");
+        String token = header.substring(7);
+        if(tokenBlacklistService.isTokenBlacklisted(token)){
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"중복된 토큰입니다.");
+            return;
+        }
 
+        System.out.println("블랙박스를 빠져 나옵니다.");
 
 
         try{
@@ -101,6 +102,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 SecurityContextHolder.setContext(securityContext);
 
             }catch(Exception exception){
+            System.out.println("필터에서 에러를 출력합니다.");
                 exception.printStackTrace();
             }
 
