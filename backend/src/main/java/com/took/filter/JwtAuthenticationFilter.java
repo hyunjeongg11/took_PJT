@@ -39,15 +39,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-            System.out.println("필터에 진입합니다.");
+        System.out.println("필터에 진입합니다.");
         System.out.println("요청 path 출력"+request.getPathInfo());
         System.out.println("요청의 인증 방법을 출력합니다."+request.getAuthType());
         System.out.println("요청의 전송 방법을 출력합니다."+request.getMethod());
+
 
         // 블랙박스 검정
         String header = request.getHeader("Authorization");
         if(header==null || !header.startsWith("Bearer")){
             System.out.println("헤더가 없습니다. 다음으로 넘어갑니다.");
+            System.out.println("request:"+request.getRequestURI() +  "response: " + response);
             filterChain.doFilter(request, response);
             return;
         }
