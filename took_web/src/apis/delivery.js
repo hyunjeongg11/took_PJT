@@ -187,3 +187,141 @@ export const getDeliveryListApi = async (params) => {
     }
 }
 
+
+/* {
+	"deliverySeq": "long" // 배달 글 번호 
+	"status": "string" // 상태 (OPEN, DELIVERY, DONE)
+} */
+// 배달 상태 변경
+export const changeDeliveryStatusApi = async (params) => {
+    try {
+        const response = await request.put('/api/delivery/setStatus', params);
+        return response.data;
+    } catch (error) {
+        return handleApiError(error);
+    }
+}
+
+/* {
+	"deliverySeq": "long", // 배달 글 번호
+	"userSeq": "long" // 사용자 번호
+} */
+// 배달 파티 참가
+export const joinDeliveryApi = async (params) => {
+    try {
+        const response = await request.post('/api/delivery/join', params);
+        return response.data;
+    } catch (error) {
+        return handleApiError(error);
+    }
+}
+
+/* {
+	"deliverySeq": "long" // 배달 글 번호
+	"deliveryGuestSeq": "long" // 배달 게스트 참가 번호
+} */
+// 배달 파티 퇴장
+export const leaveDeliveryApi = async (params) => {
+    try {
+        const response = await request.post('/api/delivery/leave', params);
+        return response.data;
+    } catch (error) {
+        return handleApiError(error);
+    }
+}
+
+
+// 배달 파티 참가자 리스트
+// 응답
+/* [
+	{
+	    "deliveryGuestSeq": "long", // 배달 게스트 번호
+	    "deliverySeq": "long", // 배달 번호
+	    "userSeq": "long", // 사용자 번호
+	    "pickUp": "boolean" // 픽업 여부
+	}
+	...
+] */
+export const getDeliveryMembersApi = async (deliverySeq) => {
+    try {
+        const response = await request.get(`/api/delivery/guest/list/${deliverySeq}`);
+        return response.data;
+    } catch (error) {
+        return handleApiError(error);
+    }
+}
+
+
+// 배달 파티 참가자 조회
+// 응답
+/* {
+    "deliveryGuestSeq": "long", // 배달 게스트 번호
+    "deliverySeq": "long", // 배달 번호
+    "userSeq": "long", // 사용자 번호
+    "pickUp": "boolean" // 픽업 여부
+} */
+export const getDeliveryMemberApi = async (deliveryGuestSeq) => {
+    try {
+        const response = await request.get(`/api/delivery/guest/${deliveryGuestSeq}`);
+        return response.data;
+    } catch (error) {
+        return handleApiError(error);
+    }
+}
+
+// 배달 픽업 여부 변경
+export const changePickUpStatusApi = async (deliveryGuestSeq) => {
+    try {
+        const response = await request.get(`/api/delivery/guest/setPickUp/${deliveryGuestSeq}`);
+        return response.data;
+    } catch (error) {
+        return handleApiError(error);
+    }
+}
+
+// 참가 중인 배달 글 목록
+// 응답
+/* [
+	{
+	    "deliverySeq": "long", // 배달 번호
+	    "userSeq": "long", // 사용자 번호
+	    "roomSeq": "long", // 방 번호
+	    "partySeq": "long", // 파티 번호
+	    "storeName": "string", // 가게 이름
+	    "pickupPlace": "string", // 픽업 장소
+	    "deliveryTip": "string", // 배달 팁
+	    "content": "string", // 내용
+	    "notice": "string", // 공지사항
+	    "deliveryTime": "string", // 배달 시간
+	    "status": "string", // 상태 (OPEN, DELIVERY, DONE)
+	    "count": "int", // 참가 인원 수
+	    "createdAt": "LocalDateTime", // 생성 시간
+	    "finishTime": "LocalDateTime" // 완료 시간
+	}
+	...
+] */
+
+export const getMyDeliveries = async (userSeq) => {
+    try {
+        const response = await request.get(`/api/delivery/list/${userSeq}`);
+        return response.data;
+    } catch (error) {
+        return handleApiError(error);
+    }
+}
+
+// 해당 파티 참가 여부 확인
+// 요청
+/* {
+	"deliverySeq": "long", // 배달 글 번호
+	"userSeq": "long" // 사용자 번호
+} */
+// 응답 - 참가 중이라면 true else false
+export const isJoiningParty = async (params) => {
+    try {
+        const response = await request.post(`/api/delivery/guest/isJoin`, params);
+        return response.data;
+    } catch (error) {
+        return handleApiError(error);
+    }
+}
