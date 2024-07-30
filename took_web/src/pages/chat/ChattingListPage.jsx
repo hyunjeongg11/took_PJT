@@ -101,16 +101,21 @@ function getIcon(category) {
   }
 }
 
+function isEnglish(str) {
+  return /^[A-Za-z\s]+$/.test(str);
+}
+
 function ChattingListPage() {
-  // 최근 메시지 시간을 기준으로 내림차순 정렬
-  const sortedTempData = tempData.sort((a, b) => new Date(b.recentChatTime) - new Date(a.recentChatTime));
+  const sortedTempData = tempData.sort(
+    (a, b) => new Date(b.recentChatTime) - new Date(a.recentChatTime)
+  );
 
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-4 py-3">
         <BackButton />
-        <div className="mt-2.5 flex-grow ml-11 text-left text-xl font-bold text-main">
-          툭채팅
+        <div className="mt-2 flex-grow ml-11 text-left text-xl font-bold text-main">
+          <span className="font-dela">took</span> 채팅
         </div>
       </div>
 
@@ -118,17 +123,34 @@ function ChattingListPage() {
 
       <div className="flex flex-col">
         {sortedTempData.map((chat, index) => (
-          <div key={index} className="flex items-center px-6 py-4 border-b border-gray-200">
-            <img src={getIcon(chat.chatCategory)} alt={chat.chatCategory} className="w-11 h-11 mr-4" />
+          <div
+            key={index}
+            className="flex items-center px-6 py-4 border-b border-gray-200"
+          >
+            <img
+              src={getIcon(chat.chatCategory)}
+              alt={chat.chatCategory}
+              className="w-11 h-11 mr-4"
+            />
             <div className="flex-grow">
               <div className="flex justify-between">
-                <div className="text-base font-bold">{chat.chatUser}</div>
-                <div className="text-xs text-gray-600">{formatTime(chat.recentChatTime)}</div>
+                <div
+                  className={`text-base font-bold ${isEnglish(chat.chatUser) ? 'font-dela mb-1' : ''}`}
+                >
+                  {chat.chatUser}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {formatTime(chat.recentChatTime)}
+                </div>
               </div>
               <div className="flex justify-between">
-                <div className="text-sm text-gray-600">{chat.recentChatMessage}</div>
+                <div className="text-sm text-gray-600">
+                  {chat.recentChatMessage}
+                </div>
                 {chat.unreadMessages > 0 && (
-                  <div className="text-xs font-bold text-white bg-main rounded-full px-2.5 py-0.5">{chat.unreadMessages}</div>
+                  <div className="text-xs font-bold text-white bg-main rounded-full px-2.5 py-0.5">
+                    {chat.unreadMessages}
+                  </div>
                 )}
               </div>
             </div>
