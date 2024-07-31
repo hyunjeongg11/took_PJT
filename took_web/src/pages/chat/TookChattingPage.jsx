@@ -14,7 +14,6 @@ import { formatDate, formatDateOnly, formatTime } from '../../utils/formatDate';
 //  송금 내역을 확인해보세요.
 // <button>송금내역 보기</button>
 
-
 // todo: 정산 완료 (최종 정산!!) ⇒ 이건 양식 다 통일하면 될 듯(택시 차액 플러스인 경우 제외하고)
 // 📌{정산/택시/배달/공구} took 정산이 완료되었어요.  (결제자)
 
@@ -38,7 +37,6 @@ import { formatDate, formatDateOnly, formatTime } from '../../utils/formatDate';
 
 <button>상세보기</button> */
 
-
 // todo: 수령 확인 완료 (배달/공구)
 // 📌 {배달/공동구매} 수령 확인이 완료되었어요. (결제자)
 
@@ -52,7 +50,6 @@ import { formatDate, formatDateOnly, formatTime } from '../../utils/formatDate';
 // 정산현황에서 송금 내역을 확인해보세요.
 // <button>정산현황 보기</button>
 // <button>수령현황 보기</button>
-
 
 // todo: 주문 금액 다 모였을 때 (배달/공구)
 // 📌 {배달/공구} 주문 금액이 다 모였어요.
@@ -184,7 +181,6 @@ const renderMessage = (item, handlePayment) => (
   </div>
 );
 
-// 최신 메시지 표시
 const sortedTempData = [...tempData]
   .sort((a, b) => new Date(b.chatTime) - new Date(a.chatTime))
   .reverse();
