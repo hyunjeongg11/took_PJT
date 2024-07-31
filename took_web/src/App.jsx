@@ -57,8 +57,8 @@ import CurrentPathListPage from './pages/taxi/CurrentPathListPage';
 import DeliveryChattingMainPage from './pages/chat/DeliveryChattingMainPage';
 import ChattingListPage from './pages/chat/ChattingListPage';
 import TookChattingPage from './pages/chat/TookChattingPage';
-import GroupBuyChattingMainPage from './pages/chat/GroupBuyChattingMainPage';
 import TaxiChattingMainPage from './pages/chat/TaxiChattingMainPage';
+import GroupBuyChattingMainPage from './pages/chat/GroupBuyChattingMainPage';
 
 function App() {
   const [checkedItems, setCheckedItems] = useState({

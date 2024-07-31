@@ -49,6 +49,7 @@ function SignupPage() {
       console.log(result);
       if (result.code == 'su') {
         setIsCertificated(true);
+        alert('인증되었습니다');
         setCertificationError('');
       } else {
         setCertificationError('인증번호가 틀렸습니다.');
@@ -87,8 +88,9 @@ function SignupPage() {
       try {
         setIsIdValid(true);
         const result = await validIdApi({ userId: id });
-        alert(result.code);
+        
         if (result.code == 'su') {
+          alert("인증되었습니다");
           setIdError('');
         } else {
           setIdError('이미 사용 중인 아이디입니다.');
@@ -166,12 +168,12 @@ function SignupPage() {
           password,
           userName: name,
           email,
-          gender: gender === '남' ? 'T' : 'F',
+          gender: gender === '남' ? 'M' : 'F',
           certificationNumber,
           phoneNumber: removeHyphens(phoneNumber),
           birth,
         });
-        console.log(res);
+        alert('회원가입이 완료되었습니다.');
         navigate('/login');
       } catch (error) {
         alert('회원가입 중 오류가 발생했습니다.');
