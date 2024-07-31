@@ -52,11 +52,7 @@ public class AccountServiceImpl implements AccountService {
 
                 AccountEntity account = new AccountEntity(accountName,main,user,bank);
 
-                if(accountName==null){
-                    accountName = bank.getBankName()+" 계좌";
-                }
-
-                if(dto.getMain()==true) accountRepositoryCustom.isMain(dto.getUserSeq());
+                if(dto.getMain()) accountRepositoryCustom.isMain(dto.getUserSeq());
 
                 accountRepository.save(account);
 

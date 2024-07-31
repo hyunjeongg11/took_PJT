@@ -21,8 +21,8 @@ public class BankEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bankSeq;
 
-    @Column(name="bank_name")
-    private String bankName;
+    @Column(name="bank_num")
+    private int bankNum;
 
     @Column(name="account_num")
     private String accountNum;

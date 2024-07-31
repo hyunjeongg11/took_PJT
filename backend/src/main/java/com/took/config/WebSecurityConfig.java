@@ -43,10 +43,12 @@ public class WebSecurityConfig {
 
         // 정확한 출처만 허용
         configuration.addAllowedOrigin("https://i11e205.p.ssafy.io");
+        //이것도 일단 연결해봐야 알겠네
+
 //        configuration.addAllowedOrigin("http://localhost:5173");
 //        configuration.addAllowedOrigin("http://localhost:5174");
         configuration.addAllowedMethod("*"); // 필요에 따라 특정 메서드만 허용
-        configuration.addAllowedHeader("*");
+        configuration.addAllowedHeader("*"); // 특정 해더만 허용
         configuration.setAllowCredentials(true); // 자격 증명(쿠키 등) 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
