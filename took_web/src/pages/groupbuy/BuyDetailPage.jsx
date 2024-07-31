@@ -38,11 +38,11 @@ const BuyDetailPage = () => {
             공구 <span className="font-dela">took !</span>
           </div>
         </div>
-        <div className="flex flex-col p-5 mt-5 w-full bg-secondary rounded-3xl shadow-gray-300 shadow-md">
+        <div className="flex flex-col p-2 mt-5 w-full bg-white rounded-3xl shadow-gray-300">
           <div className="text-md font-extrabold text-neutral-800 py-2 p-1 mt-3">
             {temp_data.title}
           </div>
-          <div className="shrink-0 h-0.5 border border-solid border-main border-opacity-70 my-1" />
+          <div className="shrink-0 h-[0.5px] border border-solid border-ne border-opacity-70 my-1" />
           <div className="flex gap-5 justify-between mt-3 w-full">
             <div className="flex gap-2.5 items-start text-neutral-500">
               <img
@@ -55,39 +55,36 @@ const BuyDetailPage = () => {
                 <div className="text-[10px]">07/16 16:31</div>
               </div>
             </div>
-            <div className="my-auto text-[10px] font-bold text-main">
+            <div className="text-[10px] text-gray-500">
               조회 : {temp_data.visit}
             </div>
           </div>
           <div className="mt-9 text-sm text-zinc-800">{temp_data.content}</div>
-          <div className="flex gap-2 px-6 py-5 mt-12 bg-main text-white rounded-2xl shadow-gray-400 shadow-md">
-            <div className="flex flex-col justify-between text-xs gap-4 font-extrabold">
+          <div className="flex gap-2 px-5 py-5 mt-8 bg-neutral-100 text-black rounded-xl border border-collapse">
+            <div className="flex flex-col justify-between text-xs gap-3 font-bold">
               <div>물품명</div>
               <div>구매링크</div>
               <div>수령장소</div>
             </div>
-            <div className="self-stretch w-px border border-main border-opacity-60" />
+            <div className="self-stretch w-px border border-neutral-300 border-opacity-60" />
             <div className="flex flex-col justify-between text-xs">
-              <div className="font-extrabold">{temp_data.item}</div>
+              <div className="font-normal">{temp_data.item}</div>
 
-              <Link
-                to="https://www.myprotein.co.kr/"
-                className="font-extrabold"
-              >
+              <Link to="https://www.myprotein.co.kr/" className="font-normal">
                 <div>{temp_data.site}</div>
               </Link>
-              <div className="font-extrabold">{temp_data.place}</div>
+              <div className="font-normal">{temp_data.place}</div>
             </div>
           </div>
           <Link to="https://www.myprotein.co.kr/">
-            <div className="p-3 mt-4 text-xs font-bold text-center text-white bg-main rounded-xl shadow-gray-400 shadow-md">
+            <div className="p-3 mt-4 text-sm font-bold text-center border border-neutral-200 rounded-xl shadow-md">
               사이트 보러가기
             </div>
           </Link>
         </div>
         <div
           onClick={handleJoinGroup}
-          className="text-center p-3 my-5 text-base font-extrabold  text-main bg-secondary rounded-2xl shadow-gray-400 shadow-md"
+          className="text-center py-3 mx-8 my-5 text-base font-bold  text-white bg-main rounded-full shadow-md"
         >
           공동구매 참여하기
         </div>

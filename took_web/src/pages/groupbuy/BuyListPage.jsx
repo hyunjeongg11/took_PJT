@@ -51,7 +51,7 @@ function BuyListPage() {
     <div className="flex flex-col pt-5 bg-white min-w-screen min-h-screen">
       <div className="flex flex-col items-center justify-center px-5 w-full">
         <BackButton />
-        <div className="self-center mt-10 mb-3 text-2xl text-main font-extrabold">
+        <div className="self-center mb-3 text-2xl text-main font-extrabold">
           공구 <span className="font-dela">took !</span>
         </div>
         <div className="flex flex-col p-5 mt-2.5 w-full bg-secondary shadow-md shadow-gray-300 rounded-2xl overflow-y-auto">
@@ -68,7 +68,7 @@ function BuyListPage() {
                 img_no={buy.img_no}
               />
               {index < temp_data.length - 1 && (
-                <div className="shrink-0 my-2 border border-solid border-main border-opacity-40" />
+                <div className="shrink-0 my-2 border border-solid border-neutral-300 border-opacity-40" />
               )}
             </React.Fragment>
           ))}
