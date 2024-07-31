@@ -198,7 +198,7 @@ function DeliveryChattingMainPage() {
               <div className={`flex ${msg.user_seq === 1 ? 'justify-end' : 'justify-start'}`}>
                 {msg.user_seq !== 1 && !sameUserAndTime && (
                   <div className="flex flex-col items-center mr-2">
-                    <img src={getProfileImagePath(getUserProfileImgNo(msg.user_seq))} alt={msg.userName} className="w-9 h-9 rounded-full self-start" />
+                    <img src={getProfileImagePath(getUserProfileImgNo(msg.user_seq))} alt={msg.userName} className="w-9 h-9 self-start" />
                   </div>
                 )}
                 <div className="flex flex-col max-w-[80%]">
@@ -219,7 +219,7 @@ function DeliveryChattingMainPage() {
                 </div>
                 {msg.user_seq === 1 && (
                   <div className="flex flex-col items-center ml-2">
-                    <img src={getProfileImagePath(getUserProfileImgNo(msg.user_seq))} alt={msg.userName} className="w-9 h-9 rounded-full self-start" />
+                    <img src={getProfileImagePath(getUserProfileImgNo(msg.user_seq))} alt={msg.userName} className="w-9 h-9 self-start" />
                   </div>
                 )}
               </div>

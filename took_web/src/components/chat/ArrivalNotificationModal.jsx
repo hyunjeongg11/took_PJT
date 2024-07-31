@@ -34,7 +34,7 @@ const ArrivalNotificationModal = ({ members, onClose }) => {
               key={member.user_seq}
               src={getProfileImagePath(member.imgNo)}
               alt={member.userName}
-              className="w-12 h-12 rounded-full animate-shake mt-4"
+              className="w-12 h-12 animate-shake mt-4"
             />
           ))}
         </div>
@@ -42,7 +42,7 @@ const ArrivalNotificationModal = ({ members, onClose }) => {
           공동구매 그룹원들에게<br />물품 도착 알림을 보내시겠습니까?
         </p>
         <button
-          className="w-full bg-white text-main font-semibold py-2 rounded-lg mt-6 shadow-neutral-400 shadow-md"
+          className="w-full bg-white text-main font-semibold py-2 rounded-lg mt-6"
           onClick={onClose}
         >
           알림 보내기

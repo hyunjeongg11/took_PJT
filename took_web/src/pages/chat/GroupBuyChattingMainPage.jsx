@@ -41,13 +41,13 @@ const tempData = {
 
 const tempMessages = [
   { id: 1, user_seq: 1, userName: '조현정', message: '여러분, 구매 사이트 확인하시고 각자 구매 정보 등록 부탁드립니다 :)', timestamp: '2024-07-06T10:12:00' },
-  { id: 2, user_seq: 3, userName: '차민주', message: '네엡', timestamp: '2024-07-06T10:12:00' },
-  { id: 3, user_seq: 2, userName: '정희수', message: '저 3천원치만 함께 주문해도 괜찮을까요?', timestamp: '2024-07-06T10:12:00' },
-  { id: 4, user_seq: 4, userName: '이재찬', message: '넵! 상관 없을 것 같아요~!', timestamp: '2024-07-06T10:12:00' },
-  { id: 5, user_seq: 2, userName: '정희수', message: '저도요~', timestamp: '2024-07-06T10:12:00' },
-  { id: 6, user_seq: 1, userName: '조현정', message: '6시까지 다른분들 기다렸다가 주문하겠습니다 :-)', timestamp: '2024-07-06T10:12:00' },
-  { id: 7, user_seq: 3, userName: '차민주', message: '넵! 감사합니다!', timestamp: '2024-07-06T10:12:00' },
-  { id: 8, user_seq: 4, userName: '이재찬', message: '좋은아침입니다!', timestamp: '2024-07-07T10:12:00' },
+  { id: 2, user_seq: 3, userName: '차민주', message: '네엡', timestamp: '2024-07-06T10:14:00' },
+  { id: 3, user_seq: 2, userName: '정희수', message: '저 3천원치만 함께 주문해도 괜찮을까요?', timestamp: '2024-07-06T10:15:00' },
+  { id: 4, user_seq: 4, userName: '이재찬', message: '넵! 상관 없을 것 같아요~!', timestamp: '2024-07-06T11:09:00' },
+  { id: 5, user_seq: 2, userName: '정희수', message: '저도요~', timestamp: '2024-07-06T11:24:00' },
+  { id: 6, user_seq: 1, userName: '조현정', message: '6시까지 다른분들 기다렸다가 주문하겠습니다 :-)', timestamp: '2024-07-06T12:26:00' },
+  { id: 7, user_seq: 3, userName: '차민주', message: '넵! 감사합니다!', timestamp: '2024-07-06T13:45:00' },
+  { id: 8, user_seq: 4, userName: '이재찬', message: '좋은아침입니다!', timestamp: '2024-07-07T08:18:00' },
 ];
 
 function GroupBuyChattingMainPage() {
@@ -178,18 +178,18 @@ function GroupBuyChattingMainPage() {
       <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
       <div className="w-full px-2 py-1">
-        <div className="flex items-start bg-main p-2 rounded-lg shadow-md text-white text-sm">
+        <div className="flex items-start bg-white p-2 rounded-lg shadow-md text-black text-sm">
           <div className="ml-2 flex-grow">
             <div className='mb-1.5'>
                 물품명 <span className='ml-5'>{tempData.item}</span></div>
                 <div className="mb-1.5">
                 구매링크 
-                <a href="https://s.baemin.com/bfp.lty8b"  className="underline ml-3">https://www.myprotein.co.kr</a>
+                <a href="https://www.myprotein.co.kr"  className="underline ml-3">https://www.myprotein.co.kr</a>
                 </div>
                 <div>
                 수령장소 <span className='ml-2'>{tempData.place}</span>
                 </div>
-                <div className="mt-1 w-full border-1 border-solid bg-white min-h-[0.5px]" />
+                <div className="mt-1 w-full border-1 border-solid bg-black min-h-[0.5px]" />
                 <div className='text-xs mt-2 mb-1 mr-3 ml-1 flex justify-between'>
                     <span onClick={() => navigate('/groupbuy/order')}>상품 주문 정보 등록</span> | 
                     <button onClick={handleShowArrivalModal} className="focus:outline-none">물품 도착 !</button> | 
@@ -216,7 +216,7 @@ function GroupBuyChattingMainPage() {
               <div className={`flex ${msg.user_seq === 1 ? 'justify-end' : 'justify-start'}`}>
                 {msg.user_seq !== 1 && !sameUserAndTime && (
                   <div className="flex flex-col items-center mr-2">
-                    <img src={getProfileImagePath(getUserProfileImgNo(msg.user_seq))} alt={msg.userName} className="w-9 h-9 rounded-full self-start" />
+                    <img src={getProfileImagePath(getUserProfileImgNo(msg.user_seq))} alt={msg.userName} className="w-9 h-9 self-start" />
                   </div>
                 )}
                 <div className="flex flex-col max-w-[80%]">
@@ -227,7 +227,7 @@ function GroupBuyChattingMainPage() {
                     {msg.user_seq === 1 && !lastMessageFromSameUser && (
                       <div className="text-[9px] text-gray-400 mr-2 whitespace-nowrap">{formatTime(msg.timestamp)}</div>
                     )}
-                    <div className={`p-2 rounded-xl shadow-md ${msg.user_seq === 1 ? 'bg-[#FFE2D7] text-black' : 'bg-white text-black'}`} style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+                    <div className={`p-2 rounded-xl shadow-md ${msg.user_seq === 1 ? 'bg-main text-white' : 'bg-white text-black'}`} style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
                       <div className="text-sm">{msg.message}</div>
                     </div>
                     {msg.user_seq !== 1 && !lastMessageFromSameUser && (
@@ -237,7 +237,7 @@ function GroupBuyChattingMainPage() {
                 </div>
                 {msg.user_seq === 1 && (
                   <div className="flex flex-col items-center ml-2">
-                    <img src={getProfileImagePath(getUserProfileImgNo(msg.user_seq))} alt={msg.userName} className="w-9 h-9 rounded-full self-start" />
+                    <img src={getProfileImagePath(getUserProfileImgNo(msg.user_seq))} alt={msg.userName} className="w-9 h-9 self-start" />
                   </div>
                 )}
               </div>
