@@ -168,7 +168,7 @@ function SignupPage() {
           password,
           userName: name,
           email,
-          gender: gender === '남' ? 'T' : 'F',
+          gender: gender === '남' ? 'M' : 'F',
           certificationNumber,
           phoneNumber: removeHyphens(phoneNumber),
           birth,
