@@ -11,8 +11,8 @@ import { useUser } from '../store/user.js';
 function LoginPage() {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
-  const { setAccessToken } = useToken();
-  const { setUserSeq } = useUser();
+  const { setAccessToken, setRefreshToken } = useToken();
+  const { setUserSeq, setLoggedIn } = useUser();
   const navigate = useNavigate();
   const handleLoginClick = async (e) => {
     e.preventDefault();
@@ -21,10 +21,11 @@ function LoginPage() {
 
     // TODO: 로그인 API 호출
     try {
-      const response = await loginApi({ id, password }, setAccessToken);
+      const response = await loginApi({ userId: id, password }, setAccessToken);
       console.log(response);
       if (response.code == 'su') {
         setUserSeq(response.userSeq);
+        setLoggedIn();
         navigate('/');
       }
     } catch (error) {

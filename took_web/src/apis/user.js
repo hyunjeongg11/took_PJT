@@ -78,13 +78,17 @@ export const checkEmailCodeApi = async (params) => {
 // 로그인
 export const loginApi = async (params, setAccessToken) => {
   try {
-    const response = await request.post('/api/auth/sign-in', params);
+
+    const response = await member_request.post('/api/auth/sign-in', params);
     const accessToken = response.data.accessToken;
+
     if (accessToken) {
       setAccessToken(accessToken);
       localStorage.setItem('accessToken', accessToken);
     }
+
     return response.data;
+
   } catch (err) {
     return handleApiError(err);
   }
@@ -116,3 +120,36 @@ export const refreshAccessTokenApi = async (params) => {
     return handleApiError(err);
   }
 };
+
+/* {
+  "userId" : "yourId",
+  "userName" : "yourName",
+  "phoneNumber": "yourPhoneNumber"
+  } */
+export const modifyUserInfoApi = async(params) => {
+  try {
+    const response = await request.post('/api/user/info-change', params);
+    return response.data;
+  }catch(err) {
+    return handleApiError(err);
+  }
+}
+
+export const modifyPwdApi = async(params) => {
+  try {
+    const response = await request.post('/api/user/change-pwd', params);
+    return response.data;
+  }
+  catch(err) {
+    return handleApiError(err);
+  }
+}
+
+export const logoutApi = async () => {
+  try {
+    const response = await request.get('/api/user/sign-out');
+    return response.data;
+  } catch(err) {
+    return handleApiError(err);
+  }
+}
