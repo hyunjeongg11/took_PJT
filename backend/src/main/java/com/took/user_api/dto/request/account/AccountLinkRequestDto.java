@@ -16,7 +16,7 @@ public class AccountLinkRequestDto {
     private String accountNum;
 
     @NotBlank
-    private String accountPwd;
+    private int accountPwd;
 
     private String accountName;
     

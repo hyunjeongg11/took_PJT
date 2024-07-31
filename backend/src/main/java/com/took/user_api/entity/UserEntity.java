@@ -111,6 +111,12 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<Delivery> deliveries;
 
+//    알림방과의 관계 설정
+// 배달파티와 관계설정
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<AlramEntity> alrams;
+
 
     // 배달 파티 멤버와 관계설정
     @JsonManagedReference

@@ -38,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
 
             // 계좌 인증용
             String accountNum = dto.getAccountNum();
-            String accountPwd = dto.getAccountPwd();
+            int accountPwd = dto.getAccountPwd();
 
             // 계좌 인증 완료
             BankEntity bank = bankRepositoryCustom.isMatched(accountNum,accountPwd);

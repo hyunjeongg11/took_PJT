@@ -16,7 +16,7 @@ public class BankRepositoryCustomImpl implements BankRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public BankEntity isMatched(String accountNum, String accountPwd) {
+    public BankEntity isMatched(String accountNum, int accountPwd) {
 
         QBankEntity bank = QBankEntity.bankEntity;
         BankEntity result = null;

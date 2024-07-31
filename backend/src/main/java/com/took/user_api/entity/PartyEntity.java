@@ -1,6 +1,7 @@
 package com.took.user_api.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.took.user_api.dto.request.party.PartyRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Entity(name = "party")
@@ -41,6 +43,10 @@ public class PartyEntity {
 
     @Column(name="total_member")
     private int totalMember;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<AlramEntity> alrams;
 
     public PartyEntity(PartyRequestDto dto){
 

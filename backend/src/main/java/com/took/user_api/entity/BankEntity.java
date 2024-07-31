@@ -28,7 +28,7 @@ public class BankEntity {
     private String accountNum;
 
     @Column(name="account_pwd")
-    private String accountPwd;
+    private int accountPwd;
 
     @Column(name="own")
     private String own;
