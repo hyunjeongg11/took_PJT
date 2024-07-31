@@ -1,9 +1,9 @@
-// pages/chat/DeliveryChattingMainPage.jsx
+// pages/chat/GroupBuyChattingMainPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { formatDateOnly, formatTime, formatDateWithYear } from '../../utils/formatDate';
-import speaker from '../../assets/common/speaker.png';
 import delivery from '../../assets/chat/delivery.png';
 import calculator from '../../assets/chat/calculator.png';
 import money from '../../assets/chat/money.png';
@@ -13,40 +13,45 @@ import CalculatorModal from '../../components/chat/CalculatorModal';
 import MoneyModal from '../../components/chat/MoneyModal';
 import DeliveryModal from '../../components/chat/DeliveryModal';
 import ParticipantList from '../../components/chat/ParticipantList';
+import ArrivalNotificationModal from '../../components/chat/ArrivalNotificationModal';
 
 const tempMember = [
   { member_seq: 1, party_seq: 1, user_seq: 1, userName: '조현정', imgNo: 19, cost: 13000, real_cost: 12000, status: true, receive: false, is_leader: true, created_at: '2024-07-06T00:23:00' },
-  { member_seq: 2, party_seq: 1, user_seq: 2, userName: '정희수', imgNo: 20, cost: 8000, real_cost: 7500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
-  { member_seq: 3, party_seq: 1, user_seq: 3, userName: '차민주', imgNo: 18, cost: 16000, real_cost: 14500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
+  { member_seq: 2, party_seq: 1, user_seq: 2, userName: '정희수', imgNo: 12, cost: 8000, real_cost: 7500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
+  { member_seq: 3, party_seq: 1, user_seq: 3, userName: '차민주', imgNo: 2, cost: 16000, real_cost: 14500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
   { member_seq: 4, party_seq: 1, user_seq: 4, userName: '이재찬', imgNo: 8, cost: 16000, real_real_cost: 14500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
 ];
 
-const tempDelivery = {
-  delivery_seq: 1,
-  user_seq: 1,
-  room_seq: 1,
-  party_seq: 1,
-  storeName: 'BBQ 명지점',
-  pickupPlace: '송정삼정그린코아 1층',
-  deliveryTip: 3500,
-  deliveryTime: '2024-07-06T18:30:00',
-  status: 'OPEN',
-  created_at: '2024-07-06T00:23:00',
-  finishTime: '2024-07-06T18:30:00',
-};
+const tempData = {
+    id: 1,
+    title: '마이프로틴 공동구매 모집합니다',
+    site: '마이프로틴',
+    item: '프로틴',
+    content: `마프대란 프로틴 같이 공동구매 하실 분 구해요
+              <br />
+              <br />
+              8만원 이상 채워서 주문하고 싶어요! 같이 쿠폰 적용해서 주문해요!!!`,
+    place: '송정삼정그린코아더시티 1층',
+    current_person: 4,
+    max_person: 6,
+    img_no: 1,
+    visit: 1,
+    created_at: new Date(),
+  };
 
 const tempMessages = [
-  { id: 1, user_seq: 1, userName: '조현정', message: '안녕하세요! BBQ 배달방이에요~', timestamp: '2024-07-06T10:12:00' },
-  { id: 2, user_seq: 3, userName: '차민주', message: '안녕하세요! 메뉴 담을까요?', timestamp: '2024-07-06T10:12:00' },
-  { id: 3, user_seq: 2, userName: '정희수', message: '네! 6시에 주문할 예정입니다.', timestamp: '2024-07-06T10:12:00' },
-  { id: 4, user_seq: 4, userName: '이재찬', message: '저는 메뉴 다 담았습니다!', timestamp: '2024-07-06T10:12:00' },
-  { id: 5, user_seq: 2, userName: '정희수', message: '저도요~', timestamp: '2024-07-06T10:12:00' },
-  { id: 6, user_seq: 1, userName: '조현정', message: '6시까지 다른분들 기다렸다가 주문하겠습니다 :-)', timestamp: '2024-07-06T10:12:00' },
-  { id: 7, user_seq: 3, userName: '차민주', message: '넵! 감사합니다!', timestamp: '2024-07-06T10:12:00' },
-  { id: 8, user_seq: 4, userName: '이재찬', message: '좋은아침입니다!', timestamp: '2024-07-07T10:12:00' },
+  { id: 1, user_seq: 1, userName: '조현정', message: '여러분, 구매 사이트 확인하시고 각자 구매 정보 등록 부탁드립니다 :)', timestamp: '2024-07-06T10:12:00' },
+  { id: 2, user_seq: 3, userName: '차민주', message: '네엡', timestamp: '2024-07-06T10:14:00' },
+  { id: 3, user_seq: 2, userName: '정희수', message: '저 3천원치만 함께 주문해도 괜찮을까요?', timestamp: '2024-07-06T10:15:00' },
+  { id: 4, user_seq: 4, userName: '이재찬', message: '넵! 상관 없을 것 같아요~!', timestamp: '2024-07-06T11:09:00' },
+  { id: 5, user_seq: 2, userName: '정희수', message: '저도요~', timestamp: '2024-07-06T11:24:00' },
+  { id: 6, user_seq: 1, userName: '조현정', message: '6시까지 다른분들 기다렸다가 주문하겠습니다 :-)', timestamp: '2024-07-06T12:26:00' },
+  { id: 7, user_seq: 3, userName: '차민주', message: '넵! 감사합니다!', timestamp: '2024-07-06T13:45:00' },
+  { id: 8, user_seq: 4, userName: '이재찬', message: '좋은아침입니다!', timestamp: '2024-07-07T08:18:00' },
 ];
 
-function DeliveryChattingMainPage() {
+function GroupBuyChattingMainPage() {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState(tempMessages);
   const [inputMessage, setInputMessage] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -54,6 +59,7 @@ function DeliveryChattingMainPage() {
   const [showActionIcons, setShowActionIcons] = useState(false);
   const [currentModal, setCurrentModal] = useState(null);
   const [showParticipantList, setShowParticipantList] = useState(false);
+  const [showArrivalModal, setShowArrivalModal] = useState(false);
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const actionIconsRef = useRef(null);
@@ -126,6 +132,14 @@ function DeliveryChattingMainPage() {
     setShowParticipantList(false);
   };
 
+  const handleShowArrivalModal = () => {
+    setShowArrivalModal(true);
+  };
+
+  const handleCloseArrivalModal = () => {
+    setShowArrivalModal(false);
+  };
+
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
@@ -156,28 +170,32 @@ function DeliveryChattingMainPage() {
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-5 py-3">
         <BackButton />
-        <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
-          {tempDelivery.storeName}
+        <div className="mt-3 flex-grow text-center text-base font-bold text-black">
+          {tempData.title}
         </div>
         <FaBars className='mt-2.5' onClick={handleShowParticipantList} />
       </div>
       <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
       <div className="w-full px-2 py-1">
-        <div className="flex items-start bg-white p-2 rounded-lg shadow-md">
-          <img src={speaker} alt="speaker" className='w-6 h-6 ml-1'/>
+        <div className="flex items-start bg-white p-2 rounded-lg shadow-md text-black text-sm">
           <div className="ml-2 flex-grow">
-            <div className='text-sm mt-[2px]'>{tempDelivery.pickupPlace}</div>
-            {!isCollapsed && (
-              <div className="text-sm text-gray-500">
-                함께 주문하기 : 
-                <a href="https://s.baemin.com/bfp.lty8b"  className="underline"> https://s.baemin.com/bfp.lty8b</a>
-              </div>
-            )}
+            <div className='mb-1.5'>
+                물품명 <span className='ml-5'>{tempData.item}</span></div>
+                <div className="mb-1.5">
+                구매링크 
+                <a href="https://www.myprotein.co.kr"  className="underline ml-3">https://www.myprotein.co.kr</a>
+                </div>
+                <div>
+                수령장소 <span className='ml-2'>{tempData.place}</span>
+                </div>
+                <div className="mt-1 w-full border-1 border-solid bg-black min-h-[0.5px]" />
+                <div className='text-xs mt-2 mb-1 mr-3 ml-1 flex justify-between'>
+                    <span onClick={() => navigate('/groupbuy/order')}>상품 주문 정보 등록</span> | 
+                    <button onClick={handleShowArrivalModal} className="focus:outline-none">물품 도착 !</button> | 
+                    <span onClick={() => navigate('/groupbuy/order')}>전체 구매 정보</span> 
+                </div>
           </div>
-          <button onClick={toggleCollapse} className="focus:outline-none">
-            {isCollapsed ? <FaChevronDown className="h-4 w-4 text-gray-400" /> : <FaChevronUp className="h-4 w-4 text-gray-400" />}
-          </button>
         </div>
       </div>
 
@@ -288,8 +306,9 @@ function DeliveryChattingMainPage() {
       {currentModal === 'money' && <MoneyModal onClose={closeModal} tempMember={tempMember} />}
       {currentModal === 'delivery' && <DeliveryModal onClose={closeModal} tempMember={tempMember}/>}
       {showParticipantList && <ParticipantList participants={tempMember} onClose={handleCloseParticipantList} />}
+      {showArrivalModal && <ArrivalNotificationModal members={tempMember} onClose={handleCloseArrivalModal} />}
     </div>
   );
 }
 
-export default DeliveryChattingMainPage;
+export default GroupBuyChattingMainPage;
