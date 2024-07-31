@@ -5,7 +5,6 @@ package com.took.user_api.repository.repositoryImpl;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.config.QuerydslConfiguration;
-import com.took.user_api.dto.LocationDto;
 import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
 import com.took.user_api.entity.QUserEntity;
 import com.took.user_api.entity.UserEntity;
