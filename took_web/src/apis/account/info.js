@@ -21,7 +21,7 @@ import { handleApiError } from '../errorHandling';
 */
 export const linkAccountApi = async (params) => {
   try {
-    const response = await request.post('/api/link-account', params);
+    const response = await request.post('/api/account/link-account', params);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -45,7 +45,7 @@ export const linkAccountApi = async (params) => {
 */
 export const changeMainAccountApi = async (params) => {
   try {
-    const response = await request.post('/api/change-main-account', params);
+    const response = await request.post('/api/account/change-main-account', params);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -80,7 +80,7 @@ export const changeMainAccountApi = async (params) => {
 */
 export const getAccountListApi = async (params) => {
   try {
-    const response = await request.post('/api/account-list', params);
+    const response = await request.post('/api/account/account-list', params);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -104,14 +104,14 @@ export const getAccountListApi = async (params) => {
 */
 export const getAccountBalanceApi = async (params) => {
   try {
-    const response = await request.post('/api/account-balance', params);
+    const response = await request.post('/api/account/account-balance', params);
     return response.data;
   } catch (error) {
     return handleApiError(error);
   }
 };
 
-// 계좌 삭제 
+// 계좌 삭제
 // 요청
 /* 
 {
@@ -126,7 +126,7 @@ export const getAccountBalanceApi = async (params) => {
 */
 export const deleteAccountApi = async (params) => {
   try {
-    const response = await request.post('/api/account-delete', params);
+    const response = await request.post('/api/account/account-delete', params);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -150,7 +150,7 @@ export const deleteAccountApi = async (params) => {
 */
 export const rePayApi = async (params) => {
   try {
-    const response = await request.post('/api/re-pay', params);
+    const response = await request.post('/api/account/re-pay', params);
     return response.data;
   } catch (error) {
     return handleApiError(error);
