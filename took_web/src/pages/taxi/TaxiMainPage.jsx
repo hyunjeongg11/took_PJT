@@ -4,10 +4,7 @@ import plusIcon from '../../assets/taxi/plus.png'; // '+' 아이콘 경로
 import enterIcon from '../../assets/taxi/enter.png'; // 입장 가능 아이콘
 import notEnterIcon from '../../assets/taxi/notEnter.png'; // 입장 불가능 아이콘
 import locationIcon from '../../assets/taxi/location.png';
-import userProfileIcon1 from '../../assets/profile/img5.png';
-import userProfileIcon2 from '../../assets/profile/img6.png';
-import userProfileIcon3 from '../../assets/profile/img9.png';
-import userProfileIcon4 from '../../assets/profile/img11.png';
+import getProfileImagePath from '../../utils/getProfileImagePath';
 
 const tempUser = {
   gender: '여성',
@@ -16,7 +13,7 @@ const tempUser = {
  
 const tempData = [
   {
-    userProfileIcon: userProfileIcon1,
+    imgNo: 1,
     gender: '무관',
     destinations: ['강서구 명지동', '사하구 하단동'],
     userCount: 3,
@@ -24,7 +21,7 @@ const tempData = [
     chatRoomId: 'room1',
   },
   {
-    userProfileIcon: userProfileIcon2,
+    imgNo: 2,
     gender: '여성',
     destinations: ['연제구 연산동', '금정구 구서동'],
     userCount: 3,
@@ -32,7 +29,7 @@ const tempData = [
     chatRoomId: 'room2',
   },
   {
-    userProfileIcon: userProfileIcon3,
+    imgNo: 3,
     gender: '무관',
     destinations: ['수영구 수영동', '해운대구 좌동'],
     userCount: 2,
@@ -40,7 +37,7 @@ const tempData = [
     chatRoomId: 'room3',
   },
   {
-    userProfileIcon: userProfileIcon4,
+    imgNo: 4,
     gender: '남성',
     destinations: ['사상구 감전동', '사상구 주례동'],
     userCount: 4,
@@ -95,7 +92,7 @@ function TaxiMainPage() {
           <div key={index} className="px-4 py-2 rounded-lg">
             <div className="flex items-center">
               <img
-                src={item.userProfileIcon}
+                src={getProfileImagePath(item.imgNo)}
                 alt="user profile"
                 className="w-12 h-12 mr-3"
               />
