@@ -16,13 +16,14 @@ export const createPayApi = async (params) => {
 /* 응답 {    "code": "su",    "message": "Success.",    "list": [        {            "partySeq": 1,            "title": "거북이조 회식",            "category": "일반 결제",            "cost": 170000,            "status": false,            "createdAt": "2024-07-23T11:56:14.908867",            "count": 0,            "totalMember": 6        }    ]} */
 export const getTookHistory = async () => {
   try {
-    const response = await request.get('/api/pay//party-list');
+    const response = await request.get('/api/pay/party-list');
     return response.data;
   } catch (error) {
     return handleApiError(error);
   }
 };
 
+// 저기 cost에 정산(배달,일반결제)등 불러와서 넘겨줘야함.
 /* 요청{    "user_seq" : 2,    "party_seq" : 1,    "cost" : 28334,    "status" : false,    "receive" : null,    "isLeader" : false} */
 // 멤버별 정산 금액
 // TODO : 이해 못 함

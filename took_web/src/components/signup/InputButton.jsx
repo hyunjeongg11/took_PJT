@@ -8,6 +8,7 @@ const InputButton = ({
   placeholder,
   styleClass,
   error,
+  readOnly,
 }) => {
   return (
     <div className={`mt-8 ${styleClass}`}>
@@ -18,11 +19,13 @@ const InputButton = ({
         type={type}
         value={value}
         onChange={onChange}
-        className="mt-1.5 text-xs leading-5 text-neutral-600 text-opacity-30 border-b-2 w-full"
+        className={`mt-1.5 text-xs leading-5 text-neutral-600 border-b-2 w-full px-2 py-1 ${readOnly ? 'bg-gray-200 cursor-not-allowed' : ''}`}
         placeholder={placeholder}
+        readOnly={readOnly}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   );
 };
+
 export default InputButton;
