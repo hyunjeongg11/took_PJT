@@ -43,8 +43,8 @@ public class WebSecurityConfig {
 
         // 정확한 출처만 허용
         configuration.addAllowedOrigin("https://i11e205.p.ssafy.io");
-        configuration.addAllowedOrigin("http://localhost:5173");
-        configuration.addAllowedOrigin("http://localhost:5174");
+//        configuration.addAllowedOrigin("http://localhost:5173");
+//        configuration.addAllowedOrigin("http://localhost:5174");
         configuration.addAllowedMethod("*"); // 필요에 따라 특정 메서드만 허용
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true); // 자격 증명(쿠키 등) 허용
