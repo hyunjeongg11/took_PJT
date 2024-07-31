@@ -19,7 +19,7 @@ const ParticipantList = ({ participants, onClose, onSignOut }) => {
               <img
                 src={getProfileImagePath(participant.imgNo)}
                 alt={participant.userName}
-                className="w-9 h-9 rounded-full"
+                className="w-9 h-9"
               />
               <div className="ml-2.5 flex items-center">
                 {participant.user_seq === 1 && (
