@@ -47,6 +47,7 @@ public class AuthController {
     public ResponseEntity<? super SignUpResponseDto>signUp(
         @RequestBody @Valid SignUpRequestDto requestBody
     ){
+        System.out.println("컨트롤러에서 로그인 시도합니다.");
         ResponseEntity<? super SignUpResponseDto> response = authService.signUp(requestBody);
         return response;
     }

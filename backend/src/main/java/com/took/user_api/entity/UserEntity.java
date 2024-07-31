@@ -16,6 +16,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity(name = "user")
 @Table(name = "user")
+@ToString
 public class UserEntity {
   
     @Id
@@ -144,7 +146,7 @@ public class UserEntity {
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<ShopGuest> shopGuests;
-    
+
     public UserEntity(SignUpRequestDto dto) {
         this.userId = dto.getUserId();
         this.password = dto.getPassword();
