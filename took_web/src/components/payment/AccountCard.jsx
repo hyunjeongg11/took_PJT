@@ -1,5 +1,5 @@
 import React from "react";
-import { formatAccountNumber } from '../../utils/accountNumFormat'
+// import { formatAccountNumber } from '../../utils/accountNumFormat'
 import { formatNumber } from '../../utils/format';
 
 
@@ -42,7 +42,7 @@ function AccountCard({ accounts, onClose, onSelect }) {
             />
             <div className="text-left">
               <div className="text-sm font-bold">{account.bankName}</div>
-              <div className="text-xs">{formatAccountNumber(account.accountNum)} ({formatNumber(account.balance)}원)</div>
+              <div className="text-xs">{account.accountNum} ({formatNumber(account.balance)}원)</div>
               <div className="text-xs text-gray-500">{account.accountName}</div>
             </div>
           </div>
