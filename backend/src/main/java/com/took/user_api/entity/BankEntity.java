@@ -36,6 +36,9 @@ public class BankEntity {
     @Column(name="balance")
     private Long balance;
 
+    @Column(name="is_bank")
+    private boolean isBank;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
     private List<AccountEntity> accounts;
