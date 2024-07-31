@@ -1,0 +1,13 @@
+services:
+  web:
+    build:
+      context: ./took_web
+    expose:
+      - 5173
+    restart: always
+    networks:
+      - took_network
+
+networks:
+  took_network:
+    external: true

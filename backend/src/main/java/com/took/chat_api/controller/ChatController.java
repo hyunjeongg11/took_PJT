@@ -74,7 +74,7 @@ public class ChatController {
      * @return 해당 채팅방의 속한 유저 리스트
      */
     @GetMapping("/users/{roomSeq}")
-    public ResponseEntity<List<ChatUserSelectResponse>> getRoom(@PathVariable Long roomSeq) {
+    public ResponseEntity<List<ChatUserSelectResponse>> getUser(@PathVariable Long roomSeq) {
         List<ChatUserSelectResponse> users = chatUserService.findUserByRoom(roomSeq);
         return ResponseEntity.ok(users);
     }
@@ -88,6 +88,8 @@ public class ChatController {
         // 유저가 이미 채팅방에 존재하는지 확인
          if (chatUserService.checkChatUser(chatUserCreateRequest)) {
             joinRoom(chatUserCreateRequest);
+             messagingTemplate.convertAndSend("/sub/chat/room/" + chatUserCreateRequest.getRoomSeq(),
+                     chatUserCreateRequest.getUserSeq() + " has entered the room.");
         }
     }
 
@@ -105,9 +107,10 @@ public class ChatController {
      * @param chatUserDeleteRequest 유저의 방 퇴장 요청 정보를 담은 객체
      */
     @MessageMapping("/room/leave")
-    public ResponseEntity<?> leaveRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
+    public void leaveRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
         chatUserService.leaveChatRoom(chatUserDeleteRequest);
-        return ResponseEntity.noContent().build();
+        messagingTemplate.convertAndSend("/sub/chat/room/" + chatUserDeleteRequest.getRoomSeq(),
+                chatUserDeleteRequest.getUserSeq() + " has left the room.");
     }
 
     /**
@@ -116,9 +119,10 @@ public class ChatController {
      * @return 응답 본문 없음
      */
     @MessageMapping("/room/kick")
-    public ResponseEntity<?> kickUser(@RequestBody ChatUserDeleteRequest chatUserDeleteRequest) {
+    public void kickUser(@RequestBody ChatUserDeleteRequest chatUserDeleteRequest) {
         chatUserService.kickUserFromRoom(chatUserDeleteRequest);
-        return ResponseEntity.noContent().build();
+        messagingTemplate.convertAndSend("/sub/chat/room/" + chatUserDeleteRequest.getRoomSeq(),
+                chatUserDeleteRequest.getUserSeq() + " has left the room.");
     }
 
     /**

@@ -30,6 +30,7 @@ public class ChatRoomService {
                 .category(chatRoomCreateRequest.getCategory())
                 .createdAt(LocalDateTime.now())
                 .build();
+
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);  // 채팅방을 저장
         return new ChatRoomCreateResponse(savedChatRoom);  // ChatRoomCreateResponse로 변환하여 반환
     }
