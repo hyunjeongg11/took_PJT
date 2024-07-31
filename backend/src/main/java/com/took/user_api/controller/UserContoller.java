@@ -87,7 +87,6 @@ public class UserContoller {
     public ResponseEntity<? super VoidResponseDto> changeAlram(
             @RequestBody UserSeqRequestDto requestBody
     ){
-
         return userService.changeAlram(requestBody);
     }
     
