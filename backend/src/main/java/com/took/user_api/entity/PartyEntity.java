@@ -2,7 +2,7 @@ package com.took.user_api.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.took.user_api.dto.request.party.PartyRequestDto;
+import com.took.user_api.dto.request.party.makePartyRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,7 +27,7 @@ public class PartyEntity {
     private String title;
 
     @Column(name = "category")
-    private String category;
+    private int category;
 
     @Column(name = "cost")
     private int cost;
@@ -48,18 +48,15 @@ public class PartyEntity {
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<AlramEntity> alrams;
 
-    public PartyEntity(PartyRequestDto dto){
-
-        this.title = dto.getTitle();
-        this.category = dto.getCategory();
-        this.cost = dto.getCost();
-        this.totalMember = dto.getTotalMember();
-
+    public PartyEntity(String title, int category, int cost, int totalMember) {
+        this.title = title;
+        this.category = category;
+        this.cost = cost;
         this.status = false;
-        this.count = 0;
         this.createdAt = LocalDateTime.now();
-
+        this.totalMember = totalMember;
 
     }
+
     
 }

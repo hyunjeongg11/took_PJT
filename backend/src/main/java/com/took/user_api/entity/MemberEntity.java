@@ -60,6 +60,17 @@ public class MemberEntity {
 
     }
 
+    public MemberEntity(PartyEntity party,UserEntity user,int cost){
+     this.party = party;
+     this.status = true;
+     this.cost = cost;
+     this.receive = true;
+     this.isLeader = true;
+     this.createdAt = LocalDateTime.now();
+     this.user = user;
+
+    }
+
 
 
 }

@@ -1,12 +1,10 @@
 package com.took.user_api.controller;
 
 
-import com.took.user_api.dto.request.account.AccountSeqRequestDto;
 import com.took.user_api.dto.request.member.MemberSaveRequestDto;
 import com.took.user_api.dto.request.party.PartyDetailRequestDto;
 import com.took.user_api.dto.request.party.PartyDoneRequestDto;
-import com.took.user_api.dto.request.party.PartyRequestDto;
-import com.took.user_api.dto.request.party.PayAllResquestDto;
+import com.took.user_api.dto.request.party.makePartyRequestDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.member.MemberSaveResponseDto;
 import com.took.user_api.dto.response.party.*;
@@ -27,22 +25,21 @@ public class PartyController {
     private final MemberService memberService;
 
 
-    // party 테이블 형성
-    @PostMapping("/request-pay")
-    public ResponseEntity<? super PartyResponseDto> RequestPay(
-            @RequestBody @Valid PartyRequestDto requestBody) {
-        System.out.println("컨트롤러 출력!");
-        ResponseEntity<? super PartyResponseDto> response = partyService.makeParty(requestBody);
-        return response;
+    @PostMapping("/make-party")
+    public ResponseEntity<? super VoidResponseDto> makeParty(@RequestBody @Valid makePartyRequestDto requestBody) {
+//        내가 파티를 만든다.
+//        나는 방장이다.
+
+        return partyService.makeParty(requestBody);
     }
+
+
 
     // 나의 테이블 확인하기
     @GetMapping("/party-list")
     public ResponseEntity<? super PartyListResponseDto> partyList() {
-
         ResponseEntity<? super PartyListResponseDto> response = partyService.listAll();
         return response;
-
     }
 
     //정산 알고리즘
@@ -55,16 +52,7 @@ public class PartyController {
         return response;
     }
 
-    //정산 완료 되면 각 pay에 저장을 해줘야 한다.
-    @PostMapping("/pay-all")
-    public ResponseEntity<? super PayAllResponseDto> postMethodName
-    (    
-    @RequestBody @Valid PayAllResquestDto requestBody
-    ) 
-    {
-        ResponseEntity<? super PayAllResponseDto> response = partyService.payAll(requestBody);   
-        return response;
-    }
+
 
     // party의 정산이 완료된 경우 true를 아닌 경우 false를 반환한다.
     @PostMapping("/party-done")

@@ -3,15 +3,16 @@ package com.took.user_api.service.implement;
 
 import com.took.user_api.dto.request.party.PartyDetailRequestDto;
 import com.took.user_api.dto.request.party.PartyDoneRequestDto;
-import com.took.user_api.dto.request.party.PartyRequestDto;
-import com.took.user_api.dto.request.party.PayAllResquestDto;
+import com.took.user_api.dto.request.party.makePartyRequestDto;
 import com.took.user_api.dto.response.ResponseDto;
+import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.party.*;
-import com.took.user_api.entity.BankEntity;
 import com.took.user_api.entity.MemberEntity;
 import com.took.user_api.entity.PartyEntity;
+import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.BankRepository;
 import com.took.user_api.repository.PartyRepository;
+import com.took.user_api.repository.UserRepository;
 import com.took.user_api.repository.custom.BankRepositoryCustom;
 import com.took.user_api.repository.custom.MemberRepositoryCustom;
 import com.took.user_api.service.PartyService;
@@ -30,26 +31,8 @@ public class PartyServiceImpl implements PartyService {
     private final BankRepositoryCustom bankRepositoryCustom;
     private final BankRepository bankRepository;
     private final MemberRepositoryCustom memberRepositoryCustom;
+    private final UserRepository userRepository;
 
-    @Override
-    @Transactional
-    public ResponseEntity<? super PartyResponseDto> makeParty(PartyRequestDto dto) {
-
-        Long partySeq = null;
-        PartyEntity party = null;
-        PartyEntity partyEntity = new PartyEntity(dto);
-
-        try {
-
-            party = partyRepository.save(partyEntity);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-
-        return PartyResponseDto.success(party.getPartySeq());
-    }
 
     @Override
     @Transactional
@@ -66,60 +49,7 @@ public class PartyServiceImpl implements PartyService {
         return PartyListResponseDto.success(list);
     }
 
-    @Override
-    @Transactional
-    public ResponseEntity<? super PayAllResponseDto> payAll(PayAllResquestDto dto) {
 
-        Long userSeq = dto.getUserSeq();
-        boolean isLeader = memberRepositoryCustom.isLeader(userSeq);
-
-        try {
-
-            MemberEntity member = memberRepositoryCustom.findMemberByUserSeq(dto.getUserSeq());
-            if(member.isStatus()) return ResponseEntity.ok("이미 거래가 완료되었습니다. partySeq 재확인 해주세요");
-
-            // 멘인 결제 은행 Seq 구해오는 함수
-            Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(userSeq);
-            BankEntity bank = bankRepository.getReferenceById(bankSeq);
-
-            // 리더이면 모든 금액이 빠지게
-            // 그리고 상태 업데이트
-            // 리더는 모든 금액을 지출 (더치페이,택시,공구,등등 동일)
-
-            PartyEntity party = partyRepository.getReferenceById(dto.getPartySeq());
-
-
-
-            if (isLeader) {
-
-                
-                int totalCost = party.getCost();
-                // 통장에 잔고가 없다면
-                if (!bank.minus(totalCost))
-                    return ResponseDto.nomoney();
-
-            } else {
-
-                int guestCost = member.getCost();
-
-                if (!bank.minus(guestCost))
-                    return ResponseDto.nomoney();
-            }
-
-            // 송금이 완료 되었다면 member에 완료된 시간을 저장
-            // 여기에서 돈 빠지면 저장할 수 있게
-            bankRepository.save(bank);
-            // 여기에서 변경 필요!
-            memberRepositoryCustom.changeStatus(userSeq, true);
-            
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-
-        return PayAllResponseDto.success();
-    }
 
     @Override
     public ResponseEntity<? super PartyDoneResponseDto> partyDone(PartyDoneRequestDto dto) {
@@ -158,6 +88,26 @@ public class PartyServiceImpl implements PartyService {
         List<MemberEntity> partyDetailList = memberRepositoryCustom.partyDetail(userSeq,partySeq);
 
         return PartyDetailResponseDto.success(partyDetailList);
+    }
+
+    @Override
+    public ResponseEntity<? super VoidResponseDto> makeParty(makePartyRequestDto dto) {
+
+        try{
+
+            PartyEntity party = new PartyEntity(dto.getTitle(),dto.getCategory(),dto.getCost(),dto.getTotalMember());
+            PartyEntity newparty = partyRepository.save(party);
+            UserEntity user = userRepository.getReferenceById(dto.getUserSeq());
+
+//          일단 정산 전이기에 자신의 cost로 0으로 설정
+            MemberEntity member = new MemberEntity(party,user,0);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return VoidResponseDto.success();
     }
 
 }

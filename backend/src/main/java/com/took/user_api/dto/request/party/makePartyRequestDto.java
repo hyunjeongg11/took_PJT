@@ -7,10 +7,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PartyRequestDto {
-    
+public class makePartyRequestDto {
+
+    private Long userSeq;
     private String title;
-    private String category;
+    private int category;
     private int cost;
     private int totalMember;
     
