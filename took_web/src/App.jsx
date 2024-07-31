@@ -134,6 +134,7 @@ function App() {
     { path: '/taxi/path', element: <TaxiPathSettingPage /> },
     { path: '/taxi/path-list', element: <CurrentPathListPage /> },
     { path: '/chat/delivery/main', element: <DeliveryChattingMainPage /> },
+    { path: '/chat/taxi/main', element: <TaxiChattingMainPage /> },
     { path: '/chat/list', element: <ChattingListPage /> },
     { path: '/chat/took', element: <TookChattingPage /> },
     { path: '/groupbuy/my-purchase', element: <MyPurchasePage /> },
