@@ -116,7 +116,6 @@ public class ChatController {
     /**
      * 특정 멤버를 채팅방에서 내보내는 메서드
      * @param chatUserDeleteRequest 유저의 방 퇴장 요청 정보를 담은 객체
-     * @return 응답 본문 없음
      */
     @MessageMapping("/room/kick")
     public void kickUser(@RequestBody ChatUserDeleteRequest chatUserDeleteRequest) {
