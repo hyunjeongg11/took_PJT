@@ -32,9 +32,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-        private final JwtAuthenticationFilter jwtAuthenticationFilter;
-        private final DefaultOAuth2UserService oAuth2UserService;
-        private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final DefaultOAuth2UserService oAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     protected CorsConfigurationSource configurationSource() {
@@ -56,51 +56,51 @@ public class WebSecurityConfig {
         return source;
     }
 
-        @Bean
-        protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
+    @Bean
+    protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 
-            System.out.println("chain에서 확인합니다.");
-                httpSecurity
-                                .cors(cors -> cors
-                                                .configurationSource(configurationSource()))
-                                .csrf(CsrfConfigurer::disable) // 사이트 요청에 대한 설정 //JWT 기반 인증이 이뤄지 때문에 csrf를 제어!
-                                .httpBasic(HttpBasicConfigurer::disable) //이것도 JWT 기반 인증이 이뤄지기 때문에 disable로 제어!
-                                .sessionManagement(sessionManagement -> sessionManagement
-                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                // 일단 세션 안쓰게끔
-                                .authorizeHttpRequests(request -> request
+        System.out.println("chain에서 확인합니다.");
+        httpSecurity
+                .cors(cors -> cors
+                        .configurationSource(configurationSource()))
+                .csrf(CsrfConfigurer::disable) // 사이트 요청에 대한 설정 //JWT 기반 인증이 이뤄지 때문에 csrf를 제어!
+                .httpBasic(HttpBasicConfigurer::disable) //이것도 JWT 기반 인증이 이뤄지기 때문에 disable로 제어!
+                .sessionManagement(sessionManagement -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 일단 세션 안쓰게끔
+                .authorizeHttpRequests(request -> request
 
 //                                                로그인 전에 이뤄지는 작업은 인증이 푤요하지 않다.
-                                                .requestMatchers("/", "/api/auth/**","/oauth2/**").permitAll()
-                                                // 접두사는 제외 하고 USER만 적어준다.w
-                                                .requestMatchers("/api/user/**").hasRole("USER")
-                                                .requestMatchers("/api/account/**").hasRole("USER")
-                                                .requestMatchers("/api/pay/**").hasRole("USER")
-                                                .requestMatchers("/api/chat/**").hasRole("USER")
-                                                .requestMatchers("/api/delivery/**").hasRole("USER")
-                                                .requestMatchers("/api/noti/**").hasRole("USER")
-                                                .requestMatchers("/api/position/**").hasRole("USER")
-                                                .requestMatchers("/api/purchase/**").hasRole("USER")
-                                                .requestMatchers("/api/ship/**").hasRole("USER")
-                                                .requestMatchers("/api/shops/**").hasRole("USER")
-                                                .requestMatchers("/api/sms/**").hasRole("USER")
-                                                .requestMatchers("/api/navi/**").hasRole("USER")
-                                                .requestMatchers("/api/taxi/**").hasRole("USER")
-                                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/", "/api/auth/**","/oauth2/**").permitAll()
+                                // 접두사는 제외 하고 USER만 적어준다.w
+                                .requestMatchers("/api/user/**").hasRole("USER")
+                                .requestMatchers("/api/account/**").hasRole("USER")
+                                .requestMatchers("/api/pay/**").hasRole("USER")
+                                .requestMatchers("/api/chat/**").hasRole("USER")
+                                .requestMatchers("/api/delivery/**").hasRole("USER")
+                                .requestMatchers("/api/noti/**").hasRole("USER")
+                                .requestMatchers("/api/position/**").hasRole("USER")
+                                .requestMatchers("/api/purchase/**").hasRole("USER")
+                                .requestMatchers("/api/ship/**").hasRole("USER")
+                                .requestMatchers("/api/shops/**").hasRole("USER")
+                                .requestMatchers("/api/sms/**").hasRole("USER")
+                                .requestMatchers("/api/navi/**").hasRole("USER")
+                                .requestMatchers("/api/taxi/**").hasRole("USER")
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                                                .anyRequest().authenticated()
-                                ).oauth2Login(oauth2 -> oauth2
-                                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/auth/oauth2"))
-                                        .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
-                                        .userInfoEndpoint(endpoint->endpoint.userService(oAuth2UserService))
-                                        .successHandler(oAuth2SuccessHandler)
-                                        )
-                                .exceptionHandling(exceptionHandling -> exceptionHandling
-                                                .authenticationEntryPoint(new FailedAuthenticationEntryPoint()))
-                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                                .anyRequest().authenticated()
+                ).oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/auth/oauth2"))
+                        .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
+                        .userInfoEndpoint(endpoint->endpoint.userService(oAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler)
+                )
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new FailedAuthenticationEntryPoint()))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-                return httpSecurity.build();
-        }
+        return httpSecurity.build();
+    }
 
 
 
@@ -109,15 +109,15 @@ public class WebSecurityConfig {
 // jwt인증에 실패하게 되면 위 값을 넣어주게 된다.
 class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-        @Override
-        public void commence(HttpServletRequest request, HttpServletResponse response,
-                        AuthenticationException authException)
-                        throws IOException, ServletException {
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+                         AuthenticationException authException)
+            throws IOException, ServletException {
 
-                response.setContentType("application/json");
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                // {"code" : "NP" , "message" : "No Permission."}
-                response.getWriter().write("{\"code\" : \"NP\" , \"message\" : \"No Permission.\"}");
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        // {"code" : "NP" , "message" : "No Permission."}
+        response.getWriter().write("{\"code\" : \"NP\" , \"message\" : \"No Permission.\"}");
 
-        }
+    }
 }

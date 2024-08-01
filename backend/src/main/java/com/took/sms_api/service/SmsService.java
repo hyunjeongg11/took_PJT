@@ -84,6 +84,8 @@ public class SmsService {
                 .build();
         identityRepository.save(identity);
 
+        System.out.println("Saved Identity: " + identity);
+
         sendSms(phoneNumber, code); // SMS 전송
     }
 
