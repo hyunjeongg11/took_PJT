@@ -6,7 +6,7 @@ function MainPage() {
     console.log('앱 함수 호출');
     if (window.Android) {
       window.Android.showToast('Hello from Javascript!');
-      window.Android.performAction(); // 추가 액션 호출
+      window.Android.performAction('data'); // 추가 액션 호출
     }
   };
 
