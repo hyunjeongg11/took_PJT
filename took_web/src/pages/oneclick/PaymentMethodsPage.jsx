@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { formatAccountNumber } from '../../utils/accountNumFormat';
+// import { formatAccountNumber } from '../../utils/accountNumFormat';
 import BackButton from '../../components/common/BackButton';
 
 const tempData = [
@@ -105,7 +105,7 @@ const PaymentMethodsPage = () => {
                   )}
                 </div>
                 <div className="text-sm text-black">
-                  {formatAccountNumber(account.account_num)}
+                  {account.account_num}
                 </div>
                 <div className="text-sm text-gray-500">
                   {account.account_name}
