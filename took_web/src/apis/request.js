@@ -16,6 +16,7 @@ request.interceptors.request.use(async (config) => {
   
   if (!accessToken) {
     const storedAccessToken = localStorage.getItem('accessToken');
+    console.log(storedAccessToken);
     if (storedAccessToken) {
       setAccessToken(storedAccessToken);
       config.headers['Authorization'] = 'Bearer ' + storedAccessToken;

@@ -9,7 +9,7 @@ import { handleApiError } from '../errorHandling';
   "main": false,
   "accountName": "두번째 계좌",
   "accountNum": "1",
-  "accountPwd": "-1"
+  "accountPwd": 1
 } 
 */
 // 응답

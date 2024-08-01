@@ -3,17 +3,23 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AiOutlineRight } from 'react-icons/ai';
 import BackButton from '../../components/common/BackButton';
 
-function AgreementPage({ checkedItems, setCheckedItems }) {
+function AgreementPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [allChecked, setAllChecked] = useState(false);
+  const [checkedItems, setCheckedItems] = useState({
+    terms1: false,
+    terms2: false,
+    terms3: false,
+    terms4: false,
+    terms5: false,
+    terms6: false,
+  });
 
-  const { bank, account } = location.state || {};
+  const { bank, account, password, accountName } = location.state || {};
 
   useEffect(() => {
-    const allChecked =
-      Object.values(checkedItems).length > 0 &&
-      Object.values(checkedItems).every(Boolean);
+    const allChecked = Object.values(checkedItems).every(Boolean);
     setAllChecked(allChecked);
   }, [checkedItems]);
 
@@ -41,6 +47,12 @@ function AgreementPage({ checkedItems, setCheckedItems }) {
 
   const handleNavigateDetail = (index) => {
     navigate('/agreementdetail', { state: { scrollToIndex: index } });
+  };
+
+  const handleNextClick = () => {
+    if (isFormValid) {
+      navigate('/verification', { state: { bank, account, password, accountName } });
+    }
   };
 
   return (
@@ -202,7 +214,7 @@ function AgreementPage({ checkedItems, setCheckedItems }) {
           (e.currentTarget.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.2)')
         }
         onMouseOut={(e) => (e.currentTarget.style.boxShadow = 'none')}
-        onClick={() => navigate('/verification', { state: { bank, account } })}
+        onClick={handleNextClick}
       >
         다음
       </button>

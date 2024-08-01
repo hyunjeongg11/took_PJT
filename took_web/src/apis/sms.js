@@ -1,5 +1,5 @@
-import { request } from '../request';
-import { handleApiError } from '../errorHandling';
+import { request } from './request';
+import { handleApiError } from './errorHandling';
 
 // 문자전송
 // 요청
@@ -33,7 +33,7 @@ export const sendSmsApi = async (params) => {
 // 실패: HTTP 상태 코드 200, 반환 값: False (boolean)
 export const verifySmsApi = async (params) => {
   try {
-    const response = await request.post('/api/sms/verify/', params);
+    const response = await request.post('/api/sms/verify', params);
     return response.data;
   } catch (error) {
     return handleApiError(error);
