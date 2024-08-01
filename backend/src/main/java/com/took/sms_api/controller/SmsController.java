@@ -31,6 +31,7 @@ public class SmsController {
     @Operation(summary = "휴대폰 인증", description = "휴대폰 인증을 진행합니다.")
     @PostMapping("/verify")
     public ResponseEntity<?> verifyCode(@RequestBody VerifyRequest verifyRequest) {
+        System.out.println(verifyRequest);
         boolean result = smsService.verifyCode(verifyRequest.getPhoneNumber(), verifyRequest.getCode());
         return ResponseEntity.ok(result);
     }
