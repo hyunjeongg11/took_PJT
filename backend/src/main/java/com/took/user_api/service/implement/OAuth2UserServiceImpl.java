@@ -21,6 +21,7 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService{
     @Override
     public OAuth2User loadUser(OAuth2UserRequest request)throws OAuth2AuthenticationException{
 
+        System.out.println("OAuth2UserServiceImpl을 불러옵니다.");
         //super에서 loadUser를 통해 그 결과를 받아 볼 수 있다. 
         OAuth2User oAuth2User = super.loadUser(request);
         String oauthClientName = request.getClientRegistration().getClientName();
@@ -29,6 +30,7 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService{
             System.out.println(new ObjectMapper().writeValueAsString(oAuth2User.getAttributes()));
 
         }catch(Exception e){
+            System.out.println("OAuth2UserServiceImpl에서 에러를 보냅니다.");
             e.printStackTrace();
         }
 
