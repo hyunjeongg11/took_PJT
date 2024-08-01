@@ -117,10 +117,9 @@ public class ChatController {
     /**
      * 특정 멤버를 채팅방에서 내보내는 메서드
      * @param chatUserDeleteRequest 유저의 방 퇴장 요청 정보를 담은 객체
-     * @return 응답 본문 없음
      */
     @MessageMapping("/room/kick")
-    public void kickUser(@RequestBody ChatUserDeleteRequest chatUserDeleteRequest) {
+    public void kickUser(ChatUserDeleteRequest chatUserDeleteRequest) {
         chatUserService.kickUserFromRoom(chatUserDeleteRequest);
         messagingTemplate.convertAndSend("/sub/chat/room/" + chatUserDeleteRequest.getRoomSeq(),
                 chatUserDeleteRequest.getUserSeq() + " has left the room.");
@@ -144,7 +143,7 @@ public class ChatController {
      * @param chatMessageCreateRequest 메시지 생성 요청 정보를 담은 객체
      */
     @MessageMapping("/message/send")
-    public void sendMessage(@RequestBody ChatMessageCreateRequest chatMessageCreateRequest) {
+    public void sendMessage(ChatMessageCreateRequest chatMessageCreateRequest) {
         ChatMessageCreateResponse savedMessage = chatMessageService.saveMessage(chatMessageCreateRequest);
         messagingTemplate.convertAndSend("/sub/chat/room/" + savedMessage.getRoomSeq(), savedMessage);
     }
