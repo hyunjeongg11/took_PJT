@@ -1,6 +1,7 @@
 package com.took.user_api.dto.request.account;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +16,7 @@ public class AccountLinkRequestDto {
     @NotBlank
     private String accountNum;
 
-    @NotBlank
+    @NotNull
     private int accountPwd;
 
     private String accountName;
