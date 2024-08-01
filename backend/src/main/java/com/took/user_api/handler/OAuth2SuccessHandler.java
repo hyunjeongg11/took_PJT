@@ -32,6 +32,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String accessToken = jwtProvider.createAccessToken(userId);
         String refreshToken = jwtProvider.createRefreshToken(userId);
 
+
+        System.out.println("oauth에 성공했습니다!");
         // HTML과 JavaScript를 통해 로컬 스토리지와 쿠키에 토큰 저장
         String redirectUrl = "https://i11e205.p.ssafy.io/";
         String script = "<script>" +
