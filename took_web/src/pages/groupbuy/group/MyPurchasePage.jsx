@@ -23,12 +23,12 @@ function MyPurchasePage() {
             공구 <span className="font-dela">took !</span>
           </div>
         </div>
-        <div className="flex flex-col py-7 mt-6 bg-main rounded-2xl shadow-gray-400 shadow-md">
+        <div className="flex flex-col pb-7 pt-5 mt-6 bg-neutral-50 rounded-2xl shadow-gray-400 shadow-md">
           <div className="flex flex-col px-4 text-sm text-white">
-            <div className="text-lg font-bold ">주문 정보</div>
-            <hr className="text-white w-full mx-auto text-opacity-40 my-3" />
-            <div className="text-sm font-semibold my-3 ml-1">내 구매 정보</div>
-            <div className="bg-secondary rounded-lg text-main p-3 shadow-md">
+            <div className="text-lg text-black ml-1 font-bold ">주문 정보</div>
+            <hr className="text-black w-full mx-auto text-opacity-40 my-3" />
+            <div className="text-sm text-black font-semibold my-3 ml-1">내 구매 정보</div>
+            <div className="bg-white rounded-lg text-black p-3 shadow-md">
               <div className="flex justify-between mb-2">
                 <span className="font-bold">물품명</span>
                 <div className="text-right">
@@ -41,19 +41,19 @@ function MyPurchasePage() {
                 <span className="font-bold">배달비</span>
                 <div className="text-right">{formatNumber(my_temp_data.deliveryFee)}원</div>
               </div>
-              <hr className="my-3 border-main border-opacity-40" />
+              <hr className="my-3 border-neutral-400 border-opacity-40" />
               <div className="flex justify-between">
                 <span className="font-bold">전체 금액</span>
                 <div className="text-right font-semibold">{formatNumber(my_temp_data.totalAmount)}원</div>
               </div>
             </div>
-            <div className="text-sm font-semibold mb-3 mt-10 ml-1">배송 조회</div>
-            <div className="bg-secondary rounded-lg text-main p-3 shadow-md">
+            <div className="text-sm font-semibold mb-3 text-black mt-10 ml-1">배송 조회</div>
+            <div className="bg-white rounded-lg text-black px-3 py-4 shadow-md">
               <div className="flex justify-between mb-2">
                 <span className="font-bold">택배사</span>
                 <div className="text-right text-sm">{temp_delivery}</div>
               </div>
-              <div className="flex justify-between mb-2">
+              <div className="flex justify-between">
                 <span className="font-bold">송장번호</span>
                 <div className="text-right text-sm">{temp_delivery_number}</div>
               </div>

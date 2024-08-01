@@ -54,7 +54,7 @@ function BuyListPage() {
         <div className="self-center mb-3 text-2xl text-main font-extrabold">
           공구 <span className="font-dela">took !</span>
         </div>
-        <div className="flex flex-col p-5 mt-2.5 w-full bg-secondary shadow-md shadow-gray-300 rounded-2xl overflow-y-auto">
+        <div className="flex flex-col p-5 mt-2.5 w-full bg-neutral-50 shadow-md rounded-2xl border border-neutral-200 overflow-y-auto">
           {temp_data.map((buy, index) => (
             <React.Fragment key={buy.id}>
               <BuyCard
@@ -74,7 +74,7 @@ function BuyListPage() {
           ))}
         </div>
         <Link to="/groupbuy/form" className="w-full">
-          <button className="bg-main px-12 py-2 mt-6 w-full shadow-md shadow-gray-400 font-extrabold text-white rounded-2xl">
+          <button className="bg-main px-12 py-3 mt-6 w-full shadow-md font-bold text-white rounded-2xl">
             공동구매 모집하기
           </button>
         </Link>
