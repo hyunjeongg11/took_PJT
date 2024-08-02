@@ -25,7 +25,7 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
         System.out.println("예외 메시지: " + exception.getMessage());
 
         // 실패 후 리다이렉트할 URL 설정 (예: 로그인 페이지로 리다이렉트)
-        String redirectUrl = "https://i11e205.p.ssafy.io/login?error";
+        String redirectUrl = "https://i11e205.p.ssafy.io/";
         String script = "<script>" +
                 "alert('로그인에 실패했습니다.');" +
                 "window.location.href = '" + redirectUrl + "';" +
