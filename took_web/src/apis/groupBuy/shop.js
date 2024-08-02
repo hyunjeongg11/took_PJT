@@ -34,7 +34,7 @@ import { handleApiError } from '../errorHandling';
 // }
 export const writeShopApi = async (params) => {
   try {
-    const response = await request.post('/shops/create', params);
+    const response = await request.post('api/shops/create', params);
     return response.data;
   } catch (err) {
     return handleApiError(err);
@@ -64,7 +64,7 @@ export const writeShopApi = async (params) => {
 // ]
 export const getAllShopApi = async (params) => {
   try {
-    const response = await request.post(`/shops/selectAll`, params);
+    const response = await request.post(`api/shops/selectAll`, params);
     return response.data;
   } catch (err) {
     return handleApiError(err);
@@ -91,7 +91,7 @@ export const getAllShopApi = async (params) => {
 // }
 export const getShopApi = async (shopSeq) => {
   try {
-    const response = await request.get(`/shops/select/${shopSeq}`);
+    const response = await request.get(`api/shops/select/${shopSeq}`);
     return response.data;
   } catch (err) {
     return handleApiError(err);
@@ -102,7 +102,7 @@ export const getShopApi = async (shopSeq) => {
 // 공동구매 게시글 삭제
 export const deleteShopApi = async (shopSeq) => {
   try {
-    await request.delete(`/shops/delete/${shopSeq}`);
+    await request.delete(`api/shops/delete/${shopSeq}`);
   } catch (err) {
     return handleApiError(err);
   }

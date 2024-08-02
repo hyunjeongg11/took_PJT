@@ -1,32 +1,49 @@
-import React from 'react';
-// import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
-
+import { TbPencil } from 'react-icons/tb';
+import { FaRegTrashAlt } from "react-icons/fa";
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-const temp_data = {
-  id: 1,
-  title: '마이프로틴 공동구매 모집합니다',
-  site: '마이프로틴',
-  item: '프로틴',
-  content: `마프대란 프로틴 같이 공동구매 하실 분 구해요
-            <br />
-            <br />
-            8만원 이상 채워서 주문하고 싶어요! 같이 쿠폰 적용해서 주문해요!!!`,
-  place: '송정삼정그린코아더시티 1층',
-  current_person: 4,
-  max_person: 6,
-  img_no: 1,
-  visit: 1,
-};
+import { getShopApi, deleteShopApi } from '../../apis/groupBuy/shop';
+import { useUser } from '../../store/user';
 
 const BuyDetailPage = () => {
-  //   const { id } = useParams();
+  const { id } = useParams(); // URL 파라미터에서 shopSeq를 가져옴
   const navigate = useNavigate();
+  const [shopData, setShopData] = useState(null);
+  const { seq: userSeq } = useUser();
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const fetchShopData = async () => {
+      try {
+        const data = await getShopApi(id);
+        setShopData(data);
+      } catch (error) {
+        console.error('API call error:', error);
+      }
+    };
+
+    fetchShopData();
+  }, [id]);
+
+  if (!shopData) {
+    return <div>Loading...</div>; // 데이터를 불러오는 동안 로딩 상태 표시
+  }
 
   const handleJoinGroup = () => {
-    navigate(`/groupbuy/join/${temp_data.id}`);
+    navigate(`/groupbuy/join/${shopData.shopSeq}`);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteShopApi(shopData.shopSeq);
+      console.log('삭제 완료');
+      navigate('/groupbuy/list');
+    } catch (error) {
+      console.error('API call error:', error);
+    }
   };
 
   return (
@@ -39,27 +56,42 @@ const BuyDetailPage = () => {
           </div>
         </div>
         <div className="flex flex-col p-4 mt-5 w-full bg-neutral-50 border border-neutral-200 rounded-3xl shadow-md">
-          <div className="text-md font-extrabold text-neutral-800 py-2 p-1">
-            {temp_data.title}
+          <div className="flex flex-row justify-between items-center">
+            <div className="text-md font-extrabold text-neutral-800 py-2 p-1">
+              {shopData.title}
+            </div>
+            {shopData.userSeq === userSeq && (
+              <div className="flex flex-row gap-2">
+                <button>
+                  <TbPencil className="text-neutral-500 w-5 h-5" />
+                </button>
+                <button onClick={() => setShowModal(true)}>
+                  <FaRegTrashAlt className="text-neutral-500 w-5 h-4" />
+                </button>
+              </div>
+            )}
           </div>
+
           <div className="shrink-0 h-[0.5px] border border-neutral-300 my-1" />
           <div className="flex gap-5 justify-between mt-3 w-full">
             <div className="flex gap-2.5 items-start text-black">
               <img
                 loading="lazy"
-                src={getProfileImagePath(temp_data.img_no)}
+                src={getProfileImagePath(shopData.imageNo)}
                 className="w-5 mt-1 ml-1"
               />
               <div className="flex flex-col">
-                <div className="text-xs font-bold">정 희 수</div>
-                <div className="text-[10px]">07/16 16:31</div>
+                <div className="text-xs font-bold">{shopData.userName}</div>
+                <div className="text-[10px]">
+                  {new Date(shopData.createAt).toLocaleString()}
+                </div>
               </div>
             </div>
             <div className="text-[10px] text-neutral-500-500">
-              조회 : {temp_data.visit}
+              조회 : {shopData.hit}
             </div>
           </div>
-          <div className="mt-9 text-sm text-zinc-800">{temp_data.content}</div>
+          <div className="mt-9 text-sm text-zinc-800" dangerouslySetInnerHTML={{ __html: shopData.content }}></div>
           <div className="flex gap-2 px-5 py-5 mt-8 bg-white text-black rounded-xl border border-collapse">
             <div className="flex flex-col justify-between text-xs gap-3 font-bold">
               <div>물품명</div>
@@ -68,21 +100,21 @@ const BuyDetailPage = () => {
             </div>
             <div className="self-stretch w-px border border-neutral-300 border-opacity-60" />
             <div className="flex flex-col justify-between text-xs">
-              <div className="font-base">{temp_data.item}</div>
+              <div className="font-base">{shopData.item}</div>
               <div>
                 <a
-                  href="https://www.myprotein.co.kr/"
+                  href={shopData.site}
                   className="font-normal text-black underline underline-offset-4"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {temp_data.site}
+                  {shopData.site}
                 </a>
               </div>
-              <div className="font-normal">{temp_data.place}</div>
+              <div className="font-normal">{shopData.place}</div>
             </div>
           </div>
-          <Link to="https://www.myprotein.co.kr/">
+          <Link to={shopData.site}>
             <div className="p-3 mt-4 text-sm font-bold text-neutral-500 text-center border border-neutral-300 bg-white rounded-xl">
               사이트 보러가기
             </div>
@@ -92,9 +124,31 @@ const BuyDetailPage = () => {
           onClick={handleJoinGroup}
           className="text-center p-3 mx-1 my-5 text-base font-bold  text-white bg-main rounded-2xl shadow-sm"
         >
-          공동구매 참여하기
+          참여하기
         </div>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 shadow-md rounded-2xl">
+            <div className="mb-6 font-bold">게시물을 삭제하시겠습니까?</div>
+            <div className="flex justify-center gap-4 text-neutral-600 font-bold">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-7 py-2 bg-neutral-200 rounded-xl"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-7 py-2 bg-main text-white rounded-xl"
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

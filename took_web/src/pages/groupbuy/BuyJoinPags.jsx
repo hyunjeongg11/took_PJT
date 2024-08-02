@@ -104,9 +104,7 @@ const BuyDetailPage = () => {
             </div>
           </div>
           <div className="shrink-0 mt-4 max-w-full border border-solid border-white border-opacity-40 w-[80%] mx-10" />
-          <div className="my-3 text-base font-bold text-white">
-            공동구매 참여하기
-          </div>
+          <div className="my-3 text-base font-bold text-white">참여하기</div>
         </div>
       </div>
     </div>

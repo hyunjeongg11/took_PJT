@@ -59,6 +59,7 @@ import ChattingListPage from './pages/chat/ChattingListPage';
 import TookChattingPage from './pages/chat/TookChattingPage';
 import TaxiChattingMainPage from './pages/chat/TaxiChattingMainPage';
 import GroupBuyChattingMainPage from './pages/chat/GroupBuyChattingMainPage';
+import BuyModifyPage from './pages/groupbuy/BuyModifyPage';
 
 function App() {
   const [checkedItems, setCheckedItems] = useState({
@@ -124,6 +125,7 @@ function App() {
     { path: '/delivery/status', element: <DeliveryStatusPage /> },
     { path: '/groupbuy/list', element: <BuyListPage /> },
     { path: '/groupbuy/:id', element: <BuyDetailPage /> },
+    // { path: '/groupbuy/:id', element: <MyOrderFormPage /> },
     { path: '/groupbuy/join/:id', element: <BuyJoinPage /> },
     { path: '/groupbuy/form', element: <BuyFormPage /> },
     { path: '/taxi/input', element: <TaxiCostInputPage /> },

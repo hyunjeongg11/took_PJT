@@ -4,7 +4,7 @@ import BackButton from '../../components/common/BackButton';
 import { writeShopApi } from '../../apis/groupBuy/shop.js';
 import { useUser } from '../../store/user.js';
 
-function BuyFormPage() {
+function BuyModifyPage() {
   const navigate = useNavigate();
   const { seq: userSeq } = useUser();
 
@@ -40,7 +40,7 @@ function BuyFormPage() {
     }
 
     const params = {
-      roomSeq: 15, // todo: 실제 채팅방 시퀀스로 교체
+      roomSeq: 9, // todo: 실제 채팅방 시퀀스로 교체
       userSeq: userSeq,
       title: formData.title,
       content: formData.content,
@@ -163,4 +163,4 @@ function BuyFormPage() {
   );
 }
 
-export default BuyFormPage;
+export default BuyModifyPage;
