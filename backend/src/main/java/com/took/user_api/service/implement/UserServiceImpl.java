@@ -87,15 +87,12 @@ public class UserServiceImpl implements UserService {
 
         UserEntity user = null;
         try{
-
             user = userRepository.getReferenceById(requestBody.getUserSeq());
-
         }catch(Exception e){
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
-
-        return UserInfoResponseDto.success(user.getUserName(), user.getPhoneNumber(), user.getUserId(), user.getEmail());
+        return UserInfoResponseDto.success(user);
     }
 
     @Override
