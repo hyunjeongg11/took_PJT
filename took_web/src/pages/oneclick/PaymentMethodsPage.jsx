@@ -1,24 +1,7 @@
-import React, { useState } from 'react';
-// import { formatAccountNumber } from '../../utils/accountNumFormat';
+import React, { useState, useEffect } from 'react';
 import BackButton from '../../components/common/BackButton';
-
-const tempData = [
-  {
-    bank_name: '국민은행',
-    account_num: '1234567891011',
-    account_name: '별명 미설정',
-  },
-  {
-    bank_name: '신한은행',
-    account_num: '9876543210123',
-    account_name: 'Deep Dream',
-  },
-  {
-    bank_name: '우리은행',
-    account_num: '1231231231231',
-    account_name: '우리 계좌',
-  },
-];
+import { getAccountListApi, changeMainAccountApi, deleteAccountApi, linkAccountApi } from '../../apis/account/info.js';
+import { useUser } from '../../store/user.js';
 
 const bankImages = import.meta.glob('../../assets/payment/bank/*.png', {
   eager: true,
@@ -28,20 +11,66 @@ const stockImages = import.meta.glob('../../assets/payment/stock/*.png', {
 });
 
 const getImagePath = (bankName) => {
+  if (!bankName) return ''; // bankName이 정의되지 않았을 때 빈 문자열 반환
+
   if (bankName.endsWith('은행')) {
     bankName = bankName.slice(0, -2);
-    return bankImages[`../../assets/payment/bank/${bankName}.png`].default;
+    return bankImages[`../../assets/payment/bank/${bankName}.png`]?.default || '';
   }
   if (bankName.endsWith('증권')) {
     bankName = bankName.slice(0, -2);
-    return stockImages[`../../assets/payment/stock/${bankName}.png`].default;
+    return stockImages[`../../assets/payment/stock/${bankName}.png`]?.default || '';
   }
-  return bankImages[`../../assets/payment/bank/${bankName}.png`].default;
+  return bankImages[`../../assets/payment/bank/${bankName}.png`]?.default || '';
 };
 
 const PaymentMethodsPage = () => {
-  const [accounts, setAccounts] = useState(tempData);
+  const { seq: userSeq } = useUser(); // useUser 훅을 사용하여 seq 값을 가져옵니다.
+  const [accounts, setAccounts] = useState([]);
   const [draggingIndex, setDraggingIndex] = useState(null);
+  const [loading, setLoading] = useState(true); // 로딩 상태 추가
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const response = await getAccountListApi({ userSeq });
+        setAccounts(response.list || []); // response.list가 정의되지 않았을 때 빈 배열로 설정
+      } catch (error) {
+        console.error('계좌 목록을 가져오는 중 오류가 발생했습니다:', error);
+      } finally {
+        setLoading(false); // 로딩 상태 해제
+      }
+    };
+
+    fetchAccounts();
+  }, [userSeq]);
+
+  useEffect(() => {
+    if (accounts.length > 0) {
+      handleSetMainAccount(0); // 첫 번째 계좌를 주계좌로 설정
+    }
+  }, [accounts]);
+
+  const handleSetMainAccount = async (index) => {
+    try {
+      const accountSeq = accounts[index].accountSeq;
+      await changeMainAccountApi({ userSeq, accountSeq });
+      console.log('주계좌가 변경되었습니다.');
+    } catch (error) {
+      console.error('주계좌를 변경하는 중 오류가 발생했습니다:', error);
+    }
+  };
+
+  const handleDelete = async (index) => {
+    try {
+      const accountSeq = accounts[index].accountSeq;
+      await deleteAccountApi({ accountSeq });
+      const newAccounts = accounts.filter((_, i) => i !== index);
+      setAccounts(newAccounts);
+    } catch (error) {
+      console.error('계좌를 삭제하는 중 오류가 발생했습니다:', error);
+    }
+  };
 
   const onDragStart = (e, index) => {
     e.dataTransfer.effectAllowed = 'move';
@@ -64,10 +93,9 @@ const PaymentMethodsPage = () => {
     setDraggingIndex(null);
   };
 
-  const handleDelete = (index) => {
-    const newAccounts = accounts.filter((_, i) => i !== index);
-    setAccounts(newAccounts);
-  };
+  if (loading) {
+    return <div>Loading...</div>; // 로딩 중 메시지
+  }
 
   return (
     <div className="flex flex-col items-center p-5 h-screen font-nanum">
@@ -91,13 +119,13 @@ const PaymentMethodsPage = () => {
             <div className="text-lg mr-2">≡</div>
             <div className="flex items-center ml-2 flex-1">
               <img
-                src={getImagePath(account.bank_name)}
-                alt={`${account.bank_name} 로고`}
+                src={getImagePath(account.bankName)}
+                alt={`${account.bankName} 로고`}
                 className="w-10 h-10 mr-2"
               />
               <div className="flex flex-col">
                 <div className="flex items-center text-lg font-bold">
-                  {account.bank_name}
+                  {account.bankName}
                   {index === 0 && (
                     <span className="bg-orange-100 text-main text-xs ml-2 px-2 py-1 rounded-full">
                       주계좌
@@ -108,7 +136,7 @@ const PaymentMethodsPage = () => {
                   {account.account_num}
                 </div>
                 <div className="text-sm text-gray-500">
-                  {account.account_name}
+                  {account.accountName}
                 </div>
               </div>
             </div>
