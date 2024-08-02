@@ -74,6 +74,7 @@ public class WebSecurityConfig {
 
 //                                                로그인 전에 이뤄지는 작업은 인증이 푤요하지 않다.
                                 .requestMatchers("/", "/api/auth/**","/oauth2/**").permitAll()
+                                .requestMatchers("/ws/**").permitAll()
                                 // 접두사는 제외 하고 USER만 적어준다.w
                                 .requestMatchers("/api/user/**").hasRole("USER")
                                 .requestMatchers("/api/account/**").hasRole("USER")
@@ -89,7 +90,6 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/navi/**").hasRole("USER")
                                 .requestMatchers("/api/taxi/**").hasRole("USER")
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/ws/**").hasRole("USER")
 
                                 .anyRequest().authenticated()
                 ).oauth2Login(oauth2 -> oauth2
