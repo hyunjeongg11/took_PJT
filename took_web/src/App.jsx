@@ -33,6 +33,7 @@ import {
   OrderFormPage,
   TotalPurchasePage,
   MyOrderFormPage,
+  TempChattingPage,
 } from './pages';
 
 import PaymentMethods from './pages/oneclick/PaymentMethodsPage';
@@ -59,6 +60,7 @@ import ChattingListPage from './pages/chat/ChattingListPage';
 import TookChattingPage from './pages/chat/TookChattingPage';
 import TaxiChattingMainPage from './pages/chat/TaxiChattingMainPage';
 import GroupBuyChattingMainPage from './pages/chat/GroupBuyChattingMainPage';
+import ChattingMainPage from './pages/chat/ChattingMainPage';
 
 function App() {
   const [checkedItems, setCheckedItems] = useState({
@@ -142,6 +144,8 @@ function App() {
     { path: '/groupbuy/order', element: <OrderFormPage /> },
     { path: '/groupbuy/total/:id', element: <TotalPurchasePage /> },
     { path: '/groupbuy/my-order', element: <MyOrderFormPage /> },
+    { path: '/chat/temp', element: <TempChattingPage />  },
+    { path: '/chat/:id', element: <ChattingMainPage /> },
   ]);
 
   return <RouterProvider router={ROUTER} />;

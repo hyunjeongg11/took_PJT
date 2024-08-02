@@ -14,7 +14,7 @@ export const request = axios.create({
 request.interceptors.request.use(async (config) => {
   const { accessToken, setAccessToken } = useToken.getState();
   
-  if (!accessToken) {
+  if (accessToken === '') {
     const storedAccessToken = localStorage.getItem('accessToken');
     console.log(storedAccessToken);
     if (storedAccessToken) {

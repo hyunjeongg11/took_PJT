@@ -2,12 +2,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
-import { formatDateOnly, formatTime, formatDateWithYear } from '../../utils/formatDate';
+import {
+  formatDateOnly,
+  formatTime,
+  formatDateWithYear,
+} from '../../utils/formatDate';
 import speaker from '../../assets/common/speaker.png';
 import delivery from '../../assets/chat/delivery.png';
 import calculator from '../../assets/chat/calculator.png';
 import money from '../../assets/chat/money.png';
-import { FaChevronUp, FaChevronDown, FaPaperPlane, FaArrowDown, FaBars } from 'react-icons/fa';
+import {
+  FaChevronUp,
+  FaChevronDown,
+  FaPaperPlane,
+  FaArrowDown,
+  FaBars,
+} from 'react-icons/fa';
 import { MdAdd } from 'react-icons/md';
 import CalculatorModal from '../../components/chat/CalculatorModal';
 import MoneyModal from '../../components/chat/MoneyModal';
@@ -15,10 +25,58 @@ import DeliveryModal from '../../components/chat/DeliveryModal';
 import ParticipantList from '../../components/chat/ParticipantList';
 
 const tempMember = [
-  { member_seq: 1, party_seq: 1, user_seq: 1, userName: '조현정', imgNo: 19, cost: 13000, real_cost: 12000, status: true, receive: false, is_leader: true, created_at: '2024-07-06T00:23:00' },
-  { member_seq: 2, party_seq: 1, user_seq: 2, userName: '정희수', imgNo: 20, cost: 8000, real_cost: 7500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
-  { member_seq: 3, party_seq: 1, user_seq: 3, userName: '차민주', imgNo: 18, cost: 16000, real_cost: 14500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
-  { member_seq: 4, party_seq: 1, user_seq: 4, userName: '이재찬', imgNo: 8, cost: 16000, real_real_cost: 14500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
+  {
+    member_seq: 1,
+    party_seq: 1,
+    user_seq: 1,
+    userName: '조현정',
+    imgNo: 19,
+    cost: 13000,
+    real_cost: 12000,
+    status: true,
+    receive: false,
+    is_leader: true,
+    created_at: '2024-07-06T00:23:00',
+  },
+  {
+    member_seq: 2,
+    party_seq: 1,
+    user_seq: 2,
+    userName: '정희수',
+    imgNo: 20,
+    cost: 8000,
+    real_cost: 7500,
+    status: true,
+    receive: false,
+    is_leader: false,
+    created_at: '2024-07-06T00:23:00',
+  },
+  {
+    member_seq: 3,
+    party_seq: 1,
+    user_seq: 3,
+    userName: '차민주',
+    imgNo: 18,
+    cost: 16000,
+    real_cost: 14500,
+    status: true,
+    receive: false,
+    is_leader: false,
+    created_at: '2024-07-06T00:23:00',
+  },
+  {
+    member_seq: 4,
+    party_seq: 1,
+    user_seq: 4,
+    userName: '이재찬',
+    imgNo: 8,
+    cost: 16000,
+    real_real_cost: 14500,
+    status: true,
+    receive: false,
+    is_leader: false,
+    created_at: '2024-07-06T00:23:00',
+  },
 ];
 
 const tempDelivery = {
@@ -36,14 +94,62 @@ const tempDelivery = {
 };
 
 const tempMessages = [
-  { id: 1, user_seq: 1, userName: '조현정', message: '안녕하세요! BBQ 배달방이에요~', timestamp: '2024-07-06T10:12:00' },
-  { id: 2, user_seq: 3, userName: '차민주', message: '안녕하세요! 메뉴 담을까요?', timestamp: '2024-07-06T10:12:00' },
-  { id: 3, user_seq: 2, userName: '정희수', message: '네! 6시에 주문할 예정입니다.', timestamp: '2024-07-06T10:12:00' },
-  { id: 4, user_seq: 4, userName: '이재찬', message: '저는 메뉴 다 담았습니다!', timestamp: '2024-07-06T10:12:00' },
-  { id: 5, user_seq: 2, userName: '정희수', message: '저도요~', timestamp: '2024-07-06T10:12:00' },
-  { id: 6, user_seq: 1, userName: '조현정', message: '6시까지 다른분들 기다렸다가 주문하겠습니다 :-)', timestamp: '2024-07-06T10:12:00' },
-  { id: 7, user_seq: 3, userName: '차민주', message: '넵! 감사합니다!', timestamp: '2024-07-06T10:12:00' },
-  { id: 8, user_seq: 4, userName: '이재찬', message: '좋은아침입니다!', timestamp: '2024-07-07T10:12:00' },
+  {
+    id: 1,
+    user_seq: 1,
+    userName: '조현정',
+    message: '안녕하세요! BBQ 배달방이에요~',
+    timestamp: '2024-07-06T10:12:00',
+  },
+  {
+    id: 2,
+    user_seq: 3,
+    userName: '차민주',
+    message: '안녕하세요! 메뉴 담을까요?',
+    timestamp: '2024-07-06T10:12:00',
+  },
+  {
+    id: 3,
+    user_seq: 2,
+    userName: '정희수',
+    message: '네! 6시에 주문할 예정입니다.',
+    timestamp: '2024-07-06T10:12:00',
+  },
+  {
+    id: 4,
+    user_seq: 4,
+    userName: '이재찬',
+    message: '저는 메뉴 다 담았습니다!',
+    timestamp: '2024-07-06T10:12:00',
+  },
+  {
+    id: 5,
+    user_seq: 2,
+    userName: '정희수',
+    message: '저도요~',
+    timestamp: '2024-07-06T10:12:00',
+  },
+  {
+    id: 6,
+    user_seq: 1,
+    userName: '조현정',
+    message: '6시까지 다른분들 기다렸다가 주문하겠습니다 :-)',
+    timestamp: '2024-07-06T10:12:00',
+  },
+  {
+    id: 7,
+    user_seq: 3,
+    userName: '차민주',
+    message: '넵! 감사합니다!',
+    timestamp: '2024-07-06T10:12:00',
+  },
+  {
+    id: 8,
+    user_seq: 4,
+    userName: '이재찬',
+    message: '좋은아침입니다!',
+    timestamp: '2024-07-07T10:12:00',
+  },
 ];
 
 function DeliveryChattingMainPage() {
@@ -91,7 +197,9 @@ function DeliveryChattingMainPage() {
 
   const handleScroll = () => {
     const container = scrollContainerRef.current;
-    const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 1;
+    const isAtBottom =
+      container.scrollHeight - container.scrollTop <=
+      container.clientHeight + 1;
     setShowScrollButton(!isAtBottom);
   };
 
@@ -105,7 +213,10 @@ function DeliveryChattingMainPage() {
   };
 
   const handleClickOutside = (event) => {
-    if (actionIconsRef.current && !actionIconsRef.current.contains(event.target)) {
+    if (
+      actionIconsRef.current &&
+      !actionIconsRef.current.contains(event.target)
+    ) {
       setShowActionIcons(false);
     }
   };
@@ -135,13 +246,16 @@ function DeliveryChattingMainPage() {
 
   useEffect(() => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+      scrollContainerRef.current.scrollTop =
+        scrollContainerRef.current.scrollHeight;
     }
   }, []);
 
   useEffect(() => {
     const container = scrollContainerRef.current;
-    const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 1;
+    const isAtBottom =
+      container.scrollHeight - container.scrollTop <=
+      container.clientHeight + 1;
     setShowScrollButton(!isAtBottom);
   }, [messages]);
 
@@ -159,33 +273,53 @@ function DeliveryChattingMainPage() {
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
           {tempDelivery.storeName}
         </div>
-        <FaBars className='mt-2.5' onClick={handleShowParticipantList} />
+        <FaBars className="mt-2.5" onClick={handleShowParticipantList} />
       </div>
       <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
       <div className="w-full px-2 py-1">
         <div className="flex items-start bg-white p-2 rounded-lg shadow-md">
-          <img src={speaker} alt="speaker" className='w-6 h-6 ml-1'/>
+          <img src={speaker} alt="speaker" className="w-6 h-6 ml-1" />
           <div className="ml-2 flex-grow">
-            <div className='text-sm mt-[2px]'>{tempDelivery.pickupPlace}</div>
+            <div className="text-sm mt-[2px]">{tempDelivery.pickupPlace}</div>
             {!isCollapsed && (
               <div className="text-sm text-gray-500">
-                함께 주문하기 : 
-                <a href="https://s.baemin.com/bfp.lty8b"  className="underline"> https://s.baemin.com/bfp.lty8b</a>
+                함께 주문하기 :
+                <a href="https://s.baemin.com/bfp.lty8b" className="underline">
+                  {' '}
+                  https://s.baemin.com/bfp.lty8b
+                </a>
               </div>
             )}
           </div>
           <button onClick={toggleCollapse} className="focus:outline-none">
-            {isCollapsed ? <FaChevronDown className="h-4 w-4 text-gray-400" /> : <FaChevronUp className="h-4 w-4 text-gray-400" />}
+            {isCollapsed ? (
+              <FaChevronDown className="h-4 w-4 text-gray-400" />
+            ) : (
+              <FaChevronUp className="h-4 w-4 text-gray-400" />
+            )}
           </button>
         </div>
       </div>
 
-      <div className="flex-grow overflow-y-scroll px-4 py-2 space-y-4 relative" onScroll={handleScroll} ref={scrollContainerRef}>
+      <div
+        className="flex-grow overflow-y-scroll px-4 py-2 space-y-4 relative"
+        onScroll={handleScroll}
+        ref={scrollContainerRef}
+      >
         {messages.map((msg, index, array) => {
-          const sameUserAndTime = index > 0 && msg.user_seq === array[index - 1].user_seq && formatTime(msg.timestamp) === formatTime(array[index - 1].timestamp);
-          const lastMessageFromSameUser = index < array.length - 1 && msg.user_seq === array[index + 1].user_seq && formatTime(msg.timestamp) === formatTime(array[index + 1].timestamp);
-          const showDate = lastDateRef.current !== formatDateOnly(msg.timestamp);
+          const sameUserAndTime =
+            index > 0 &&
+            msg.user_seq === array[index - 1].user_seq &&
+            formatTime(msg.timestamp) ===
+              formatTime(array[index - 1].timestamp);
+          const lastMessageFromSameUser =
+            index < array.length - 1 &&
+            msg.user_seq === array[index + 1].user_seq &&
+            formatTime(msg.timestamp) ===
+              formatTime(array[index + 1].timestamp);
+          const showDate =
+            lastDateRef.current !== formatDateOnly(msg.timestamp);
           lastDateRef.current = formatDateOnly(msg.timestamp);
 
           return (
@@ -195,31 +329,59 @@ function DeliveryChattingMainPage() {
                   {formatDateOnly(msg.timestamp)}
                 </div>
               )}
-              <div className={`flex ${msg.user_seq === 1 ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`flex ${msg.user_seq === 1 ? 'justify-end' : 'justify-start'}`}
+              >
                 {msg.user_seq !== 1 && !sameUserAndTime && (
                   <div className="flex flex-col items-center mr-2">
-                    <img src={getProfileImagePath(getUserProfileImgNo(msg.user_seq))} alt={msg.userName} className="w-9 h-9 self-start" />
+                    <img
+                      src={getProfileImagePath(
+                        getUserProfileImgNo(msg.user_seq)
+                      )}
+                      alt={msg.userName}
+                      className="w-9 h-9 self-start"
+                    />
                   </div>
                 )}
                 <div className="flex flex-col max-w-[80%]">
                   {!sameUserAndTime && (
-                    <span className={`text-[9px] mb-1 text-black ${msg.user_seq === 1 ? 'text-right' : 'text-left'}`}>{msg.userName}</span>
+                    <span
+                      className={`text-[9px] mb-1 text-black ${msg.user_seq === 1 ? 'text-right' : 'text-left'}`}
+                    >
+                      {msg.userName}
+                    </span>
                   )}
                   <div className="flex items-end">
                     {msg.user_seq === 1 && !lastMessageFromSameUser && (
-                      <div className="text-[9px] text-gray-400 mr-2 whitespace-nowrap">{formatTime(msg.timestamp)}</div>
+                      <div className="text-[9px] text-gray-400 mr-2 whitespace-nowrap">
+                        {formatTime(msg.timestamp)}
+                      </div>
                     )}
-                    <div className={`p-2 rounded-xl shadow-md ${msg.user_seq === 1 ? 'bg-main text-white' : 'bg-white text-black'}`} style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+                    <div
+                      className={`p-2 rounded-xl shadow-md ${msg.user_seq === 1 ? 'bg-main text-white' : 'bg-white text-black'}`}
+                      style={{
+                        wordBreak: 'break-word',
+                        whiteSpace: 'pre-wrap',
+                      }}
+                    >
                       <div className="text-sm">{msg.message}</div>
                     </div>
                     {msg.user_seq !== 1 && !lastMessageFromSameUser && (
-                      <div className="text-[9px] text-gray-400 ml-2 whitespace-nowrap">{formatTime(msg.timestamp)}</div>
+                      <div className="text-[9px] text-gray-400 ml-2 whitespace-nowrap">
+                        {formatTime(msg.timestamp)}
+                      </div>
                     )}
                   </div>
                 </div>
                 {msg.user_seq === 1 && (
                   <div className="flex flex-col items-center ml-2">
-                    <img src={getProfileImagePath(getUserProfileImgNo(msg.user_seq))} alt={msg.userName} className="w-9 h-9 self-start" />
+                    <img
+                      src={getProfileImagePath(
+                        getUserProfileImgNo(msg.user_seq)
+                      )}
+                      alt={msg.userName}
+                      className="w-9 h-9 self-start"
+                    />
                   </div>
                 )}
               </div>
@@ -231,7 +393,9 @@ function DeliveryChattingMainPage() {
 
       <div className="w-full px-2 py-2 bg-white flex items-center relative">
         <button onClick={toggleActionIcons} className="focus:outline-none">
-          <MdAdd className={`text-gray-400 cursor-pointer mr-2 w-6 h-6 transform transition-transform ${showActionIcons ? 'rotate-45' : ''}`} />
+          <MdAdd
+            className={`text-gray-400 cursor-pointer mr-2 w-6 h-6 transform transition-transform ${showActionIcons ? 'rotate-45' : ''}`}
+          />
         </button>
         <div className="relative flex-grow">
           <textarea
@@ -262,21 +426,33 @@ function DeliveryChattingMainPage() {
       </div>
 
       {showActionIcons && (
-        <div className="w-full px-4 py-2 bg-white flex justify-around" ref={actionIconsRef}>
+        <div
+          className="w-full px-4 py-2 bg-white flex justify-around"
+          ref={actionIconsRef}
+        >
           <div className="flex flex-col items-center mb-4">
-            <div className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center" onClick={() => openModal('calculator')}>
+            <div
+              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
+              onClick={() => openModal('calculator')}
+            >
               <img src={calculator} alt="정산" className="w-6 h-6" />
             </div>
             <span className="mt-1 text-[11px] text-gray-500">정산</span>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center" onClick={() => openModal('money')}>
+            <div
+              className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center"
+              onClick={() => openModal('money')}
+            >
               <img src={money} alt="주문금액" className="w-7 h-7" />
             </div>
             <span className="mt-1 text-[11px] text-gray-500">주문금액</span>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center" onClick={() => openModal('delivery')}>
+            <div
+              className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center"
+              onClick={() => openModal('delivery')}
+            >
               <img src={delivery} alt="배달" className="w-6 h-5" />
             </div>
             <span className="mt-1 text-[11px] text-gray-500">배달</span>
@@ -284,10 +460,21 @@ function DeliveryChattingMainPage() {
         </div>
       )}
 
-      {currentModal === 'calculator' && <CalculatorModal onClose={closeModal} tempMember={tempMember} />}
-      {currentModal === 'money' && <MoneyModal onClose={closeModal} tempMember={tempMember} />}
-      {currentModal === 'delivery' && <DeliveryModal onClose={closeModal} tempMember={tempMember}/>}
-      {showParticipantList && <ParticipantList participants={tempMember} onClose={handleCloseParticipantList} />}
+      {currentModal === 'calculator' && (
+        <CalculatorModal onClose={closeModal} tempMember={tempMember} />
+      )}
+      {currentModal === 'money' && (
+        <MoneyModal onClose={closeModal} tempMember={tempMember} />
+      )}
+      {currentModal === 'delivery' && (
+        <DeliveryModal onClose={closeModal} tempMember={tempMember} />
+      )}
+      {showParticipantList && (
+        <ParticipantList
+          participants={tempMember}
+          onClose={handleCloseParticipantList}
+        />
+      )}
     </div>
   );
 }
