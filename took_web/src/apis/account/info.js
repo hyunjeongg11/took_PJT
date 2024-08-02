@@ -9,7 +9,8 @@ import { handleApiError } from '../errorHandling';
   "main": false,
   "accountName": "두번째 계좌",
   "accountNum": "1",
-  "accountPwd": 1
+  "accountPwd": 1,
+  "esayPwd": "111111"
 } 
 */
 // 응답
@@ -124,9 +125,9 @@ export const getAccountBalanceApi = async (params) => {
   "Done!"
 }
 */
-export const deleteAccountApi = async (params) => {
+export const deleteAccountApi = async ({ accountSeq }) => {
   try {
-    const response = await request.post('/api/account/account-delete', params);
+    const response = await request.delete(`/api/account/account-delete/${accountSeq}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);
