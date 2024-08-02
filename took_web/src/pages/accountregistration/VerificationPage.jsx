@@ -89,7 +89,7 @@ function VerificationPage() {
         const response = await linkAccountApi(params);
         console.log(response);
         // 성공 처리 (예: 완료 페이지로 이동)
-        navigate('/accountcomplete');
+        navigate('/accountcomplete', { state: { bank, account, password, accountName } });
       } catch (error) {
         console.error('API 호출 중 오류 발생:', error);
         // 오류 처리
