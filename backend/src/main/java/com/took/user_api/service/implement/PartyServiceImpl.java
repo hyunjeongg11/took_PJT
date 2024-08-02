@@ -3,7 +3,7 @@ package com.took.user_api.service.implement;
 
 import com.took.user_api.dto.request.party.PartyDetailRequestDto;
 import com.took.user_api.dto.request.party.PartyDoneRequestDto;
-import com.took.user_api.dto.request.party.makePartyRequestDto;
+import com.took.user_api.dto.request.party.MakePartyRequestDto;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.party.*;
@@ -11,6 +11,7 @@ import com.took.user_api.entity.MemberEntity;
 import com.took.user_api.entity.PartyEntity;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.BankRepository;
+import com.took.user_api.repository.MemberRepository;
 import com.took.user_api.repository.PartyRepository;
 import com.took.user_api.repository.UserRepository;
 import com.took.user_api.repository.custom.BankRepositoryCustom;
@@ -32,6 +33,7 @@ public class PartyServiceImpl implements PartyService {
     private final BankRepository bankRepository;
     private final MemberRepositoryCustom memberRepositoryCustom;
     private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
 
     @Override
@@ -91,7 +93,7 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
-    public ResponseEntity<? super VoidResponseDto> makeParty(makePartyRequestDto dto) {
+    public ResponseEntity<? super VoidResponseDto> makeParty(MakePartyRequestDto dto) {
 
         try{
 
@@ -99,8 +101,10 @@ public class PartyServiceImpl implements PartyService {
             PartyEntity newparty = partyRepository.save(party);
             UserEntity user = userRepository.getReferenceById(dto.getUserSeq());
 
-//          일단 정산 전이기에 자신의 cost로 0으로 설정
-            MemberEntity member = new MemberEntity(party,user,0);
+//          일단 정산 전이기에 자신의 cost로 0으로 설정 // status (정산 여부도 설정)
+            // 일단 맴버도 돈을 다 낸건 아니기 때문에!
+            MemberEntity member = new MemberEntity(party,user,0,false);
+            memberRepository.save(member);
 
 
         }catch (Exception e){
