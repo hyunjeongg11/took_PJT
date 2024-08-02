@@ -3,7 +3,9 @@ package com.took.user_api.dto.response.account;
 
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.entity.AccountEntity;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -13,15 +15,29 @@ import java.util.List;
 public class AccountListResponsetDto extends ResponseDto {
 
 
-    private List<AccountEntity> list;
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class BankAccount{
 
-    private AccountListResponsetDto(List<AccountEntity> list){
+        private Long userSeq;
+        private String accountName;
+        private String accountNum;
+        private int bankNum;
+        private Long balance;
+
+    }
+
+    private List<BankAccount> list;
+
+    private AccountListResponsetDto(List<BankAccount> list){
         this.list=list;
     }
-    
 
-     public static ResponseEntity<AccountListResponsetDto> success(List<AccountEntity> list) {
+     public static ResponseEntity<AccountListResponsetDto> success(List<BankAccount> list) {
         AccountListResponsetDto responseBody = new AccountListResponsetDto(list);
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
+
+
 }

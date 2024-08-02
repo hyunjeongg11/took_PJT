@@ -9,6 +9,8 @@ import com.took.user_api.repository.custom.BankRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class BankRepositoryCustomImpl implements BankRepositoryCustom {
@@ -71,6 +73,16 @@ public class BankRepositoryCustomImpl implements BankRepositoryCustom {
                 .set(bank.balance, bankCost)
                 .where(bank.bankSeq.eq(bankSeq))
                 .execute();
+    }
+
+    @Override
+    public List<BankEntity> findBanksByBankSeq(List<Long> bankSeq) {
+
+        QBankEntity bank = QBankEntity.bankEntity;
+        List<BankEntity> result = null;
+        result = jpaQueryFactory.selectFrom(bank).where(bank.bankSeq.in(bankSeq)).fetch();
+        return result;
+
     }
 
 }

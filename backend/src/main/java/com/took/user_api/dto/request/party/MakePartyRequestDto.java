@@ -14,5 +14,5 @@ public class MakePartyRequestDto {
     private int category;
     private int cost;
     private int totalMember;
-    
+    private boolean reciever;
 }

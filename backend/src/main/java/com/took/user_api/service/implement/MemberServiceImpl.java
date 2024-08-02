@@ -45,6 +45,25 @@ public class MemberServiceImpl implements MemberService {
 
         return MemberSaveResponseDto.success();
     }
-    
+
+    @Override
+    public ResponseEntity<? super MemberSaveResponseDto> insertMember(MemberSaveRequestDto requestBody) {
+
+        MemberEntity newMember = null;
+
+        try{
+
+            PartyEntity party = partyRepository.getReferenceById(requestBody.getPartySeq());
+            UserEntity user = userRepository.getReferenceById(requestBody.getUserSeq());
+            MemberEntity member = new MemberEntity(party,user,requestBody.getCost(),requestBody.isStatus(),requestBody.isReceive());
+            newMember = memberRepository.save(member);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return MemberSaveResponseDto.success(newMember.getMemberSeq());
+    }
+
 
 }

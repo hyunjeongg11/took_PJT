@@ -158,7 +158,7 @@ public class UserEntity {
         this.createdAt = LocalDateTime.now();
         this.loginStatus = LoginStatus.TOOK; // 기본값 설정
         this.role = "ROLE_USER";
-        this.imageNo = (int)Math.random()*20+1;
+        this.imageNo = (int)(Math.random() * 23) + 1;
     }
 
     public UserEntity(String userId, String email) {
@@ -171,7 +171,7 @@ public class UserEntity {
         this.createdAt = LocalDateTime.now();
         this.loginStatus = LoginStatus.KAKAO;
         this.role = "ROLE_USER";
-        this.imageNo = (int)Math.random()*20+1;
+        this.imageNo = (int)(Math.random() * 23) + 1;
     }
 
     public UserEntity(Double lat,Double lng){

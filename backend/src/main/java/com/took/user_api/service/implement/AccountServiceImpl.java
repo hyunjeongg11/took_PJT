@@ -7,6 +7,7 @@ import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.account.*;
 import com.took.user_api.entity.AccountEntity;
 import com.took.user_api.entity.BankEntity;
+import com.took.user_api.entity.MemberEntity;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.AccountRepository;
 import com.took.user_api.repository.BankRepository;
@@ -19,7 +20,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -86,13 +89,32 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
+//   제작
     @Override
     public ResponseEntity<? super AccountListResponsetDto> accountList(AccountListRequestDto dto) {
 
-        List<AccountEntity> list = null;
-        
+        List<AccountEntity> al = null;
+        List<BankEntity> bl = null;
+        List<AccountListResponsetDto.BankAccount> result = new ArrayList<>();
+
         try{
-            list = accountRepositoryCustom.findAccountsByUserSeq(dto.getUserSeq());
+
+            al = accountRepositoryCustom.findAccountsByUserSeq(dto.getUserSeq());
+
+            List<Long> bankSeq = new ArrayList<>();
+
+            for(AccountEntity account : al){
+                bankSeq.add(account.getBank().getBankSeq());
+            }
+
+            bl = bankRepositoryCustom.findBanksByBankSeq(bankSeq);
+
+            int size = al.size();
+
+            for(int i=0;i<size;i++){
+                result.add(new AccountListResponsetDto.BankAccount(dto.getUserSeq(),al.get(i).getAccountName(),bl.get(i).getAccountNum(),bl.get(i).getBankNum(),bl.get(i).getBalance()));
+            }
+
 
 
         }catch(Exception e){
@@ -100,7 +122,7 @@ public class AccountServiceImpl implements AccountService {
             return ResponseDto.databaseError();
         }
 
-        return AccountListResponsetDto.success(list);
+        return AccountListResponsetDto.success(result);
     }
 
 

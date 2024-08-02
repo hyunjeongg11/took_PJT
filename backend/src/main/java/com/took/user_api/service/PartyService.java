@@ -12,9 +12,8 @@ import org.springframework.http.ResponseEntity;
 
 public interface PartyService {
 
-
-    ResponseEntity<? super PartyListResponseDto> listAll();
     ResponseEntity<? super PartyDoneResponseDto> partyDone(PartyDoneRequestDto dto);
     ResponseEntity<? super PartyDetailResponseDto>partyDetail(PartyDetailRequestDto dto);
-    ResponseEntity<? super VoidResponseDto> makeParty(MakePartyRequestDto dto);
+    ResponseEntity<? super MakePartyResponseDto> makeParty(MakePartyRequestDto dto);
+    ResponseEntity<? super PartyListResponseDto> myPartyList(Long userSeq);
 }

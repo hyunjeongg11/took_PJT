@@ -26,7 +26,7 @@ public class PartyController {
 
 
     @PostMapping("/make-party")
-    public ResponseEntity<? super VoidResponseDto> makeParty(@RequestBody @Valid MakePartyRequestDto requestBody) {
+    public ResponseEntity<? super MakePartyResponseDto> makeParty(@RequestBody @Valid MakePartyRequestDto requestBody) {
 //        내가 파티를 만든다.
 //        나는 방장이다. -> 맴버에도 접근해야됨.
 
@@ -36,12 +36,18 @@ public class PartyController {
         return partyService.makeParty(requestBody);
     }
 
+//   몇명?
+    @PostMapping("/insert-member")
+    public ResponseEntity<? super MemberSaveResponseDto> insertMember(@RequestBody @Valid MemberSaveRequestDto requestBody) {
+        return memberService.insertMember(requestBody);
+    }
+
 
 
     // 나의 테이블 확인하기
-    @GetMapping("/party-list")
-    public ResponseEntity<? super PartyListResponseDto> partyList() {
-        ResponseEntity<? super PartyListResponseDto> response = partyService.listAll();
+    @GetMapping("/party-list/{userSeq}")
+    public ResponseEntity<? super PartyListResponseDto> partyList(@PathVariable("userSeq") Long userSeq) {
+        ResponseEntity<? super PartyListResponseDto> response = partyService.myPartyList(userSeq);
         return response;
     }
 

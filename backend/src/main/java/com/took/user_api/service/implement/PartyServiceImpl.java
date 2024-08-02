@@ -16,6 +16,7 @@ import com.took.user_api.repository.PartyRepository;
 import com.took.user_api.repository.UserRepository;
 import com.took.user_api.repository.custom.BankRepositoryCustom;
 import com.took.user_api.repository.custom.MemberRepositoryCustom;
+import com.took.user_api.repository.custom.PartyRepositoryCustom;
 import com.took.user_api.service.PartyService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,22 +35,7 @@ public class PartyServiceImpl implements PartyService {
     private final MemberRepositoryCustom memberRepositoryCustom;
     private final UserRepository userRepository;
     private final MemberRepository memberRepository;
-
-
-    @Override
-    @Transactional
-    public ResponseEntity<? super PartyListResponseDto> listAll() {
-
-        List<PartyEntity> list = null;
-        try {
-            list = partyRepository.findAll();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-
-        return PartyListResponseDto.success(list);
-    }
+    private final PartyRepositoryCustom partyRepositoryCustom;
 
 
 
@@ -93,25 +79,44 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
-    public ResponseEntity<? super VoidResponseDto> makeParty(MakePartyRequestDto dto) {
+    public ResponseEntity<? super MakePartyResponseDto> makeParty(MakePartyRequestDto dto) {
+
+        Long partySeq = null;
+        Long memberSeq = null;
 
         try{
 
             PartyEntity party = new PartyEntity(dto.getTitle(),dto.getCategory(),dto.getCost(),dto.getTotalMember());
             PartyEntity newparty = partyRepository.save(party);
+            partySeq = newparty.getPartySeq();
             UserEntity user = userRepository.getReferenceById(dto.getUserSeq());
 
 //          일단 정산 전이기에 자신의 cost로 0으로 설정 // status (정산 여부도 설정)
             // 일단 맴버도 돈을 다 낸건 아니기 때문에!
-            MemberEntity member = new MemberEntity(party,user,0,false);
-            memberRepository.save(member);
+            MemberEntity member = new MemberEntity(party,user,0,false,false);
+            MemberEntity newMember = memberRepository.save(member);
+            memberSeq = newMember.getMemberSeq();
 
 
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
-        return VoidResponseDto.success();
+        return MakePartyResponseDto.success(partySeq,memberSeq);
+    }
+
+    @Override
+    public ResponseEntity<? super PartyListResponseDto> myPartyList(Long userSeq) {
+
+        List<PartyEntity> list = null;
+        try{
+            list = partyRepositoryCustom.findMyPartyList(userSeq);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return PartyListResponseDto.success(list);
     }
 
 }

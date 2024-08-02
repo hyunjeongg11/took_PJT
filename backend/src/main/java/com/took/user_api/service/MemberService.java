@@ -9,6 +9,5 @@ public interface MemberService {
 
     
     ResponseEntity<? super MemberSaveResponseDto> makeMember(MemberSaveRequestDto dto);
-
-
-} 
+    ResponseEntity<? super MemberSaveResponseDto> insertMember(MemberSaveRequestDto requestBody);
+}
