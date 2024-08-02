@@ -5,6 +5,7 @@ import InputButton from '../components/signup/InputButton';
 import GenderInput from '../components/signup/GenderInput';
 import { formatPhoneNumber, removeHyphens } from '../utils/format';
 import { useNavigate } from 'react-router-dom';
+import { msgToAndroid } from '../android/message';
 import {
   signUpApi,
   validIdApi,
@@ -88,9 +89,9 @@ function SignupPage() {
       try {
         setIsIdValid(true);
         const result = await validIdApi({ userId: id });
-        
+
         if (result.code == 'su') {
-          alert("인증되었습니다");
+          alert('인증되었습니다');
           setIdError('');
         } else {
           setIdError('이미 사용 중인 아이디입니다.');
