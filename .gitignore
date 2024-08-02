@@ -3,3 +3,6 @@ application.properties
 
 # docker-compose.yml 파일을 무시
 docker-compose.yml
+
+# docker-compose-front.yml 파일을 무시
+docker-compose-front.yml
