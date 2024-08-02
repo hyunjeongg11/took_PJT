@@ -89,6 +89,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/navi/**").hasRole("USER")
                                 .requestMatchers("/api/taxi/**").hasRole("USER")
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/ws/**").hasRole("USER")
 
                                 .anyRequest().authenticated()
                 ).oauth2Login(oauth2 -> oauth2
