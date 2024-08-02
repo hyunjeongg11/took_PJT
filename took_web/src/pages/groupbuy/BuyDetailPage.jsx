@@ -38,11 +38,11 @@ const BuyDetailPage = () => {
             공구 <span className="font-dela">took !</span>
           </div>
         </div>
-        <div className="flex flex-col p-4 mt-5 w-full bg-neutral-50 border border-neutral-200 rounded-3xl shadow-sm">
+        <div className="flex flex-col p-4 mt-5 w-full bg-neutral-50 border border-neutral-200 rounded-3xl shadow-md">
           <div className="text-md font-extrabold text-neutral-800 py-2 p-1">
             {temp_data.title}
           </div>
-          <div className="shrink-0 h-[0.5px] border border-solid border-neutral-300 my-1" />
+          <div className="shrink-0 h-[0.5px] border border-neutral-300 my-1" />
           <div className="flex gap-5 justify-between mt-3 w-full">
             <div className="flex gap-2.5 items-start text-black">
               <img
@@ -60,7 +60,7 @@ const BuyDetailPage = () => {
             </div>
           </div>
           <div className="mt-9 text-sm text-zinc-800">{temp_data.content}</div>
-          <div className="flex gap-2 px-5 py-5 mt-8 bg-white text-black rounded-xl border border-neutral-300">
+          <div className="flex gap-2 px-5 py-5 mt-8 bg-white text-black rounded-xl border border-collapse">
             <div className="flex flex-col justify-between text-xs gap-3 font-bold">
               <div>물품명</div>
               <div>구매링크</div>
@@ -68,11 +68,17 @@ const BuyDetailPage = () => {
             </div>
             <div className="self-stretch w-px border border-neutral-300 border-opacity-60" />
             <div className="flex flex-col justify-between text-xs">
-              <div className="font-normal">{temp_data.item}</div>
-
-              <Link to="https://www.myprotein.co.kr/" className="font-normal">
-                <div>{temp_data.site}</div>
-              </Link>
+              <div className="font-base">{temp_data.item}</div>
+              <div>
+                <a
+                  href="https://www.myprotein.co.kr/"
+                  className="font-normal text-black underline underline-offset-4"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {temp_data.site}
+                </a>
+              </div>
               <div className="font-normal">{temp_data.place}</div>
             </div>
           </div>
@@ -84,7 +90,7 @@ const BuyDetailPage = () => {
         </div>
         <div
           onClick={handleJoinGroup}
-          className="text-center p-3 mx-1 my-5 text-base font-bold  text-white bg-main rounded-xl shadow-sm"
+          className="text-center p-3 mx-1 my-5 text-base font-bold  text-white bg-main rounded-2xl shadow-sm"
         >
           공동구매 참여하기
         </div>

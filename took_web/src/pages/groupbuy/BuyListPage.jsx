@@ -74,7 +74,7 @@ function BuyListPage() {
           ))}
         </div>
         <Link to="/groupbuy/form" className="w-full">
-          <button className="bg-main px-12 py-3 mt-6 w-full shadow-md font-bold text-white rounded-2xl">
+          <button className="bg-main px-12 py-3 mt-6 w-full shadow-sm font-bold text-white rounded-2xl">
             공동구매 모집하기
           </button>
         </Link>

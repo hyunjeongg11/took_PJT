@@ -23,12 +23,12 @@ function MyPurchasePage() {
             공구 <span className="font-dela">took !</span>
           </div>
         </div>
-        <div className="flex flex-col pb-7 pt-5 mt-6 bg-neutral-50 rounded-2xl shadow-gray-400 shadow-md">
+        <div className="flex flex-col pb-7 pt-5 mt-6 bg-neutral-50 border border-neutral-200 rounded-2xl shadow-md">
           <div className="flex flex-col px-4 text-sm text-white">
             <div className="text-lg text-black ml-1 font-bold ">주문 정보</div>
-            <hr className="text-black w-full mx-auto text-opacity-40 my-3" />
+            <hr className="border border-neutral-300 w-full mx-auto my-3" />
             <div className="text-sm text-black font-semibold my-3 ml-1">내 구매 정보</div>
-            <div className="bg-white rounded-lg text-black p-3 shadow-md">
+            <div className="bg-white rounded-lg text-black p-3 border border-neutral-200 shadow-sm">
               <div className="flex justify-between mb-2">
                 <span className="font-bold">물품명</span>
                 <div className="text-right">
@@ -48,8 +48,8 @@ function MyPurchasePage() {
               </div>
             </div>
             <div className="text-sm font-semibold mb-3 text-black mt-10 ml-1">배송 조회</div>
-            <div className="bg-white rounded-lg text-black px-3 py-4 shadow-md">
-              <div className="flex justify-between mb-2">
+            <div className="bg-white rounded-lg text-black px-3 py-4 border border-neutral-200 shadow-sm">
+              <div className="flex justify-between mb-3">
                 <span className="font-bold">택배사</span>
                 <div className="text-right text-sm">{temp_delivery}</div>
               </div>

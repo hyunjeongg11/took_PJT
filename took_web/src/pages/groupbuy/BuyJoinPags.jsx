@@ -38,11 +38,11 @@ const BuyDetailPage = () => {
             공구 <span className="font-dela">took !</span>
           </div>
         </div>
-        <div className="flex flex-col p-4 mt-5 w-full border border-neutral-200 bg-neutral-50 rounded-3xl shadow-sm">
+        <div className="flex flex-col p-4 mt-5 w-full border border-neutral-200 bg-neutral-50 rounded-3xl shadow-md">
           <div className="text-md font-extrabold text-neutral-800 py-2 p-1">
             {temp_data.title}
           </div>
-          <div className="shrink-0 h-[0.5px] border border-solid border-opacity-70 my-1" />
+          <div className="shrink-0 h-[0.5px] border border-neutral-300 my-1" />
           <div className="flex gap-5 justify-between mt-3 w-full">
             <div className="flex gap-2.5 items-start text-black">
               <img
