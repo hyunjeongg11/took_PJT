@@ -119,7 +119,7 @@ function App() {
     { path: '/dutch/request', element: <PayRequestPage /> },
     { path: '/mytookmoney', element: <MyTookMoneyPage /> },
     { path: '/delivery/create', element: <CreateDeliveryPage /> },
-    { path: '/delivery/detail', element: <DeliveryDetailPage /> },
+    { path: '/delivery/detail/:id', element: <DeliveryDetailPage /> },
     { path: '/delivery/list', element: <DeliveryListPage /> },
     { path: '/delivery/input', element: <DeliveryPayInputPage /> },
     { path: '/delivery/complete', element: <DeliveryCompletePage /> },

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import BackButton from '../../components/common/BackButton';
 import { useNavigate } from 'react-router-dom';
+import { writeDeliveryApi } from '../../apis/delivery';
+import { useUser } from '../../store/user';
 
 const InputField = ({
   label,
@@ -80,6 +82,7 @@ const Modal = ({ show, message, onConfirm, onCancel }) => {
 
 function CreateDeliveryPage() {
   const navigate = useNavigate();
+  const { seq: userSeq } = useUser(); // useUser 훅을 사용하여 seq 값을 가져옵니다.
   const [form, setForm] = useState({
     storeName: '',
     deliveryAddress: '',
@@ -113,16 +116,33 @@ function CreateDeliveryPage() {
     navigate(-1);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (Object.values(form).some((field) => field === '')) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 2000); // 2초 후 알림 메시지 숨김
     } else {
-      setShowCompletionMessage(true);
-      setTimeout(() => {
-        setShowCompletionMessage(false);
-        navigate('/'); // 등록 후 이동할 경로 설정
-      }, 2000); // 2초 후에 완료 메시지 사라짐
+      const params = {
+        userSeq,
+        roomSeq: 30, // roomSeq를 실제 값으로 대체해야 합니다.
+        storeName: form.storeName,
+        pickupPlace: form.deliveryAddress,
+        pickupLat: 0.0, // 픽업 장소 위도 값을 실제 값으로 대체해야 합니다.
+        pickupLon: 0.0, // 픽업 장소 경도 값을 실제 값으로 대체해야 합니다.
+        deliveryTip: form.deliveryTip,
+        deliveryTime: form.orderTime,
+        content: form.additionalInfo,
+      };
+
+      try {
+        const response = await writeDeliveryApi(params);
+        console.log('API response:', response);
+        const deliverySeq = response.deliverySeq; // 응답에서 deliverySeq를 가져옴
+        navigate(`/delivery/detail/${deliverySeq}`); // 생성된 게시물로 이동
+      } catch (error) {
+        console.error('배달 글 작성 중 오류 발생:', error);
+        setShowAlert(true);
+        setTimeout(() => setShowAlert(false), 2000); // 2초 후 알림 메시지 숨김
+      }
     }
   };
 

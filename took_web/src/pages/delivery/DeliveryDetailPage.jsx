@@ -1,7 +1,11 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import backIcon from '../../assets/delivery/whiteBack.svg';
-import userProfile1 from '../../assets/profile/img7.png'; // 사용자 프로필 아이콘 경로
+import { getDeliveryDetailApi } from '../../apis/delivery';
+import getProfileImagePath from '../../utils/getProfileImagePath';
+import { useUser } from '../../store/user.js';
+import { getUserInfoApi } from '../../apis/user.js'
+
 
 const BackButton = () => {
   const navigate = useNavigate();
@@ -16,22 +20,6 @@ const BackButton = () => {
       onClick={handleBackClick}
     />
   ); 
-};
-
-const temp_data = {
-  userName: '조현정',
-  userIcon: userProfile1,
-  storeName: '반올림 피자 명지점',
-  pickupPlace: '송정삼정그린코아 1층',
-  deliveryTip: '4500',
-  deliveryTime: '2024-07-24 18:00:00',
-  content: `오늘 저녁으로 반올림 피자 시켜 먹을 분 구합니다!
-저녁은 6시쯤에 주문할 예정이고,
-배달 수령은 송정삼정그린코아시티 정문에서 할 예정입니다~
-참고로 배달팁은 50,000원 이상일때만 3,300원이에요.
-
-같이 배달비 절약해서 부자됩시다 !`,
-  createdAt: '2024-07-24 14:00:00',
 };
 
 function formatTime(timeString) {
@@ -69,11 +57,30 @@ function formatDeliveryTime(timeString) {
 
 function DeliveryDetailPage() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getDeliveryDetailApi(id);
+        setData(response);
+      } catch (error) {
+        console.error('배달 글 상세 조회 중 오류 발생:', error);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const handleParticipate = () => {
     // 참여하기 버튼 클릭 시 로직 추가
     console.log('참여하기 버튼 클릭됨');
   };
+
+  if (!data) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col max-w-[360px] mx-auto relative h-screen">
@@ -87,14 +94,14 @@ function DeliveryDetailPage() {
       <div className="p-4">
         <div className="flex items-center mb-4">
           <img
-            src={temp_data.userIcon}
+            src={getProfileImagePath(user.imgNo)}
             alt="avatar"
             className="w-10 h-10 mr-4"
           />
           <div>
-            <div className="text-base font-bold">{temp_data.userName}</div>
+            <div className="text-base font-bold">{data.userName}</div>
             <div className="text-xs text-gray-500">
-              {formatTime(temp_data.createdAt)}
+              {formatTime(data.createdAt)}
             </div>
           </div>
         </div>
@@ -103,20 +110,20 @@ function DeliveryDetailPage() {
 
         <div className="mb-10 px-2">
           <div className="text-xl font-bold mb-1 mt-3">
-            {temp_data.storeName}
+            {data.storeName}
           </div>
-          <div className="text-gray-700 mb-3">{temp_data.pickupPlace}</div>
+          <div className="text-gray-700 mb-3">{data.pickupPlace}</div>
           <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
           <div className="text-gray-700 my-3">
-            배달팁 : {temp_data.deliveryTip}원
+            배달팁 : {data.deliveryTip}원
           </div>
           <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
           <div className="text-gray-700 my-3">
-            배달 주문 시간 : {formatDeliveryTime(temp_data.deliveryTime)}
+            배달 주문 시간 : {formatDeliveryTime(data.deliveryTime)}
           </div>
           <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
           <div className="text-gray-700 whitespace-pre-line leading-7">
-            {temp_data.content}
+            {data.content}
           </div>
         </div>
 

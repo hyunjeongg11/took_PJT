@@ -1,5 +1,5 @@
-import { request } from '../request';
-import { handleApiError } from '../errorHandling';
+import { request } from './request';
+import { handleApiError } from './errorHandling';
 
 // 택시 파티 생성
 // 요청
