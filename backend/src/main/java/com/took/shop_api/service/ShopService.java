@@ -2,10 +2,7 @@ package com.took.shop_api.service;
 
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.repository.ChatRoomRepository;
-import com.took.shop_api.dto.AddShopGuest;
-import com.took.shop_api.dto.AddShopRequest;
-import com.took.shop_api.dto.UpdateShopRequest;
-import com.took.shop_api.dto.UpdateStatusShopRequest;
+import com.took.shop_api.dto.*;
 import com.took.shop_api.entity.Shop;
 import com.took.shop_api.entity.ShopGuest;
 import com.took.shop_api.repository.ShopGuestRepository;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -51,17 +49,27 @@ public class ShopService {
     }
 
     @Transactional
-    public List<Shop> findShopsByIds(List<Long> id) {
-        List<UserEntity> user = userRepository.findAllById(id);
-        return shopRepository.findByUserInAndStatus(user, Shop.statusType.OPEN);
+    public List<ShopResponse> findShopsByIds(List<Long> id) {
+        List<UserEntity> users = userRepository.findAllById(id);
+        List<ShopResponse> shops = shopRepository.findByUserInAndStatus(users, Shop.statusType.OPEN)
+                .stream()
+                .map(shop -> {
+                    // Shop 객체에서 직접 UserEntity 정보 가져오기
+                    UserEntity user = shop.getUser();
+                    return new ShopResponse(shop, user);
+                })
+                .collect(Collectors.toList());
+        return shops;
     }
 
     @Transactional
-    public Shop findById(long id) {
+    public ShopResponse findById(long id) {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
+        UserEntity user = userRepository.findByUserSeq(shop.getUser().getUserSeq());
+
         shop.updateHit(1);
-        return shop;
+        return new ShopResponse(shop, user);
     }
 
     @Transactional

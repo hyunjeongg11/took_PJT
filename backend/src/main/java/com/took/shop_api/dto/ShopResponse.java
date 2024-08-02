@@ -1,6 +1,7 @@
 package com.took.shop_api.dto;
 
 import com.took.shop_api.entity.Shop;
+import com.took.user_api.entity.UserEntity;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -22,8 +23,10 @@ public class ShopResponse {
     private final int maxCount;
     private final Shop.statusType status;
     private final LocalDateTime createAt;
+    private final String userName;
+    private final int imageNo;
 
-    public ShopResponse(Shop shop) {
+    public ShopResponse(Shop shop, UserEntity user) {
         this.shopSeq = shop.getShopSeq();
         this.userSeq = shop.getUser().getUserSeq();
         this.roomSeq = shop.getChatRoom().getRoomSeq();
@@ -39,5 +42,7 @@ public class ShopResponse {
         this.lon = shop.getLon();
         this.count = shop.getCount();
         this.maxCount = shop.getMaxCount();
+        this.userName = user.getUserName();
+        this.imageNo = user.getImageNo();
     }
 }

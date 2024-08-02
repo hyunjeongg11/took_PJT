@@ -27,21 +27,16 @@ public class ShopController {
 
     @PostMapping("/selectAll")
     public ResponseEntity<List<ShopResponse>> findShopsByIds(@RequestBody List<Long> id) {
-        List<ShopResponse> shops = shopService.findShopsByIds(id)
-                .stream()
-                .map(ShopResponse::new)
-                .collect(Collectors.toList());
 
                 return ResponseEntity.ok()
-                .body(shops);
+                .body(shopService.findShopsByIds(id));
     }
 
     @GetMapping("/select/{id}")
-    public ResponseEntity<ShopResponse> findShop(@PathVariable long id) {
-        Shop shop = shopService.findById(id);
+    public ResponseEntity<?> findShop(@PathVariable long id) {
 
         return ResponseEntity.ok()
-                .body(new ShopResponse(shop));
+                .body(shopService.findById(id));
     }
 
     @DeleteMapping("/delete/{id}")
