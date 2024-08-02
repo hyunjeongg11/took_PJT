@@ -2,6 +2,8 @@ package com.took.config;
 
 
 import com.took.filter.JwtAuthenticationFilter;
+
+import com.took.user_api.handler.OAuth2FailureHandler;
 import com.took.user_api.handler.OAuth2SuccessHandler;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -94,6 +96,7 @@ public class WebSecurityConfig {
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
                         .userInfoEndpoint(endpoint->endpoint.userService(oAuth2UserService))
                         .successHandler(oAuth2SuccessHandler)
+                        .failureHandler(new OAuth2FailureHandler()) // 실패 핸들러 설정
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new FailedAuthenticationEntryPoint()))
