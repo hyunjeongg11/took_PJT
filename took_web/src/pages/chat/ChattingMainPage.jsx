@@ -27,7 +27,7 @@ import MoneyModal from '../../components/chat/MoneyModal';
 import DeliveryModal from '../../components/chat/DeliveryModal';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
-
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 const tempMember = [
   {
@@ -100,6 +100,15 @@ const tempDelivery = {
 
 
 function ChattingMainPage() {
+  let stompClient = null;
+  let currentSubscription = null;
+  const socket = new SockJS(`${SERVER_URL}/ws`);
+  stompClient = Stomp.over(socket);
+  stompClient.connect({}, (frame) => {
+    console.log('WebSocket connected');
+    stompClient.subscribe
+  })
+
   const { id } = useParams();
   const { seq } = useUser();
   const [messages, setMessages] = useState([]);
@@ -110,6 +119,14 @@ function ChattingMainPage() {
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const actionIconsRef = useRef(null);
+
+  const enterRoom = () => {
+    if(currentSubscription) {
+      currentSubscription.unsubscribe();
+    }
+    const enterRequest = { roomSeq: id, userSeq: seq };
+    stompClient.send('/pub')
+  }
 
   const getMessages = async () => {
     const response = await getChatRoomMessageApi({ roomSeq: id, userSeq: seq });
