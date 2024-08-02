@@ -60,11 +60,11 @@ public class MemberEntity {
 
     }
 
-    public MemberEntity(PartyEntity party,UserEntity user,int cost){
+    public MemberEntity(PartyEntity party,UserEntity user,int cost,Boolean status){
      this.party = party;
-     this.status = true;
+     this.status = status;
      this.cost = cost;
-     this.receive = true;
+     this.receive = false;
      this.isLeader = true;
      this.createdAt = LocalDateTime.now();
      this.user = user;

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class makePartyRequestDto {
+public class MakePartyRequestDto {
 
     private Long userSeq;
     private String title;

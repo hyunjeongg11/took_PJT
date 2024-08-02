@@ -24,7 +24,7 @@ public class AccountEntity {
     @Column(name = "main")
     private Boolean main;
 
-    @Column(name="easyPwd",nullable=true)
+    @Column(name="easyPwd",nullable=false)
     private String easyPwd;
 
     @JsonBackReference
@@ -38,12 +38,14 @@ public class AccountEntity {
     private BankEntity bank;
 
 
-    public AccountEntity(String accountName, Boolean main,UserEntity user, BankEntity bank){
+    public AccountEntity(String accountName, Boolean main,UserEntity user, BankEntity bank,String easyPwd){
 
         this.accountName = accountName;
         this.user = user;
         this.bank = bank;
         this.main = main;
+        this.easyPwd = easyPwd;
+
     }
 
 

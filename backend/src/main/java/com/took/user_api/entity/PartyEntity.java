@@ -2,7 +2,6 @@ package com.took.user_api.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.took.user_api.dto.request.party.makePartyRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

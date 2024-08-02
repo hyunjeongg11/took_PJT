@@ -19,6 +19,8 @@ public class AccountLinkRequestDto {
     @NotNull
     private int accountPwd;
 
+    @NotNull
+    private String easyPwd;
+
     private String accountName;
-    
 }

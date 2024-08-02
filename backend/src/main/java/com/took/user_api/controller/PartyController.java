@@ -4,7 +4,7 @@ package com.took.user_api.controller;
 import com.took.user_api.dto.request.member.MemberSaveRequestDto;
 import com.took.user_api.dto.request.party.PartyDetailRequestDto;
 import com.took.user_api.dto.request.party.PartyDoneRequestDto;
-import com.took.user_api.dto.request.party.makePartyRequestDto;
+import com.took.user_api.dto.request.party.MakePartyRequestDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.member.MemberSaveResponseDto;
 import com.took.user_api.dto.response.party.*;
@@ -26,9 +26,12 @@ public class PartyController {
 
 
     @PostMapping("/make-party")
-    public ResponseEntity<? super VoidResponseDto> makeParty(@RequestBody @Valid makePartyRequestDto requestBody) {
+    public ResponseEntity<? super VoidResponseDto> makeParty(@RequestBody @Valid MakePartyRequestDto requestBody) {
 //        내가 파티를 만든다.
-//        나는 방장이다.
+//        나는 방장이다. -> 맴버에도 접근해야됨.
+
+        partyService.makeParty(requestBody);
+
 
         return partyService.makeParty(requestBody);
     }

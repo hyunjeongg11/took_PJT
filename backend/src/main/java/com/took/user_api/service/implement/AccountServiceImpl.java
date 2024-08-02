@@ -50,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
                 UserEntity user = userRepository.getReferenceById(dto.getUserSeq());
                 Boolean main = dto.getMain();
 
-                AccountEntity account = new AccountEntity(accountName,main,user,bank);
+                AccountEntity account = new AccountEntity(accountName,main,user,bank,dto.getEasyPwd());
 
                 if(dto.getMain()) accountRepositoryCustom.isMain(dto.getUserSeq());
 
