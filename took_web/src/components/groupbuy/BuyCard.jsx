@@ -28,7 +28,7 @@ export const BuyCard = ({
             수령 장소: {place}
           </div>
         </div>
-        <div className="flex flex-col items-end text-[10px] mt-2 font-bold text-main whitespace-nowrap">
+        <div className="flex flex-col items-end text-[10px] mt-2 font-bold text-black whitespace-nowrap">
           <img
             loading="lazy"
             src={getProfileImagePath(img_no)}
