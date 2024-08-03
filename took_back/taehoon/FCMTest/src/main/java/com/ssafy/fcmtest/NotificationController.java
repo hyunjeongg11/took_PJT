@@ -1,18 +1,28 @@
 package com.ssafy.fcmtest;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/fcm")
+@RequiredArgsConstructor
 public class NotificationController {
 
-    @Autowired
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    @PostMapping("/sendNotification")
-    public void sendNotification(@RequestBody NotificationRequest request) {
-        notificationService.sendNotification(request.getToken(), request.getTitle(), request.getBody());
+    @PostMapping("/send")
+    public ResponseEntity<?> sendNotification(@RequestBody NotificationRequest request) {
+        notificationService.sendReminderNotification(request.getUserSeq(), request.getPartySeq(), request.getTitle(), request.getCost());
+        return ResponseEntity.ok().build();
     }
+
+//    @PostMapping("/register")
+//    public ResponseEntity<?> registerToken(@RequestBody TokenRequest request) {
+//        notificationService.registerToken(request);
+//        return ResponseEntity.ok().build();
+//    }
 }
