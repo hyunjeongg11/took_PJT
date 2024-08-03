@@ -51,6 +51,7 @@ function SignupPage() {
       if (result.code == 'su') {
         setIsCertificated(true);
         alert('인증되었습니다');
+        msgToAndroid('인증되었습니다');
         setCertificationError('');
       } else {
         setCertificationError('인증번호가 틀렸습니다.');
@@ -76,6 +77,7 @@ function SignupPage() {
       const result = await emailCertificateApi({ userId: id, email });
       console.log(result);
       alert('이메일이 전송되었습니다');
+      msgToAndroid('이메일이 전송되었습니다');
     } catch (error) {
       setEmailError('이메일 인증 중 오류가 발생했습니다.');
     }
@@ -92,6 +94,7 @@ function SignupPage() {
 
         if (result.code == 'su') {
           alert('인증되었습니다');
+          msgToAndroid('인증되었습니다');
           setIdError('');
         } else {
           setIdError('이미 사용 중인 아이디입니다.');
@@ -175,9 +178,11 @@ function SignupPage() {
           birth,
         });
         alert('회원가입이 완료되었습니다.');
+        msgToAndroid('회원가입이 완료되었습니다');
         navigate('/login');
       } catch (error) {
         alert('회원가입 중 오류가 발생했습니다.');
+        msgToAndroid('회원가입 중 오류가 발생했습니다');
       }
     }
   };
