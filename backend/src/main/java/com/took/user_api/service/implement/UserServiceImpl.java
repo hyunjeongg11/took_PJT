@@ -11,6 +11,7 @@ import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
 import com.took.user_api.dto.response.user.KakaoChangeResponseDto;
 import com.took.user_api.dto.response.user.UserInfoResponseDto;
+import com.took.user_api.entity.QUserEntity;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
 import com.took.user_api.repository.custom.UserCustomRepository;
@@ -29,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import java.util.List;
@@ -172,6 +174,12 @@ public class UserServiceImpl implements UserService {
         }
 
         return VoidResponseDto.success();
+    }
+
+    // GOOGLE OAUTh 떄문에 적음
+    public UserEntity findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
     }
 
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {

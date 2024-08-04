@@ -89,8 +89,7 @@ public class UserContoller {
     ){
         return userService.changeAlram(requestBody);
     }
-    
-    
+
 }
 
     

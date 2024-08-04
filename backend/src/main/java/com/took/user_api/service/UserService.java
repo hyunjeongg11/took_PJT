@@ -9,8 +9,11 @@ import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
 import com.took.user_api.dto.response.user.KakaoChangeResponseDto;
 import com.took.user_api.dto.response.user.UserInfoResponseDto;
+import com.took.user_api.entity.UserEntity;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Optional;
 
 public interface UserService {
     ResponseEntity<? super KakaoChangeResponseDto> kakaoChange(KakaoChangeRequestDto dto);
@@ -19,4 +22,8 @@ public interface UserService {
     ResponseEntity<? super DeliNearUserResponseDto> searchNearUser(NearUserRequestDto requestBody);
     ResponseEntity<? super VoidResponseDto> changePwd(PwdChangeRequestDto requestBody);
     ResponseEntity<? super VoidResponseDto> changeAlram(UserSeqRequestDto requestBody);
+//  Google Oauth 인증 때문에 만듬.
+    UserEntity findByEmail(String email);
+
+
 }

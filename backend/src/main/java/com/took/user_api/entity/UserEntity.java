@@ -33,19 +33,19 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userSeq; // 시퀀스를 위한 필드
 
-    @Column(nullable = false, length = 30, unique = true)
+    @Column(nullable = true, length = 30, unique = true)
     private String userId;
 
     @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = true, length = 30)
     private String userName;
 
     @Column(nullable = false, length = 255)
     private String email;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = true, length = 20)
     private String phoneNumber;
 
     @Column(nullable = false, length = 20)
@@ -147,10 +147,13 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<ShopGuest> shopGuests;
 
+    @Column(name="nickname")
+    private String nickname;
+
     public UserEntity(SignUpRequestDto dto) {
         this.userId = dto.getUserId();
         this.password = dto.getPassword();
-         this.gender = dto.getGender();
+        this.gender = dto.getGender();
         this.email = dto.getEmail();
         this.userName = dto.getUserName(); // SignUpRequestDto에 userName이 추가되어야 합니다.
         this.phoneNumber = dto.getPhoneNumber(); // SignUpRequestDto에 phoneNumber가 추가되어야 합니다.
@@ -159,6 +162,18 @@ public class UserEntity {
         this.loginStatus = LoginStatus.TOOK; // 기본값 설정
         this.role = "ROLE_USER";
         this.imageNo = (int)(Math.random() * 23) + 1;
+    }
+
+    public UserEntity(String email, String password, String nickname) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.birth = "20000101"; // 기본값 설정
+        this.createdAt = LocalDateTime.now();
+        this.loginStatus = LoginStatus.GOOGLE;
+        this.role = "ROLE_USER";
+        this.imageNo = (int)(Math.random() * 23) + 1;
+
     }
 
     public UserEntity(String userId, String email) {
@@ -179,8 +194,13 @@ public class UserEntity {
         this.lng = lng;
     }
 
+    public UserEntity update(String nickname){
+        this.nickname = nickname;
+        return this;
+    }
+
     public enum LoginStatus {
-        KAKAO, TOOK
+        KAKAO, TOOK, GOOGLE
     }
 
     public enum Gender{

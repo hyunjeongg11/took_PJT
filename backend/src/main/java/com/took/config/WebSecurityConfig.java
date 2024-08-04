@@ -3,8 +3,10 @@ package com.took.config;
 
 import com.took.filter.JwtAuthenticationFilter;
 
+//Google Oauth 인증용
+import com.took.user_api.handler.GOAuth2SuccessHandler;
 import com.took.user_api.handler.OAuth2FailureHandler;
-import com.took.user_api.handler.OAuth2SuccessHandler;
+//import com.took.user_api.handler.OAuth2SuccessHandler;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,7 +38,10 @@ public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final DefaultOAuth2UserService oAuth2UserService;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+//    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
+//   구글 임시 인증 시험용
+    private final GOAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     protected CorsConfigurationSource configurationSource() {
@@ -90,15 +95,15 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/navi/**").hasRole("USER")
                                 .requestMatchers("/api/taxi/**").hasRole("USER")
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
                                 .anyRequest().authenticated()
-                ).oauth2Login(oauth2 -> oauth2
-                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/auth/oauth2"))
-                        .redirectionEndpoint(endpoint -> endpoint.baseUri("/api/oauth2/callback/*"))
-                        .userInfoEndpoint(endpoint->endpoint.userService(oAuth2UserService))
-                        .successHandler(oAuth2SuccessHandler)
-                        .failureHandler(new OAuth2FailureHandler()) // 실패 핸들러 설정
                 )
+//                .oauth2Login(oauth2 -> oauth2
+//                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/auth/oauth2"))
+//                        .redirectionEndpoint(endpoint -> endpoint.baseUri("/api/oauth2/callback/*"))
+//                        .userInfoEndpoint(endpoint->endpoint.userService(oAuth2UserService))
+//                        .successHandler(oAuth2SuccessHandler)
+//                        .failureHandler(new OAuth2FailureHandler()) // 실패 핸들러 설정
+//                )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new FailedAuthenticationEntryPoint()))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
