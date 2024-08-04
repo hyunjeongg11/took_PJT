@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
-import { linkAccountApi } from '../../apis/account/info.js';
 import { sendSmsApi, verifySmsApi } from '../../apis/sms';
 import { useUser } from '../../store/user.js';
 
@@ -75,25 +74,28 @@ function VerificationPage() {
     }
   };
 
-  const handleNextClick = async () => {
-    if (isFormValid) {
-      const params = {
-        userSeq, // useUser 훅을 사용하여 가져온 userSeq 사용
-        main: false, // 주계좌 여부 설정 (필요에 따라 변경)
-        accountName,
-        accountNum: `${account}`,
-        accountPwd: parseInt(password),
-      };
+  const handleNextClick = () => {
+    // if (isFormValid) {
+    //   const params = {
+    //     userSeq, // useUser 훅을 사용하여 가져온 userSeq 사용
+    //     main: false, // 주계좌 여부 설정 (필요에 따라 변경)
+    //     accountName,
+    //     accountNum: `${account}`,
+    //     accountPwd: parseInt(password),
+    //   };
 
-      try {
-        const response = await linkAccountApi(params);
-        console.log(response);
-        // 성공 처리 (예: 완료 페이지로 이동)
-        navigate('/accountcomplete');
-      } catch (error) {
-        console.error('API 호출 중 오류 발생:', error);
-        // 오류 처리
-      }
+    //   try {
+    //     const response = await linkAccountApi(params);
+    //     console.log(response);
+    //     // 성공 처리 (예: 완료 페이지로 이동)
+    //     navigate('/setsimplepwd', { state: { bank, account, password, accountName } });
+    //   } catch (error) {
+    //     console.error('API 호출 중 오류 발생:', error);
+    //     // 오류 처리
+    //   }
+    // }
+    if (isFormValid) {
+      navigate('/setsimplepwd', { state: { bank, account, password, accountName } });
     }
   };
 

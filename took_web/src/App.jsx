@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { msgToAndroid } from './android/message';
+import { usePosition } from './store/position';
 
 import {
   MainPage,
@@ -17,6 +19,7 @@ import {
   AgreementDetailPage,
   AgreementPage,
   VerificationPage,
+  SetSimplePwd,
   SelectPage,
   CompletePage,
   PwdPage,
@@ -62,7 +65,39 @@ import TaxiChattingMainPage from './pages/chat/TaxiChattingMainPage';
 import GroupBuyChattingMainPage from './pages/chat/GroupBuyChattingMainPage';
 import ChattingMainPage from './pages/chat/ChattingMainPage';
 
+export const getUserLocation = () => {
+  if (window.Android) {
+    window.Android.getLocation();
+  }
+};
+
 function App() {
+  const { setPosition } = usePosition();
+
+  useEffect(() => {
+    getUserLocation();
+
+    window.onLocation = (latitude, longitude) => {
+      console.log('Received location:', latitude, longitude);
+      msgToAndroid(
+        `Received location in onLocation:, ${latitude}, ${longitude}`
+      );
+      setPosition({ latitude, longitude });
+    };
+
+    window.onNotification = (notificationData) => {
+      // const notification = JSON.parse(notificationData);
+      msgToAndroid(notificationData);
+    };
+
+    getUserLocation();
+
+    return () => {
+      delete window.onLocation;
+      delete window.onNotification;
+    };
+  }, []);
+
   const [checkedItems, setCheckedItems] = useState({
     terms1: false,
     terms2: false,
@@ -102,6 +137,7 @@ function App() {
     },
     { path: '/verification', element: <VerificationPage /> },
     { path: '/accountcomplete', element: <AccountCompletePage /> },
+    { path: '/setsimplepwd', element: <SetSimplePwd /> },
     { path: '/mypage', element: <MyPage /> },
     { path: '/notification', element: <NotificationSetting /> },
     { path: '/location', element: <LocationSettingPage /> },
@@ -144,7 +180,7 @@ function App() {
     { path: '/groupbuy/order', element: <OrderFormPage /> },
     { path: '/groupbuy/total/:id', element: <TotalPurchasePage /> },
     { path: '/groupbuy/my-order', element: <MyOrderFormPage /> },
-    { path: '/chat/temp', element: <TempChattingPage />  },
+    { path: '/chat/temp', element: <TempChattingPage /> },
     { path: '/chat/:id', element: <ChattingMainPage /> },
   ]);
 

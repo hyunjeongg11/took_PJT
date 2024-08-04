@@ -1,14 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MdBackspace } from 'react-icons/md';
-import { msgToAndroid } from '../../android/message';
-function PwdPage() {
+import { linkAccountApi } from '../../apis/account/info.js';
+import { useUser } from '../../store/user.js';
+import Modal from 'react-modal';
+
+function SetSimplePwdPage() {
   const [input, setInput] = useState('');
   const [isError, setIsError] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
+  const [isPasswordSet, setIsPasswordSet] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [firstPassword, setFirstPassword] = useState('');
   const navigate = useNavigate();
-
-  const correctPassword = '123456'; // 지금은 기본 비밀번호 "123456"으로 설정
+  const location = useLocation();
+  const { bank, account, password, accountName } = location.state || {};
+  const { seq: userSeq } = useUser(); // useUser 훅을 사용하여 seq 값을 가져옵니다.
 
   const handleButtonClick = (value) => {
     if (input.length < 6) {
@@ -20,40 +27,63 @@ function PwdPage() {
     setInput(input.slice(0, -1));
   };
 
-  const handleInputChange = () => {
-    if (input.length === 6) {
-      console.log(input); // 최종 입력된 비밀번호 콘솔에 출력
-      if (input === correctPassword) {
-        alert('비밀번호가 맞습니다!');
-        msgToAndroid('비밀번호가 맞습니다');
-        setInput('');
-        setIsError(false);
-        setAttemptCount(0); // 성공 시 시도 횟수 초기화
-      } else {
-        setIsError(true);
-        setAttemptCount((prev) => prev + 1);
-        setInput('');
+  const handleSetPassword = async () => {
+    setFirstPassword(input);
+    setIsPasswordSet(true);
+    setInput('');
+    setIsError(false);
+  };
+
+  const handleCheckPassword = async () => {
+    if (input === firstPassword) {
+      setInput('');
+      setIsError(false);
+      setAttemptCount(0); // 성공 시 시도 횟수 초기화
+      await handleLinkAccount(); // 계좌 연동 처리
+    } else {
+      setIsError(true);
+      setAttemptCount((prev) => prev + 1);
+      setInput('');
+      if (attemptCount >= 2) {
+        setIsModalOpen(true);
+        setTimeout(() => {
+          navigate(-1);
+        }, 3000);
       }
     }
   };
 
-  useEffect(() => {
-    if (window.Android) {
-      window.Android.authenticate();
+  const handleLinkAccount = async () => {
+    const params = {
+      userSeq,
+      main: false, // 주계좌 여부 설정 (필요에 따라 변경)
+      accountName,
+      accountNum: account,
+      accountPwd: parseInt(password, 10),
+      easyPwd: firstPassword,
+    };
+    try {
+      const response = await linkAccountApi(params);
+      console.log(response);
+      navigate('/accountcomplete', { state: { bank, account, password, accountName, easyPwd: firstPassword } });
+    } catch (error) {
+      console.error('API 호출 중 오류 발생:', error);
     }
-  }, []);
+  };
 
-  useEffect(() => {
+  const handleInputChange = () => {
+    if (input.length === 6) {
+      if (!isPasswordSet) {
+        handleSetPassword();
+      } else {
+        handleCheckPassword();
+      }
+    }
+  };
+
+  React.useEffect(() => {
     handleInputChange();
   }, [input]);
-
-  useEffect(() => {
-    if (attemptCount >= 5) {
-      alert('비밀번호 입력 횟수 초과!');
-      msgToAndroid('비밀번호 입력 횟수 초과!');
-      // 추가적인 처리 (예: 화면 전환, 잠금 등)
-    }
-  }, [attemptCount]);
 
   const renderDots = () => {
     const dots = [];
@@ -95,11 +125,11 @@ function PwdPage() {
       <div className="text-xl text-white mb-5 text-center font-bold">
         {isError ? (
           <div>
-            비밀번호가 맞지 않아요 <br /> 다시 입력해주세요{' '}
-            <span className="text-black"> {attemptCount}/5</span>
+            비밀번호가 일치하지 않아요 <br /> 다시 입력해주세요{' '}
+            <span className="text-black"> {attemptCount}/3</span>
           </div>
         ) : (
-          '간편 비밀번호 입력'
+          isPasswordSet ? '다시 한 번 입력해주세요' : '간편 비밀번호 설정'
         )}
       </div>
       <div className="flex justify-center mb-5">{renderDots()}</div>
@@ -127,8 +157,19 @@ function PwdPage() {
           <MdBackspace size={24} />
         </button>
       </div>
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        className="fixed inset-0 flex items-center justify-center"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+        ariaHideApp={false}
+      >
+        <div className="bg-white p-5 rounded-lg text-center">
+          <p>비밀번호 입력 횟수를 초과하였습니다</p>
+        </div>
+      </Modal>
     </div>
   );
 }
 
-export default PwdPage;
+export default SetSimplePwdPage;

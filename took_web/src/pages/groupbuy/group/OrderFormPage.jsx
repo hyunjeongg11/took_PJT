@@ -18,24 +18,24 @@ function OrderFormPage() {
             공구 <span className="font-dela">took !</span>
           </div>
         </div>
-        <div className="flex flex-col pt-10 pb-1 mt-6 bg-main rounded-2xl shadow-gray-400 shadow-md">
-          <div className="flex flex-col px-4 text-xs text-white">
+        <div className="flex flex-col pt-5 pb-1 mt-6 bg-neutral-50 border border-neutral-200 rounded-2xl shadow-md">
+          <div className="flex flex-col px-4 text-xs text-black">
             <div className="text-lg font-bold">상품 주문 정보 등록</div>
-            <hr className="text-white w-full mx-auto text-opacity-40 my-3" />
-            <div className="text-sm font-semibold pl-2 pt-2 ">배송 정보</div>
-            <div className="flex text-sm flex-col items-start py-3 px-5 mt-5 text-main bg-secondary rounded-xl shadow-md shadow-orange-800 font-medium">
-              <label className="w-full flex justify-between items-center">
+            <hr className="border border-neutral-300 w-full mx-auto my-3" />
+            <div className="text-base font-semibold pl-2 pt-2 ">배송 정보</div>
+            <div className="flex text-sm flex-col items-start py-1 px-4 mt-5 text-black bg-white rounded-xl shadow-sm border border-neutral-200 font-medium">
+              <label className="w-full my-2 flex justify-between items-center">
                 택배사
                 <input
                   type="text"
-                  className="ml-4 mt-2 p-2 rounded-md bg-secondary text-right  focus:outline-none focus:ring-2 focus:ring-main"
+                  className="ml-4 p-2 rounded-md text-right border border-collapse focus:outline-none focus:ring-2 focus:ring-main"
                 />
               </label>
-              <label className="w-full flex justify-between items-center mt-2">
+              <label className="w-full my-2 flex justify-between items-center mt-2">
                 송장번호
                 <input
                   type="number"
-                  className="ml-4 mt-2 p-2 rounded-md bg-secondary text-right  focus:outline-none focus:ring-2 focus:ring-main"
+                  className="ml-4 p-2 rounded-md text-right border border-collapse focus:outline-none focus:ring-2 focus:ring-main"
                 />
               </label>
             </div>
@@ -54,7 +54,7 @@ function OrderFormPage() {
             </div>
           </div>
         </div>
-        <div className="px-16 py-3 my-6 text-md text-center font-bold text-white bg-main rounded-xl shadow-gray-400 shadow-md cursor-pointer">
+        <div className="px-16 py-3 my-6 text-md text-center font-bold text-white bg-main rounded-2xl shadow-md cursor-pointer">
           등록하기
         </div>
       </div>
