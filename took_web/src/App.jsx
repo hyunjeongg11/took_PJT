@@ -17,6 +17,7 @@ import {
   AgreementDetailPage,
   AgreementPage,
   VerificationPage,
+  SetSimplePwd,
   SelectPage,
   CompletePage,
   PwdPage,
@@ -54,9 +55,11 @@ import CreateChattingPage from './pages/taxi/CreateChattingPage';
 import TaxiChattingSettingPage from './pages/taxi/TaxiChattingSettingPage';
 import TaxiPathSettingPage from './pages/taxi/TaxiPathSettingPage';
 import CurrentPathListPage from './pages/taxi/CurrentPathListPage';
-import ChattingMainPage from './pages/chat/ChattingMainPage';
+import DeliveryChattingMainPage from './pages/chat/DeliveryChattingMainPage';
 import ChattingListPage from './pages/chat/ChattingListPage';
 import TookChattingPage from './pages/chat/TookChattingPage';
+import TaxiChattingMainPage from './pages/chat/TaxiChattingMainPage';
+import GroupBuyChattingMainPage from './pages/chat/GroupBuyChattingMainPage';
 
 function App() {
   const [checkedItems, setCheckedItems] = useState({
@@ -98,6 +101,7 @@ function App() {
     },
     { path: '/verification', element: <VerificationPage /> },
     { path: '/accountcomplete', element: <AccountCompletePage /> },
+    { path: '/setsimplepwd', element: <SetSimplePwd /> },
     { path: '/mypage', element: <MyPage /> },
     { path: '/notification', element: <NotificationSetting /> },
     { path: '/location', element: <LocationSettingPage /> },
@@ -131,7 +135,9 @@ function App() {
     { path: '/taxi/setting', element: <TaxiChattingSettingPage /> },
     { path: '/taxi/path', element: <TaxiPathSettingPage /> },
     { path: '/taxi/path-list', element: <CurrentPathListPage /> },
-    { path: '/chat/main', element: <ChattingMainPage /> },
+    { path: '/chat/delivery/main', element: <DeliveryChattingMainPage /> },
+    { path: '/chat/groupbuy/main', element: <GroupBuyChattingMainPage /> },
+    { path: '/chat/taxi/main', element: <TaxiChattingMainPage /> },
     { path: '/chat/list', element: <ChattingListPage /> },
     { path: '/chat/took', element: <TookChattingPage /> },
     { path: '/groupbuy/my-purchase', element: <MyPurchasePage /> },

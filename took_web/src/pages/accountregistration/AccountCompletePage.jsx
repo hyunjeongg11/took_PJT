@@ -1,12 +1,17 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import check from '../../assets/payment/check.png';
 
 function AccountCompletePage() {
   const navigate = useNavigate();
-  const bankName = '국민은행'; // 임시로 설정된 은행명
-  const accountNumber = '123-456789-01'; // 임시로 설정된 계좌번호
+  const location = useLocation();
+  const { bank, account, password, accountName } = location.state || {};
+
+  const bankName = bank;
+  const accountNumber = account; 
+
+
 
   return (
     <div

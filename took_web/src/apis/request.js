@@ -8,13 +8,23 @@ export const request = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 request.interceptors.request.use(async (config) => {
-  const { accessToken } = useToken.getState();
-  if (accessToken) {
+  const { accessToken, setAccessToken } = useToken.getState();
+  
+  if (!accessToken) {
+    const storedAccessToken = localStorage.getItem('accessToken');
+    console.log(storedAccessToken);
+    if (storedAccessToken) {
+      setAccessToken(storedAccessToken);
+      config.headers['Authorization'] = 'Bearer ' + storedAccessToken;
+    }
+  } else {
     config.headers['Authorization'] = 'Bearer ' + accessToken;
   }
+
   return config;
 });
 
@@ -24,4 +34,5 @@ export const member_request = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });

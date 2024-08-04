@@ -165,9 +165,8 @@ function ChattingMainPage() {
 
       <div className="flex-grow overflow-y-scroll px-4 py-2 space-y-4 relative" onScroll={handleScroll} ref={scrollContainerRef}>
         {messages.map((msg, index, array) => {
-          const isFirstMessage = index === 0;
-          const sameUserAndTime = !isFirstMessage && msg.user_seq === array[index - 1].user_seq && msg.timestamp.slice(0, 16) === array[index - 1].timestamp.slice(0, 16);
-          const lastMessageFromSameUser = index < array.length - 1 && msg.user_seq === array[index + 1].user_seq && msg.timestamp.slice(0, 16) === array[index + 1].timestamp.slice(0, 16);
+          const sameUserAndTime = index > 0 && msg.user_seq === array[index - 1].user_seq && msg.timestamp === array[index - 1].timestamp;
+          const lastMessageFromSameUser = index < array.length - 1 && msg.user_seq === array[index + 1].user_seq && msg.timestamp === array[index + 1].timestamp;
           const showDate = lastDateRef.current !== formatDateOnly(msg.timestamp);
           lastDateRef.current = formatDateOnly(msg.timestamp);
 
@@ -179,7 +178,7 @@ function ChattingMainPage() {
                 </div>
               )}
               <div className={`flex ${msg.user_seq === 1 ? 'justify-end' : 'justify-start'}`}>
-                {msg.user_seq !== 1 && !sameUserAndTime && (
+                {msg.user_seq !== 1 && (
                   <div className="flex flex-col items-center mr-2">
                     <img src={getProfileImagePath(getUserProfileImgNo(msg.user_seq))} alt={msg.userName} className="w-9 h-9 rounded-full self-start" />
                   </div>
@@ -189,18 +188,18 @@ function ChattingMainPage() {
                     <span className={`text-[9px] mb-1 text-black ${msg.user_seq === 1 ? 'text-right' : 'text-left'}`}>{msg.userName}</span>
                   )}
                   <div className="flex items-end">
+                    {msg.user_seq === 1 && !lastMessageFromSameUser && (
+                      <div className="text-[9px] text-gray-400 mr-2 whitespace-nowrap">{formatTime(msg.timestamp)}</div>
+                    )}
                     <div className={`p-2 rounded-xl shadow-md ${msg.user_seq === 1 ? 'bg-main text-white' : 'bg-white text-black'}`}>
                       <div className="text-sm">{msg.message}</div>
                     </div>
                     {msg.user_seq !== 1 && !lastMessageFromSameUser && (
                       <div className="text-[9px] text-gray-400 ml-2 whitespace-nowrap">{formatTime(msg.timestamp)}</div>
                     )}
-                    {msg.user_seq === 1 && !lastMessageFromSameUser && (
-                      <div className="text-[9px] text-gray-400 mr-2 whitespace-nowrap">{formatTime(msg.timestamp)}</div>
-                    )}
                   </div>
                 </div>
-                {msg.user_seq === 1 && !sameUserAndTime && (
+                {msg.user_seq === 1 && (
                   <div className="flex flex-col items-center ml-2">
                     <img src={getProfileImagePath(getUserProfileImgNo(msg.user_seq))} alt={msg.userName} className="w-9 h-9 rounded-full self-start" />
                   </div>
@@ -266,7 +265,7 @@ function ChattingMainPage() {
       )}
 
       {currentModal === 'calculator' && <CalculatorModal onClose={closeModal} tempMember={tempMember} />}
-      {currentModal === 'money' && <MoneyModal onClose={closeModal} tempMember={tempMember} />}
+      {currentModal === 'money' && <MoneyModal onClose={closeModal} />}
       {currentModal === 'delivery' && <DeliveryModal onClose={closeModal} tempMember={tempMember}/>}
     </div>
   );

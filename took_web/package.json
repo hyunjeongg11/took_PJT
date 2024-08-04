@@ -17,6 +17,7 @@
     "react-dom": "^18.3.1",
     "react-draggable": "^4.4.6",
     "react-icons": "^5.2.1",
+    "react-modal": "^3.16.1",
     "react-router-dom": "^6.25.1",
     "swiper": "^11.1.6",
     "tailwindcss": "^3.4.6",
@@ -35,7 +36,5 @@
     "prettier": "^3.3.3",
     "vite": "^5.3.4"
   },
-  
-    "proxy": "https://i11e205.p.ssafy.io"
-  
+  "proxy": "https://i11e205.p.ssafy.io"
 }
