@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
-import { writeShopApi } from '../../apis/groupBuy/shop.js';
+import { writeShopApi, getShopApi, modifyShopApi } from '../../apis/groupBuy/shop.js';
 import { useUser } from '../../store/user.js';
 
 function BuyFormPage() {
+  const { id } = useParams(); // 수정 모드에서 사용할 shopSeq
   const navigate = useNavigate();
   const { seq: userSeq } = useUser();
 
@@ -20,8 +21,29 @@ function BuyFormPage() {
   });
 
   useEffect(() => {
-    console.log('User Sequence:', userSeq); // userSeq 값 확인
-  }, [userSeq]);
+    if (id) {
+      // id가 있는 경우 기존 데이터를 불러옴
+      const fetchShopData = async () => {
+        try {
+          const data = await getShopApi(id);
+          setFormData({
+            title: data.title,
+            site: data.site,
+            item: data.item,
+            content: data.content,
+            place: data.place,
+            max_person: data.maxCount,
+            lat: data.lat,
+            lon: data.lon,
+          });
+        } catch (error) {
+          console.error('API call error:', error);
+        }
+      };
+
+      fetchShopData();
+    }
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,7 +62,7 @@ function BuyFormPage() {
     }
 
     const params = {
-      roomSeq: 15, // todo: 실제 채팅방 시퀀스로 교체
+      roomSeq: 21, // todo: 실제 채팅방 시퀀스로 교체
       userSeq: userSeq,
       title: formData.title,
       content: formData.content,
@@ -53,10 +75,18 @@ function BuyFormPage() {
     };
 
     try {
-      const response = await writeShopApi(params);
-      console.log('API response:', response);
-      const shopSeq = response.shopSeq; // 응답에서 shopSeq를 가져옴
-      navigate(`/groupbuy/${shopSeq}`); // 생성된 게시물로 이동
+      if (id) {
+        // 수정 모드
+        await modifyShopApi(id, params);
+        console.log('수정 완료');
+        navigate(`/groupbuy/${id}`); // 수정된 게시물로 이동
+      } else {
+        // 새 글 작성 모드
+        const response = await writeShopApi(params);
+        console.log('등록 완료');
+        const shopSeq = response.shopSeq; // 응답에서 shopSeq를 가져옴
+        navigate(`/groupbuy/${shopSeq}`); // 생성된 게시물로 이동
+      }
     } catch (error) {
       console.error('API call error:', error);
     }
@@ -152,12 +182,13 @@ function BuyFormPage() {
           </div>
         </div>
 
-        <div
+        <button
+          type="submit"
           onClick={handleSubmit}
           className="px-16 py-3 mt-9 text-sm text-center font-bold text-white bg-main rounded-2xl shadow-md"
         >
-          등록하기
-        </div>
+          {id ? '수정하기' : '등록하기'}
+        </button>
       </div>
     </div>
   );

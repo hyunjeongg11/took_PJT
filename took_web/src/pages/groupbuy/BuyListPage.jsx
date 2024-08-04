@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import { Link } from 'react-router-dom';
 import { BuyCard } from '../../components/groupbuy/BuyCard';
@@ -7,15 +8,23 @@ import { useUser } from '../../store/user';
 
 function BuyListPage() {
   const { seq: userSeq } = useUser();
-  const [buyList, setBuyList] = useState([]); // 초기값을 빈 배열로 설정
+  const [buyList, setBuyList] = useState([]);
+  const location = useLocation();
+  const shouldRefresh = location.state?.shouldRefresh;
 
   useEffect(() => {
     const fetchBuyList = async () => {
       try {
-        const params = [userSeq];
+        const params = [userSeq, 15, 17]; // 배열로 줘야 함
         const data = await getAllShopApi(params);
         if (Array.isArray(data)) {
-          setBuyList(data);
+          const updatedData = data
+            .map((buy) => ({
+              ...buy,
+              status: buy.count === buy.maxCount ? 'IN_PROGRESSING' : buy.status,
+            }))
+            .filter((buy) => buy.status !== 'IN_PROGRESSING'); // 'IN_PROGRESSING' 상태인 항목 필터링
+          setBuyList(updatedData);
         } else {
           setBuyList([]); // 응답이 배열이 아닌 경우 빈 배열로 설정
         }
@@ -26,7 +35,7 @@ function BuyListPage() {
     };
 
     fetchBuyList();
-  }, [userSeq]);
+  }, [userSeq, shouldRefresh]);
 
   return (
     <div className="flex flex-col pt-5 bg-white min-w-screen min-h-screen">
@@ -44,9 +53,10 @@ function BuyListPage() {
                 site={buy.site}
                 item={buy.item}
                 place={buy.place}
-                current_person={buy.current_person || 0} // 현재 인원 수를 제공하지 않는 경우 기본값 0 설정
-                max_person={buy.maxCount}
+                count={buy.count || 0} // 현재 인원 수를 제공하지 않는 경우 기본값 0 설정
+                maxCount={buy.maxCount}
                 img_no={buy.imageNo || 1} // 이미지 번호를 제공하지 않는 경우 기본값 1 설정
+                status={buy.status} // status 전달
               />
               {index < buyList.length - 1 && (
                 <div className="shrink-0 my-2 border border-solid border-neutral-300 border-opacity-40" />

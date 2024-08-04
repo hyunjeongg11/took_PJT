@@ -34,7 +34,7 @@ import { handleApiError } from '../errorHandling';
 // }
 export const writeShopApi = async (params) => {
   try {
-    const response = await request.post('api/shops/create', params);
+    const response = await request.post('/api/shops/create', params);
     return response.data;
   } catch (err) {
     return handleApiError(err);
@@ -64,7 +64,7 @@ export const writeShopApi = async (params) => {
 // ]
 export const getAllShopApi = async (params) => {
   try {
-    const response = await request.post(`api/shops/selectAll`, params);
+    const response = await request.post(`/api/shops/selectAll`, params);
     return response.data;
   } catch (err) {
     return handleApiError(err);
@@ -91,7 +91,7 @@ export const getAllShopApi = async (params) => {
 // }
 export const getShopApi = async (shopSeq) => {
   try {
-    const response = await request.get(`api/shops/select/${shopSeq}`);
+    const response = await request.get(`/api/shops/select/${shopSeq}`);
     return response.data;
   } catch (err) {
     return handleApiError(err);
@@ -102,8 +102,11 @@ export const getShopApi = async (shopSeq) => {
 // 공동구매 게시글 삭제
 export const deleteShopApi = async (shopSeq) => {
   try {
-    await request.delete(`api/shops/delete/${shopSeq}`);
+    const response = await request.delete(`/api/shops/delete/${shopSeq}`);
+    console.log('삭제 요청 성공', response); // 삭제 요청 성공 여부 확인
+    return response; // 삭제 요청 성공 시 응답 반환
   } catch (err) {
+    console.error('삭제 요청 실패', err); // 오류 발생 시 로그 출력
     return handleApiError(err);
   }
 };
@@ -137,9 +140,9 @@ export const deleteShopApi = async (shopSeq) => {
 //     "createAt": String
 // }
 
-export const modifyShopApi = async (shopSeq) => {
+export const modifyShopApi = async (shopSeq, params) => {
   try {
-    const response = await request.put(`/shops/update/${shopSeq.id}`);
+    const response = await request.put(`/api/shops/update/${shopSeq}`, params);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -166,7 +169,7 @@ export const modifyShopApi = async (shopSeq) => {
 export const modifyShopStatusApi = async (shopSeq, params) => {
   try {
     const response = await request.put(
-      `/shops/update/status/${shopSeq}`,
+      `/api/shops/update/status/${shopSeq}`,
       params
     );
     return response.data;
@@ -182,9 +185,11 @@ export const modifyShopStatusApi = async (shopSeq, params) => {
 //공동구매 채팅방 참여하기
 export const joinGroupBuyApi = async (params) => {
   try {
-    const response = await request.post('/shops/enter', params);
+    const response = await request.post('/api/shops/enter', params);
+    console.log('API Response:', response);
     return response.data;
   } catch (error) {
+    console.error('API call error:', error.response ? error.response.data : error.message);
     return handleApiError(error);
   }
 };
@@ -192,7 +197,7 @@ export const joinGroupBuyApi = async (params) => {
 //공동구매 채팅방 나가기
 export const exitGroupBuyApi = async (shopSeq, userSeq) => {
   try {
-    await request.delete(`/shops/exit/${shopSeq}/${userSeq}`);
+    await request.delete(`/api/shops/exit/${shopSeq}/${userSeq}`);
   } catch (error) {
     return handleApiError(error);
   }
@@ -201,7 +206,7 @@ export const exitGroupBuyApi = async (shopSeq, userSeq) => {
 // 공동 구매 수령 확인
 export const pickUpCheckApi = async (shopSeq, userSeq) => {
   try {
-    await request.put(`/shops/pickUp/${shopSeq}/${userSeq}`);
+    await request.put(`/api/shops/pickUp/${shopSeq}/${userSeq}`);
   } catch (error) {
     return handleApiError(error);
   }
@@ -211,7 +216,7 @@ export const pickUpCheckApi = async (shopSeq, userSeq) => {
 // 응답: boolean
 export const getAllPickUpApi = async (shopSeq) => {
   try {
-    const response = await request.get(`/shops/pickUpCheck/${shopSeq}`);
+    const response = await request.get(`/api/shops/pickUpCheck/${shopSeq}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);

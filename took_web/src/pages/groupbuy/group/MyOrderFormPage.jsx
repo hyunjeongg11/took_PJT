@@ -29,7 +29,7 @@ function MyOrderFormPage() {
         </div>
         <div className="flex flex-col border border-neutral-200 pt-5 pb-1 mt-6 bg-neutral-50 rounded-2xl shadow-md">
           <div className="flex flex-col px-4 text-xs text-black">
-            <div className="text-lg font-bold">내 구매 정보 등록</div>
+            <div className="text-base font-bold">내 구매 정보 등록</div>
             <hr className="border border-neutral-300 w-full mx-auto my-3" />
 
             {myData.map((data, idx) => (
