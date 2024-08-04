@@ -12,7 +12,7 @@ import { msgToAndroid } from '../android/message.js';
 function LoginPage() {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
-  const { setAccessToken, setRefreshToken } = useToken();
+  const { setAccessToken } = useToken();
   const { setUserSeq, setLoggedIn } = useUser();
   const navigate = useNavigate();
   const handleLoginClick = async (e) => {

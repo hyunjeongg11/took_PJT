@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdBackspace } from 'react-icons/md';
 import { msgToAndroid } from '../../android/message';
@@ -37,11 +37,17 @@ function PwdPage() {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (window.Android) {
+      window.Android.authenticate();
+    }
+  });
+
+  useEffect(() => {
     handleInputChange();
   }, [input]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (attemptCount >= 5) {
       alert('비밀번호 입력 횟수 초과!');
       msgToAndroid('비밀번호 입력 횟수 초과!');

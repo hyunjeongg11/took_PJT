@@ -83,18 +83,16 @@ function App() {
       setPosition({ latitude, longitude });
     };
 
-    const locationEventListener = (e) => {
-      const { latitude, longitude } = e.detail;
-      setPosition({ latitude, longitude });
-      msgToAndroid(
-        `Received location in event listener:, ${latitude}, ${longitude}`
-      );
-      console.log(e.detail);
+    window.onNotification = (notificationData) => {
+      // const notification = JSON.parse(notificationData);
+      msgToAndroid(notificationData);
     };
 
-    window.addEventListener('location', locationEventListener);
+    getUserLocation();
+
     return () => {
-      window.removeEventListener('location', locationEventListener);
+      delete window.onLocation;
+      delete window.onNotification;
     };
   }, []);
 
