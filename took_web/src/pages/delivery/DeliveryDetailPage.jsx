@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import backIcon from '../../assets/delivery/whiteBack.svg';
-import { getDeliveryDetailApi } from '../../apis/delivery';
+import { getDeliveryDetailApi, deleteDeliveryApi, joinDeliveryApi } from '../../apis/delivery';
+import { getUserInfoApi } from '../../apis/user';
+import { useUser } from '../../store/user';
 import getProfileImagePath from '../../utils/getProfileImagePath';
-import { useUser } from '../../store/user.js';
-import { getUserInfoApi } from '../../apis/user.js'
-
+import { TbPencil } from 'react-icons/tb';
+import { FaRegTrashAlt } from 'react-icons/fa';
 
 const BackButton = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const BackButton = () => {
       className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
       onClick={handleBackClick}
     />
-  ); 
+  );
 };
 
 function formatTime(timeString) {
@@ -44,7 +45,6 @@ function formatTime(timeString) {
   }
 }
 
-// 배달 주문 시간 형식 맞추는 함수
 function formatDeliveryTime(timeString) {
   const date = new Date(timeString);
   const hours = date.getHours();
@@ -52,33 +52,75 @@ function formatDeliveryTime(timeString) {
   const month = date.getMonth() + 1;
   const day = date.getDate();
 
-  return `${month}.${day} ${hours >= 12 ? '오후' : '오전'} ${hours > 12 ? hours - 12 : hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
+  return `${month}.${day} ${hours >= 12 ? '오후' : '오전'} ${
+    hours > 12 ? hours - 12 : hours
+  }:${minutes < 10 ? `0${minutes}` : minutes}`;
 }
 
 function DeliveryDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { seq: userSeq } = useUser();
   const [data, setData] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDeliveryData = async () => {
       try {
-        const response = await getDeliveryDetailApi(id);
-        setData(response);
+        const deliveryResponse = await getDeliveryDetailApi(id);
+        setData(deliveryResponse);
       } catch (error) {
         console.error('배달 글 상세 조회 중 오류 발생:', error);
       }
     };
 
-    fetchData();
-  }, [id]);
+    const fetchUserData = async () => {
+      try {
+        const userResponse = await getUserInfoApi(userSeq);
+        setUserInfo(userResponse);
+      } catch (error) {
+        console.error('유저 정보 조회 중 오류 발생:', error);
+      }
+    };
 
-  const handleParticipate = () => {
-    // 참여하기 버튼 클릭 시 로직 추가
-    console.log('참여하기 버튼 클릭됨');
+    if (userSeq) {
+      fetchUserData();
+    }
+    if (id) {
+      fetchDeliveryData();
+    }
+  }, [id, userSeq]);
+
+  const handleParticipate = async () => {
+    try {
+      await joinDeliveryApi({ deliverySeq: id, userSeq });
+      alert('배달 파티에 참여하였습니다!');
+    } catch (error) {
+      console.error('참여 중 오류 발생:', error);
+      alert('참여 중 오류가 발생했습니다.');
+    }
   };
 
-  if (!data) {
+  const handleDelete = async () => {
+    try {
+      await deleteDeliveryApi(id);
+      setShowSuccessModal(true);
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        navigate('/');
+      }, 2000);
+    } catch (error) {
+      console.error('삭제 중 오류 발생:', error);
+    }
+  };
+
+  const handleModify = () => {
+    navigate(`/delivery/modify/${id}`);
+  };
+
+  if (!data || !userInfo) {
     return <div>Loading...</div>;
   }
 
@@ -92,26 +134,30 @@ function DeliveryDetailPage() {
       </div>
 
       <div className="p-4">
-        <div className="flex items-center mb-4">
-          <img
-            src={getProfileImagePath(user.imgNo)}
-            alt="avatar"
-            className="w-10 h-10 mr-4"
-          />
-          <div>
-            <div className="text-base font-bold">{data.userName}</div>
-            <div className="text-xs text-gray-500">
-              {formatTime(data.createdAt)}
+        <div className="flex items-center mb-4 justify-between">
+          <div className="flex items-center">
+            <img
+              src={userInfo.imgNo ? getProfileImagePath(userInfo.imgNo) : getProfileImagePath(2)}
+              alt="avatar"
+              className="w-10 h-10 mr-4"
+            />
+            <div>
+              <div className="text-base font-bold">{userInfo.userName}</div>
+              <div className="text-xs text-gray-500">
+                {formatTime(data.createdAt)}
+              </div>
             </div>
+          </div>
+          <div className="flex items-center">
+            <TbPencil className="w-5 h-5 text-neutral-500 mr-4" onClick={handleModify} />
+            <FaRegTrashAlt className="w-5 h-4 text-neutral-500" onClick={() => setShowDeleteModal(true)} />
           </div>
         </div>
 
         <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
 
         <div className="mb-10 px-2">
-          <div className="text-xl font-bold mb-1 mt-3">
-            {data.storeName}
-          </div>
+          <div className="text-xl font-bold mb-1 mt-3">{data.storeName}</div>
           <div className="text-gray-700 mb-3">{data.pickupPlace}</div>
           <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
           <div className="text-gray-700 my-3">
@@ -136,6 +182,37 @@ function DeliveryDetailPage() {
           </button>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white px-6 py-4 rounded-lg shadow-lg text-center">
+            <div className="text-base font-bold mb-2">게시글을 삭제하시겠습니까?</div>
+            <div className="mb-4 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
+            <div className="flex justify-center">
+              <button
+                className="bg-gray-200 font-bold text-[#3D3D3D] px-10 py-2 rounded-2xl mx-2"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                취소
+              </button>
+              <button
+                className="bg-main font-bold text-white px-10 py-2 rounded-2xl mx-2"
+                onClick={handleDelete}
+              >
+                삭제
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showSuccessModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white px-6 py-4 rounded-lg shadow-lg text-center text-base font-bold">
+            배달 게시글이 삭제되었습니다
+          </div>
+        </div>
+      )}
     </div>
   );
 }
