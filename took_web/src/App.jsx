@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { msgToAndroid } from './android/message';
+import { usePosition } from './store/position';
 
 import {
   MainPage,
@@ -61,7 +63,41 @@ import TookChattingPage from './pages/chat/TookChattingPage';
 import TaxiChattingMainPage from './pages/chat/TaxiChattingMainPage';
 import GroupBuyChattingMainPage from './pages/chat/GroupBuyChattingMainPage';
 
+export const getUserLocation = () => {
+  if (window.Android) {
+    window.Android.getLocation();
+  }
+};
+
 function App() {
+  const { setPosition } = usePosition();
+
+  useEffect(() => {
+    getUserLocation();
+
+    window.onLocation = (latitude, longitude) => {
+      console.log('Received location:', latitude, longitude);
+      msgToAndroid(
+        `Received location in onLocation:, ${latitude}, ${longitude}`
+      );
+      setPosition({ latitude, longitude });
+    };
+
+    const locationEventListener = (e) => {
+      const { latitude, longitude } = e.detail;
+      setPosition({ latitude, longitude });
+      msgToAndroid(
+        `Received location in event listener:, ${latitude}, ${longitude}`
+      );
+      console.log(e.detail);
+    };
+
+    window.addEventListener('location', locationEventListener);
+    return () => {
+      window.removeEventListener('location', locationEventListener);
+    };
+  }, []);
+
   const [checkedItems, setCheckedItems] = useState({
     terms1: false,
     terms2: false,
