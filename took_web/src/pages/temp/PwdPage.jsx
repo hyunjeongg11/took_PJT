@@ -41,7 +41,7 @@ function PwdPage() {
     if (window.Android) {
       window.Android.authenticate();
     }
-  });
+  }, []);
 
   useEffect(() => {
     handleInputChange();
