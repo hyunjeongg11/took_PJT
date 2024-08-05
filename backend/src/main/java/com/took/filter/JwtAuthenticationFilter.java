@@ -56,6 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         String token = header.substring(7);
         System.out.println("토큰: " + token);
 
+
         if (tokenBlacklistService.isTokenBlacklisted(token)) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "중복된 토큰입니다.");
             return;

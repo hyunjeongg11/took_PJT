@@ -16,7 +16,6 @@ import java.util.List;
 public class AccountRepositoryCustomImpl implements AccountRepositoryCustom {
 
     private final EntityManager entityManager;
-
     private final JPAQueryFactory queryFactory;
 
     @Override

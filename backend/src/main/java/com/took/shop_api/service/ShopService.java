@@ -79,6 +79,7 @@ public class ShopService {
     @Transactional
     public void delete(Long id) {
 
+
         QShop shop = QShop.shop;
         System.out.println("shop을 수정합니다.");
         queryFactory.delete(shop).where(shop.shopSeq.eq(id)).execute();

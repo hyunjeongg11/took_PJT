@@ -21,6 +21,7 @@ public class AccountListResponsetDto extends ResponseDto {
     public static class BankAccount{
 
         private Long userSeq;
+        private Long accountSeq;
         private String accountName;
         private String accountNum;
         private int bankNum;
