@@ -65,6 +65,7 @@ public class PartyController {
         return partyService.myPartyList(userSeq);
     }
 
+
     @Operation(summary = "멤버 정산", description = "파티의 멤버 정산을 처리합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "멤버 정산 성공",
@@ -77,6 +78,8 @@ public class PartyController {
     ) {
         return memberService.makeMember(requestBody);
     }
+
+
 
     @Operation(summary = "파티 정산 완료", description = "파티의 정산 완료 여부를 확인합니다.")
     @ApiResponses(value = {
