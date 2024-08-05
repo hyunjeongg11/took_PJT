@@ -74,8 +74,6 @@ public class ShopService {
 
     @Transactional
     public void delete(long id) {
-        System.out.println(id);
-        
         shopRepository.deleteById(id);
     }
 
