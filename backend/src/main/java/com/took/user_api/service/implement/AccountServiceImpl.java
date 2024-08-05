@@ -100,8 +100,10 @@ public class AccountServiceImpl implements AccountService {
 
         try{
 
+            System.out.println("유저 번호"+dto.getUserSeq());
             al = accountRepositoryCustom.findAccountsByUserSeq(dto.getUserSeq());
 
+            System.out.println("al 길이"+al.size());
             List<Long> bankSeq = new ArrayList<>();
 
             for(AccountEntity account : al){
@@ -109,6 +111,8 @@ public class AccountServiceImpl implements AccountService {
             }
 
             bl = bankRepositoryCustom.findBanksByBankSeq(bankSeq);
+
+            System.out.println("bl 길이"+bl.size());
 
             int size = al.size();
 
