@@ -97,7 +97,7 @@ const ROUTER = createBrowserRouter([
   { path: '/delivery/detail/:id', element: <DeliveryDetailPage /> },
   { path: '/delivery/list', element: <DeliveryListPage /> },
   { path: '/delivery/input', element: <DeliveryPayInputPage /> },
-  { path: '/delivery/complete', element: <DeliveryCompletePage /> },
+  { path: '/delivery/:id/complete', element: <DeliveryCompletePage /> },
   { path: '/delivery/status', element: <DeliveryStatusPage /> },
   { path: '/delivery/modify/:id', element: <CreateDeliveryPage /> },
   { path: '/groupbuy/list', element: <BuyListPage /> },
