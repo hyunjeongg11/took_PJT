@@ -1,12 +1,15 @@
 package com.took.delivery_api.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.delivery_api.dto.*;
 import com.took.delivery_api.entity.Delivery;
 import com.took.delivery_api.entity.DeliveryGuest;
+import com.took.delivery_api.entity.QDelivery;
 import com.took.delivery_api.repository.DeliveryGuestRepository;
 import com.took.delivery_api.repository.DeliveryRepository;
+import com.took.shop_api.entity.QShop;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -32,7 +35,7 @@ public class DeliveryService {
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
 
     // 배달 생성 메서드
     @Transactional
@@ -76,20 +79,8 @@ public class DeliveryService {
     // 글 삭제
     @Transactional
     public void deleteDelivery(Long deliverySeq) {
-        // Delivery 엔티티를 데이터베이스에서 가져오기
-        Delivery delivery = deliveryRepository.findByDeliverySeq(deliverySeq);
-
-        // 연관된 DeliveryGuest 엔티티들 가져오기
-        List<DeliveryGuest> deliveryGuests = deliveryGuestRepository.findByDelivery(delivery);
-
-        // 연관된 DeliveryGuest 엔티티들의 연관 관계 제거 및 삭제
-        for (DeliveryGuest guest : deliveryGuests) {
-            guest.deleteParent(); // 연관 관계 제거
-            deliveryGuestRepository.delete(guest); // 엔티티 삭제
-        }
-
-        // Delivery 엔티티 삭제
-        deliveryRepository.delete(delivery);
+        QDelivery qDelivery = QDelivery.delivery;
+        queryFactory.delete(qDelivery).where(qDelivery.deliverySeq.eq(deliverySeq)).execute();
     }
 
 
