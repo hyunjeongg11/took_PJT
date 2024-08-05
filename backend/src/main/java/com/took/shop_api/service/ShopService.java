@@ -63,7 +63,7 @@ public class ShopService {
     }
 
     @Transactional
-    public ShopResponse findById(long id) {
+    public ShopResponse findById(Long id) {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
         UserEntity user = userRepository.findByUserSeq(shop.getUser().getUserSeq());
@@ -73,14 +73,12 @@ public class ShopService {
     }
 
     @Transactional
-    public void delete(long id) {
-        System.out.println(id);
-        
+    public void delete(Long id) {
         shopRepository.deleteById(id);
     }
 
     @Transactional
-    public Shop update(long id, UpdateShopRequest request) {
+    public Shop update(Long id, UpdateShopRequest request) {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
 
@@ -90,7 +88,7 @@ public class ShopService {
     }
 
     @Transactional
-    public Shop updateStatus(long id, UpdateStatusShopRequest request) {
+    public Shop updateStatus(Long id, UpdateStatusShopRequest request) {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
         shop.updateStatus(request.getStatus());
@@ -124,7 +122,7 @@ public class ShopService {
     }
 
     @Transactional
-    public void exit(long shopSeq, long userSeq){
+    public void exit(Long shopSeq, Long userSeq){
         Shop shop = shopRepository.findById(shopSeq).orElseThrow();
         UserEntity user = userRepository.findByUserSeq(userSeq);
         shopGuestRepository.deleteByShopAndUser(shop, user);
@@ -133,7 +131,7 @@ public class ShopService {
     }
 
     @Transactional
-    public void pickUp(long shopSeq, long userSeq) {
+    public void pickUp(Long shopSeq, Long userSeq) {
         Shop shop = shopRepository.findById(shopSeq)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + shopSeq));
 
@@ -144,7 +142,7 @@ public class ShopService {
     }
 
     @Transactional
-    public boolean pickUpCheck(long shopSeq) {
+    public boolean pickUpCheck(Long shopSeq) {
         Shop shop = shopRepository.findById(shopSeq).orElseThrow();
         List<ShopGuest> list = shopGuestRepository.findAllByShop(shop);
         for (ShopGuest shopGuest : list){

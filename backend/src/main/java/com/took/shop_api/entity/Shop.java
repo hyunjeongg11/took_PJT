@@ -87,15 +87,15 @@ public class Shop {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "shop", cascade =CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    List<ShopGuest> shopGuests;
+    private List<ShopGuest> shopGuests;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    List<ShipInfo> shipInfos;
+    private List<ShipInfo> shipInfos;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    List<PurchaseInfo> purchaseInfos;
+    private List<PurchaseInfo> purchaseInfos;
 
     @PrePersist
     protected void onCreate() {
