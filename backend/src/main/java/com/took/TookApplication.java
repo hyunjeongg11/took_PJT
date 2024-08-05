@@ -9,7 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.TimeZone;
 
 @SpringBootApplication
@@ -24,8 +26,11 @@ public class TookApplication {
     public static void main(String[] args) throws IOException {
         // FirebaseApp 초기화 여부 확인
         if (FirebaseApp.getApps().isEmpty()) {
-            FileInputStream serviceAccount =
-                    new FileInputStream("src/main/resources/serviceAccountKey.json");
+            InputStream serviceAccount = TookApplication.class.getClassLoader().getResourceAsStream("serviceAccountKey.json");
+
+            if (serviceAccount == null) {
+                throw new FileNotFoundException("serviceAccountKey.json 파일을 찾을 수 없습니다.");
+            }
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
