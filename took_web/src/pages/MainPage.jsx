@@ -253,6 +253,11 @@ function MainPage() {
             Delivery Chatting Main
           </button>
         </Link>
+        <Link to="/chat/groupbuy/main">
+          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
+            Groupbuy Chatting Main
+          </button>
+        </Link>
         <Link to="/chat/taxi/main">
           <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
             Taxi Chatting Main
@@ -285,7 +290,7 @@ function MainPage() {
         </Link>
         <Link to="/groupbuy/my-order">
           <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            My Order Form
+            GroupBuy My Order Form
           </button>
         </Link>
       </div>

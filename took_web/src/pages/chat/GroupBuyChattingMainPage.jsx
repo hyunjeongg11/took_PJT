@@ -1,12 +1,11 @@
-// pages/chat/GroupBuyChattingMainPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
-import { formatDateOnly, formatTime, formatDateWithYear } from '../../utils/formatDate';
+import { formatDateOnly, formatTime } from '../../utils/formatDate';
 import delivery from '../../assets/chat/delivery.png';
-import calculator from '../../assets/chat/calculator.png';
-import money from '../../assets/chat/money.png';
+import { BsTruck } from "react-icons/bs";
+import { TfiWorld } from "react-icons/tfi";
 import { FaChevronUp, FaChevronDown, FaPaperPlane, FaArrowDown, FaBars } from 'react-icons/fa';
 import { MdAdd } from 'react-icons/md';
 import CalculatorModal from '../../components/chat/CalculatorModal';
@@ -23,21 +22,21 @@ const tempMember = [
 ];
 
 const tempData = {
-    id: 1,
-    title: '마이프로틴 공동구매 모집합니다',
-    site: '마이프로틴',
-    item: '프로틴',
-    content: `마프대란 프로틴 같이 공동구매 하실 분 구해요
+  shopSeq: 8,
+  title: '마이프로틴 공동구매 모집합니다',
+  site: '마이프로틴',
+  item: '프로틴',
+  content: `마프대란 프로틴 같이 공동구매 하실 분 구해요
               <br />
               <br />
               8만원 이상 채워서 주문하고 싶어요! 같이 쿠폰 적용해서 주문해요!!!`,
-    place: '송정삼정그린코아더시티 1층',
-    current_person: 4,
-    max_person: 6,
-    img_no: 1,
-    visit: 1,
-    created_at: new Date(),
-  };
+  place: '송정삼정그린코아더시티 1층',
+  current_person: 4,
+  max_person: 6,
+  img_no: 1,
+  visit: 1,
+  created_at: new Date(),
+};
 
 const tempMessages = [
   { id: 1, user_seq: 1, userName: '조현정', message: '여러분, 구매 사이트 확인하시고 각자 구매 정보 등록 부탁드립니다 :)', timestamp: '2024-07-06T10:12:00' },
@@ -173,28 +172,46 @@ function GroupBuyChattingMainPage() {
         <div className="mt-3 flex-grow text-center text-base font-bold text-black">
           {tempData.title}
         </div>
-        <FaBars className='mt-2.5' onClick={handleShowParticipantList} />
+        <FaBars className="mt-2.5" onClick={handleShowParticipantList} />
       </div>
       <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
       <div className="w-full px-2 py-1">
         <div className="flex items-start bg-white p-2 rounded-lg shadow-md text-black text-sm">
           <div className="ml-2 flex-grow">
-            <div className='mb-1.5'>
-                물품명 <span className='ml-5'>{tempData.item}</span></div>
-                <div className="mb-1.5">
-                구매링크 
-                <a href="https://www.myprotein.co.kr"  className="underline ml-3">https://www.myprotein.co.kr</a>
-                </div>
-                <div>
-                수령장소 <span className='ml-2'>{tempData.place}</span>
-                </div>
-                <div className="mt-1 w-full border-1 border-solid bg-black min-h-[0.5px]" />
-                <div className='text-xs mt-2 mb-1 mr-3 ml-1 flex justify-between'>
-                    <span onClick={() => navigate('/groupbuy/order')}>상품 주문 정보 등록</span> | 
-                    <button onClick={handleShowArrivalModal} className="focus:outline-none">물품 도착 !</button> | 
-                    <span onClick={() => navigate('/groupbuy/order')}>전체 구매 정보</span> 
-                </div>
+            <div className="mb-1.5">
+              물품명 <span className="ml-5">{tempData.item}</span>
+            </div>
+            <div className="mb-1.5">
+              구매링크
+              <a href="https://www.myprotein.co.kr" className="underline ml-3">
+                https://www.myprotein.co.kr
+              </a>
+            </div>
+            <div>
+              수령장소 <span className="ml-2">{tempData.place}</span>
+            </div>
+            <div className="mt-1 w-full border-1 border-solid bg-black min-h-[0.5px]" />
+            <div className="text-xs mt-2 mb-1 mr-3 ml-1 flex justify-between">
+              <span
+                onClick={() => navigate(`/groupbuy/order/${tempData.shopSeq}`)}
+              >
+                상품 주문 정보 등록
+              </span>{' '}
+              |
+              <button
+                onClick={handleShowArrivalModal}
+                className="focus:outline-none"
+              >
+                물품 도착 !
+              </button>{' '}
+              |
+              <span
+                onClick={() => navigate(`/groupbuy/total/${tempData.shopSeq}`)}
+              >
+                전체 구매 정보
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -283,18 +300,24 @@ function GroupBuyChattingMainPage() {
         <div className="w-full px-4 py-2 bg-white flex justify-around" ref={actionIconsRef}>
           <div className="flex flex-col items-center mb-4">
             <div className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center" onClick={() => openModal('calculator')}>
-              <img src={calculator} alt="정산" className="w-6 h-6" />
+              <BsTruck className="text-white w-7 h-7" />
             </div>
             <span className="mt-1 text-[11px] text-gray-500">정산</span>
           </div>
           <div className="flex flex-col items-center">
             <div className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center" onClick={() => openModal('money')}>
-              <img src={money} alt="주문금액" className="w-7 h-7" />
+              <TfiWorld className="text-white w-6 h-6" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">주문금액</span>
+            <span className="mt-1 text-[11px] text-gray-500">사이트 바로가기</span>
           </div>
           <div className="flex flex-col items-center">
             <div className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center" onClick={() => openModal('delivery')}>
+              <img src={delivery} alt="배달" className="w-6 h-5" />
+            </div>
+            <span className="mt-1 text-[11px] text-gray-500">배달</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="w-11 h-11 rounded-full bg-[#C0E0A0] flex items-center justify-center" onClick={() => openModal('delivery')}>
               <img src={delivery} alt="배달" className="w-6 h-5" />
             </div>
             <span className="mt-1 text-[11px] text-gray-500">배달</span>
