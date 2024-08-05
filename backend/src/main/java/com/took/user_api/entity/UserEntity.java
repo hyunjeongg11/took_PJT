@@ -22,7 +22,7 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

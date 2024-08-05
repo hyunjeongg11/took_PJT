@@ -1,6 +1,11 @@
 # Use a base image with JDK
 FROM openjdk:17-jdk-slim
 
+# Install tzdata package and configure timezone
+RUN apt-get update && apt-get install -y tzdata && \
+    ln -fs /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    dpkg-reconfigure --frontend noninteractive tzdata
+
 # Add a directory for the application
 WORKDIR /app
 

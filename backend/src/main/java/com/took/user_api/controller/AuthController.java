@@ -22,8 +22,6 @@ public class AuthController {
 
     @PostMapping("/id-check")
     public ResponseEntity<? super IdCheckResponseDto> idCheck(@RequestBody @Valid IdCheckRequestDto requestBody) {
-
-        System.out.println("컨트롤러에서 진입합니다.");
         ResponseEntity<? super IdCheckResponseDto> response = authService.idCheck(requestBody);
         return response;
     }
