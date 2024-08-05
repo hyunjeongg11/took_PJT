@@ -13,4 +13,10 @@ public class ChatUserSelectResponse {
 
     @Schema(description = "유저 ID", example = "456")
     private Long userSeq;
+
+    @Schema(description = "유저 이름", example = "홍길동")
+    private String userName;
+
+    @Schema(description = "이미지 번호", example = "12")
+    private int imageNo;
 }

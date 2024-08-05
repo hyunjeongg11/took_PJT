@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor  // Lombok 어노테이션으로, final 필드에 대해 생성자를 자동으로 생성
@@ -107,11 +109,25 @@ public class ChatUserService {
 
         List<ChatUser> users = chatUserRepository.findByChatRoom(chatRoom);
 
+        List<UserEntity> userInfos = userRepository.findByUserSeqIn(users.stream()
+                .map(user -> user.getUser().getUserSeq())
+                .collect(Collectors.toList()));
+
+        // userInfos를 userSeq를 기준으로 매핑
+        Map<Long, UserEntity> userInfoMap = userInfos.stream()
+                .collect(Collectors.toMap(UserEntity::getUserSeq, Function.identity()));
+
         // ChatUser 리스트를 ChatUserSelectResponse 리스트로 변환
         return users.stream()
-                .map(user -> ChatUserSelectResponse.builder()
-                        .userSeq(user.getUser().getUserSeq())
-                        .build())
+                .map(user -> {
+                    UserEntity userEntity = userInfoMap.get(user.getUser().getUserSeq());
+                    return ChatUserSelectResponse.builder()
+                            .userSeq(user.getUser().getUserSeq())
+                            .userName(userEntity != null ? userEntity.getUserName() : null)
+                            .imageNo(userEntity != null ? userEntity.getImageNo() : null)
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
+
 }
