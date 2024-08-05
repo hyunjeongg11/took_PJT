@@ -78,7 +78,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(request -> request
 
 //                                                로그인 전에 이뤄지는 작업은 인증이 푤요하지 않다.
-                                .requestMatchers("/", "/api/auth/**","/oauth2/**", "api/swagger-ui/**").permitAll()
+                                .requestMatchers("/", "/api/auth/**","/oauth2/**", "/api/swagger-ui/**").permitAll()
                                 .requestMatchers("/ws/**").permitAll()
                                 // 접두사는 제외 하고 USER만 적어준다.w
                                 .requestMatchers("/api/user/**").hasRole("USER")
