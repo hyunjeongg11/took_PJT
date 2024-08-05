@@ -5,31 +5,8 @@ import taxiIcon from '../../assets/chat/taxiIcon.png';
 import deliveryIcon from '../../assets/chat/deliveryIcon.png';
 import buyingIcon from '../../assets/chat/buyingIcon.png';
 import tookIcon from '../../assets/chat/tookIcon.png';
-import Stomp from 'stompjs';
-import SockJS from 'sockjs-client';
-import { connect } from '../../apis/chat/socket';
-import { getChatListApi } from '../../apis/chat/chat'
-
-
-const tempData = [
-  {
-    chatRoomId: 1,
-    chatCategory: 'taxi',
-    chatUser: '명지',
-    recentChatMessage: '정산 완료 되었습니다.',
-    recentChatTime: '2024-07-30 08:58:00',
-    unreadMessages: 2,
-  },
-  {
-    chatRoomId: 2,
-    chatCategory: 'delivery',
-    chatUser: 'BBQ 명지점',
-    recentChatMessage: '메뉴 다 넣었어요!',
-    recentChatTime: '2024-07-29 18:58:00',
-    unreadMessages: 1,
-  },
-
-];
+import { getChatListApi } from '../../apis/chat/chat';
+import { useUser } from '../../store/user';
 
 function formatTime(timeString) {
   const date = new Date(timeString);
@@ -68,34 +45,24 @@ function getIcon(category) {
   }
 }
 
-function isEnglish(str) {
-  return /^[A-Za-z\s]+$/.test(str);
-}
-
 function ChattingListPage() {
-  const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
-  let stompClient = Stomp.over(socket);
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
+  const { seq } = useUser();
+  const handleChatRoomClick = (chatRoom) => {
+    // TODO: chatRoom.category에 따라서 배달, 택시, 공동구매 각각 채팅방으로 연결될 수 있도록 구현
 
-  // const sortedTempData = tempData.sort(
-  //   (a, b) => new Date(b.recentChatTime) - new Date(a.recentChatTime)
-  // );
-
-  const handleChatRoomClick = (chatRoomId) => {
-    navigate(`/chat/${chatRoomId}`);
+    navigate(`/chat/${chatRoom.roomSeq}`, { state: { chatRoom } });
   };
 
   const loadChatRooms = async () => {
-    const response = await getChatListApi();
+    const response = await getChatListApi(seq);
     console.log(response);
     setRooms(response);
-    console.log("rooms", rooms);
+    console.log('rooms', rooms);
   };
 
-
   useEffect(() => {
-    // connect({ stompClient, loadChatRooms });
     loadChatRooms();
   }, []);
 
@@ -115,7 +82,7 @@ function ChattingListPage() {
           <div
             key={chat.roomSeq}
             className="flex items-center px-6 py-4 border-b border-gray-200 cursor-pointer"
-            onClick={() => handleChatRoomClick(chat.roomSeq)}
+            onClick={() => handleChatRoomClick(chat)}
           >
             <img
               src={getIcon(chat.category)}
@@ -124,9 +91,7 @@ function ChattingListPage() {
             />
             <div className="flex-grow">
               <div className="flex justify-between">
-                <div
-                  className={`text-base font-bold ${isEnglish(chat.chatUser) ? 'font-dela mb-1' : ''}`}
-                >
+                <div className={`text-base font-extrabold`}>
                   {chat.roomTitle}
                 </div>
                 <div className="text-xs text-gray-500">
