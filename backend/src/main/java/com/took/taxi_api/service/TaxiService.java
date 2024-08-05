@@ -1,8 +1,13 @@
 package com.took.taxi_api.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.repository.ChatRoomRepository;
+import com.took.delivery_api.entity.QDelivery;
+import com.took.delivery_api.entity.QDeliveryGuest;
 import com.took.taxi_api.dto.*;
+import com.took.taxi_api.entity.QTaxi;
+import com.took.taxi_api.entity.QTaxiGuest;
 import com.took.taxi_api.entity.Taxi;
 import com.took.taxi_api.entity.TaxiGuest;
 import com.took.taxi_api.repository.TaxiGuestRepository;
@@ -27,6 +32,8 @@ public class TaxiService {
     private final TaxiGuestRepository taxiGuestRepository;
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
+
+    private final JPAQueryFactory queryFactory;
 
     /**
      * 새로운 Taxi 엔티티를 생성하고 데이터베이스에 저장합니다.
@@ -73,8 +80,13 @@ public class TaxiService {
      */
     @Transactional
     public void deleteTaxi(Long taxiSeq) {
-        Taxi taxi = taxiRepository.findByTaxiSeq(taxiSeq);
-        taxiRepository.delete(taxi);
+        QTaxiGuest qTaxiGuest = QTaxiGuest.taxiGuest;
+        queryFactory.delete(qTaxiGuest)
+                .where(qTaxiGuest.taxi.taxiSeq.eq(taxiSeq))
+                .execute();
+
+        QTaxi qTaxi = QTaxi.taxi;
+        queryFactory.delete(qTaxi).where(qTaxi.taxiSeq.eq(taxiSeq)).execute();
     }
 
     /**

@@ -4,9 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.shop_api.dto.*;
-import com.took.shop_api.entity.QShop;
-import com.took.shop_api.entity.Shop;
-import com.took.shop_api.entity.ShopGuest;
+import com.took.shop_api.entity.*;
 import com.took.shop_api.repository.ShopGuestRepository;
 import com.took.shop_api.repository.ShopRepository;
 import com.took.user_api.entity.UserEntity;
@@ -78,6 +76,15 @@ public class ShopService {
 
     @Transactional
     public void delete(Long id) {
+        QShopGuest qShopGuest = QShopGuest.shopGuest;
+        queryFactory.delete(qShopGuest).where(qShopGuest.shop.shopSeq.eq(id)).execute();
+
+        QShipInfo qShipInfo = QShipInfo.shipInfo;
+        queryFactory.delete(qShipInfo).where(qShipInfo.shop.shopSeq.eq(id)).execute();
+
+        QPurchaseInfo qPurchaseInfo = QPurchaseInfo.purchaseInfo;
+        queryFactory.delete(qPurchaseInfo).where(qPurchaseInfo.shop.shopSeq.eq(id)).execute();
+
         QShop shop = QShop.shop;
         queryFactory.delete(shop).where(shop.shopSeq.eq(id)).execute();
     }

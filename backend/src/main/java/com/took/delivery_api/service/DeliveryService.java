@@ -1,14 +1,20 @@
 package com.took.delivery_api.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.delivery_api.dto.*;
 import com.took.delivery_api.entity.Delivery;
 import com.took.delivery_api.entity.DeliveryGuest;
+import com.took.delivery_api.entity.QDelivery;
+import com.took.delivery_api.entity.QDeliveryGuest;
+import com.took.delivery_api.repository.DeliveryGuestRepository;
 import com.took.delivery_api.repository.DeliveryRepository;
+import com.took.shop_api.entity.QShop;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -26,10 +32,11 @@ public class DeliveryService {
 
     // 리포지토리 주입
     private final DeliveryRepository deliveryRepository;
+    private final DeliveryGuestRepository deliveryGuestRepository;
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
 
     // 배달 생성 메서드
     @Transactional
@@ -73,12 +80,16 @@ public class DeliveryService {
     // 글 삭제
     @Transactional
     public void deleteDelivery(Long deliverySeq) {
-//        deliveryRepository.deleteByDeliverySeq(deliverySeq);
-        Delivery delivery = deliveryRepository.findByDeliverySeq(deliverySeq);
-        System.out.println(delivery.getDeliverySeq() + "번 글 삭제");
-        deliveryRepository.delete(delivery);
-        deliveryRepository.flush(); // 변경 사항을 즉시 데이터베이스에 반영
+        QDeliveryGuest qDeliveryGuest = QDeliveryGuest.deliveryGuest;
+        // 자식 엔티티인 DeliveryGuest 먼저 삭제
+        queryFactory.delete(qDeliveryGuest)
+                .where(qDeliveryGuest.delivery.deliverySeq.eq(deliverySeq))
+                .execute();
+
+        QDelivery qDelivery = QDelivery.delivery;
+        queryFactory.delete(qDelivery).where(qDelivery.deliverySeq.eq(deliverySeq)).execute();
     }
+
 
     // 공지사항 등록
     @Transactional
