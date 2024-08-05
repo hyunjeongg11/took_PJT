@@ -82,5 +82,34 @@ public class SwaggerConfiguration {
                 .pathsToMatch("/api/navi/**") // 경로 패턴이 일치하는 것들을 API로 인식
                 .build();
     }
+    // 어떤 REST API를 문서화 할 것인지 매핑하기
+    @Bean
+    public GroupedOpenApi shopApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("shop")  // 그룹 이름 ( 원하는 이름으로 작성 )
+                .pathsToMatch("/api/shops/**") // 경로 패턴이 일치하는 것들을 API로 인식
+                .build();
+    }
+    // 어떤 REST API를 문서화 할 것인지 매핑하기
+    @Bean
+    public GroupedOpenApi shipApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("ship")  // 그룹 이름 ( 원하는 이름으로 작성 )
+                .pathsToMatch("/api/ship/**") // 경로 패턴이 일치하는 것들을 API로 인식
+                .build();
+    }
+    // 어떤 REST API를 문서화 할 것인지 매핑하기
+    @Bean
+    public GroupedOpenApi purchaseApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("purchase")  // 그룹 이름 ( 원하는 이름으로 작성 )
+                .pathsToMatch("/api/purchase/**") // 경로 패턴이 일치하는 것들을 API로 인식
+                .build();
+    }
+
+
 
 }
