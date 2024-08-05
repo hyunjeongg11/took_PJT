@@ -5,6 +5,8 @@
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.gavlyukovskiy/p6spy-spring-boot-starter/1.5.6/495579c7fb01b005f19ec4d5188245c66de0937b/p6spy-spring-boot-starter-1.5.6.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.gavlyukovskiy/p6spy-spring-boot-starter/1.5.6/333131e5a499de1386fe8bb1ae6c456249373ade/p6spy-spring-boot-starter-1.5.6-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

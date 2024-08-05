@@ -5,6 +5,8 @@
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/p6spy/p6spy/3.8.2/52299d9a1ec2bc2fb8b1a21cc12dfc1a7c033caf/p6spy-3.8.2.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/p6spy/p6spy/3.8.2/c65ca831f5c5cee121cb338b16d525c24f17d90d/p6spy-3.8.2-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
