@@ -7,7 +7,7 @@ import lombok.Getter;
 public class RepayRequestDto {
 
     @Schema(description = "재지불 금액", example = "1000")
-    private int cost;
+    private Long cost;
 
     @Schema(description = "계좌 식별 번호", example = "12345")
     private Long accountSeq;

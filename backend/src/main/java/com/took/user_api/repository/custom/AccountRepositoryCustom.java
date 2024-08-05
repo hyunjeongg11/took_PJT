@@ -14,4 +14,5 @@ public interface AccountRepositoryCustom {
     Long findBankSeqByAccountSeq(Long accountSeq);
     void updateEasyPwd(Long accountSeq, String easyPwd);
     String checkEasyPwd(Long accountSeq);
+    Long findMainBank(Long userSeq);
 }

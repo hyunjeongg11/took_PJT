@@ -43,7 +43,7 @@ public class BankEntity {
     @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
     private List<AccountEntity> accounts;
 
-    public boolean minus(int money){
+    public boolean minus(Long money){
 
         if(this.balance >= money){
             this.balance-=money;

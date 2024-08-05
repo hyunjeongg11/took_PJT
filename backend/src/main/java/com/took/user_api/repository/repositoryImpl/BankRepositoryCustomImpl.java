@@ -85,4 +85,9 @@ public class BankRepositoryCustomImpl implements BankRepositoryCustom {
 
     }
 
+    @Override
+    public void pay(Long bankSeq, Long cost) {
+
+    }
+
 }

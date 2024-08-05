@@ -99,7 +99,17 @@ public class AccountRepositoryCustomImpl implements AccountRepositoryCustom {
         return result;
     }
 
+    @Override
+    public Long findMainBank(Long userSeq) {
 
+        Long mainBankSeq = null;
+        QAccountEntity account = QAccountEntity.accountEntity;
 
+        mainBankSeq = queryFactory.select(account.bank.bankSeq)
+                .where(account.user.userSeq.eq(userSeq).and(account.main.isTrue()))
+                .fetchOne();
+
+        return mainBankSeq;
+    }
 
 }

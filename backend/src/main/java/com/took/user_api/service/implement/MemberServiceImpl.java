@@ -24,29 +24,10 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final UserRepository userRepository;
 
+
+
     @Override
     @Transactional
-    public ResponseEntity<? super MemberSaveResponseDto> makeMember(MemberSaveRequestDto dto) {
-
-        // 뭔가 비효율 적인듯
-        PartyEntity party = partyRepository.getReferenceById(dto.getPartySeq());
-        UserEntity user = userRepository.getReferenceById(dto.getUserSeq());
-        
-        MemberEntity member = new MemberEntity(dto,party,user);
-
-        try{
-
-            memberRepository.save(member);
-
-        }catch(Exception e){
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-
-        return MemberSaveResponseDto.success();
-    }
-
-    @Override
     public ResponseEntity<? super MemberSaveResponseDto> insertMember(MemberSaveRequestDto requestBody) {
 
         MemberEntity newMember = null;

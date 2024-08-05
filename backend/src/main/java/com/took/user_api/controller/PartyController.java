@@ -4,8 +4,10 @@ import com.took.user_api.dto.request.member.MemberSaveRequestDto;
 import com.took.user_api.dto.request.party.PartyDetailRequestDto;
 import com.took.user_api.dto.request.party.PartyDoneRequestDto;
 import com.took.user_api.dto.request.party.MakePartyRequestDto;
+import com.took.user_api.dto.request.party.PayRequestDto;
 import com.took.user_api.dto.response.member.MemberSaveResponseDto;
 import com.took.user_api.dto.response.party.*;
+import com.took.user_api.service.AccountService;
 import com.took.user_api.service.MemberService;
 import com.took.user_api.service.PartyService;
 import jakarta.validation.Valid;
@@ -23,6 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @RequiredArgsConstructor
 public class PartyController {
 
+    private final AccountService accountService;
     private final PartyService partyService;
     private final MemberService memberService;
 
@@ -72,11 +75,12 @@ public class PartyController {
                     content = @Content(schema = @Schema(implementation = MemberSaveResponseDto.class))),
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
-    @PostMapping("/member")
-    public ResponseEntity<? super MemberSaveResponseDto> member(
-            @RequestBody @Valid MemberSaveRequestDto requestBody
-    ) {
-        return memberService.makeMember(requestBody);
+    @PostMapping("/pay")
+    public ResponseEntity<? super PayResponseDto>pay(@RequestBody @Valid PayRequestDto requestBody){
+
+//        userSeq 보고 바로 짜르면 된다.
+        ResponseEntity<? super PayResponseDto> response = accountService.pay(requestBody);
+        return response;
     }
 
 

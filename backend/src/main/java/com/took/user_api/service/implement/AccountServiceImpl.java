@@ -2,9 +2,11 @@ package com.took.user_api.service.implement;
 
 
 import com.took.user_api.dto.request.account.*;
+import com.took.user_api.dto.request.party.PayRequestDto;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.account.*;
+import com.took.user_api.dto.response.party.PayResponseDto;
 import com.took.user_api.entity.AccountEntity;
 import com.took.user_api.entity.BankEntity;
 import com.took.user_api.entity.MemberEntity;
@@ -238,5 +240,26 @@ public class AccountServiceImpl implements AccountService {
         }
 
         return VoidResponseDto.success();
+    }
+
+
+    @Override
+    public ResponseEntity<? super PayResponseDto> pay(PayRequestDto requestBody) {
+
+        Long bankSeq = null;
+        BankEntity bank = null;
+
+        try {
+
+            bankSeq = accountRepositoryCustom.findMainBank(requestBody.getUserSeq());
+            bank = bankRepository.getReferenceById(bankSeq);
+
+            if (!bank.minus(requestBody.getCost())) return ResponseDto.nomoney();
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return PayResponseDto.success(requestBody.getUserSeq());
     }
 }
