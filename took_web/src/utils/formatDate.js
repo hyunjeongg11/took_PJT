@@ -51,3 +51,50 @@ export const formatTime = (dateString) => {
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
   return `${ampm} ${formattedHours}:${formattedMinutes}`;
 }
+
+
+export function formatBeforeTime(timeString) {
+  const date = new Date(timeString);
+  const now = new Date();
+  const diff = (now - date) / 1000 / 60; // difference in minutes
+
+  if (diff < 1) {
+    return '방금 전';
+  } else if (diff < 60) {
+    return `${Math.floor(diff)}분 전`;
+  } else if (diff < 24 * 60) {
+    return `${Math.floor(diff / 60)}시간 전`;
+  } else if (diff < 7 * 24 * 60) {
+    return `${Math.floor(diff / (24 * 60))}일 전`;
+  } else if (diff < 30 * 24 * 60) {
+    return `${Math.floor(diff / (7 * 24 * 60))}주 전`;
+  } else if (diff < 12 * 30 * 24 * 60) {
+    return `${Math.floor(diff / (30 * 24 * 60))}개월 전`;
+  } else {
+    return `${Math.floor(diff / (12 * 30 * 24 * 60))}년 전`;
+  }
+}
+
+export function formatFinishTime(timeString) {
+  const date = new Date(timeString);
+  const now = new Date();
+  const diff = (now - date) / 1000 / 60; // difference in minutes
+
+  if (diff < 1) {
+    return '방금 전';
+  } else if (diff < 60) {
+    return `${Math.floor(diff)}분 전`;
+  } else if (diff < 24 * 60) {
+    const hours = Math.floor(diff / 60);
+    const minutes = Math.floor(diff % 60);
+    return `${hours}시간 ${minutes}분 전`;
+  } else if (diff < 7 * 24 * 60) {
+    return `${Math.floor(diff / (24 * 60))}일 전`;
+  } else if (diff < 30 * 24 * 60) {
+    return `${Math.floor(diff / (7 * 24 * 60))}주 전`;
+  } else if (diff < 12 * 30 * 24 * 60) {
+    return `${Math.floor(diff / (30 * 24 * 60))}개월 전`;
+  } else {
+    return `${Math.floor(diff / (12 * 30 * 24 * 60))}년 전`;
+  }
+}

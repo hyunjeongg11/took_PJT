@@ -1,89 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getDeliveryListApi } from '../../apis/delivery';
+import { formatBeforeTime, formatFinishTime } from '../../utils/formatDate';
 import plusIcon from '../../assets/delivery/plus.png'; // '+' 아이콘 경로
 import mapIcon from '../../assets/delivery/map.png'; // 지도 아이콘 경로
-
-const temp_data_address = [
-  {
-    storeName: '명지첫집 오션시티직영점',
-    pickupPlace: '명지삼정그린코아웨스트 정문',
-    deliveryTip: '4000',
-  },
-  {
-    storeName: '롯데리아 부산명지점',
-    pickupPlace: '명지삼정그린코아웨스트 정문',
-    deliveryTip: '5000',
-  },
-  {
-    storeName: '빙수당 명지국제점',
-    pickupPlace: '명지삼정그린코아웨스트 정문',
-    deliveryTip: '4500',
-  },
-  {
-    storeName: '페로어페로 부산명지점',
-    pickupPlace: '명지삼정그린코아웨스트 정문',
-    deliveryTip: '4500',
-  },
-  {
-    storeName: '왔따 쪽갈비 명지점',
-    pickupPlace: '명지삼정그린코아웨스트 정문',
-    deliveryTip: '4500',
-  },
-  {
-    storeName: '사랑해베이글 명지점',
-    pickupPlace: '명지삼정그린코아웨스트 정문',
-    deliveryTip: '5000',
-  },
-];
-
-const temp_data_location = [
-  {
-    storeName: '지코바 신호점',
-    pickupPlace: '삼성전기 정문',
-    deliveryTip: '4500',
-  },
-  {
-    storeName: '설빙 신호점',
-    pickupPlace: '송정삼정그린코아시티 정문',
-    deliveryTip: '5000',
-  },
-  {
-    storeName: '히스피커피&디저트 신호점',
-    pickupPlace: '송정삼정그린코아시티 정문',
-    deliveryTip: '4500',
-  },
-];
-
-const temp_address = '강서구 녹산동';
-const temp_location = '강서구 명지동';
+import BackButton from '../../components/common/BackButton';
 
 const DeliveryListPage = () => {
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState('주소지');
+  const [deliveryList, setDeliveryList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDeliveryList = async () => {
+      try {
+        // 임시로 위경도 0으로 설정
+        const params = {
+          lat: 0.0,
+          lon: 0.0,
+        };
+        const response = await getDeliveryListApi(params);
+        const sortedList = response.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setDeliveryList(sortedList || []);
+      } catch (error) {
+        console.error('배달 목록을 가져오는 중 오류가 발생했습니다:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDeliveryList();
+  }, []);
 
   const handleCreateDelivery = () => {
     navigate('/create/delivery');
   };
 
-  const data =
-    selectedOption === '주소지' ? temp_data_address : temp_data_location;
-  const addressText =
-    selectedOption === '주소지' ? temp_address : temp_location;
+  const handleDetailClick = (deliverySeq) => {
+    navigate(`/delivery/detail/${deliverySeq}`);
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-4 mt-4">
-        <div className="mt-2.5 mb-1 ml-4 flex-grow text-left text-3xl font-bold text-main">
-          배달{' '}
-          <span className="font-dela">
-            took<span className="font-noto">!</span>
+        <BackButton />
+        <div className="flex-grow text-center">
+          <span className="mt-2.5 mb-1 text-3xl font-bold text-main">
+            배달{' '}
+            <span className="font-dela">
+              took<span className="font-noto">!</span>
+            </span>
           </span>
         </div>
       </div>
       <div className="px-6">
         <div className="flex justify-between items-center mb-4">
           <div className="text-xl text-black ml-2 font-bold mt-2">
-            {addressText}
+            주변 배달 목록
           </div>
         </div>
 
@@ -114,14 +92,18 @@ const DeliveryListPage = () => {
           </button>
         </div>
 
-        {data.map((item, index) => (
-          <div key={index} className="my-4">
-            <div className="text-lg font-bold text-black">{item.storeName}</div>
+        {deliveryList.map((item, index) => (
+          <div key={index} className="my-4 cursor-pointer" onClick={() => handleDetailClick(item.deliverySeq)}>
+            <div className="flex justify-between items-center">
+              <div className="text-lg font-bold text-black">{item.storeName}</div>
+              <div className="text-xs text-gray-500">{formatBeforeTime(item.createdAt)}</div>
+            </div>
             <div className="text-black font-bold text-sm mb-1">
               {item.pickupPlace}
             </div>
-            <div className="text-neutral-500 font-bold text-xs">
-              배달팁 : {item.deliveryTip}원
+            <div className="my-1">
+              <div className="text-neutral-500 font-bold text-xs">배달팁 : {item.deliveryTip}원</div>
+              <div className="text-neutral-500 font-bold text-xs">주문 종료 : {formatFinishTime(item.finishTime)}</div>
             </div>
             <div className="my-4 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
           </div>

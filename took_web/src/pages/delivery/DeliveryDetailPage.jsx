@@ -7,6 +7,7 @@ import { useUser } from '../../store/user';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { TbPencil } from 'react-icons/tb';
 import { FaRegTrashAlt } from 'react-icons/fa';
+import { formatBeforeTime } from '../../utils/formatDate';
 
 const BackButton = () => {
   const navigate = useNavigate();
@@ -20,30 +21,10 @@ const BackButton = () => {
       className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
       onClick={handleBackClick}
     />
-  );
+  ); 
 };
 
-function formatTime(timeString) {
-  const date = new Date(timeString);
-  const now = new Date();
-  const diff = (now - date) / 1000 / 60; // difference in minutes
 
-  if (diff < 1) {
-    return '방금 전';
-  } else if (diff < 60) {
-    return `${Math.floor(diff)}분 전`;
-  } else if (diff < 24 * 60) {
-    return `${Math.floor(diff / 60)}시간 전`;
-  } else if (diff < 7 * 24 * 60) {
-    return `${Math.floor(diff / (24 * 60))}일 전`;
-  } else if (diff < 30 * 24 * 60) {
-    return `${Math.floor(diff / (7 * 24 * 60))}주 전`;
-  } else if (diff < 12 * 30 * 24 * 60) {
-    return `${Math.floor(diff / (30 * 24 * 60))}개월 전`;
-  } else {
-    return `${Math.floor(diff / (12 * 30 * 24 * 60))}년 전`;
-  }
-}
 
 function formatDeliveryTime(timeString) {
   const date = new Date(timeString);
@@ -72,16 +53,16 @@ function DeliveryDetailPage() {
         const deliveryResponse = await getDeliveryDetailApi(id);
         setData(deliveryResponse);
       } catch (error) {
-        console.error('배달 글 상세 조회 중 오류 발생:', error);
+        console.error('배달 글 상세 조회 중 오류 발생:', error.response?.data || error.message);
       }
     };
 
     const fetchUserData = async () => {
       try {
-        const userResponse = await getUserInfoApi(userSeq);
+        const userResponse = await getUserInfoApi({ userSeq });
         setUserInfo(userResponse);
       } catch (error) {
-        console.error('유저 정보 조회 중 오류 발생:', error);
+        console.error('유저 정보 조회 중 오류 발생:', error.response?.data || error.message);
       }
     };
 
@@ -98,21 +79,23 @@ function DeliveryDetailPage() {
       await joinDeliveryApi({ deliverySeq: id, userSeq });
       alert('배달 파티에 참여하였습니다!');
     } catch (error) {
-      console.error('참여 중 오류 발생:', error);
+      console.error('참여 중 오류 발생:', error.response?.data || error.message);
       alert('참여 중 오류가 발생했습니다.');
     }
   };
 
   const handleDelete = async () => {
     try {
-      await deleteDeliveryApi(id);
+      console.log('Deleting delivery with id:', id);
+      const response = await deleteDeliveryApi(id);
+      console.log('Delete response:', response);
       setShowSuccessModal(true);
       setTimeout(() => {
         setShowSuccessModal(false);
         navigate('/');
       }, 2000);
     } catch (error) {
-      console.error('삭제 중 오류 발생:', error);
+      console.error('삭제 중 오류 발생:', error.response?.data || error.message);
     }
   };
 
@@ -137,14 +120,14 @@ function DeliveryDetailPage() {
         <div className="flex items-center mb-4 justify-between">
           <div className="flex items-center">
             <img
-              src={userInfo.imgNo ? getProfileImagePath(userInfo.imgNo) : getProfileImagePath(2)}
+              src={getProfileImagePath(userInfo.imageNo)}
               alt="avatar"
               className="w-10 h-10 mr-4"
             />
             <div>
               <div className="text-base font-bold">{userInfo.userName}</div>
               <div className="text-xs text-gray-500">
-                {formatTime(data.createdAt)}
+                {formatBeforeTime(data.createdAt)}
               </div>
             </div>
           </div>

@@ -138,14 +138,14 @@ function CreateDeliveryPage() {
     navigate(-1);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async () => { // async 추가
     if (Object.values(form).some((field) => field === '')) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 2000); // 2초 후 알림 메시지 숨김
     } else {
       const params = {
         userSeq,
-        roomSeq: 33, // roomSeq를 실제 값으로 대체해야 합니다.
+        roomSeq: 39, // roomSeq를 실제 값으로 대체해야 합니다.
         storeName: form.storeName,
         pickupPlace: form.deliveryAddress,
         pickupLat: 0.0, // 픽업 장소 위도 값을 실제 값으로 대체해야 합니다.
@@ -156,10 +156,11 @@ function CreateDeliveryPage() {
       };
 
       try {
+        let response;
         if (id) {
           await modifyDeliveryApi({ deliverySeq: id, ...params });
         } else {
-          const response = await writeDeliveryApi(params);
+          response = await writeDeliveryApi(params);
           console.log('API response:', response);
           const deliverySeq = response.deliverySeq; // 응답에서 deliverySeq를 가져옴
           navigate(`/delivery/detail/${deliverySeq}`); // 생성된 게시물로 이동
