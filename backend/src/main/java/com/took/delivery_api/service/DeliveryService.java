@@ -70,6 +70,7 @@ public class DeliveryService {
     @Transactional
     public void deleteDelivery(Long deliverySeq) {
         Delivery delivery = deliveryRepository.findByDeliverySeq(deliverySeq);
+        System.out.println(delivery);
         deliveryRepository.delete(delivery);
     }
     
