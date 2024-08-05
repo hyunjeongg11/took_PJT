@@ -43,7 +43,6 @@ public class PartyController {
     }
 
 
-
     // 나의 테이블 확인하기
     @GetMapping("/party-list/{userSeq}")
     public ResponseEntity<? super PartyListResponseDto> partyList(@PathVariable("userSeq") Long userSeq) {

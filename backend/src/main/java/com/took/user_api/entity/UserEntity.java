@@ -1,5 +1,6 @@
 package com.took.user_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.took.chat_api.entity.ChatRoom;
@@ -21,6 +22,7 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

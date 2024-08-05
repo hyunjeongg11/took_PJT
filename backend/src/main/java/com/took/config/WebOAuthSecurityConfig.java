@@ -50,11 +50,6 @@ public class WebOAuthSecurityConfig {
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/api/token").permitAll()
-                .requestMatchers("/api/**").authenticated()
-                .anyRequest().permitAll());
-
         http.oauth2Login(oauth2 -> oauth2
                 .loginPage("/login")
                 .authorizationEndpoint(authorization -> authorization
