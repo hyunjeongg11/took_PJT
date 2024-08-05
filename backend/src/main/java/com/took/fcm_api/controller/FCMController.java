@@ -1,5 +1,7 @@
-package com.ssafy.fcmtest;
+package com.took.fcm_api.controller;
 
+import com.took.fcm_api.dto.FCMRequest;
+import com.took.fcm_api.service.FCMService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/fcm")
 @RequiredArgsConstructor
-public class NotificationController {
+public class FCMController {
 
-    private final NotificationService notificationService;
+    private final FCMService fcmService;
 
     @PostMapping("/send")
-    public ResponseEntity<?> sendNotification(@RequestBody NotificationRequest request) {
-        notificationService.sendReminderNotification(request.getUserSeq(), request.getPartySeq(), request.getTitle(), request.getCost());
+    public ResponseEntity<?> sendNotification(@RequestBody FCMRequest request) {
+        fcmService.sendNotification(request.getUserSeq(), request.getPartySeq(), request.getCategory(),request.getTitle(), request.getToken(), request.getCost());
         return ResponseEntity.ok().build();
     }
 
