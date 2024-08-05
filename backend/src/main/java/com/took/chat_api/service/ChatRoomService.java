@@ -1,8 +1,13 @@
 package com.took.chat_api.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.chat_api.dto.*;
 import com.took.chat_api.entity.ChatRoom;
+import com.took.chat_api.entity.QChatMessage;
+import com.took.chat_api.entity.QChatRoom;
+import com.took.chat_api.entity.QChatUser;
 import com.took.chat_api.repository.ChatRoomRepository;
+import com.took.delivery_api.entity.QDelivery;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +25,8 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
+
+    private JPAQueryFactory queryFactory;
 
     /**
      * 채팅방 생성
@@ -85,6 +92,20 @@ public class ChatRoomService {
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
     public void deleteChatRoom(Long roomSeq) {
         chatRoomRepository.deleteByRoomSeq(roomSeq);  // 채팅방 삭제
+
+        QChatMessage qChatMessage = QChatMessage.chatMessage;
+        QChatUser qChatUser    = QChatUser.chatUser;
+        queryFactory.delete(qChatMessage)
+                .where(qChatMessage.chatRoom.roomSeq.eq(roomSeq))
+                .execute();
+        queryFactory.delete(qChatUser)
+                .where(qChatUser.chatRoom.roomSeq.eq(roomSeq))
+                .execute();
+
+        QChatRoom qChatRoom = QChatRoom.chatRoom;
+        queryFactory.delete(qChatRoom)
+                .where(qChatRoom.roomSeq.eq(roomSeq))
+                .execute();
     }
 
 }
