@@ -6,7 +6,7 @@
     <content url="file://$MODULE_DIR$/../../../app/src/main">
       <sourceFolder url="file://$MODULE_DIR$/../../../app/src/main/java" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="liberica-17" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: com.google.guava:guava:33.1.0-jre" level="project" />
     <orderEntry type="library" name="Gradle: com.google.guava:failureaccess:1.0.2" level="project" />

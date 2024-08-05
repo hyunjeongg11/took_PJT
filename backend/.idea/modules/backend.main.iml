@@ -23,7 +23,7 @@
       <sourceFolder url="file://$MODULE_DIR$/../../src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../src/main/resources" type="java-resource" />
     </content>
-    <orderEntry type="jdk" jdkName="liberica-17" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.projectlombok:lombok:1.18.32" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: com.querydsl:querydsl-apt:jakarta:5.1.0" level="project" />
