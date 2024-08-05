@@ -124,7 +124,6 @@ function App() {
     { path: '/delivery/status', element: <DeliveryStatusPage /> },
     { path: '/groupbuy/list', element: <BuyListPage /> },
     { path: '/groupbuy/:id', element: <BuyDetailPage /> },
-    { path: '/groupbuy/myorder', element: <MyOrderFormPage /> },
     { path: '/groupbuy/join/:id', element: <BuyJoinPage /> },
     { path: '/groupbuy/form', element: <BuyFormPage /> },
     { path: '/groupbuy/form/:id', element: <BuyFormPage /> },
@@ -143,7 +142,7 @@ function App() {
     { path: '/groupbuy/my-purchase', element: <MyPurchasePage /> },
     { path: '/groupbuy/order/:id', element: <OrderFormPage /> },
     { path: '/groupbuy/total/:id', element: <TotalPurchasePage /> },
-    { path: '/groupbuy/my-order', element: <MyOrderFormPage /> },
+    { path: '/groupbuy/my-order/:id', element: <MyOrderFormPage /> },
   ]);
 
   return <RouterProvider router={ROUTER} />;

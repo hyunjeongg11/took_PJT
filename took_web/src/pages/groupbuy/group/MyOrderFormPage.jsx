@@ -1,11 +1,18 @@
+import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../../components/common/BackButton';
-import { useState } from 'react';
+import { writePurchaseApi } from '../../../apis/groupBuy/purchase';
+import { FaRegTrashAlt } from 'react-icons/fa';
+import { useUser } from '../../../store/user.js';
 
 const initialData = [{ name: '', option: '', etc: '' }];
 
 function MyOrderFormPage() {
+  const { id: shopSeq } = useParams(); // URL 파라미터에서 shopSeq를 가져옴
+  const { seq: userSeq } = useUser();
   const [myData, setMyData] = useState(initialData);
   const [total, setTotal] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (idx, field, value) => {
     const newData = myData.map((item, index) =>
@@ -16,6 +23,41 @@ function MyOrderFormPage() {
 
   const addNewItem = () => {
     setMyData([...myData, { name: '', option: '', etc: '' }]);
+  };
+
+  const removeItem = (idx) => {
+    if (idx > 0) {
+      const newData = myData.filter((_, index) => index !== idx);
+      setMyData(newData);
+    }
+  };
+
+  const handleSubmit = async () => {
+    const price = parseInt(total, 10);
+    const shipCost = 0; // 배송비를 따로 입력받지 않는다면 0으로 설정
+
+    const productList = myData.map((item) => ({
+      productName: item.name,
+      optionDetails: item.option,
+      etc: item.etc,
+    }));
+
+    const params = {
+      userSeq,
+      shopSeq: parseInt(shopSeq, 10),
+      price,
+      shipCost,
+      productList,
+    };
+
+    try {
+      const response = await writePurchaseApi(params);
+      alert('주문 정보가 성공적으로 등록되었습니다.');
+      navigate(`/groupbuy/total/${shopSeq}`); // 등록 후 전체 구매 정보 페이지로 이동
+    } catch (error) {
+      alert('에러가 발생했습니다. 다시 시도해주세요.');
+      console.error('API call error:', error);
+    }
   };
 
   return (
@@ -66,6 +108,14 @@ function MyOrderFormPage() {
                     className="ml-4 p-2 rounded-md text-right border border-collapse focus:outline-none focus:ring-2 focus:ring-main"
                   />
                 </label>
+                {idx > 0 && data.name === '' && data.option === '' && data.etc === '' && (
+                  <button
+                    onClick={() => removeItem(idx)}
+                    className="self-end mt-1 text-neutral-400"
+                  >
+                    <FaRegTrashAlt />
+                  </button>
+                )}
               </div>
             ))}
             <div
@@ -87,7 +137,10 @@ function MyOrderFormPage() {
             </label>
           </div>
         </div>
-        <div className="px-16 py-3 my-6 text-md text-center font-bold text-white bg-main rounded-xl shadow-md">
+        <div
+          onClick={handleSubmit}
+          className="px-16 py-3 my-6 text-md text-center font-bold text-white bg-main rounded-xl shadow-md cursor-pointer"
+        >
           등록하기
         </div>
       </div>

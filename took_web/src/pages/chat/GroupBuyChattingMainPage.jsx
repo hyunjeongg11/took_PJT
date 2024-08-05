@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { formatDateOnly, formatTime } from '../../utils/formatDate';
-import delivery from '../../assets/chat/delivery.png';
+import { AiOutlineInfoCircle } from "react-icons/ai";
 import { BsTruck } from "react-icons/bs";
 import { TfiWorld } from "react-icons/tfi";
+import { GoBell } from "react-icons/go";
 import { FaChevronUp, FaChevronDown, FaPaperPlane, FaArrowDown, FaBars } from 'react-icons/fa';
 import { MdAdd } from 'react-icons/md';
-import CalculatorModal from '../../components/chat/CalculatorModal';
 import MoneyModal from '../../components/chat/MoneyModal';
 import DeliveryModal from '../../components/chat/DeliveryModal';
 import ParticipantList from '../../components/chat/ParticipantList';
@@ -22,7 +22,7 @@ const tempMember = [
 ];
 
 const tempData = {
-  shopSeq: 8,
+  shopSeq: 8, // 채팅방 연결 전까지는 임시로 8번으로 !!
   title: '마이프로틴 공동구매 모집합니다',
   site: '마이프로틴',
   item: '프로틴',
@@ -299,35 +299,40 @@ function GroupBuyChattingMainPage() {
       {showActionIcons && (
         <div className="w-full px-4 py-2 bg-white flex justify-around" ref={actionIconsRef}>
           <div className="flex flex-col items-center mb-4">
-            <div className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center" onClick={() => openModal('calculator')}>
+            <div className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center">
               <BsTruck className="text-white w-7 h-7" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">정산</span>
+            <span className="mt-1 text-[11px] text-gray-500">배송 정보</span>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center" onClick={() => openModal('money')}>
+            <div className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center">
               <TfiWorld className="text-white w-6 h-6" />
             </div>
             <span className="mt-1 text-[11px] text-gray-500">사이트 바로가기</span>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center" onClick={() => openModal('delivery')}>
-              <img src={delivery} alt="배달" className="w-6 h-5" />
+            <div
+              className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center"
+              onClick={() => navigate(`/groupbuy/total/${tempData.shopSeq}`)}
+            >
+              <AiOutlineInfoCircle className="text-white w-6 h-6" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">배달</span>
+            <span className="mt-1 text-[11px] text-gray-500">주문 정보</span>
           </div>
-          <div className="flex flex-col items-center">
-            <div className="w-11 h-11 rounded-full bg-[#C0E0A0] flex items-center justify-center" onClick={() => openModal('delivery')}>
-              <img src={delivery} alt="배달" className="w-6 h-5" />
+          <div
+            onClick={handleShowArrivalModal}
+            className="flex flex-col items-center"
+          >
+            <div className="w-11 h-11 rounded-full bg-[#C0E0A0] flex items-center justify-center">
+              <GoBell className="text-white w-6 h-6" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">배달</span>
+            <span className="mt-1 text-[11px] text-gray-500">물품 도착</span>
           </div>
         </div>
       )}
 
-      {currentModal === 'calculator' && <CalculatorModal onClose={closeModal} tempMember={tempMember} />}
-      {currentModal === 'money' && <MoneyModal onClose={closeModal} tempMember={tempMember} />}
-      {currentModal === 'delivery' && <DeliveryModal onClose={closeModal} tempMember={tempMember}/>}
+      {/* {currentModal === 'money' && <MoneyModal onClose={closeModal} tempMember={tempMember} />} */}
+      {/* {currentModal === 'delivery' && <DeliveryModal onClose={closeModal} tempMember={tempMember}/>} */}
       {showParticipantList && <ParticipantList participants={tempMember} onClose={handleCloseParticipantList} />}
       {showArrivalModal && <ArrivalNotificationModal members={tempMember} onClose={handleCloseArrivalModal} />}
     </div>
