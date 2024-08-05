@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DeliveryRepository extends JpaRepository<Delivery, Long>, DeliveryRepositoryCustom {
+public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
 
     Delivery findByDeliverySeq(Long deliverySeq);
 

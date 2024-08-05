@@ -39,4 +39,8 @@ public class DeliveryGuest {
     public void updatePickUp(boolean pickUp) {
         this.pickUp = pickUp;
     }
+
+    public void deleteParent() {
+        this.delivery = null;
+    }
 }

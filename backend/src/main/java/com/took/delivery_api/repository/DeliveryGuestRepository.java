@@ -20,4 +20,6 @@ public interface DeliveryGuestRepository extends JpaRepository<DeliveryGuest, Lo
     List<DeliveryGuest> findAllByUser(UserEntity user);
 
     void deleteByDeliveryGuestSeq(Long deliveryGuestSeq);
+
+    List<DeliveryGuest> findByDelivery(Delivery delivery);
 }
