@@ -1,14 +1,46 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import deliveryIcon from '../../assets/delivery/delivery.png';
+import { getDeliveryMembersApi, changePickUpStatusApi } from '../../apis/delivery';
+import { useUser } from '../../store/user';
 
 function DeliveryCompletePage() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { id } = useParams(); // id는 deliverySeq 값
+  const { seq: currentUserSeq } = useUser();
+  const [loading, setLoading] = useState(true);
+  const [memberInfo, setMemberInfo] = useState(null);
 
-  // const handleConfirmClick = () => {
-  //   // 수령 확인 클릭 시의 로직을 추가
-  //   navigate("/"); // 클릭 시 이동할 경로 설정
-  // };
+  useEffect(() => {
+    const fetchMemberInfo = async () => {
+      try {
+        const membersResponse = await getDeliveryMembersApi(id);
+        const currentUserMemberInfo = membersResponse.find(member => member.userSeq === currentUserSeq);
+        setMemberInfo(currentUserMemberInfo);
+      } catch (error) {
+        console.error('참가자 정보를 가져오는 중 오류가 발생했습니다:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMemberInfo();
+  }, [id, currentUserSeq]);
+
+  const handleConfirmClick = async () => {
+    try {
+      await changePickUpStatusApi(memberInfo.deliveryGuestSeq);
+      alert('수령 확인이 완료되었습니다.');
+      navigate("/");
+    } catch (error) {
+      console.error('수령 확인 중 오류가 발생했습니다:', error);
+      alert('수령 확인 중 오류가 발생했습니다.');
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col items-center bg-white max-w-[360px] mx-auto relative h-screen">
@@ -32,7 +64,7 @@ function DeliveryCompletePage() {
       </div>
 
       <button
-        // onClick={handleConfirmClick}
+        onClick={handleConfirmClick}
         className="py-3 px-10 bg-main text-white text-[1.1rem] font-bold rounded-xl mb-8 w-60"
       >
         수령 확인
