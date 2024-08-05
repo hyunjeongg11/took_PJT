@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../../components/common/BackButton';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useUser } from '../../store/user';
+import { getChatRoomMessageApi, getUsersApi } from '../../apis/chat/chat';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { formatDateOnly, formatTime } from '../../utils/formatDate';
 import speaker from '../../assets/common/speaker.png';
@@ -18,6 +20,11 @@ import {
 import { IoIosSettings } from 'react-icons/io';
 import { FaLocationDot, FaCrown, FaCalculator } from 'react-icons/fa6';
 import { MdAdd } from 'react-icons/md';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import ParticipantList from '../../components/chat/ParticipantList';
+
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 const tempMember = [
   {

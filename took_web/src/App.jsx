@@ -171,9 +171,6 @@ function App() {
     { path: '/taxi/setting', element: <TaxiChattingSettingPage /> },
     { path: '/taxi/path', element: <TaxiPathSettingPage /> },
     { path: '/taxi/path-list', element: <CurrentPathListPage /> },
-    { path: '/chat/delivery/main', element: <DeliveryChattingMainPage /> },
-    { path: '/chat/groupbuy/main', element: <GroupBuyChattingMainPage /> },
-    { path: '/chat/taxi/main', element: <TaxiChattingMainPage /> },
     { path: '/chat/list', element: <ChattingListPage /> },
     { path: '/chat/took', element: <TookChattingPage /> },
     { path: '/groupbuy/my-purchase', element: <MyPurchasePage /> },
@@ -181,7 +178,9 @@ function App() {
     { path: '/groupbuy/total/:id', element: <TotalPurchasePage /> },
     { path: '/groupbuy/my-order', element: <MyOrderFormPage /> },
     { path: '/chat/temp', element: <TempChattingPage /> },
-    { path: '/chat/:id', element: <ChattingMainPage /> },
+    { path: '/chat/delivery/:id', element: <DeliveryChattingMainPage /> },
+    { path: '/chat/taxi/:id', element: <TaxiChattingMainPage /> },
+    { path: '/chat/buy/:id', element: <GroupBuyChattingMainPage /> },
   ]);
 
   return <RouterProvider router={ROUTER} />;

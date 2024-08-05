@@ -16,7 +16,7 @@ function MainPage() {
             Sign Up
           </button>
         </Link>
-        <Link to="/mypage">
+        <Link to="/chat/temp">
           <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
             Mypage
           </button>

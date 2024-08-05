@@ -9,9 +9,7 @@ function AccountCompletePage() {
   const { bank, account, password, accountName } = location.state || {};
 
   const bankName = bank;
-  const accountNumber = account; 
-
-
+  const accountNumber = account;
 
   return (
     <div

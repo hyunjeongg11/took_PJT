@@ -6,8 +6,19 @@ import { MdBackspace } from 'react-icons/md';
 // const tempUser = '주최자'; // 유저에 따라 다른 창이 뜸
 // const tempUser = '참여자';
 
-const tempUser = { member_seq: 1, party_seq: 1, user_seq: 1, userName: '조현정', imgNo: 19, cost: 13000, real_cost: 12000, status: true, receive: false, is_leader: true, created_at: '2024-07-06T00:23:00' };
-
+const tempUser = {
+  member_seq: 1,
+  party_seq: 1,
+  user_seq: 1,
+  userName: '조현정',
+  imgNo: 19,
+  cost: 13000,
+  real_cost: 12000,
+  status: true,
+  receive: false,
+  is_leader: true,
+  created_at: '2024-07-06T00:23:00',
+};
 
 function DeliveryPayInputPage() {
   const [orderAmount, setOrderAmount] = useState('');

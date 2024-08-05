@@ -1,12 +1,14 @@
-// pages/chat/DeliveryChattingMainPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import {
-  formatDateOnly,
-  formatTime,
-  formatDateWithYear,
-} from '../../utils/formatDate';
+  getChatRoomMessageApi,
+  deleteRoomApi,
+  getUsersApi,
+} from '../../apis/chat/chat';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useUser } from '../../store/user';
+import { formatDateOnly, formatTime } from '../../utils/formatDate';
 import speaker from '../../assets/common/speaker.png';
 import delivery from '../../assets/chat/delivery.png';
 import calculator from '../../assets/chat/calculator.png';
@@ -22,138 +24,17 @@ import { MdAdd } from 'react-icons/md';
 import CalculatorModal from '../../components/chat/CalculatorModal';
 import MoneyModal from '../../components/chat/MoneyModal';
 import DeliveryModal from '../../components/chat/DeliveryModal';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
 import ParticipantList from '../../components/chat/ParticipantList';
 
-const tempMember = [
-  {
-    member_seq: 1,
-    party_seq: 1,
-    user_seq: 1,
-    userName: '조현정',
-    imgNo: 19,
-    cost: 13000,
-    real_cost: 12000,
-    status: true,
-    receive: false,
-    is_leader: true,
-    created_at: '2024-07-06T00:23:00',
-  },
-  {
-    member_seq: 2,
-    party_seq: 1,
-    user_seq: 2,
-    userName: '정희수',
-    imgNo: 20,
-    cost: 8000,
-    real_cost: 7500,
-    status: true,
-    receive: false,
-    is_leader: false,
-    created_at: '2024-07-06T00:23:00',
-  },
-  {
-    member_seq: 3,
-    party_seq: 1,
-    user_seq: 3,
-    userName: '차민주',
-    imgNo: 18,
-    cost: 16000,
-    real_cost: 14500,
-    status: true,
-    receive: false,
-    is_leader: false,
-    created_at: '2024-07-06T00:23:00',
-  },
-  {
-    member_seq: 4,
-    party_seq: 1,
-    user_seq: 4,
-    userName: '이재찬',
-    imgNo: 8,
-    cost: 16000,
-    real_real_cost: 14500,
-    status: true,
-    receive: false,
-    is_leader: false,
-    created_at: '2024-07-06T00:23:00',
-  },
-];
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
-const tempDelivery = {
-  delivery_seq: 1,
-  user_seq: 1,
-  room_seq: 1,
-  party_seq: 1,
-  storeName: 'BBQ 명지점',
-  pickupPlace: '송정삼정그린코아 1층',
-  deliveryTip: 3500,
-  deliveryTime: '2024-07-06T18:30:00',
-  status: 'OPEN',
-  created_at: '2024-07-06T00:23:00',
-  finishTime: '2024-07-06T18:30:00',
-};
-
-const tempMessages = [
-  {
-    id: 1,
-    user_seq: 1,
-    userName: '조현정',
-    message: '안녕하세요! BBQ 배달방이에요~',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 2,
-    user_seq: 3,
-    userName: '차민주',
-    message: '안녕하세요! 메뉴 담을까요?',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 3,
-    user_seq: 2,
-    userName: '정희수',
-    message: '네! 6시에 주문할 예정입니다.',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 4,
-    user_seq: 4,
-    userName: '이재찬',
-    message: '저는 메뉴 다 담았습니다!',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 5,
-    user_seq: 2,
-    userName: '정희수',
-    message: '저도요~',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 6,
-    user_seq: 1,
-    userName: '조현정',
-    message: '6시까지 다른분들 기다렸다가 주문하겠습니다 :-)',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 7,
-    user_seq: 3,
-    userName: '차민주',
-    message: '넵! 감사합니다!',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 8,
-    user_seq: 4,
-    userName: '이재찬',
-    message: '좋은아침입니다!',
-    timestamp: '2024-07-07T10:12:00',
-  },
-];
-
-function DeliveryChattingMainPage() {
-  const [messages, setMessages] = useState(tempMessages);
+function ChattingMainPage() {
+  const { id } = useParams();
+  const { seq } = useUser();
+  const [messages, setMessages] = useState([]);
+  const [users, setUsers] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -165,30 +46,110 @@ function DeliveryChattingMainPage() {
   const actionIconsRef = useRef(null);
   const lastDateRef = useRef('');
   const textareaRef = useRef(null);
+  const stompClient = useRef(null);
+  const currentSubscription = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const chatRoom = location.state?.chatRoom || null;
+
+  useEffect(() => {
+    const socket = new SockJS(`${SERVER_URL}/ws`);
+    stompClient.current = Stomp.over(socket);
+
+    stompClient.current.connect({}, () => {
+      console.log('WebSocket connected');
+      enterRoom();
+      loadUsers();
+    });
+
+    return () => {
+      if (stompClient.current && stompClient.current.connected) {
+        stompClient.current.disconnect();
+      }
+    };
+  }, []);
+
+  const fetchRoomMessages = async () => {
+    try {
+      const response = await getChatRoomMessageApi({
+        roomSeq: id,
+        userSeq: seq,
+      });
+      setMessages(response);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
+
+  const loadUsers = async () => {
+    try {
+      const response = await getUsersApi(id);
+      setUsers(response);
+      console.log(response);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  const enterRoom = () => {
+    if (currentSubscription.current) {
+      currentSubscription.current.unsubscribe();
+    }
+    // const enterRequest = { roomSeq: id, userSeq: seq };
+    // stompClient.current.send(
+    //   '/pub/room/enter',
+    //   {},
+    //   JSON.stringify(enterRequest)
+    // );
+    currentSubscription.current = subscribeToRoomMessages(id);
+    fetchRoomMessages();
+  };
+
+  function subscribeToRoomMessages(roomSeq) {
+    return stompClient.current.subscribe(
+      `/sub/chat/room/${roomSeq}`,
+      (messageOutput) => {
+        const newMessage = JSON.parse(messageOutput.body);
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      }
+    );
+  }
 
   const handleSendMessage = () => {
     if (inputMessage.trim() === '') return;
 
-    const newMessage = {
-      id: messages.length + 1,
-      user_seq: 1,
-      userName: '조현정',
+    const messageRequest = {
+      type: 'TALK',
+      roomSeq: id,
+      userSeq: seq,
       message: inputMessage,
-      timestamp: new Date().toISOString(),
     };
 
-    setMessages([...messages, newMessage]);
-    setInputMessage('');
-
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      setShowScrollButton(false);
-    }, 100);
+    if (stompClient.current && stompClient.current.connected) {
+      stompClient.current.send(
+        '/pub/message/send',
+        {},
+        JSON.stringify(messageRequest)
+      );
+      setInputMessage('');
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      console.error('WebSocket is not connected.');
+    }
   };
 
-  const getUserProfileImgNo = (user_seq) => {
-    const user = tempMember.find((member) => member.user_seq === user_seq);
-    return user ? user.imgNo : 1; // imgNo 기본값을 1로 설정
+  const leaveRoom = ({ roomSeq, userSeq }) => {
+    if (stompClient.current && stompClient.current.connected) {
+      const leaveRequest = { roomSeq, userSeq };
+      stompClient.current.send(
+        '/pub/room/leave',
+        {},
+        JSON.stringify(leaveRequest)
+      );
+    }
+    navigate(-1);
   };
 
   const toggleCollapse = () => {
@@ -212,15 +173,6 @@ function DeliveryChattingMainPage() {
     setShowActionIcons(!showActionIcons);
   };
 
-  const handleClickOutside = (event) => {
-    if (
-      actionIconsRef.current &&
-      !actionIconsRef.current.contains(event.target)
-    ) {
-      setShowActionIcons(false);
-    }
-  };
-
   const openModal = (modalType) => {
     setCurrentModal(modalType);
   };
@@ -238,20 +190,6 @@ function DeliveryChattingMainPage() {
   };
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop =
-        scrollContainerRef.current.scrollHeight;
-    }
-  }, []);
-
-  useEffect(() => {
     const container = scrollContainerRef.current;
     const isAtBottom =
       container.scrollHeight - container.scrollTop <=
@@ -266,22 +204,31 @@ function DeliveryChattingMainPage() {
     }
   }, [inputMessage]);
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-5 py-3">
         <BackButton />
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
-          {tempDelivery.storeName}
+          {chatRoom?.roomTitle || '채팅방'}
         </div>
         <FaBars className="mt-2.5" onClick={handleShowParticipantList} />
       </div>
       <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
       <div className="w-full px-2 py-1">
-        <div className="flex items-start bg-white p-2 rounded-lg shadow-md">
+        <div
+          className={`flex items-start p-2 m-1 rounded-lg shadow-md ${isCollapsed ? 'bg-opacity-80 bg-white shadow-none' : 'bg-white'}`}
+        >
           <img src={speaker} alt="speaker" className="w-6 h-6 ml-1" />
           <div className="ml-2 flex-grow">
-            <div className="text-sm mt-[2px]">{tempDelivery.pickupPlace}</div>
+            <div className="text-sm mt-[2px]"></div>
             {!isCollapsed && (
               <div className="text-sm text-gray-500">
                 함께 주문하기 :
@@ -307,127 +254,111 @@ function DeliveryChattingMainPage() {
         onScroll={handleScroll}
         ref={scrollContainerRef}
       >
-        {messages.map((msg, index, array) => {
-          const sameUserAndTime =
-            index > 0 &&
-            msg.user_seq === array[index - 1].user_seq &&
-            formatTime(msg.timestamp) ===
-              formatTime(array[index - 1].timestamp);
-          const lastMessageFromSameUser =
-            index < array.length - 1 &&
-            msg.user_seq === array[index + 1].user_seq &&
-            formatTime(msg.timestamp) ===
-              formatTime(array[index + 1].timestamp);
-          const showDate =
-            lastDateRef.current !== formatDateOnly(msg.timestamp);
-          lastDateRef.current = formatDateOnly(msg.timestamp);
+        {Array.isArray(messages) && messages.length > 0 ? (
+          messages.map((message, index) => {
+            const { userSeq, message: text, createdAt } = message;
+            const isCurrentUser = userSeq === seq;
+            const messageDate = new Date(createdAt);
+            const formattedTime = formatTime(messageDate);
 
-          return (
-            <div key={msg.id}>
-              {showDate && (
-                <div className="w-1/2 text-center text-xs mx-auto py-1 bg-neutral-200 bg-opacity-70 rounded-full text-black mt-2 mb-5">
-                  {formatDateOnly(msg.timestamp)}
-                </div>
-              )}
+            const user = users.find((user) => user.userSeq === userSeq);
+            const userProfileImage = user
+              ? getProfileImagePath(user.imageNo)
+              : '';
+            const userName = user ? user.userName : '';
+
+            return (
               <div
-                className={`flex ${msg.user_seq === 1 ? 'justify-end' : 'justify-start'}`}
+                key={index}
+                className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-2`}
               >
-                {msg.user_seq !== 1 && !sameUserAndTime && (
-                  <div className="flex flex-col items-center mr-2">
-                    <img
-                      src={getProfileImagePath(
-                        getUserProfileImgNo(msg.user_seq)
-                      )}
-                      alt={msg.userName}
-                      className="w-9 h-9 self-start"
-                    />
-                  </div>
-                )}
-                <div className="flex flex-col max-w-[80%]">
-                  {!sameUserAndTime && (
-                    <span
-                      className={`text-[9px] mb-1 text-black ${msg.user_seq === 1 ? 'text-right' : 'text-left'}`}
-                    >
-                      {msg.userName}
-                    </span>
-                  )}
-                  <div className="flex items-end">
-                    {msg.user_seq === 1 && !lastMessageFromSameUser && (
-                      <div className="text-[9px] text-gray-400 mr-2 whitespace-nowrap">
-                        {formatTime(msg.timestamp)}
+                {isCurrentUser ? (
+                  <>
+                    <div className="flex items-end flex-col mr-2">
+                      {/* <span className="text-xs text-gray-500 text-right mb-1">{userName}</span> */}
+                      <div className="flex items-end ">
+                        <div className="text-[10px] text-gray-500 top-full mr-2 left-0 mt-1">
+                          {formattedTime}
+                        </div>
+                        <div className="px-4 py-2 rounded-xl max-w-xs shadow-md bg-main text-white relative">
+                          {text}
+                        </div>
                       </div>
-                    )}
-                    <div
-                      className={`p-2 rounded-xl shadow-md ${msg.user_seq === 1 ? 'bg-main text-white' : 'bg-white text-black'}`}
-                      style={{
-                        wordBreak: 'break-word',
-                        whiteSpace: 'pre-wrap',
-                      }}
-                    >
-                      <div className="text-sm">{msg.message}</div>
                     </div>
-                    {msg.user_seq !== 1 && !lastMessageFromSameUser && (
-                      <div className="text-[9px] text-gray-400 ml-2 whitespace-nowrap">
-                        {formatTime(msg.timestamp)}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                {msg.user_seq === 1 && (
-                  <div className="flex flex-col items-center ml-2">
                     <img
-                      src={getProfileImagePath(
-                        getUserProfileImgNo(msg.user_seq)
-                      )}
-                      alt={msg.userName}
-                      className="w-9 h-9 self-start"
+                      src={userProfileImage}
+                      alt={userName}
+                      className="w-8 h-8 ml-2"
                     />
-                  </div>
+                  </>
+                ) : (
+                  <>
+                    <img
+                      src={userProfileImage}
+                      alt={userName}
+                      className="w-8 h-8 mr-2 mt-2"
+                    />
+                    <div className="flex items-start flex-col ml-2">
+                      <span className="text-xs text-gray-500 text-left mb-1">
+                        {userName}
+                      </span>
+                      <div className="flex items-end">
+                        <div className="px-4 py-2 rounded-xl max-w-xs shadow-md bg-white relative">
+                          {text}
+                        </div>
+                        <div className="text-[10px] text-gray-500  mt-1 ml-2">
+                          {formattedTime}
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <div className="text-center rounded-xl m-2 text-sm py-1 shadow bg-gray-500 bg-opacity-10">
+            메시지가 없습니다.
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="w-full px-2 py-2 bg-white flex items-center relative">
-        <button onClick={toggleActionIcons} className="focus:outline-none">
-          <MdAdd
-            className={`text-gray-400 cursor-pointer mr-2 w-6 h-6 transform transition-transform ${showActionIcons ? 'rotate-45' : ''}`}
-          />
+      {showScrollButton && (
+        <button
+          onClick={scrollToBottom}
+          className="absolute bottom-4 right-4 p-2 bg-main text-white rounded-full"
+        >
+          <FaArrowDown />
         </button>
-        <div className="relative flex-grow">
+      )}
+
+      <div className="flex flex-col">
+        <div className="relative bottom-0 left-0 right-0 bg-white p-2 shadow-md flex items-center">
           <textarea
             ref={textareaRef}
-            className="flex-grow w-full pl-4 pr-10 py-2 rounded-2xl bg-gray-100 focus:outline-none resize-none max-h-24"
-            placeholder="채팅 메시지 보내기"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            rows={1}
-            style={{ overflow: 'hidden' }}
+            rows="1"
+            onKeyDown={handleKeyPress}
+            className="flex-grow p-2 border rounded-lg resize-none overflow-hidden"
+            placeholder="메시지를 입력하세요"
           />
           <button
-            className={`absolute right-2 bottom-3.5 px-3 py-1.5 ${inputMessage.trim() === '' ? 'bg-gray-300' : 'bg-main'} text-white rounded-2xl flex items-center justify-center focus:outline-none`}
             onClick={handleSendMessage}
-            disabled={inputMessage.trim() === ''}
+            className="ml-2 p-2 bg-main text-white rounded-full"
           >
-            <FaPaperPlane className="w-5 h-4" />
+            <FaPaperPlane />
           </button>
+          <MdAdd
+            onClick={toggleActionIcons}
+            className="ml-2 text-2xl text-main cursor-pointer"
+          />
         </div>
-        {showScrollButton && (
-          <button
-            onClick={scrollToBottom}
-            className="absolute bottom-16 right-4 p-2 bg-white text-gray-500 rounded-full shadow-md"
-          >
-            <FaArrowDown className="w-3 h-3" />
-          </button>
-        )}
       </div>
-
       {showActionIcons && (
         <div
-          className="w-full px-4 py-2 bg-white flex justify-around"
+          className="w-full px-4 py-12 bg-white flex justify-around"
           ref={actionIconsRef}
         >
           <div className="flex flex-col items-center mb-4">
@@ -459,24 +390,30 @@ function DeliveryChattingMainPage() {
           </div>
         </div>
       )}
-
       {currentModal === 'calculator' && (
-        <CalculatorModal onClose={closeModal} tempMember={tempMember} />
+        <CalculatorModal
+          onClose={closeModal}
+          tempMember={users}
+          leader={chatRoom.userSeq}
+        />
       )}
       {currentModal === 'money' && (
-        <MoneyModal onClose={closeModal} tempMember={tempMember} />
+        <MoneyModal onClose={closeModal} tempMember={users} />
       )}
       {currentModal === 'delivery' && (
-        <DeliveryModal onClose={closeModal} tempMember={tempMember} />
+        <DeliveryModal onClose={closeModal} tempMember={users} />
       )}
+
       {showParticipantList && (
         <ParticipantList
-          participants={tempMember}
+          participants={users}
           onClose={handleCloseParticipantList}
+          onSignOut={leaveRoom}
+          leaderSeq={chatRoom.userSeq}
         />
       )}
     </div>
   );
 }
 
-export default DeliveryChattingMainPage;
+export default ChattingMainPage;

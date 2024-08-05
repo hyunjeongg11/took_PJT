@@ -46,7 +46,10 @@ export const linkAccountApi = async (params) => {
 */
 export const changeMainAccountApi = async (params) => {
   try {
-    const response = await request.post('/api/account/change-main-account', params);
+    const response = await request.post(
+      '/api/account/change-main-account',
+      params
+    );
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -127,7 +130,9 @@ export const getAccountBalanceApi = async (params) => {
 */
 export const deleteAccountApi = async ({ accountSeq }) => {
   try {
-    const response = await request.delete(`/api/account/account-delete/${accountSeq}`);
+    const response = await request.delete(
+      `/api/account/account-delete/${accountSeq}`
+    );
     return response.data;
   } catch (error) {
     return handleApiError(error);

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import BackButton from "../../components/common/BackButton";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import BackButton from '../../components/common/BackButton';
 import taxiIcon from '../../assets/payment/taxiTook.png';
 import getProfileImagePath from '../../utils/getProfileImagePath';
-import { formatNumber } from '../../utils/format'; 
+import { formatNumber } from '../../utils/format';
 import { formatDate } from '../../utils/formatDate';
 
 // 임시 데이터
@@ -21,13 +21,49 @@ const tempTaxi = {
   created_at: '2024-07-06T00:23:00',
   finish_time: '2024-07-06T01:23:00',
   cost: 34000,
-  master: '방장'
+  master: '방장',
 };
 
 const tempMember = [
-  { member_seq: 1, party_seq: 1, user_seq: 1, userName: '조현정', imgNo: 19, cost: 13000, real_cost: 12000, status: true, receive: false, is_leader: true, created_at: '2024-07-06T00:23:00' },
-  { member_seq: 2, party_seq: 1, user_seq: 2, userName: '정희수', imgNo: 20, cost: 8000, real_cost: 7500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
-  { member_seq: 3, party_seq: 1, user_seq: 3, userName: '차민주', imgNo: 18, cost: 16000, real_cost: 14500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
+  {
+    member_seq: 1,
+    party_seq: 1,
+    user_seq: 1,
+    userName: '조현정',
+    imgNo: 19,
+    cost: 13000,
+    real_cost: 12000,
+    status: true,
+    receive: false,
+    is_leader: true,
+    created_at: '2024-07-06T00:23:00',
+  },
+  {
+    member_seq: 2,
+    party_seq: 1,
+    user_seq: 2,
+    userName: '정희수',
+    imgNo: 20,
+    cost: 8000,
+    real_cost: 7500,
+    status: true,
+    receive: false,
+    is_leader: false,
+    created_at: '2024-07-06T00:23:00',
+  },
+  {
+    member_seq: 3,
+    party_seq: 1,
+    user_seq: 3,
+    userName: '차민주',
+    imgNo: 18,
+    cost: 16000,
+    real_cost: 14500,
+    status: true,
+    receive: false,
+    is_leader: false,
+    created_at: '2024-07-06T00:23:00',
+  },
 ];
 
 const tempParty = {
@@ -37,13 +73,40 @@ const tempParty = {
   cost: 34000,
   created_at: '2024-07-06T00:23:00',
   count: 3,
-  total_member: 3
+  total_member: 3,
 };
 
 const tempTaxiGuest = [
-  { guest_seq: 1, taxi_seq: 1, user_seq: 1, cost: 12000, dsti_name: '목적지1', dsti_lat: null, dsti_lng: null, route_rank: 1 },
-  { guest_seq: 2, taxi_seq: 1, user_seq: 2, cost: 7500, dsti_name: '목적지2', dsti_lat: null, dsti_lng: null, route_rank: 2 },
-  { guest_seq: 3, taxi_seq: 1, user_seq: 3, cost: 14500, dsti_name: '목적지3', dsti_lat: null, dsti_lng: null, route_rank: 3 }
+  {
+    guest_seq: 1,
+    taxi_seq: 1,
+    user_seq: 1,
+    cost: 12000,
+    dsti_name: '목적지1',
+    dsti_lat: null,
+    dsti_lng: null,
+    route_rank: 1,
+  },
+  {
+    guest_seq: 2,
+    taxi_seq: 1,
+    user_seq: 2,
+    cost: 7500,
+    dsti_name: '목적지2',
+    dsti_lat: null,
+    dsti_lng: null,
+    route_rank: 2,
+  },
+  {
+    guest_seq: 3,
+    taxi_seq: 1,
+    user_seq: 3,
+    cost: 14500,
+    dsti_name: '목적지3',
+    dsti_lat: null,
+    dsti_lng: null,
+    route_rank: 3,
+  },
 ];
 
 function TaxiCostInputPage() {
@@ -68,11 +131,15 @@ function TaxiCostInputPage() {
 
       <div className="flex flex-col mt-4 px-4 font-[Nanum_Gothic] h-[calc(100%-160px)] relative">
         <div className="p-5 rounded-xl shadow-lg border border-inherit h-full overflow-y-scroll pb-24">
-          <div className="text-gray-500 mb-4 text-sm">{formatDate(tempTaxi.created_at)}</div>
+          <div className="text-gray-500 mb-4 text-sm">
+            {formatDate(tempTaxi.created_at)}
+          </div>
           <div className="flex items-center mb-6">
             <img src={taxiIcon} alt="Took" className="w-14 h-14" />
             <div className="ml-4 relative">
-              <div className="text-sm font-bold text-black mb-1">총 {tempTaxi.count}명</div>
+              <div className="text-sm font-bold text-black mb-1">
+                총 {tempTaxi.count}명
+              </div>
               <div className="text-lg flex items-center">
                 <input
                   type="text"
@@ -88,31 +155,46 @@ function TaxiCostInputPage() {
 
           {tempMember.map((member) => {
             const balance = member.cost - member.real_cost;
-            const formattedBalance = balance > 0 ? `+${formatNumber(balance)}` : formatNumber(balance);
+            const formattedBalance =
+              balance > 0 ? `+${formatNumber(balance)}` : formatNumber(balance);
             return (
               <div key={member.member_seq} className="mb-4">
                 <div className="flex items-center mb-3">
                   <div className="flex-grow items-center">
                     <div className="flex items-center font-bold">
-                      <img src={getProfileImagePath(member.imgNo)} alt={member.userName} className="font-[Nanum_Gothic] w-9 h-9 mr-4" />
+                      <img
+                        src={getProfileImagePath(member.imgNo)}
+                        alt={member.userName}
+                        className="font-[Nanum_Gothic] w-9 h-9 mr-4"
+                      />
                       <span>{member.userName}</span>
                       {member.is_leader && (
-                        <span className="ml-2 bg-gray-300 text-white text-xs rounded-full px-2 py-0.5">본인</span>
+                        <span className="ml-2 bg-gray-300 text-white text-xs rounded-full px-2 py-0.5">
+                          본인
+                        </span>
                       )}
                     </div>
                     {totalAmount ? (
                       <div>
                         <div className="flex justify-between mt-2 ml-1">
                           <span className="text-sm">선결제금액</span>
-                          <span className="text-sm">{formatNumber(member.cost)} 원</span>
+                          <span className="text-sm">
+                            {formatNumber(member.cost)} 원
+                          </span>
                         </div>
                         <div className="flex justify-between mt-2 ml-1">
                           <span className="text-sm">실결제금액</span>
-                          <span className="text-sm font-bold">{formatNumber(member.real_cost)} 원</span>
+                          <span className="text-sm font-bold">
+                            {formatNumber(member.real_cost)} 원
+                          </span>
                         </div>
                         <div className="flex justify-between mt-2 ml-1">
                           <span className="text-sm">차액</span>
-                          <span className={`text-sm font-bold ${balance > 0 ? 'text-green-500' : 'text-red-500'}`}>{formattedBalance} 원</span>
+                          <span
+                            className={`text-sm font-bold ${balance > 0 ? 'text-green-500' : 'text-red-500'}`}
+                          >
+                            {formattedBalance} 원
+                          </span>
                         </div>
                       </div>
                     ) : null}

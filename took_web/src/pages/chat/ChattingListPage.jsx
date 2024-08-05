@@ -50,9 +50,22 @@ function ChattingListPage() {
   const [rooms, setRooms] = useState([]);
   const { seq } = useUser();
   const handleChatRoomClick = (chatRoom) => {
-    // TODO: chatRoom.category에 따라서 배달, 택시, 공동구매 각각 채팅방으로 연결될 수 있도록 구현
+    let route;
+    switch (chatRoom.category) {
+      case 1:
+        route = `/chat/delivery/${chatRoom.roomSeq}`;
+        break;
+      case 2:
+        route = `/chat/taxi/${chatRoom.roomSeq}`;
+        break;
+      case 3:
+        route = `/chat/buy/${chatRoom.roomSeq}`;
+        break;
+      default:
+        route = `/chat/${chatRoom.roomSeq}`;
+    }
 
-    navigate(`/chat/${chatRoom.roomSeq}`, { state: { chatRoom } });
+    navigate(route, { state: { chatRoom } });
   };
 
   const loadChatRooms = async () => {

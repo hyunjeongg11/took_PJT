@@ -41,16 +41,14 @@ function OrderFormPage() {
             </div>
 
             <div className="flex items-center gap-2 justify-center p-10 overflow-x-scroll">
-              {Array.from({ length: 4 }).map(
-                (_, index) => (
-                  <img
-                    key={index}
-                    loading="lazy"
-                    src={getProfileImagePath(getRandomNumber(1, 20))}
-                    className="w-8 mx-auto mt-3 animate-semijump "
-                  />
-                )
-              )}
+              {Array.from({ length: 4 }).map((_, index) => (
+                <img
+                  key={index}
+                  loading="lazy"
+                  src={getProfileImagePath(getRandomNumber(1, 20))}
+                  className="w-8 mx-auto mt-3 animate-semijump "
+                />
+              ))}
             </div>
           </div>
         </div>

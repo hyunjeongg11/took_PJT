@@ -11,7 +11,10 @@ const ParticipantList = ({ participants, onClose, onSignOut, leaderSeq }) => {
       <div className="bg-white w-4/5 max-w-md h-full shadow-lg relative">
         <div className="flex justify-between items-center p-4 border-b border-gray-300">
           <h2 className="text-lg font-semibold">참여자</h2>
-          <button onClick={onClose} className="text-gray-400 focus:outline-none">
+          <button
+            onClick={onClose}
+            className="text-gray-400 focus:outline-none"
+          >
             <FaTimes className="w-5 h-5" />
           </button>
         </div>
@@ -25,15 +28,21 @@ const ParticipantList = ({ participants, onClose, onSignOut, leaderSeq }) => {
               />
               <div className="ml-2.5 flex items-center">
                 {participant.userSeq === seq && (
-                  <div className="bg-gray-400 text-white text-[9px] rounded-full px-1 py-0.5 mr-2">나</div>
+                  <div className="bg-gray-400 text-white text-[9px] rounded-full px-1 py-0.5 mr-2">
+                    나
+                  </div>
                 )}
-                <div className="text-sm font-medium">{participant.userName}</div>
-                {leaderSeq === participant.userSeq && <FaCrown className="text-yellow-400 ml-2" />}
+                <div className="text-sm font-medium">
+                  {participant.userName}
+                </div>
+                {leaderSeq === participant.userSeq && (
+                  <FaCrown className="text-yellow-400 ml-2" />
+                )}
               </div>
             </div>
           ))}
         </div>
-      
+
         <button
           onClick={onSignOut}
           className="absolute left-4 bottom-4 text-gray-400 focus:outline-none flex items-center"

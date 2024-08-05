@@ -25,7 +25,7 @@ function connect() {
   stompClient.connect({}, function (frame) {
     console.log('Connected: ' + frame);
     stompClient.subscribe('/sub/chat/rooms', function (messageOutput) {
-      loadChatRooms(); // 방 목록 불러오기
+      // loadChatRooms(); // 방 목록 불러오기
     });
     stompClient.subscribe('/sub/chat/users', function (userOutput) {
       loadUsers(); // 사용자 목록 불러오기
@@ -35,10 +35,11 @@ function connect() {
 
 // 사용자 시퀀스 설정
 function setUserSeq() {
-  currentUserSeq = document.getElementById('userSeq').value;
-  document.getElementById('userSeqInput').style.display = 'none'; // 사용자 입력 섹션 숨김
-  document.getElementById('chatRooms').style.display = 'block'; // 채팅방 목록 섹션 표시
-  loadChatRooms(); // 채팅방 목록 로드
+  // currentUserSeq = document.getElementById('userSeq').value;
+  // document.getElementById('userSeqInput').style.display = 'none'; // 사용자 입력 섹션 숨김
+  // document.getElementById('chatRooms').style.display = 'block'; // 채팅방 목록 섹션 표시
+  // //loadChatRooms(); // 채팅방 목록 로드
+  enterRoom(66);
 }
 
 // 채팅방 생성 UI 표시
@@ -47,23 +48,22 @@ function showCreateRoom() {
 }
 
 // 새로운 채팅방 생성
-// async function createRoom() {
-//   const roomTitle = document.getElementById('roomTitle').value;
-//   const category = document.getElementById('roomCategory').value;
-//   const response = await createChatApi({
-//     roomTitle: "제목",
-//     category: 1,
-//     userSeq: 1,
-//   });
-//   console.log(response);
-  
-// }
+async function createRoom() {
+  const roomTitle = document.getElementById('roomTitle').value;
+  const category = document.getElementById('roomCategory').value;
+  const response = await createChatApi({
+    roomTitle: roomTitle,
+    category: category,
+    userSeq: 1,
+  });
+  console.log(response);
+}
 
 // const loadChatRooms = async () => {
 //   const response = await getChatListApi();
 //   console.log(response);
 //   rooms = response;
-//   showChatRooms(rooms); 
+//   showChatRooms(rooms);
 // }
 
 // async function loadChatRooms() {
@@ -76,14 +76,14 @@ function showCreateRoom() {
 // }
 
 // 사용자 목록 로드
-// function loadUsers() {
-//   fetch('/api/chat/users')
-//     .then((response) => response.json())
-//     .then((data) => {
-//       users = data; // 사용자 목록 업데이트
-//       showUsers(users); // 사용자 목록 표시
-//     });
-// }
+function loadUsers() {
+  fetch('/api/chat/users')
+    .then((response) => response.json())
+    .then((data) => {
+      users = data; // 사용자 목록 업데이트
+      showUsers(users); // 사용자 목록 표시
+    });
+}
 
 // 사용자 목록 표시
 function showUsers(users) {
@@ -190,7 +190,7 @@ function backToRooms() {
   document.getElementById('chatRoom').style.display = 'none'; // 채팅방 UI 숨김
   document.getElementById('chatRooms').style.display = 'block'; // 채팅방 목록 UI 표시
   currentRoomSeq = null; // 현재 방 시퀀스 초기화
-  loadChatRooms(); // 채팅방 목록 로드
+  //loadChatRooms(); // 채팅방 목록 로드
 }
 
 // 채팅방 삭제
@@ -262,8 +262,8 @@ const TempChattingPage = () => {
   return (
     <div className="container">
       <h1 className="mt-5">Chat Application</h1>
-
-      {/* <div id="userSeqInput" className="mt-3">
+      {/* 
+      <div id="userSeqInput" className="mt-3">
         <h2>Enter User Sequence</h2>
         <input
           type="text"

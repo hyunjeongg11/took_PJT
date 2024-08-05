@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 function RequestCard({ userName, onClose }) {
   const [requestSent, setRequestSent] = useState(false);
@@ -13,21 +13,35 @@ function RequestCard({ userName, onClose }) {
         {!requestSent ? (
           <>
             <div className="mb-6 mt-4 text-sm">
-              {userName}님께 <span className="font-dela">took</span> 정산 요청<br />
+              {userName}님께 <span className="font-dela">took</span> 정산 요청
+              <br />
               알림 메세지를 전송할까요?
             </div>
             <div className="font-bold">
-              <button onClick={onClose} className="bg-gray-200 text-gray-700 w-24 py-2 rounded-xl mr-4">취소</button>
-              <button onClick={handleRequest} className="bg-main text-white w-24 py-2 rounded-xl">요청하기</button>
+              <button
+                onClick={onClose}
+                className="bg-gray-200 text-gray-700 w-24 py-2 rounded-xl mr-4"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleRequest}
+                className="bg-main text-white w-24 py-2 rounded-xl"
+              >
+                요청하기
+              </button>
             </div>
           </>
         ) : (
           <>
-            <div className="mb-6 mt-4 text-sm">
-              요청이 완료되었습니다.
-            </div>
+            <div className="mb-6 mt-4 text-sm">요청이 완료되었습니다.</div>
             <div className="font-bold">
-              <button onClick={onClose} className="bg-main text-white w-24 py-2 rounded-xl">확인</button>
+              <button
+                onClick={onClose}
+                className="bg-main text-white w-24 py-2 rounded-xl"
+              >
+                확인
+              </button>
             </div>
           </>
         )}

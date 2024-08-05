@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import BackButton from '../../components/common/BackButton';
-import { getAccountListApi, changeMainAccountApi, deleteAccountApi, linkAccountApi } from '../../apis/account/info.js';
+import {
+  getAccountListApi,
+  changeMainAccountApi,
+  deleteAccountApi,
+  linkAccountApi,
+} from '../../apis/account/info.js';
 import { useUser } from '../../store/user.js';
 
 const bankImages = import.meta.glob('../../assets/payment/bank/*.png', {
@@ -15,11 +20,15 @@ const getImagePath = (bankName) => {
 
   if (bankName.endsWith('은행')) {
     bankName = bankName.slice(0, -2);
-    return bankImages[`../../assets/payment/bank/${bankName}.png`]?.default || '';
+    return (
+      bankImages[`../../assets/payment/bank/${bankName}.png`]?.default || ''
+    );
   }
   if (bankName.endsWith('증권')) {
     bankName = bankName.slice(0, -2);
-    return stockImages[`../../assets/payment/stock/${bankName}.png`]?.default || '';
+    return (
+      stockImages[`../../assets/payment/stock/${bankName}.png`]?.default || ''
+    );
   }
   return bankImages[`../../assets/payment/bank/${bankName}.png`]?.default || '';
 };
@@ -132,9 +141,7 @@ const PaymentMethodsPage = () => {
                     </span>
                   )}
                 </div>
-                <div className="text-sm text-black">
-                  {account.account_num}
-                </div>
+                <div className="text-sm text-black">{account.account_num}</div>
                 <div className="text-sm text-gray-500">
                   {account.accountName}
                 </div>

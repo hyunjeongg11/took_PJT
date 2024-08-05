@@ -3,7 +3,6 @@ import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import {
   getChatRoomMessageApi,
-  deleteRoomApi,
   getUsersApi,
 } from '../../apis/chat/chat';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
@@ -44,14 +43,12 @@ function ChattingMainPage() {
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const actionIconsRef = useRef(null);
-  const lastDateRef = useRef('');
   const textareaRef = useRef(null);
   const stompClient = useRef(null);
   const currentSubscription = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const chatRoom = location.state?.chatRoom || null;
-
 
   useEffect(() => {
     const socket = new SockJS(`${SERVER_URL}/ws`);
@@ -205,6 +202,13 @@ function ChattingMainPage() {
     }
   }, [inputMessage]);
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-5 py-3">
@@ -217,29 +221,31 @@ function ChattingMainPage() {
       <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
       <div className="w-full px-2 py-1">
-      <div className={`flex items-start p-2 m-1 rounded-lg shadow-md ${isCollapsed ? 'bg-opacity-80 bg-white shadow-none' : 'bg-white'}`}>
-        <img src={speaker} alt="speaker" className="w-6 h-6 ml-1" />
-        <div className="ml-2 flex-grow">
-          <div className="text-sm mt-[2px]"></div>
-          {!isCollapsed && (
-            <div className="text-sm text-gray-500">
-              함께 주문하기 :
-              <a href="https://s.baemin.com/bfp.lty8b" className="underline">
-                {' '}
-                https://s.baemin.com/bfp.lty8b
-              </a>
-            </div>
-          )}
+        <div
+          className={`flex items-start p-2 m-1 rounded-lg shadow-md ${isCollapsed ? 'bg-opacity-80 bg-white shadow-none' : 'bg-white'}`}
+        >
+          <img src={speaker} alt="speaker" className="w-6 h-6 ml-1" />
+          <div className="ml-2 flex-grow">
+            <div className="text-sm mt-[2px]"></div>
+            {!isCollapsed && (
+              <div className="text-sm text-gray-500">
+                함께 주문하기 :
+                <a href="https://s.baemin.com/bfp.lty8b" className="underline">
+                  {' '}
+                  https://s.baemin.com/bfp.lty8b
+                </a>
+              </div>
+            )}
+          </div>
+          <button onClick={toggleCollapse} className="focus:outline-none">
+            {isCollapsed ? (
+              <FaChevronDown className="h-4 w-4 text-gray-400" />
+            ) : (
+              <FaChevronUp className="h-4 w-4 text-gray-400" />
+            )}
+          </button>
         </div>
-        <button onClick={toggleCollapse} className="focus:outline-none">
-          {isCollapsed ? (
-            <FaChevronDown className="h-4 w-4 text-gray-400" />
-          ) : (
-            <FaChevronUp className="h-4 w-4 text-gray-400" />
-          )}
-        </button>
       </div>
-    </div>
 
       <div
         className="flex-grow overflow-y-scroll px-4 py-2 space-y-4 relative"
@@ -252,11 +258,13 @@ function ChattingMainPage() {
             const isCurrentUser = userSeq === seq;
             const messageDate = new Date(createdAt);
             const formattedTime = formatTime(messageDate);
-          
-            const user = users.find(user => user.userSeq === userSeq);
-            const userProfileImage = user ? getProfileImagePath(user.imageNo) : '';
+
+            const user = users.find((user) => user.userSeq === userSeq);
+            const userProfileImage = user
+              ? getProfileImagePath(user.imageNo)
+              : '';
             const userName = user ? user.userName : '';
-          
+
             return (
               <div
                 key={index}
@@ -266,11 +274,13 @@ function ChattingMainPage() {
                   <>
                     <div className="flex items-end flex-col mr-2">
                       {/* <span className="text-xs text-gray-500 text-right mb-1">{userName}</span> */}
-                      <div className='flex items-end '>
-                      <div className="text-[10px] text-gray-500 top-full mr-2 left-0 mt-1">{formattedTime}</div>
-                      <div className="px-4 py-2 rounded-xl max-w-xs shadow-md bg-main text-white relative">
-                        {text}
-                      </div>
+                      <div className="flex items-end ">
+                        <div className="text-[10px] text-gray-500 top-full mr-2 left-0 mt-1">
+                          {formattedTime}
+                        </div>
+                        <div className="px-4 py-2 rounded-xl max-w-xs shadow-md bg-main text-white relative">
+                          {text}
+                        </div>
                       </div>
                     </div>
                     <img
@@ -284,23 +294,30 @@ function ChattingMainPage() {
                     <img
                       src={userProfileImage}
                       alt={userName}
-                      className="w-8 h-8 mr-2 mt-3"
+                      className="w-8 h-8 mr-2 mt-2"
                     />
                     <div className="flex items-start flex-col ml-2">
-                      <span className="text-xs text-gray-500 text-left mb-1">{userName}</span>
-                      <div className='flex items-end'>
-                      <div className="px-4 py-2 rounded-xl max-w-xs shadow-md bg-white relative">
-                        {text}
-                        
-                      </div><div className="text-[10px] text-gray-500  mt-1">{formattedTime}</div>
+                      <span className="text-xs text-gray-500 text-left mb-1">
+                        {userName}
+                      </span>
+                      <div className="flex items-end">
+                        <div className="px-4 py-2 rounded-xl max-w-xs shadow-md bg-white relative">
+                          {text}
+                        </div>
+                        <div className="text-[10px] text-gray-500  mt-1 ml-2">
+                          {formattedTime}
+                        </div>
                       </div>
                     </div>
                   </>
                 )}
               </div>
             );
-          })) : (
-          <div className='text-center rounded-xl m-2 text-sm py-1 shadow bg-gray-500 bg-opacity-10'>메시지가 없습니다.</div>
+          })
+        ) : (
+          <div className="text-center rounded-xl m-2 text-sm py-1 shadow bg-gray-500 bg-opacity-10">
+            메시지가 없습니다.
+          </div>
         )}
         <div ref={messagesEndRef} />
       </div>
@@ -314,32 +331,30 @@ function ChattingMainPage() {
         </button>
       )}
 
-      
-      <div className='flex flex-col'>
-      <div className="relative bottom-0 left-0 right-0 bg-white p-2 shadow-md flex items-center">
-        <textarea
-          ref={textareaRef}
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          rows="1"
-          className="flex-grow p-2 border rounded-lg resize-none overflow-hidden"
-          placeholder="메시지를 입력하세요"
-        />
-        <button
-          onClick={handleSendMessage}
-          className="ml-2 p-2 bg-main text-white rounded-full"
-        >
-          <FaPaperPlane />
-        </button>
-        <MdAdd
-          onClick={toggleActionIcons}
-          className="ml-2 text-2xl text-main cursor-pointer"
-        />
-      
+      <div className="flex flex-col">
+        <div className="relative bottom-0 left-0 right-0 bg-white p-2 shadow-md flex items-center">
+          <textarea
+            ref={textareaRef}
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            rows="1"
+            onKeyDown={handleKeyPress}
+            className="flex-grow p-2 border rounded-lg resize-none overflow-hidden"
+            placeholder="메시지를 입력하세요"
+          />
+          <button
+            onClick={handleSendMessage}
+            className="ml-2 p-2 bg-main text-white rounded-full"
+          >
+            <FaPaperPlane />
+          </button>
+          <MdAdd
+            onClick={toggleActionIcons}
+            className="ml-2 text-2xl text-main cursor-pointer"
+          />
+        </div>
       </div>
-     
-    </div>
-    {showActionIcons && (
+      {showActionIcons && (
         <div
           className="w-full px-4 py-12 bg-white flex justify-around"
           ref={actionIconsRef}
@@ -374,10 +389,18 @@ function ChattingMainPage() {
         </div>
       )}
       {currentModal === 'calculator' && (
-        <CalculatorModal onClose={closeModal} tempMember={users} leader={chatRoom.userSeq} />
+        <CalculatorModal
+          onClose={closeModal}
+          tempMember={users}
+          leader={chatRoom.userSeq}
+        />
       )}
-      {currentModal === 'money' && <MoneyModal onClose={closeModal} tempMember={users} />}
-      {currentModal === 'delivery' && <DeliveryModal onClose={closeModal} tempMember={users} />}
+      {currentModal === 'money' && (
+        <MoneyModal onClose={closeModal} tempMember={users} />
+      )}
+      {currentModal === 'delivery' && (
+        <DeliveryModal onClose={closeModal} tempMember={users} />
+      )}
 
       {showParticipantList && (
         <ParticipantList

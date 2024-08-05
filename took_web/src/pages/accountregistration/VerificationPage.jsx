@@ -57,7 +57,10 @@ function VerificationPage() {
     }
 
     try {
-      const response = await verifySmsApi({ phoneNumber: phoneNumber.toString(), code: parseInt(verificationCode, 10) });
+      const response = await verifySmsApi({
+        phoneNumber: phoneNumber.toString(),
+        code: parseInt(verificationCode, 10),
+      });
       if (response) {
         setIsVerified(true);
         setIsValidCode(true);
@@ -95,7 +98,9 @@ function VerificationPage() {
     //   }
     // }
     if (isFormValid) {
-      navigate('/setsimplepwd', { state: { bank, account, password, accountName } });
+      navigate('/setsimplepwd', {
+        state: { bank, account, password, accountName },
+      });
     }
   };
 
@@ -190,7 +195,8 @@ function VerificationPage() {
         disabled={!isFormValid}
         onMouseOver={(e) =>
           isFormValid &&
-          (e.currentTarget.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.2)')}
+          (e.currentTarget.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.2)')
+        }
         onMouseOut={(e) => (e.currentTarget.style.boxShadow = 'none')}
         onClick={handleNextClick}
       >

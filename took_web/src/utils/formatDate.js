@@ -17,7 +17,6 @@ export const formatDateWithoutTime = (dateString) => {
   return `${month}.${day} (${dayOfWeek})`;
 };
 
-
 export const formatDateWithYear = (dateString) => {
   const date = new Date(dateString);
   const year = date.getFullYear();
@@ -29,7 +28,7 @@ export const formatDateWithYear = (dateString) => {
   const formattedHours = hours < 10 ? `0${hours}` : hours;
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
   return `${year}.${month}.${day} (${weekday}) ${formattedHours}:${formattedMinutes}`;
-}
+};
 
 export const formatDateOnly = (dateString) => {
   const options = {
@@ -40,7 +39,7 @@ export const formatDateOnly = (dateString) => {
   };
   const date = new Date(dateString);
   return date.toLocaleDateString('ko-KR', options);
-}
+};
 
 export const formatTime = (dateString) => {
   const date = new Date(dateString);
@@ -50,4 +49,4 @@ export const formatTime = (dateString) => {
   const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
   return `${ampm} ${formattedHours}:${formattedMinutes}`;
-}
+};

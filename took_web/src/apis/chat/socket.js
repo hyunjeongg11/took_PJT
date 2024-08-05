@@ -4,7 +4,6 @@ import { useUser } from '../../store/user';
 import { handleApiError } from '../errorHandling';
 import { createChatApi } from '../../apis/chat/chat';
 
-
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 // const { userSeq } = useUser();

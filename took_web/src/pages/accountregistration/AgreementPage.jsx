@@ -51,7 +51,9 @@ function AgreementPage() {
 
   const handleNextClick = () => {
     if (isFormValid) {
-      navigate('/verification', { state: { bank, account, password, accountName } });
+      navigate('/verification', {
+        state: { bank, account, password, accountName },
+      });
     }
   };
 

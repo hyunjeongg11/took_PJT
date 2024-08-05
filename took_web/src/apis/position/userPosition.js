@@ -3,7 +3,7 @@ import { handleApiError } from '../errorHandling';
 
 // 사용자 현재 위치 정보 저장
 // - 요청
-// { 
+// {
 // 	"userSeq": "Long", // 사용자번호
 //   "lat": "double",  // 위도
 //   "lon": "double"   // 경도
