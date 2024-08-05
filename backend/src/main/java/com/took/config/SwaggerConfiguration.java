@@ -146,10 +146,4 @@ public class SwaggerConfiguration {
                 .pathsToMatch("/api/user/**") // 경로 패턴이 일치하는 것들을 API로 인식
                 .build();
     }
-
-
-
-
-
-
 }
