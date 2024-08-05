@@ -82,7 +82,7 @@ public class WebSecurityConfig {
 //                                                로그인 전에 이뤄지는 작업은 인증이 푤요하지 않다.
                                 .requestMatchers("/", "/api/auth/**","/oauth2/**").permitAll()
                                 .requestMatchers("/ws/**").permitAll()
-                                .requestMatchers("/api/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                .requestMatchers("/api/swagger-ui/**", "/api-docs/**").permitAll()
                                 // 접두사는 제외 하고 USER만 적어준다.w
                                 .requestMatchers("/api/user/**").hasRole("USER")
                                 .requestMatchers("/api/account/**").hasRole("USER")
