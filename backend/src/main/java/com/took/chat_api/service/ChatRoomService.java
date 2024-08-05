@@ -86,4 +86,5 @@ public class ChatRoomService {
     public void deleteChatRoom(Long roomSeq) {
         chatRoomRepository.deleteById(roomSeq);  // 채팅방 삭제
     }
+
 }

@@ -1,9 +1,6 @@
 package com.took.chat_api.service;
 
-import com.took.chat_api.dto.ChatUserCreateRequest;
-import com.took.chat_api.dto.ChatUserCreateResponse;
-import com.took.chat_api.dto.ChatUserDeleteRequest;
-import com.took.chat_api.dto.ChatUserSelectResponse;
+import com.took.chat_api.dto.*;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.entity.ChatUser;
 import com.took.chat_api.repository.ChatRoomRepository;
@@ -130,4 +127,23 @@ public class ChatUserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public List<ChatRoomCategorySelectResponse> findRoomsByUser(Long userSeq) {
+        // 주어진 userSeq로 UserEntity 조회
+        UserEntity user = userRepository.findByUserSeq(userSeq);
+
+        // 해당 유저가 참여하고 있는 ChatUser 목록 조회
+        List<ChatUser> chatUsers = chatUserRepository.findByUser(user);
+
+        // ChatUser에서 ChatRoom을 추출하고 중복을 제거하여 리스트로 변환
+        List<ChatRoom> chatRooms = chatUsers.stream()
+                .map(ChatUser::getChatRoom)
+                .distinct()
+                .toList();
+
+        // ChatRoom을 ChatRoomCategorySelectResponse로 변환
+        return chatRooms.stream()
+                .map(ChatRoomCategorySelectResponse::new)  // DTO 변환
+                .collect(Collectors.toList());
+    }
 }

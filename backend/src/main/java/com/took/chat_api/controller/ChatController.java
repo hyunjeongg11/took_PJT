@@ -124,4 +124,12 @@ public class ChatController {
         List<ChatMessageSelectResponse> messages = chatMessageService.findMessagesByRoomSeq(chatMessageSelectRequest);
         return ResponseEntity.ok(messages);
     }
+
+    @Operation(summary = "해당 유저가 채팅방 목록 조회", description = "특정 유저의 모든 채팅방을 조회합니다.")
+    @GetMapping("/rooms/{userSeq}")
+    public ResponseEntity<List<ChatRoomCategorySelectResponse>> getRoomsByUser(
+            @PathVariable @Parameter(description = "조회할 유저의 고유 번호", required = true) Long userSeq) {
+        List<ChatRoomCategorySelectResponse> rooms = chatUserService.findRoomsByUser(userSeq);
+        return ResponseEntity.ok(rooms);
+    }
 }
