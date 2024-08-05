@@ -58,7 +58,7 @@ public class TaxiGuestRepositoryCustomImpl implements TaxiGuestRepositoryCustom 
 
     /**
      * 특정 사용자가 참가했는지 확인합니다.
-     * @param userSeq 사용자 번호
+     * @param user 사용자 번호
      * @return 탑승 여부
      */
     @Override

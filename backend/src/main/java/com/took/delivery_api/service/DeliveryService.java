@@ -74,7 +74,6 @@ public class DeliveryService {
     @Transactional
     public void deleteDelivery(Long deliverySeq) {
         deliveryRepository.deleteByDeliverySeq(deliverySeq);
-        em.flush();
     }
     
     // 공지사항 등록

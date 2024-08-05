@@ -42,8 +42,7 @@ public class DeliveryGuestService {
     // 파티 퇴장
     @Transactional
     public void leaveParty(DeliveryGuestDeleteRequest request) {
-        DeliveryGuest deliveryGuest = deliveryGuestRepository.findByDeliveryGuestSeq(request.getDeliveryGuestSeq());
-        deliveryGuestRepository.delete(deliveryGuest);
+        deliveryGuestRepository.deleteByDeliveryGuestSeq(request.getDeliveryGuestSeq());
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
         delivery.updateCount(-1);
     }
