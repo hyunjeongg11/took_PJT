@@ -86,11 +86,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<? super UserInfoResponseDto> userInfo(UserSeqRequestDto requestBody) {
-
         UserEntity user = null;
-        try{
+        try {
             user = userRepository.getReferenceById(requestBody.getUserSeq());
-        }catch(Exception e){
+
+            // UserInfoResponseDto의 정적 팩토리 메서드를 사용하여 객체 생성
+            UserInfoResponseDto response = UserInfoResponseDto.fromEntity(user);
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
