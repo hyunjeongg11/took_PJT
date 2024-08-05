@@ -1,8 +1,10 @@
 package com.took.shop_api.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.shop_api.dto.*;
+import com.took.shop_api.entity.QShop;
 import com.took.shop_api.entity.Shop;
 import com.took.shop_api.entity.ShopGuest;
 import com.took.shop_api.repository.ShopGuestRepository;
@@ -25,6 +27,8 @@ public class ShopService {
     private final ShopGuestRepository shopGuestRepository;
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
+
+    private final JPAQueryFactory queryFactory;
 
     @Transactional
     public Shop save(AddShopRequest request) {
@@ -74,7 +78,10 @@ public class ShopService {
 
     @Transactional
     public void delete(Long id) {
-        shopRepository.deleteById(id);
+
+        QShop shop = QShop.shop;
+        System.out.println("shop을 수정합니다.");
+        queryFactory.delete(shop).where(shop.shopSeq.eq(id)).execute();
     }
 
     @Transactional
