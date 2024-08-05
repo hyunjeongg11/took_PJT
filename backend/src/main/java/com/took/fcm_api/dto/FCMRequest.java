@@ -1,14 +1,13 @@
-package com.ssafy.fcmtest;
+package com.took.fcm_api.dto;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-public class NotificationRequest {
+public class FCMRequest {
     private long userSeq;
     private long partySeq;
+    private int category;
     private String title;
     private String token;
     private int cost;
-
 }
