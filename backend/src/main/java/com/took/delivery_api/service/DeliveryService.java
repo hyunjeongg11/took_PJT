@@ -69,7 +69,7 @@ public class DeliveryService {
     // 글 삭제
     @Transactional
     public void deleteDelivery(Long deliverySeq) {
-        deliveryRepository.deleteById(deliverySeq);
+        deliveryRepository.deleteByDeliverySeq(deliverySeq);
     }
     
     // 공지사항 등록

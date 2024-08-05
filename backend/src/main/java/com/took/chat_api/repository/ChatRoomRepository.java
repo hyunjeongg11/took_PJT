@@ -20,4 +20,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     List<ChatRoom> findByCategoryAndUserIn(int category, List<UserEntity> users);
 
     List<ChatRoom> findByUser(UserEntity user);
+
+    void deleteByRoomSeq(Long roomSeq);
 }

@@ -84,7 +84,7 @@ public class ChatRoomService {
      */
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
     public void deleteChatRoom(Long roomSeq) {
-        chatRoomRepository.deleteById(roomSeq);  // 채팅방 삭제
+        chatRoomRepository.deleteByRoomSeq(roomSeq);  // 채팅방 삭제
     }
 
 }
