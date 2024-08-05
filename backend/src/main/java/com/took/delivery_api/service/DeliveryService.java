@@ -55,14 +55,14 @@ public class DeliveryService {
         // Delivery 객체를 저장하고 응답 객체 생성
         return new DeliveryCreateResponse(deliveryRepository.save(delivery));
     }
-    
+
     // 정산 연결
     @Transactional
     public void setParty(DeliverySerPartyRequest request) {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
         delivery.updateParty(request.getPartySeq());
     }
-    
+
     // 글 수정
     @Transactional
     public void modifyDelivery(DeliveryModifyRequest request) {
@@ -73,9 +73,13 @@ public class DeliveryService {
     // 글 삭제
     @Transactional
     public void deleteDelivery(Long deliverySeq) {
-        deliveryRepository.deleteByDeliverySeq(deliverySeq);
+//        deliveryRepository.deleteByDeliverySeq(deliverySeq);
+        Delivery delivery = deliveryRepository.findByDeliverySeq(deliverySeq);
+        System.out.println(delivery.getDeliverySeq() + "번 글 삭제");
+        deliveryRepository.delete(delivery);
+        deliveryRepository.flush(); // 변경 사항을 즉시 데이터베이스에 반영
     }
-    
+
     // 공지사항 등록
     @Transactional
     public void createNotice(DeliveryNoticeCreateRequest request) {
