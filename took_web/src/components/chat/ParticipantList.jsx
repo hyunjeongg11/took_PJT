@@ -2,8 +2,10 @@
 import React from 'react';
 import { FaCrown, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import getProfileImagePath from '../../utils/getProfileImagePath';
+import { useUser } from '../../store/user';
 
-const ParticipantList = ({ participants, onClose, onSignOut }) => {
+const ParticipantList = ({ participants, onClose, onSignOut, leaderSeq }) => {
+  const { seq } = useUser();
   return (
     <div className="fixed inset-0 flex justify-end bg-black bg-opacity-50 z-50">
       <div className="bg-white w-4/5 max-w-md h-full shadow-lg relative">
@@ -15,18 +17,18 @@ const ParticipantList = ({ participants, onClose, onSignOut }) => {
         </div>
         <div className="p-4">
           {participants.map((participant) => (
-            <div key={participant.user_seq} className="flex items-center mb-4">
+            <div key={participant.userSeq} className="flex items-center mb-4">
               <img
-                src={getProfileImagePath(participant.imgNo)}
+                src={getProfileImagePath(participant.imageNo)}
                 alt={participant.userName}
-                className="w-9 h-9"
+                className="w-8 h-8"
               />
               <div className="ml-2.5 flex items-center">
-                {participant.user_seq === 1 && (
-                  <div className="bg-gray-400 text-white text-[9px] rounded-full px-1 py-0.5 mr-1">나</div>
+                {participant.userSeq === seq && (
+                  <div className="bg-gray-400 text-white text-[9px] rounded-full px-1 py-0.5 mr-2">나</div>
                 )}
                 <div className="text-sm font-medium">{participant.userName}</div>
-                {participant.is_leader && <FaCrown className="text-yellow-400 ml-2" />}
+                {leaderSeq === participant.userSeq && <FaCrown className="text-yellow-400 ml-2" />}
               </div>
             </div>
           ))}
