@@ -85,15 +85,15 @@ public class Shop {
     @Column
     private int maxCount;
 
-    @JsonManagedReference
+    @JsonBackReference
     @OneToMany(mappedBy = "shop", cascade =CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     List<ShopGuest> shopGuests;
 
-    @JsonManagedReference
+    @JsonBackReference
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     List<ShipInfo> shipInfos;
 
-    @JsonManagedReference
+    @JsonBackReference
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     List<PurchaseInfo> purchaseInfos;
 
