@@ -34,6 +34,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountRepositoryCustom accountRepositoryCustom;
 
+    @Transactional
     @Override
     public ResponseEntity<? super AccountLinkResponseDto> saveAccount(AccountLinkRequestDto dto) {
 
@@ -51,11 +52,11 @@ public class AccountServiceImpl implements AccountService {
                 // 정보 저장
                 String accountName = dto.getAccountName();
                 UserEntity user = userRepository.getReferenceById(dto.getUserSeq());
-                Boolean main = dto.getMain();
 
+                Boolean main = dto.getMain();
                 AccountEntity account = new AccountEntity(accountName,main,user,bank,dto.getEasyPwd());
 
-                if(dto.getMain()) accountRepositoryCustom.isMain(dto.getUserSeq());
+                if(main) accountRepositoryCustom.isMain(dto.getUserSeq());
 
                 accountRepository.save(account);
 
