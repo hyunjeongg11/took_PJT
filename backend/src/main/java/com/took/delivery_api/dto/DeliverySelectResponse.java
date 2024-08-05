@@ -46,10 +46,10 @@ public class DeliverySelectResponse {
     private String notice;  // 공지사항 내용
 
     @Schema(description = "배달 시간", example = "2024-12-31T12:00:00")
-    private String deliveryTime;  // 배달 시간
+    private LocalDateTime deliveryTime;  // 배달 시간
 
-    @Schema(description = "배달 상태", example = "PENDING")
-    private String status;  // 배달 상태
+    @Schema(description = "배달 상태", example = "OPEN")
+    private Delivery.Status status;  // 배달 상태
 
     @Schema(description = "참가자 수", example = "4")
     private int count;  // 참가자 수
@@ -72,8 +72,8 @@ public class DeliverySelectResponse {
         this.deliveryTip = delivery.getDeliveryTip();
         this.content = delivery.getContent();
         this.notice = delivery.getNotice();
-        this.deliveryTime = delivery.getDeliveryTime().toString();
-        this.status = delivery.getStatus().name();
+        this.deliveryTime = delivery.getDeliveryTime();
+        this.status = delivery.getStatus();
         this.count = delivery.getCount();
         this.createdAt = delivery.getCreatedAt();
         this.finishTime = delivery.getFinishTime();

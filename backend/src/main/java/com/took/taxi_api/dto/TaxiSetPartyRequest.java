@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class TaxiSetPartyRequest {
 
-    private Long taxiSeq;
-    private Long partySeq;
+    private Long taxiSeq;  // 택시 식별 번호
+
+    private Long partySeq;  // 파티 식별 번호
 }

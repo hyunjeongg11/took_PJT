@@ -1,11 +1,14 @@
 package com.took.taxi_api.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
+@Schema(description = "예상 비용 응답 데이터")
 public class ExpectCostResponse {
 
-    private int cost; // 택시 비용 + Toll 비용
+    @Schema(description = "택시 비용 + 톨게이트 비용", example = "15000")
+    private int cost;
 
     public ExpectCostResponse(int cost) {
         this.cost = cost;

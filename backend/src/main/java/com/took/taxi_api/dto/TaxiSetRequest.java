@@ -5,11 +5,11 @@ import lombok.Data;
 @Data
 public class TaxiSetRequest {
 
-    private Long taxiSeq;
+    private Long taxiSeq;  // 택시 식별 번호
 
-    private Long master;
+    private Long master;  // 결제자 식별 번호
 
-    private int max;
+    private int max;  // 최대 인원 수
 
-    private boolean gender;
+    private boolean gender;  // 성별 여부
 }

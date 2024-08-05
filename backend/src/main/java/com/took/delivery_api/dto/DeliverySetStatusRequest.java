@@ -9,6 +9,6 @@ public class DeliverySetStatusRequest {
     @Schema(description = "배달의 고유 번호", example = "12345")
     private Long deliverySeq;  // 배달의 고유 번호
 
-    @Schema(description = "배달의 상태", example = "COMPLETED")
+    @Schema(description = "배달의 상태", example = "DONE")
     private String status;     // 배달의 상태
 }

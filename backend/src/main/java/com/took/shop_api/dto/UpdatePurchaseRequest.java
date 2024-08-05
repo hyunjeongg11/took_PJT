@@ -1,5 +1,6 @@
 package com.took.shop_api.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,12 @@ import java.util.List;
 @Getter
 public class UpdatePurchaseRequest {
 
-    private int price;
+    @Schema(description = "구매 금액", example = "50000")
+    private int price;  // 구매 금액
 
-    private int shipCost;
+    @Schema(description = "배송비", example = "5000")
+    private int shipCost;  // 배송비
 
-    private List<UpdateProductRequest> productList;
+    @Schema(description = "제품 목록", example = "[{\"productName\": \"샴푸\", \"optionDetails\": \"300ml\", \"etc\": \"\"}]")
+    private List<UpdateProductRequest> productList;  // 제품 목록
 }

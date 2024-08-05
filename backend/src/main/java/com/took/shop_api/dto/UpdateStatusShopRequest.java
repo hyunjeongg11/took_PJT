@@ -1,8 +1,7 @@
 package com.took.shop_api.dto;
 
 import com.took.shop_api.entity.Shop;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class UpdateStatusShopRequest {
 
-    @Enumerated(EnumType.STRING)
-    private Shop.statusType status;
+    @Schema(description = "상점 상태", example = "OPEN", allowableValues = {"OPEN", "IN_PROGRESS", "COMPLETED"})
+    private Shop.statusType status;  // 상점 상태
 }

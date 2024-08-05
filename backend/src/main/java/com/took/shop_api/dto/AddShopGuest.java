@@ -1,6 +1,6 @@
 package com.took.shop_api.dto;
 
-import com.took.shop_api.entity.ShopGuest;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @Getter
 public class AddShopGuest {
 
-    private long shopSeq;
+    @Schema(description = "상점 고유 번호", example = "12345")
+    private long shopSeq;  // 상점 고유 번호
 
-    private long userSeq;
-
-
+    @Schema(description = "사용자 고유 번호", example = "67890")
+    private long userSeq;  // 사용자 고유 번호
 }
