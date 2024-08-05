@@ -21,7 +21,8 @@ const DeliveryListPage = () => {
           lon: 0.0,
         };
         const response = await getDeliveryListApi(params);
-        const sortedList = response.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const openList = response.filter(item => item.status === 'OPEN');
+        const sortedList = openList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setDeliveryList(sortedList || []);
       } catch (error) {
         console.error('배달 목록을 가져오는 중 오류가 발생했습니다:', error);
@@ -34,7 +35,7 @@ const DeliveryListPage = () => {
   }, []);
 
   const handleCreateDelivery = () => {
-    navigate('/create/delivery');
+    navigate('/delivery/create');
   };
 
   const handleDetailClick = (deliverySeq) => {
@@ -58,7 +59,8 @@ const DeliveryListPage = () => {
           </span>
         </div>
       </div>
-      <div className="px-6">
+      
+      <div className="px-6 mt-4">
         <div className="flex justify-between items-center mb-4">
           <div className="text-xl text-black ml-2 font-bold mt-2">
             주변 배달 목록
@@ -103,7 +105,7 @@ const DeliveryListPage = () => {
             </div>
             <div className="my-1">
               <div className="text-neutral-500 font-bold text-xs">배달팁 : {item.deliveryTip}원</div>
-              <div className="text-neutral-500 font-bold text-xs">주문 종료 : {formatFinishTime(item.finishTime)}</div>
+              {/* <div className="text-neutral-500 font-bold text-xs">주문 종료 : {formatFinishTime(item.deliveryTime)}</div> */}
             </div>
             <div className="my-4 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
           </div>

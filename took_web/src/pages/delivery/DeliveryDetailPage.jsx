@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import backIcon from '../../assets/delivery/whiteBack.svg';
-import { getDeliveryDetailApi, deleteDeliveryApi, joinDeliveryApi } from '../../apis/delivery';
+import { getDeliveryDetailApi, deleteDeliveryApi, joinDeliveryApi, getDeliveryMembersApi, changeDeliveryStatusApi } from '../../apis/delivery';
 import { getUserInfoApi } from '../../apis/user';
 import { useUser } from '../../store/user';
 import getProfileImagePath from '../../utils/getProfileImagePath';
@@ -24,8 +24,6 @@ const BackButton = () => {
   ); 
 };
 
-
-
 function formatDeliveryTime(timeString) {
   const date = new Date(timeString);
   const hours = date.getHours();
@@ -41,43 +39,56 @@ function formatDeliveryTime(timeString) {
 function DeliveryDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { seq: userSeq } = useUser();
+  const { seq: currentUserSeq } = useUser();
   const [data, setData] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isLeader, setIsLeader] = useState(false);
+  const [isParticipant, setIsParticipant] = useState(false);
 
   useEffect(() => {
     const fetchDeliveryData = async () => {
       try {
         const deliveryResponse = await getDeliveryDetailApi(id);
+        if (deliveryResponse.status === 'DONE') {
+          navigate('/');
+          return;
+        }
+
         setData(deliveryResponse);
+
+        const deliveryUserSeq = deliveryResponse.userSeq;
+        if (deliveryUserSeq) {
+          const userResponse = await getUserInfoApi({ userSeq: deliveryUserSeq });
+          setUserInfo(userResponse);
+          setIsLeader(deliveryUserSeq === currentUserSeq);
+        }
+
+        const membersResponse = await getDeliveryMembersApi(id);
+        const isCurrentUserParticipant = membersResponse.some(member => member.userSeq === currentUserSeq);
+        setIsParticipant(isCurrentUserParticipant);
+
+        const deliveryTime = new Date(deliveryResponse.deliveryTime);
+        if (new Date() > deliveryTime) {
+          await changeDeliveryStatusApi({ deliverySeq: id, status: 'DONE' });
+          navigate('/');
+        }
       } catch (error) {
         console.error('배달 글 상세 조회 중 오류 발생:', error.response?.data || error.message);
       }
     };
 
-    const fetchUserData = async () => {
-      try {
-        const userResponse = await getUserInfoApi({ userSeq });
-        setUserInfo(userResponse);
-      } catch (error) {
-        console.error('유저 정보 조회 중 오류 발생:', error.response?.data || error.message);
-      }
-    };
-
-    if (userSeq) {
-      fetchUserData();
-    }
     if (id) {
       fetchDeliveryData();
     }
-  }, [id, userSeq]);
+  }, [id, currentUserSeq, navigate]);
 
   const handleParticipate = async () => {
     try {
-      await joinDeliveryApi({ deliverySeq: id, userSeq });
+      await joinDeliveryApi({ deliverySeq: id, userSeq: currentUserSeq });
       alert('배달 파티에 참여하였습니다!');
+      setIsParticipant(true);
     } catch (error) {
       console.error('참여 중 오류 발생:', error.response?.data || error.message);
       alert('참여 중 오류가 발생했습니다.');
@@ -101,6 +112,22 @@ function DeliveryDetailPage() {
 
   const handleModify = () => {
     navigate(`/delivery/modify/${id}`);
+  };
+
+  const handleChatRedirect = () => {
+    if (data && data.roomSeq) {
+      navigate(`/chat/delivery/${data.roomSeq}`);
+    }
+  };
+
+  const handleEndRecruitment = async () => {
+    try {
+      await changeDeliveryStatusApi({ deliverySeq: id, status: 'DONE' });
+      navigate('/');
+    } catch (error) {
+      console.error('모집 종료 중 오류 발생:', error.response?.data || error.message);
+      alert('모집 종료 중 오류가 발생했습니다.');
+    }
   };
 
   if (!data || !userInfo) {
@@ -131,10 +158,12 @@ function DeliveryDetailPage() {
               </div>
             </div>
           </div>
-          <div className="flex items-center">
-            <TbPencil className="w-5 h-5 text-neutral-500 mr-4" onClick={handleModify} />
-            <FaRegTrashAlt className="w-5 h-4 text-neutral-500" onClick={() => setShowDeleteModal(true)} />
-          </div>
+          {isLeader && (
+            <div className="flex items-center">
+              <TbPencil className="w-5 h-5 text-neutral-500 mr-4" onClick={handleModify} />
+              <FaRegTrashAlt className="w-5 h-4 text-neutral-500" onClick={() => setShowDeleteModal(true)} />
+            </div>
+          )}
         </div>
 
         <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
@@ -157,12 +186,21 @@ function DeliveryDetailPage() {
         </div>
 
         <div className="flex justify-center">
-          <button
-            onClick={handleParticipate}
-            className="bg-main text-white py-2 px-10 rounded-2xl text-lg font-bold"
-          >
-            참여하기
-          </button>
+          {isParticipant ? (
+            <button
+              onClick={handleChatRedirect}
+              className="bg-main text-white py-2 px-10 rounded-2xl text-lg font-bold"
+            >
+              채팅방 이동
+            </button>
+          ) : (
+            <button
+              onClick={isLeader ? handleEndRecruitment : handleParticipate}
+              className="bg-main text-white py-2 px-10 rounded-2xl text-lg font-bold"
+            >
+              {isLeader ? "모집 종료하기" : "참여하기"}
+            </button>
+          )}
         </div>
       </div>
 
