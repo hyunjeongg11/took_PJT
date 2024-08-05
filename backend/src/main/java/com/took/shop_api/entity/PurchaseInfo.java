@@ -40,7 +40,7 @@ public class PurchaseInfo {
     private int shipCost;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "purchaseInfo",cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "purchaseInfo",cascade = CascadeType.REMOVE,orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Product> products;
 
     public void update(int price, int shipCost) {
