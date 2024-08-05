@@ -7,6 +7,7 @@ import com.took.delivery_api.dto.*;
 import com.took.delivery_api.entity.Delivery;
 import com.took.delivery_api.entity.DeliveryGuest;
 import com.took.delivery_api.entity.QDelivery;
+import com.took.delivery_api.entity.QDeliveryGuest;
 import com.took.delivery_api.repository.DeliveryGuestRepository;
 import com.took.delivery_api.repository.DeliveryRepository;
 import com.took.shop_api.entity.QShop;
@@ -79,6 +80,12 @@ public class DeliveryService {
     // 글 삭제
     @Transactional
     public void deleteDelivery(Long deliverySeq) {
+        QDeliveryGuest qDeliveryGuest = QDeliveryGuest.deliveryGuest;
+        // 자식 엔티티인 DeliveryGuest 먼저 삭제
+        queryFactory.delete(qDeliveryGuest)
+                .where(qDeliveryGuest.delivery.deliverySeq.eq(deliverySeq))
+                .execute();
+
         QDelivery qDelivery = QDelivery.delivery;
         queryFactory.delete(qDelivery).where(qDelivery.deliverySeq.eq(deliverySeq)).execute();
     }
