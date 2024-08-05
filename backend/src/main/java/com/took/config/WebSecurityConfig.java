@@ -5,7 +5,7 @@ import com.took.filter.JwtAuthenticationFilter;
 
 //Google Oauth 인증용
 import com.took.user_api.handler.GOAuth2SuccessHandler;
-import com.took.user_api.handler.OAuth2FailureHandler;
+
 //import com.took.user_api.handler.OAuth2SuccessHandler;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
@@ -67,6 +68,7 @@ public class WebSecurityConfig {
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 
         System.out.println("chain에서 확인합니다.");
+
         httpSecurity
                 .cors(cors -> cors
                         .configurationSource(configurationSource()))
@@ -80,7 +82,7 @@ public class WebSecurityConfig {
 //                                                로그인 전에 이뤄지는 작업은 인증이 푤요하지 않다.
                                 .requestMatchers("/", "/api/auth/**","/oauth2/**").permitAll()
                                 .requestMatchers("/ws/**").permitAll()
-                                .requestMatchers("/api/swagger-ui/**", "/api/api-docs/**").permitAll()
+                                .requestMatchers("/api/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 // 접두사는 제외 하고 USER만 적어준다.w
                                 .requestMatchers("/api/user/**").hasRole("USER")
                                 .requestMatchers("/api/account/**").hasRole("USER")
@@ -111,9 +113,6 @@ public class WebSecurityConfig {
 
         return httpSecurity.build();
     }
-
-
-
 }
 
 // jwt인증에 실패하게 되면 위 값을 넣어주게 된다.

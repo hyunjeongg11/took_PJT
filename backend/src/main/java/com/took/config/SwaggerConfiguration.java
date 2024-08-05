@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 // TODO: Swagger JavaConfig 작성
-// {서버주소}/swagger-ui.html로 접속
+// {서버주소}/swagger-ui/index. html로 접속
 
 @Configuration
 public class SwaggerConfiguration {
