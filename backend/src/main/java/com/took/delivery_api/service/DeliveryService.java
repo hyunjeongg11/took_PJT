@@ -4,9 +4,11 @@ import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.delivery_api.dto.*;
 import com.took.delivery_api.entity.Delivery;
+import com.took.delivery_api.entity.DeliveryGuest;
 import com.took.delivery_api.repository.DeliveryRepository;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ public class DeliveryService {
     private final DeliveryRepository deliveryRepository;
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
+
+    private final EntityManager em;
 
     // 배달 생성 메서드
     @Transactional
@@ -69,9 +73,8 @@ public class DeliveryService {
     // 글 삭제
     @Transactional
     public void deleteDelivery(Long deliverySeq) {
-        Delivery delivery = deliveryRepository.findByDeliverySeq(deliverySeq);
-        System.out.println(delivery.getDeliverySeq() + "번 글 삭제");
-        deliveryRepository.delete(delivery);
+        deliveryRepository.deleteByDeliverySeq(deliverySeq);
+        em.flush();
     }
     
     // 공지사항 등록
@@ -80,7 +83,7 @@ public class DeliveryService {
         Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
         delivery.updateNotice(request.getNotice());
     }
-    
+
     // 공지사항 수정
     @Transactional
     public void modifyNotice(DeliveryNoticeCreateRequest request) {
