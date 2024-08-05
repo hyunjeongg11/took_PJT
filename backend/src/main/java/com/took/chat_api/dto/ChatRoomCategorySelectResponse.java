@@ -2,6 +2,7 @@ package com.took.chat_api.dto;
 
 import com.took.chat_api.entity.ChatRoom;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -33,4 +34,5 @@ public class ChatRoomCategorySelectResponse {
         this.createdAt = chatRoom.getCreatedAt();
         this.category = chatRoom.getCategory();
     }
+
 }

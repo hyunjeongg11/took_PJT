@@ -16,4 +16,6 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, Long> {
 
     // 특정 사용자가 특정 채팅방에 있는지 확인하는 메서드
     ChatUser findByUserAndChatRoom(UserEntity user, ChatRoom chatRoom);
+
+    List<ChatUser> findByUser(UserEntity user);
 }

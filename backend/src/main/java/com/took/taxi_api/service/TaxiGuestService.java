@@ -53,7 +53,6 @@ public class TaxiGuestService {
         UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
         TaxiGuest guest = taxiGuestRepository.findByUserAndTaxi(user, taxi);
         taxiGuestRepository.delete(guest);
-
         taxi.updateCount(-1);
     }
 

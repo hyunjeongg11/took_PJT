@@ -117,7 +117,12 @@ public class AccountServiceImpl implements AccountService {
             int size = al.size();
 
             for(int i=0;i<size;i++){
-                result.add(new AccountListResponsetDto.BankAccount(dto.getUserSeq(),al.get(i).getAccountSeq(),al.get(i).getAccountName(),bl.get(i).getAccountNum(),bl.get(i).getBankNum(),bl.get(i).getBalance()));
+                result.add(new AccountListResponsetDto.BankAccount(dto.getUserSeq(),
+                        al.get(i).getAccountSeq(),
+                        al.get(i).getAccountName(),
+                        bl.get(i).getAccountNum(),
+                        bl.get(i).getBankNum(),
+                        bl.get(i).getBalance()));
             }
 
 

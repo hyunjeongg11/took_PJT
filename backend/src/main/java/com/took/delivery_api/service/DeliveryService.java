@@ -69,7 +69,9 @@ public class DeliveryService {
     // 글 삭제
     @Transactional
     public void deleteDelivery(Long deliverySeq) {
-        deliveryRepository.deleteById(deliverySeq);
+        Delivery delivery = deliveryRepository.findByDeliverySeq(deliverySeq);
+        System.out.println(delivery);
+        deliveryRepository.delete(delivery);
     }
     
     // 공지사항 등록

@@ -1,9 +1,6 @@
 package com.took.chat_api.service;
 
-import com.took.chat_api.dto.ChatUserCreateRequest;
-import com.took.chat_api.dto.ChatUserCreateResponse;
-import com.took.chat_api.dto.ChatUserDeleteRequest;
-import com.took.chat_api.dto.ChatUserSelectResponse;
+import com.took.chat_api.dto.*;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.entity.ChatUser;
 import com.took.chat_api.repository.ChatRoomRepository;
@@ -16,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor  // Lombok 어노테이션으로, final 필드에 대해 생성자를 자동으로 생성
@@ -107,11 +106,44 @@ public class ChatUserService {
 
         List<ChatUser> users = chatUserRepository.findByChatRoom(chatRoom);
 
+        List<UserEntity> userInfos = userRepository.findByUserSeqIn(users.stream()
+                .map(user -> user.getUser().getUserSeq())
+                .collect(Collectors.toList()));
+
+        // userInfos를 userSeq를 기준으로 매핑
+        Map<Long, UserEntity> userInfoMap = userInfos.stream()
+                .collect(Collectors.toMap(UserEntity::getUserSeq, Function.identity()));
+
         // ChatUser 리스트를 ChatUserSelectResponse 리스트로 변환
         return users.stream()
-                .map(user -> ChatUserSelectResponse.builder()
-                        .userSeq(user.getUser().getUserSeq())
-                        .build())
+                .map(user -> {
+                    UserEntity userEntity = userInfoMap.get(user.getUser().getUserSeq());
+                    return ChatUserSelectResponse.builder()
+                            .userSeq(user.getUser().getUserSeq())
+                            .userName(userEntity != null ? userEntity.getUserName() : null)
+                            .imageNo(userEntity != null ? userEntity.getImageNo() : null)
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<ChatRoomCategorySelectResponse> findRoomsByUser(Long userSeq) {
+        // 주어진 userSeq로 UserEntity 조회
+        UserEntity user = userRepository.findByUserSeq(userSeq);
+
+        // 해당 유저가 참여하고 있는 ChatUser 목록 조회
+        List<ChatUser> chatUsers = chatUserRepository.findByUser(user);
+
+        // ChatUser에서 ChatRoom을 추출하고 중복을 제거하여 리스트로 변환
+        List<ChatRoom> chatRooms = chatUsers.stream()
+                .map(ChatUser::getChatRoom)
+                .distinct()
+                .toList();
+
+        // ChatRoom을 ChatRoomCategorySelectResponse로 변환
+        return chatRooms.stream()
+                .map(ChatRoomCategorySelectResponse::new)  // DTO 변환
                 .collect(Collectors.toList());
     }
 }

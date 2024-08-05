@@ -109,7 +109,41 @@ public class SwaggerConfiguration {
                 .pathsToMatch("/api/purchase/**") // 경로 패턴이 일치하는 것들을 API로 인식
                 .build();
     }
+    // 어떤 REST API를 문서화 할 것인지 매핑하기
+    @Bean
+    public GroupedOpenApi accountApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("account")  // 그룹 이름 ( 원하는 이름으로 작성 )
+                .pathsToMatch("/api/account/**") // 경로 패턴이 일치하는 것들을 API로 인식
+                .build();
+    }
+    // 어떤 REST API를 문서화 할 것인지 매핑하기
+    @Bean
+    public GroupedOpenApi authApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("auth")  // 그룹 이름 ( 원하는 이름으로 작성 )
+                .pathsToMatch("/api/auth/**") // 경로 패턴이 일치하는 것들을 API로 인식
+                .build();
+    }
+    // 어떤 REST API를 문서화 할 것인지 매핑하기
+    @Bean
+    public GroupedOpenApi payApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("pay")  // 그룹 이름 ( 원하는 이름으로 작성 )
+                .pathsToMatch("/api/pay/**") // 경로 패턴이 일치하는 것들을 API로 인식
+                .build();
+    }
 
-
-
+    // 어떤 REST API를 문서화 할 것인지 매핑하기
+    @Bean
+    public GroupedOpenApi userApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("user")  // 그룹 이름 ( 원하는 이름으로 작성 )
+                .pathsToMatch("/api/user/**") // 경로 패턴이 일치하는 것들을 API로 인식
+                .build();
+    }
 }

@@ -1,6 +1,7 @@
 package com.took.delivery_api.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.delivery_api.dto.DeliveryModifyRequest;
 import com.took.user_api.entity.UserEntity;
@@ -93,7 +94,7 @@ public class Delivery {
     private LocalDateTime finishTime;
 
     // 배달 손님 관계설정
-    @JsonBackReference
+    @JsonManagedReference
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<DeliveryGuest> deliveryGuests;
 
