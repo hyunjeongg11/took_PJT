@@ -8,6 +8,6 @@ public class FCMRequest {
     private long partySeq;
     private int category;
     private String title;
-    private String token;
+    private long receiveUserSeq;
     private int cost;
 }

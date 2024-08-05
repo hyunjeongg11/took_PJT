@@ -4,10 +4,7 @@ import com.took.fcm_api.dto.FCMRequest;
 import com.took.fcm_api.service.FCMService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/fcm")
@@ -16,15 +13,16 @@ public class FCMController {
 
     private final FCMService fcmService;
 
+    @PostMapping("/token")
+    public String saveToken(@RequestParam long userSeq, @RequestParam String token) {
+        fcmService.saveToken(userSeq, token);
+        return "Token saved successfully";
+    }
+
     @PostMapping("/send")
     public ResponseEntity<?> sendNotification(@RequestBody FCMRequest request) {
-        fcmService.sendNotification(request.getUserSeq(), request.getPartySeq(), request.getCategory(),request.getTitle(), request.getToken(), request.getCost());
+        fcmService.sendNotification(request);
         return ResponseEntity.ok().build();
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<?> registerToken(@RequestBody TokenRequest request) {
-//        notificationService.registerToken(request);
-//        return ResponseEntity.ok().build();
-//    }
 }
