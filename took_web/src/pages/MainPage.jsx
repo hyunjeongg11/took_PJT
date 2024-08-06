@@ -2,18 +2,6 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function MainPage() {
-  const AndroidAppInterface = () => {
-    console.log('앱 함수 호출');
-    if (window.Android) {
-      window.Android.showToast('Hello from Javascript!');
-      window.Android.performAction(); // 추가 액션 호출
-    }
-  };
-
-  useEffect(() => {
-    AndroidAppInterface();
-  }, []);
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full bg-gray-100 p-4">
       <h1 className="text-3xl font-bold mb-8 font-dela text-main">took!</h1>

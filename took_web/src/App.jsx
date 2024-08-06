@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { msgToAndroid } from './android/message';
+import { usePosition } from './store/position';
 
 import {
   MainPage,
@@ -17,6 +19,7 @@ import {
   AgreementDetailPage,
   AgreementPage,
   VerificationPage,
+  SetSimplePwd,
   SelectPage,
   CompletePage,
   PwdPage,
@@ -59,9 +62,40 @@ import ChattingListPage from './pages/chat/ChattingListPage';
 import TookChattingPage from './pages/chat/TookChattingPage';
 import TaxiChattingMainPage from './pages/chat/TaxiChattingMainPage';
 import GroupBuyChattingMainPage from './pages/chat/GroupBuyChattingMainPage';
-import TaxiChattingMainPage from './pages/chat/TaxiChattingMainPage';
+
+export const getUserLocation = () => {
+  if (window.Android) {
+    window.Android.getLocation();
+  }
+};
 
 function App() {
+  const { setPosition } = usePosition();
+
+  useEffect(() => {
+    getUserLocation();
+
+    window.onLocation = (latitude, longitude) => {
+      console.log('Received location:', latitude, longitude);
+      msgToAndroid(
+        `Received location in onLocation:, ${latitude}, ${longitude}`
+      );
+      setPosition({ latitude, longitude });
+    };
+
+    window.onNotification = (notificationData) => {
+      // const notification = JSON.parse(notificationData);
+      msgToAndroid(notificationData);
+    };
+
+    getUserLocation();
+
+    return () => {
+      delete window.onLocation;
+      delete window.onNotification;
+    };
+  }, []);
+
   const [checkedItems, setCheckedItems] = useState({
     terms1: false,
     terms2: false,
@@ -101,6 +135,7 @@ function App() {
     },
     { path: '/verification', element: <VerificationPage /> },
     { path: '/accountcomplete', element: <AccountCompletePage /> },
+    { path: '/setsimplepwd', element: <SetSimplePwd /> },
     { path: '/mypage', element: <MyPage /> },
     { path: '/notification', element: <NotificationSetting /> },
     { path: '/location', element: <LocationSettingPage /> },

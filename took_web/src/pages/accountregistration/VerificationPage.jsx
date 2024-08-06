@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
+import { sendSmsApi, verifySmsApi } from '../../apis/sms';
+import { useUser } from '../../store/user.js';
 
 function VerificationPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { bank, account, password, accountName } = location.state || {};
+
+  const { seq: userSeq } = useUser(); // useUser 훅을 사용하여 seq 값을 가져옵니다.
+
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
@@ -26,17 +33,22 @@ function VerificationPage() {
     }
   };
 
-  const handleRequestClick = () => {
+  const handleRequestClick = async () => {
     if (name && phoneNumber) {
-      setRequestSent(true);
-      setVerificationStatus('');
-      setIsVerified(false);
+      try {
+        await sendSmsApi({ phoneNumber: phoneNumber.toString() });
+        setRequestSent(true);
+        setVerificationStatus('');
+        setIsVerified(false);
+      } catch (error) {
+        setVerificationStatus('문자 전송 중 오류가 발생했습니다.');
+      }
     } else {
       setVerificationStatus('이름과 휴대폰 번호를 입력해주세요.');
     }
   };
 
-  const handleVerifyClick = () => {
+  const handleVerifyClick = async () => {
     if (!verificationCode) {
       setVerificationStatus('인증번호를 입력해주세요.');
       setIsVerified(false);
@@ -44,18 +56,46 @@ function VerificationPage() {
       return;
     }
 
-    console.log('user_name :', name);
-    console.log('phone_number :', phoneNumber);
-    console.log('code :', verificationCode);
-
-    if (verificationCode === '123456') {
-      setIsVerified(true);
-      setIsValidCode(true);
-      setVerificationStatus('인증이 완료되었습니다.');
-    } else {
+    try {
+      const response = await verifySmsApi({ phoneNumber: phoneNumber.toString(), code: parseInt(verificationCode, 10) });
+      if (response) {
+        setIsVerified(true);
+        setIsValidCode(true);
+        setVerificationStatus('인증이 완료되었습니다.');
+      } else {
+        setIsVerified(false);
+        setIsValidCode(false);
+        setVerificationStatus('잘못된 인증번호를 입력하였습니다.');
+      }
+    } catch (error) {
+      setVerificationStatus('인증 중 오류가 발생했습니다.');
       setIsVerified(false);
       setIsValidCode(false);
-      setVerificationStatus('잘못된 인증번호를 입력하였습니다.');
+    }
+  };
+
+  const handleNextClick = () => {
+    // if (isFormValid) {
+    //   const params = {
+    //     userSeq, // useUser 훅을 사용하여 가져온 userSeq 사용
+    //     main: false, // 주계좌 여부 설정 (필요에 따라 변경)
+    //     accountName,
+    //     accountNum: `${account}`,
+    //     accountPwd: parseInt(password),
+    //   };
+
+    //   try {
+    //     const response = await linkAccountApi(params);
+    //     console.log(response);
+    //     // 성공 처리 (예: 완료 페이지로 이동)
+    //     navigate('/setsimplepwd', { state: { bank, account, password, accountName } });
+    //   } catch (error) {
+    //     console.error('API 호출 중 오류 발생:', error);
+    //     // 오류 처리
+    //   }
+    // }
+    if (isFormValid) {
+      navigate('/setsimplepwd', { state: { bank, account, password, accountName } });
     }
   };
 
@@ -150,10 +190,9 @@ function VerificationPage() {
         disabled={!isFormValid}
         onMouseOver={(e) =>
           isFormValid &&
-          (e.currentTarget.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.2)')
-        }
+          (e.currentTarget.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.2)')}
         onMouseOut={(e) => (e.currentTarget.style.boxShadow = 'none')}
-        onClick={() => navigate('/accountcomplete')}
+        onClick={handleNextClick}
       >
         다음
       </button>

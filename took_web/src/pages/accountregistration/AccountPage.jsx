@@ -16,7 +16,7 @@ function AccountPage() {
   const [bank, setBank] = useState(selectedName);
   const [account, setAccount] = useState(savedAccount || '');
   const [password, setPassword] = useState(savedPassword || '');
-  const [alias, setAlias] = useState('');
+  const [accountName, setAccountName] = useState('');
   const [showKeypad, setShowKeypad] = useState(false);
   const [keypadNumbers, setKeypadNumbers] = useState([]);
 
@@ -45,18 +45,25 @@ function AccountPage() {
     setShowKeypad(false);
   };
 
-  const handleAliasChange = (e) => {
-    setAlias(e.target.value);
+  const handleAccountNameChange = (e) => {
+    setAccountName(e.target.value);
     setShowKeypad(false);
   };
 
-  const handleNextClick = () => {
+  const handleNextClick = async () => {
     console.log('bankName: ', bank);
     console.log('accountNum: ', account);
     console.log('accountPwd: ', password);
-    console.log('accountAlias: ', alias);
+    console.log('accountName: ', accountName);
     if (isFormValid) {
-      navigate('/agreement', { state: { bank, account, alias } });
+      navigate('/agreement', {
+        state: {
+          bank,
+          account,
+          password,
+          accountName
+        }
+      });
     }
   };
 
@@ -133,11 +140,11 @@ function AccountPage() {
           <input
             type="text"
             placeholder="(선택) 계좌별칭 등록 / 최대16글자"
-            value={alias}
-            onChange={handleAliasChange}
+            value={accountName}
+            onChange={handleAccountNameChange}
             onFocus={() => setShowKeypad(false)}
             maxLength="16"
-            className={`text-sm w-full border-b border-gray-300 py-2 outline-none ${alias ? 'text-black' : 'text-gray-400'}`}
+            className={`text-sm w-full border-b border-gray-300 py-2 outline-none ${accountName ? 'text-black' : 'text-gray-400'}`}
           />
         </div>
       </div>

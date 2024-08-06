@@ -44,10 +44,10 @@ function TotalPurchasePage() {
                         공구 <span className="font-dela">took !</span>
                     </div>
                 </div>
-                <div className="flex flex-col py-5 pb-1 my-6 bg-main rounded-2xl shadow-gray-400 shadow-md">
-                    <div className="flex flex-col px-4 text-xs text-white">
-                        <div className="text-lg font-bold mt-3">전체 구매 정보</div>
-                        <hr className="text-white w-full mx-auto text-opacity-40 my-3" />
+                <div className="flex flex-col py-5 pb-1 my-6 bg-neutral-50 border border-neutral-200 rounded-2xl shadow-md">
+                    <div className="flex flex-col px-4 text-xs text-black">
+                        <div className="text-lg font-bold">전체 구매 정보</div>
+                        <hr className="border border-neutral-300 w-full mx-auto my-3" />
                         {temp_data.map((el, idx) => (
                             <div key={idx} className="my-4">
                                 <div className="flex items-center mb-2">
@@ -57,11 +57,11 @@ function TotalPurchasePage() {
                                         alt="Profile"
                                         className="w-7"
                                     />
-                                    <div className="ml-2 text-sm text-white font-semibold">
+                                    <div className="ml-2 text-sm text-black font-semibold">
                                         {el.userName}
                                     </div>
                                 </div>
-                                <div className="bg-secondary rounded-lg text-main p-3 shadow-md">
+                                <div className="bg-white rounded-lg text-gray-500 p-3 border border-collapse shadow-sm">
                                     <div className="flex justify-between mb-2">
                                         <span className="font-bold">물품명</span>
                                         <div className="text-right">
@@ -74,17 +74,17 @@ function TotalPurchasePage() {
                                         <span className="font-bold">배달비</span>
                                         <div className="text-right">{formatNumber(el.deliveryFee)}원</div>
                                     </div>
-                                    <hr className="my-2 border-main border-opacity-40" />
+                                    <hr className="my-2 border-neutral-300" />
                                     <div className="flex justify-between">
-                                        <span className="font-bold">전체 금액</span>
-                                        <div className="text-right font-semibold">{formatNumber(el.totalAmount)}원</div>
+                                        <span className="font-bold text-black">전체 금액</span>
+                                        <div className="text-right text-black font-semibold">{formatNumber(el.totalAmount)}원</div>
                                     </div>
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <hr className="text-white w-[80%] my-2 mx-auto" />
-                    <div className="text-white font-bold text-lg text-center px-5 py-3">총 금액 : {formatNumber(totalAmountSum)}원</div>
+                    <hr className="border border-neutral-300 w-[90%] my-2 mx-auto" />
+                    <div className="text-black font-bold text-lg text-center px-5 py-3">총 금액 : {formatNumber(totalAmountSum)}원</div>
                 </div>
             </div>
         </div>
