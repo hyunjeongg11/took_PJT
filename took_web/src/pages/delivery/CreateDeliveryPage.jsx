@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BackButton from '../../components/common/BackButton';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { writeDeliveryApi, modifyDeliveryApi, getDeliveryDetailApi } from '../../apis/delivery';
+import { useUser } from '../../store/user';
 
 const InputField = ({
   label,
@@ -80,6 +82,8 @@ const Modal = ({ show, message, onConfirm, onCancel }) => {
 
 function CreateDeliveryPage() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { seq: userSeq } = useUser(); // useUser 훅을 사용하여 seq 값을 가져옵니다.
   const [form, setForm] = useState({
     storeName: '',
     deliveryAddress: '',
@@ -91,6 +95,27 @@ function CreateDeliveryPage() {
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (id) {
+        try {
+          const response = await getDeliveryDetailApi(id);
+          setForm({
+            storeName: response.storeName,
+            deliveryAddress: response.pickupPlace,
+            deliveryTip: response.deliveryTip,
+            orderTime: response.deliveryTime,
+            additionalInfo: response.content,
+          });
+        } catch (error) {
+          console.error('배달 글 조회 중 오류 발생:', error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -113,16 +138,43 @@ function CreateDeliveryPage() {
     navigate(-1);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => { // async 추가
     if (Object.values(form).some((field) => field === '')) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 2000); // 2초 후 알림 메시지 숨김
     } else {
-      setShowCompletionMessage(true);
-      setTimeout(() => {
-        setShowCompletionMessage(false);
-        navigate('/'); // 등록 후 이동할 경로 설정
-      }, 2000); // 2초 후에 완료 메시지 사라짐
+      const params = {
+        userSeq,
+        roomSeq: 31, // roomSeq를 실제 값으로 대체해야 합니다.
+        storeName: form.storeName,
+        pickupPlace: form.deliveryAddress,
+        pickupLat: 0.0, // 픽업 장소 위도 값을 실제 값으로 대체해야 합니다.
+        pickupLon: 0.0, // 픽업 장소 경도 값을 실제 값으로 대체해야 합니다.
+        deliveryTip: form.deliveryTip,
+        deliveryTime: form.orderTime,
+        content: form.additionalInfo,
+      };
+
+      try {
+        let response;
+        if (id) {
+          await modifyDeliveryApi({ deliverySeq: id, ...params });
+        } else {
+          response = await writeDeliveryApi(params);
+          console.log('API response:', response);
+          const deliverySeq = response.deliverySeq; // 응답에서 deliverySeq를 가져옴
+          navigate(`/delivery/detail/${deliverySeq}`); // 생성된 게시물로 이동
+        }
+        setShowCompletionMessage(true);
+        setTimeout(() => {
+          setShowCompletionMessage(false);
+          navigate(id ? `/delivery/detail/${id}` : `/delivery/detail/${response.deliverySeq}`); // 생성된 게시물로 이동
+        }, 2000); // 2초 후에 완료 메시지 사라짐
+      } catch (error) {
+        console.error('배달 글 작성 중 오류 발생:', error);
+        setShowAlert(true);
+        setTimeout(() => setShowAlert(false), 2000); // 2초 후 알림 메시지 숨김
+      }
     }
   };
 
@@ -133,7 +185,7 @@ function CreateDeliveryPage() {
           <BackButton />
         </button>
         <div className="mt-2 ml-12 flex-grow text-center text-lg font-bold text-black">
-          배달 <span className="font-dela">took</span> 작성하기
+          배달 <span className="font-dela">took</span> {id ? '수정하기' : '작성하기'}
         </div>
         <button
           className="text-white mt-2 bg-[#FF7F50] px-3 py-1.5 rounded-full text-sm font-bold"
@@ -197,7 +249,7 @@ function CreateDeliveryPage() {
       {showCompletionMessage && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white px-6 py-4 rounded-lg shadow-lg text-center text-base font-bold">
-            배달 <span className="font-dela">took</span> 작성 완료
+            배달 <span className="font-dela">took</span> {id ? '수정 완료' : '작성 완료'}
           </div>
         </div>
       )}

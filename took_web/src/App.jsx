@@ -1,6 +1,4 @@
-
 import React from 'react';
-
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { msgToAndroid } from './android/message';
 import { usePosition } from './store/position';
@@ -60,11 +58,11 @@ import TaxiChattingSettingPage from './pages/taxi/TaxiChattingSettingPage';
 import TaxiPathSettingPage from './pages/taxi/TaxiPathSettingPage';
 import CurrentPathListPage from './pages/taxi/CurrentPathListPage';
 import DeliveryChattingMainPage from './pages/chat/DeliveryChattingMainPage';
+import DeliveryNoticePage from './pages/chat/DeliveryNoticePage';
 import ChattingListPage from './pages/chat/ChattingListPage';
 import TookChattingPage from './pages/chat/TookChattingPage';
 import TaxiChattingMainPage from './pages/chat/TaxiChattingMainPage';
 import GroupBuyChattingMainPage from './pages/chat/GroupBuyChattingMainPage';
-
 
 const ROUTER = createBrowserRouter([
   { path: '/', element: <MainPage /> },
@@ -98,11 +96,12 @@ const ROUTER = createBrowserRouter([
   { path: '/dutch/request', element: <PayRequestPage /> },
   { path: '/mytookmoney', element: <MyTookMoneyPage /> },
   { path: '/delivery/create', element: <CreateDeliveryPage /> },
-  { path: '/delivery/detail', element: <DeliveryDetailPage /> },
   { path: '/delivery/list', element: <DeliveryListPage /> },
-  { path: '/delivery/input', element: <DeliveryPayInputPage /> },
-  { path: '/delivery/complete', element: <DeliveryCompletePage /> },
-  { path: '/delivery/status', element: <DeliveryStatusPage /> },
+  { path: '/delivery/detail/:id', element: <DeliveryDetailPage /> },
+  { path: '/delivery/input/:id', element: <DeliveryPayInputPage /> },
+  { path: '/delivery/complete/:id', element: <DeliveryCompletePage /> },
+  { path: '/delivery/status/:id', element: <DeliveryStatusPage /> },
+  { path: '/delivery/modify/:id', element: <CreateDeliveryPage /> },
   { path: '/groupbuy/list', element: <BuyListPage /> },
   { path: '/groupbuy/:id', element: <BuyDetailPage /> },
   { path: '/groupbuy/join/:id', element: <BuyJoinPage /> },
@@ -116,6 +115,7 @@ const ROUTER = createBrowserRouter([
   { path: '/taxi/path', element: <TaxiPathSettingPage /> },
   { path: '/taxi/path-list', element: <CurrentPathListPage /> },
   { path: '/chat/delivery/main', element: <DeliveryChattingMainPage /> },
+  { path: '/chat/delivery/:id/notice', element: <DeliveryNoticePage /> },
   { path: '/chat/groupbuy/main', element: <GroupBuyChattingMainPage /> },
   { path: '/chat/taxi/main', element: <TaxiChattingMainPage /> },
   { path: '/chat/list', element: <ChattingListPage /> },

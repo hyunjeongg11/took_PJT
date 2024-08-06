@@ -1,5 +1,5 @@
-import { request } from '../request';
-import { handleApiError } from '../errorHandling';
+import { request } from './request';
+import { handleApiError } from './errorHandling';
 
 /*{
     "userSeq": "long", // 사용자 번호
@@ -91,7 +91,7 @@ export const deleteDeliveryApi = async (deliverySeq) => {
 	"notice": "string" // 공지사항
 } */
 // 배달 채팅방에 공지사항 등록
-export const writeNoticeApi = async (params) {
+export const writeNoticeApi = async (params) => {
     try {
         const response = await request.put(`/api/delivery/notice/create`, params);
         return response.data;
@@ -104,7 +104,7 @@ export const writeNoticeApi = async (params) {
 	"notice": "string" // 공지사항
 } */
 // 배달 채팅방 공지사항 수정
-export const modifyNoticeApi = async (params) {
+export const modifyNoticeApi = async (params) => {
     try {
         const response = await request.put(`/api/delivery/notice/modify`, params);
         return response.data;
@@ -114,7 +114,7 @@ export const modifyNoticeApi = async (params) {
 }
 
 // 공지사항 삭제
-export const deleteNoticeApi = async (deliverySeq) {
+export const deleteNoticeApi = async (deliverySeq) => {
     try {
         const response = await request.delete(`/api/delivery/notice/delete/${deliverySeq}`);
         return response.data;
@@ -143,7 +143,7 @@ export const deleteNoticeApi = async (deliverySeq) {
     "createdAt": "LocalDateTime", // 생성 시간
     "finishTime": "LocalDateTime" // 완료 시간
 } */
-export const getDeliveryDetailApi = async (delicerySeq) {
+export const getDeliveryDetailApi = async (deliverySeq) => {
     try {
         const response = await request.get(`/api/delivery/${deliverySeq}`);
         return response.data;

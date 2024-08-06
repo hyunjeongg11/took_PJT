@@ -1,22 +1,62 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import deliveryIcon from '../../assets/payment/deliveryTook.png'; // 배달 took 아이콘 경로
-import userProfile1 from '../../assets/profile/img5.png'; // 사용자 프로필 아이콘 경로
-import userProfile2 from '../../assets/profile/img6.png'; // 사용자 프로필 아이콘 경로
-import userProfile3 from '../../assets/profile/img9.png'; // 사용자 프로필 아이콘 경로
-import userProfile4 from '../../assets/profile/img11.png'; // 사용자 프로필 아이콘 경로
 import isMeIcon from '../../assets/payment/isMe.png'; // 본인 아이콘 경로
-
-const temp_users = [
-  { name: '차민주', icon: userProfile1, status: '완료', isMe: true },
-  { name: '공지환', icon: userProfile2, status: '미완료', isMe: false },
-  { name: '조현정', icon: userProfile3, status: '완료', isMe: false },
-  { name: '이재찬', icon: userProfile4, status: '완료', isMe: false },
-];
-
-const temp_date = '6.24 (월) 18:55';
+import { getDeliveryMembersApi, changePickUpStatusApi } from '../../apis/delivery';
+import { getUserInfoApi } from '../../apis/user';
+import getProfileImagePath from '../../utils/getProfileImagePath';
+import { useUser } from '../../store/user';
 
 function TookDetailsPage() {
+  const { id } = useParams(); // deliverySeq 값
+  const { seq: currentUserSeq } = useUser();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const membersResponse = await getDeliveryMembersApi(id);
+        const userPromises = membersResponse.map(async member => {
+          const userInfo = await getUserInfoApi({ userSeq: member.userSeq });
+          return {
+            name: userInfo.userName,
+            icon: getProfileImagePath(userInfo.imageNo),
+            status: member.pickUp ? '완료' : '미완료',
+            isMe: member.userSeq === currentUserSeq,
+            deliveryGuestSeq: member.deliveryGuestSeq,
+          };
+        });
+
+        const usersData = await Promise.all(userPromises);
+        setUsers(usersData);
+      } catch (error) {
+        console.error('파티 참가자 정보를 가져오는 중 오류가 발생했습니다:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, [id, currentUserSeq]);
+
+  const handleConfirmClick = async (deliveryGuestSeq) => {
+    try {
+      await changePickUpStatusApi(deliveryGuestSeq);
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.deliveryGuestSeq === deliveryGuestSeq
+            ? { ...user, status: '완료' }
+            : user
+        )
+      );
+    } catch (error) {
+      console.error('수령 확인 중 오류가 발생했습니다:', error);
+      alert('수령 확인 중 오류가 발생했습니다.');
+    }
+  };
+
   const renderUserDetails = (user, index) => {
     const isCompleted = user.status === '완료';
     return (
@@ -32,6 +72,7 @@ function TookDetailsPage() {
             </div>
             <div className="text-right">
               <button
+                onClick={() => user.isMe && !isCompleted && handleConfirmClick(user.deliveryGuestSeq)}
                 className={`py-2.5 w-24 rounded-full text-sm font-bold ${isCompleted ? 'bg-[#FF7F50] text-white' : 'bg-neutral-400 text-white'}`}
               >
                 {isCompleted ? '확인 완료' : '미확인'}
@@ -39,12 +80,16 @@ function TookDetailsPage() {
             </div>
           </div>
         </div>
-        {index < temp_users.length - 1 && (
+        {index < users.length - 1 && (
           <div className="border-b border-dashed border-gray-300 my-2"></div>
         )}
       </div>
     );
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
@@ -59,17 +104,17 @@ function TookDetailsPage() {
 
       <div className="flex flex-col mt-4 px-4 font-bold">
         <div className="bg-[#FBFBFB] p-5 rounded-xl shadow-lg border border-inherit max-h-[550px] overflow-y-scroll">
-          <div className="text-gray-500 mb-4 text-sm">{temp_date}</div>
+          <div className="text-gray-500 mb-4 text-sm">{/* 날짜 정보 추가 필요 */}</div>
           <div className="flex items-center mb-4">
             <img src={deliveryIcon} alt="Took" className="w-14 h-14" />
             <div className="ml-4">
               <div className="text-base text-black">
-                총 {temp_users.length}명
+                총 {users.length}명
               </div>
             </div>
           </div>
 
-          {temp_users.map((user, index) => renderUserDetails(user, index))}
+          {users.map((user, index) => renderUserDetails(user, index))}
         </div>
       </div>
     </div>

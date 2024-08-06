@@ -1,14 +1,54 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import deliveryIcon from '../../assets/delivery/delivery.png';
+import { getDeliveryMembersApi, changePickUpStatusApi } from '../../apis/delivery';
+import { useUser } from '../../store/user';
 
 function DeliveryCompletePage() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { id } = useParams(); // id는 deliverySeq 값
+  const { seq: currentUserSeq } = useUser();
+  const [loading, setLoading] = useState(true);
+  const [memberInfo, setMemberInfo] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // const handleConfirmClick = () => {
-  //   // 수령 확인 클릭 시의 로직을 추가
-  //   navigate("/"); // 클릭 시 이동할 경로 설정
-  // };
+  useEffect(() => {
+    const fetchMemberInfo = async () => {
+      try {
+        const membersResponse = await getDeliveryMembersApi(id);
+        const currentUserMemberInfo = membersResponse.find(member => member.userSeq === currentUserSeq);
+        setMemberInfo(currentUserMemberInfo);
+      } catch (error) {
+        console.error('참가자 정보를 가져오는 중 오류가 발생했습니다:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMemberInfo();
+  }, [id, currentUserSeq]);
+
+  const handleConfirmClick = async () => {
+    try {
+      if (!memberInfo) {
+        throw new Error('현재 사용자의 멤버 정보를 찾을 수 없습니다.');
+      }
+      console.log('Changing pick-up status for deliveryGuestSeq:', memberInfo.deliveryGuestSeq);
+      await changePickUpStatusApi(memberInfo.deliveryGuestSeq);
+      setShowSuccessModal(true);
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        navigate(`/chat/delivery/main`); // roomSeq를 이용하여 채팅방으로 이동
+      }, 1500);
+    } catch (error) {
+      console.error('수령 확인 중 오류가 발생했습니다:', error);
+      alert('수령 확인 중 오류가 발생했습니다.');
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col items-center bg-white max-w-[360px] mx-auto relative h-screen">
@@ -32,11 +72,19 @@ function DeliveryCompletePage() {
       </div>
 
       <button
-        // onClick={handleConfirmClick}
+        onClick={handleConfirmClick}
         className="py-3 px-10 bg-main text-white text-[1.1rem] font-bold rounded-xl mb-8 w-60"
       >
         수령 확인
       </button>
+
+      {showSuccessModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white px-4 py-2 rounded-lg shadow-lg text-center">
+            <div className="text-lg font-bold">수령 확인 완료</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

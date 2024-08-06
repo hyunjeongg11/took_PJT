@@ -171,12 +171,12 @@ function MainPage() {
             Delivery Pay Input
           </button>
         </Link>
-        <Link to="/delivery/complete">
+        <Link to="/delivery/21/complete">
           <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
             Delivery Complete
           </button>
         </Link>
-        <Link to="/delivery/status">
+        <Link to="/delivery/21/status">
           <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
             Delivery Status
           </button>

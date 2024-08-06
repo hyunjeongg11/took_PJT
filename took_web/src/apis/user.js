@@ -94,8 +94,29 @@ export const loginApi = async (params, setAccessToken) => {
 };
 
 //getUserInfoApi
-// {
+// 요청
+//  {
 //   ”userSeq” : 2
+//   }
+// 응답
+// {
+//   "code": "su",
+//   "message": "Success.",
+//   "userSeq": 17,
+//   "userId": "a",
+//   "userName": "참",
+//   "email": "ckalswn007@naver.com",
+//   "phoneNumber": "01077228267",
+//   "birth": "20010118",
+//   "createdAt": "2024-08-02T07:38:31.861593",
+//   "sido": "부산광역시",
+//   "gugun": "강서구",
+//   "addr": "녹산산업중로 333(송정동)",
+//   "lat": 35.096235,
+//   "lng": 128.855274,
+//   "imageNo": 7,
+//   "role": "ROLE_USER",
+//   "nickname": null
 //   }
 export const getUserInfoApi = async (params) => {
   try {

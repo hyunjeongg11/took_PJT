@@ -84,9 +84,11 @@ export const getAccountListApi = async (params) => {
     const response = await request.post('/api/account/account-list', params);
     return response.data;
   } catch (error) {
+    console.error('getAccountListApi 에러:', error.response ? error.response.data : error.message);
     return handleApiError(error);
   }
 };
+
 
 // 계좌 잔액 보기
 // 요청
