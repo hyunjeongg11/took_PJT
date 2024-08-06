@@ -215,6 +215,7 @@ function SignupPage() {
             value={id}
             onChange={(e) => {
               setId(e.target.value);
+              setIdError('');
               setIsIdValid(false);
             }}
             placeholder="아이디를 입력해주세요"
