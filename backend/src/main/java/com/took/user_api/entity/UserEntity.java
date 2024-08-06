@@ -107,7 +107,8 @@ public class UserEntity {
         this.imageNo = (int)(Math.random() * 23) + 1;
     }
 
-    public UserEntity(String email, String password, String nickname) {
+    public UserEntity(String email, String password, String nickname,String userId) {
+        this.userId = userId;
         this.email = email;
         this.password = password;
         this.nickname = nickname;

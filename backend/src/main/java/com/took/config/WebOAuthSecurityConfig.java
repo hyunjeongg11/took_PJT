@@ -26,12 +26,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 public class WebOAuthSecurityConfig {
 
-    @Qualifier("GOAuth2UserCustomService")
+
     private final GOAuth2UserCustomService oAuth2UserCustomService;
     private final JwtProvider jwtProvider;
     private final UserService userService;
     private final RefreshTokenRepository refreshTokenRepository;
-
     private final UserRepository userRepository;
     private final TokenBlacklistService tokenBlacklistService;
 
@@ -44,18 +43,15 @@ public class WebOAuthSecurityConfig {
                 .formLogin(formLogin -> formLogin.disable())
                 .logout(logout -> logout.disable());
 
-
-        http.sessionManagement(sessionManagement ->
-                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.oauth2Login(oauth2 -> oauth2
                 .loginPage("/login")
                 .authorizationEndpoint(authorization -> authorization
                         .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository()))
-                .successHandler(oAuth2SuccessHandler())
-                .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserCustomService)));
+                        .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserCustomService))
+                        .successHandler(oAuth2SuccessHandler())
+                );
         http.logout(logout -> logout.logoutSuccessUrl("/login"));
 
         http.exceptionHandling(exceptionHandling -> exceptionHandling

@@ -111,6 +111,13 @@ public class PartyController {
         return partyService.partyDetail(requestBody);
     }
 
+    @Operation(summary = "파티 삭제", description = "파티를 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "파티 삭제 성공",
+                    content = @Content(schema = @Schema(implementation = PartyDetailResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "잘못된 서버")
+    })
     @DeleteMapping("/party-delete/{partySeq}")
     public ResponseEntity<?> partyDelete(@PathVariable("partySeq") Long partySeq) {
         return partyService.partyDelete(partySeq);

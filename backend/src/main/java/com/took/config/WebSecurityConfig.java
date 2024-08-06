@@ -1,12 +1,6 @@
 package com.took.config;
 
-
 import com.took.filter.JwtAuthenticationFilter;
-
-//Google Oauth 인증용
-import com.took.user_api.handler.GOAuth2SuccessHandler;
-
-//import com.took.user_api.handler.OAuth2SuccessHandler;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,7 +9,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
@@ -23,7 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -33,80 +25,57 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
 
-@Configurable // @Bean을 등록할 수 있도록 해준다.
-@Configuration // WebSecurityConfig 라는 친구가 bean method를 갖고 있다.
+@Configurable
+@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final DefaultOAuth2UserService oAuth2UserService;
-//    private final OAuth2SuccessHandler oAuth2SuccessHandler;
-
-//   구글 임시 인증 시험용
-    private final GOAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     protected CorsConfigurationSource configurationSource() {
-
         CorsConfiguration configuration = new CorsConfiguration();
-
-        // 정확한 출처만 허용
         configuration.addAllowedOrigin("https://i11e205.p.ssafy.io");
         configuration.addAllowedOrigin("http://localhost:5173");
         configuration.addAllowedOrigin("http://localhost:5174");
-
-        configuration.addAllowedMethod("*"); // 필요에 따라 특정 메서드만 허용
-        configuration.addAllowedHeader("*"); // 특정 해더만 허용
-        configuration.setAllowCredentials(true); // 자격 증명(쿠키 등) 허용
-
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .cors(cors -> cors
-                        .configurationSource(configurationSource()))
-                .csrf(CsrfConfigurer::disable) // 사이트 요청에 대한 설정 //JWT 기반 인증이 이뤄지 때문에 csrf를 제어!
-                .httpBasic(HttpBasicConfigurer::disable) //이것도 JWT 기반 인증이 이뤄지기 때문에 disable로 제어!
+                .cors(cors -> cors.configurationSource(configurationSource()))
+                .csrf(CsrfConfigurer::disable)
+                .httpBasic(HttpBasicConfigurer::disable)
                 .sessionManagement(sessionManagement -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                         .maximumSessions(1)
                         .sessionRegistry(sessionRegistry()))
-                // 세션을 하나만 쓰도록 설정
                 .authorizeHttpRequests(request -> request
-
-//                                                로그인 전에 이뤄지는 작업은 인증이 푤요하지 않다.
-                                .requestMatchers("/", "/api/auth/**","/oauth2/**").permitAll()
-                                .requestMatchers("/ws/**").permitAll()
-                                .requestMatchers("/api/swagger-ui/**", "/api-docs/**").permitAll()
-                                // 접두사는 제외 하고 USER만 적어준다.w
-                                .requestMatchers("/api/user/**").hasRole("USER")
-                                .requestMatchers("/api/account/**").hasRole("USER")
-                                .requestMatchers("/api/pay/**").hasRole("USER")
-                                .requestMatchers("/api/chat/**").hasRole("USER")
-                                .requestMatchers("/api/delivery/**").hasRole("USER")
-                                .requestMatchers("/api/noti/**").hasRole("USER")
-                                .requestMatchers("/api/position/**").hasRole("USER")
-                                .requestMatchers("/api/purchase/**").hasRole("USER")
-                                .requestMatchers("/api/ship/**").hasRole("USER")
-                                .requestMatchers("/api/shops/**").hasRole("USER")
-                                .requestMatchers("/api/sms/**").hasRole("USER")
-                                .requestMatchers("/api/navi/**").hasRole("USER")
-                                .requestMatchers("/api/taxi/**").hasRole("USER")
-                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                .anyRequest().authenticated()
-                )
-//                .oauth2Login(oauth2 -> oauth2
-//                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/auth/oauth2"))
-//                        .redirectionEndpoint(endpoint -> endpoint.baseUri("/api/oauth2/callback/*"))
-//                        .userInfoEndpoint(endpoint->endpoint.userService(oAuth2UserService))
-//                        .successHandler(oAuth2SuccessHandler)
-//                        .failureHandler(new OAuth2FailureHandler()) // 실패 핸들러 설정
-//                )
+                        .requestMatchers("/", "/api/auth/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/api/swagger-ui/**", "/api-docs/**").permitAll()
+                        .requestMatchers("/api/user/**").hasRole("USER")
+                        .requestMatchers("/api/account/**").hasRole("USER")
+                        .requestMatchers("/api/pay/**").hasRole("USER")
+                        .requestMatchers("/api/chat/**").hasRole("USER")
+                        .requestMatchers("/api/delivery/**").hasRole("USER")
+                        .requestMatchers("/api/noti/**").hasRole("USER")
+                        .requestMatchers("/api/position/**").hasRole("USER")
+                        .requestMatchers("/api/purchase/**").hasRole("USER")
+                        .requestMatchers("/api/ship/**").hasRole("USER")
+                        .requestMatchers("/api/shops/**").hasRole("USER")
+                        .requestMatchers("/api/sms/**").hasRole("USER")
+                        .requestMatchers("/api/navi/**").hasRole("USER")
+                        .requestMatchers("/api/taxi/**").hasRole("USER")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new FailedAuthenticationEntryPoint()))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -120,20 +89,12 @@ public class WebSecurityConfig {
     }
 }
 
-// jwt인증에 실패하게 되면 위 값을 넣어주게 된다.
 class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException)
-            throws IOException, ServletException {
-
+                         AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        // {"code" : "NP" , "message" : "No Permission."}
         response.getWriter().write("{\"code\" : \"NP\" , \"message\" : \"No Permission.\"}");
-
     }
-
-
 }
