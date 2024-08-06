@@ -144,4 +144,10 @@ public class DeliveryService {
             return (dist * 1000);  // m 단위로 변환
         }
     }
+
+    @Transactional
+    public DeliverySelectResponse selectByRoom(Long roomSeq) {
+        Delivery delivery = deliveryRepository.findByRoomSeq(roomSeq);
+        return new DeliverySelectResponse(delivery);
+    }
 }

@@ -11,4 +11,6 @@ import java.util.List;
 public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
 
     List<Delivery> findByDeliverySeqIn(List<Long> deliverySeqs);
+
+    Delivery findByRoomSeq(Long roomSeq);
 }

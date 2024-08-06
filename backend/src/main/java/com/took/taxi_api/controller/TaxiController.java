@@ -261,4 +261,17 @@ public class TaxiController {
         taxiGuestService.setRank(request);
         return ResponseEntity.noContent().build();
     }
+
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "방에 참가 중인 택시 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "방에 참가 중인 택시를 찾을 수 없음")
+    })
+    @PostMapping("/selectByRoom/{roomSeq}")
+    ResponseEntity<TaxiSelectResponse> selectByRoom(
+            @PathVariable @Parameter(description = "방 식별 번호", required = true) Long roomSeq) {
+        TaxiSelectResponse taxi = taxiService.selectByRoom(roomSeq);
+        return ResponseEntity.ok(taxi);
+    }
+
 }

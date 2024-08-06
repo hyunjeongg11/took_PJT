@@ -183,4 +183,10 @@ public class TaxiService {
         Taxi taxi = taxiRepository.findById(guest.getTaxi().getTaxiSeq()).orElseThrow();
         return new TaxiSelectResponse(taxi);
     }
+
+    @Transactional
+    public TaxiSelectResponse selectByRoom(Long roomSeq) {
+        Taxi taxi = taxiRepository.findByRoomSeq(roomSeq);
+        return new TaxiSelectResponse(taxi);
+    }
 }

@@ -230,4 +230,16 @@ public class DeliveryController {
         boolean response = deliveryGuestService.isJoin(request);
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "해당 채팅방 번호의 파티 조회", description = "해당 채팅방과 연결되어있는 파티를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @GetMapping("/selectByRoom/{roomSeq}")
+    ResponseEntity<DeliverySelectResponse> selectByRoom(
+            @PathVariable @Parameter(description = "조회할 채팅방의 고유 번호", required = true) Long roomSeq) {
+        DeliverySelectResponse response = deliveryService.selectByRoom(roomSeq);
+        return ResponseEntity.ok(response);
+    }
 }
