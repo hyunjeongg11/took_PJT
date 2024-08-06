@@ -77,17 +77,6 @@ public class ShopService {
 
     @Transactional
     public void delete(Long id) {
-//        QShopGuest qShopGuest = QShopGuest.shopGuest;
-//        queryFactory.delete(qShopGuest).where(qShopGuest.shop.shopSeq.eq(id)).execute();
-//
-//        QShipInfo qShipInfo = QShipInfo.shipInfo;
-//        queryFactory.delete(qShipInfo).where(qShipInfo.shop.shopSeq.eq(id)).execute();
-//
-//        QPurchaseInfo qPurchaseInfo = QPurchaseInfo.purchaseInfo;
-//        queryFactory.delete(qPurchaseInfo).where(qPurchaseInfo.shop.shopSeq.eq(id)).execute();
-//
-//        QShop shop = QShop.shop;
-//        queryFactory.delete(shop).where(shop.shopSeq.eq(id)).execute();
         shopRepository.deleteById(id);
     }
 
@@ -165,5 +154,13 @@ public class ShopService {
             }
         }
         return true;
+    }
+
+    @Transactional
+    public boolean findGuestsById(long userSeq, long shopSeq) {
+        UserEntity user = userRepository.findByUserSeq(userSeq);
+        Shop shop = shopRepository.findById(shopSeq).orElseThrow();
+        ShopGuest shopGuest = shopGuestRepository.findByShopAndUser(shop, user);
+        return shopGuest == null;
     }
 }

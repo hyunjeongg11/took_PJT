@@ -106,4 +106,12 @@ public class ShopController {
         boolean check = shopService.pickUpCheck(shopSeq);
         return ResponseEntity.ok(check);
     }
+
+    @Operation(summary = "상점에 게스트 참여 중인지 확인", description = "상점에 게스트가 참여 중인지 확인합니다.")
+    @ApiResponse(responseCode = "200", description = "게스트가 참여중인지 확인 성공")
+    @GetMapping("/guestCheck/{shopSeq}/{userSeq}")
+    public ResponseEntity<?> findGuestsById(@PathVariable @Schema(description = "상점 ID", example = "1") long shopSeq, @PathVariable @Schema(description = "사용자 ID", example = "1") long userSeq) {
+        return ResponseEntity.ok()
+                .body(shopService.findGuestsById(userSeq, shopSeq));
+    }
 }

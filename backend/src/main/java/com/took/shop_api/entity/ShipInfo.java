@@ -20,7 +20,7 @@ public class ShipInfo {
     private Long shipSeq;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "shop_seq", nullable = false)
     private Shop shop;
