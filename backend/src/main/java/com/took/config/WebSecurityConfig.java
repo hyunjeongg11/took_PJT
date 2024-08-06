@@ -58,7 +58,7 @@ public class WebSecurityConfig {
                         .maximumSessions(1)
                         .sessionRegistry(sessionRegistry()))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/", "/api/auth/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/", "/api/auth/**", "/api/oauth2/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/api/swagger-ui/**", "/api-docs/**").permitAll()
                         .requestMatchers("/api/user/**").hasRole("USER")
