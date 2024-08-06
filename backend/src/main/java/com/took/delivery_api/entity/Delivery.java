@@ -38,10 +38,8 @@ public class Delivery {
     private UserEntity user;
 
     // 채팅방 번호
-    @OneToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "room_seq", nullable = false)
-    private ChatRoom chatRoom;
+    @Column
+    private Long roomSeq;
 
     // 정산 번호
     @Column

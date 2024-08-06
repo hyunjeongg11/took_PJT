@@ -1,7 +1,6 @@
 package com.took.shop_api.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.shop_api.dto.*;
 import com.took.shop_api.entity.*;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -30,9 +28,8 @@ public class ShopService {
 
     @Transactional
     public Shop save(AddShopRequest request) {
-        ChatRoom chatRoom = chatRoomRepository.findById(request.getRoomSeq()).orElseThrow();
         Shop shop = Shop.builder().user(userRepository.findByUserSeq(request.getUserSeq()))
-                .chatRoom(chatRoom)
+                .roomSeq(request.getRoomSeq())
                 .title(request.getTitle())
                 .content(request.getContent())
                 .item(request.getItem())

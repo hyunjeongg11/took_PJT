@@ -26,10 +26,8 @@ public class Taxi {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long taxiSeq;  // 택시 번호
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "room_seq", nullable = false)
-    private ChatRoom chatRoom;  // 채팅방 참조 번호
+    @Column
+    private Long roomSeq;  // 채팅방 참조 번호
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)

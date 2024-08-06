@@ -45,10 +45,7 @@ public class Shop {
     @JoinColumn(name = "user_seq", nullable = false)
     private UserEntity user;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "room_seq", nullable = false)
-    private ChatRoom chatRoom;
+    private Long roomSeq;
 
     @Column(nullable = false)
     private String title;
