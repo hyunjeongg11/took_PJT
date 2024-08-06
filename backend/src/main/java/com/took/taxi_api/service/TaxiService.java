@@ -1,13 +1,8 @@
 package com.took.taxi_api.service;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.repository.ChatRoomRepository;
-import com.took.delivery_api.entity.QDelivery;
-import com.took.delivery_api.entity.QDeliveryGuest;
 import com.took.taxi_api.dto.*;
-import com.took.taxi_api.entity.QTaxi;
-import com.took.taxi_api.entity.QTaxiGuest;
 import com.took.taxi_api.entity.Taxi;
 import com.took.taxi_api.entity.TaxiGuest;
 import com.took.taxi_api.repository.TaxiGuestRepository;
@@ -33,7 +28,6 @@ public class TaxiService {
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    private final JPAQueryFactory queryFactory;
 
     /**
      * 새로운 Taxi 엔티티를 생성하고 데이터베이스에 저장합니다.
@@ -80,13 +74,7 @@ public class TaxiService {
      */
     @Transactional
     public void deleteTaxi(Long taxiSeq) {
-        QTaxiGuest qTaxiGuest = QTaxiGuest.taxiGuest;
-        queryFactory.delete(qTaxiGuest)
-                .where(qTaxiGuest.taxi.taxiSeq.eq(taxiSeq))
-                .execute();
-
-        QTaxi qTaxi = QTaxi.taxi;
-        queryFactory.delete(qTaxi).where(qTaxi.taxiSeq.eq(taxiSeq)).execute();
+        taxiRepository.deleteById(taxiSeq);
     }
 
     /**
@@ -96,7 +84,7 @@ public class TaxiService {
      */
     @Transactional
     public TaxiSelectResponse getTaxi(Long taxiSeq) {
-        Taxi taxi = taxiRepository.findByTaxiSeq(taxiSeq);
+        Taxi taxi = taxiRepository.findById(taxiSeq).orElseThrow();
         return new TaxiSelectResponse(taxi);
     }
 
@@ -106,7 +94,7 @@ public class TaxiService {
      */
     @Transactional
     public void setTaxi(TaxiSetRequest request) {
-        Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
+        Taxi taxi = taxiRepository.findById(request.getTaxiSeq()).orElseThrow();
         taxi.updateTaxi(request.getMaster(), request.getMax(), request.isGender());
     }
 
@@ -116,7 +104,7 @@ public class TaxiService {
      */
     @Transactional
     public void statusTaxi(TaxiStatusRequest request) {
-        Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
+        Taxi taxi = taxiRepository.findById(request.getTaxiSeq()).orElseThrow();
         switch (taxi.getStatus()) {
             case OPEN:
                 taxi.updateStatus(Taxi.Status.FILLED);
@@ -138,7 +126,7 @@ public class TaxiService {
      */
     @Transactional
     public void startTaxi(TaxiStartRequest request) {
-        Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
+        Taxi taxi = taxiRepository.findById(request.getTaxiSeq()).orElseThrow();
         taxi.updateStart(request.getStartLat(), request.getStartLon(), request.getCost());
     }
 
@@ -148,7 +136,7 @@ public class TaxiService {
       @param request TaxiSetCostRequest 객체로, 택시 비용 설정에 필요한 정보를 담고 있습니다.
      */
     public void setCost(TaxiSetCostRequest request) {
-        Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
+        Taxi taxi = taxiRepository.findById(request.getTaxiSeq()).orElseThrow();
         taxi.updateCost(request.getCost());
     }
 
@@ -160,7 +148,7 @@ public class TaxiService {
      */
     @Transactional
     public TaxiFinalCostResponse finalCost(TaxiFInalCostRequest request) {
-        Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
+        Taxi taxi = taxiRepository.findById(request.getTaxiSeq()).orElseThrow();
         taxi.updateCost(request.getAllCost());
 
         TaxiFinalCostResponse response = new TaxiFinalCostResponse();
@@ -185,7 +173,7 @@ public class TaxiService {
     // 정산방 연결
     @Transactional
     public void setParty(TaxiSetPartyRequest request) {
-        Taxi taxi = taxiRepository.findByTaxiSeq(request.getTaxiSeq());
+        Taxi taxi = taxiRepository.findById(request.getTaxiSeq()).orElseThrow();
         taxi.updateParty(request.getPartySeq());
     }
 
@@ -194,7 +182,7 @@ public class TaxiService {
     public TaxiSelectResponse getJoinedTaxi(Long userSeq) {
         UserEntity user = userRepository.findByUserSeq(userSeq);
         TaxiGuest guest = taxiGuestRepository.findByUser(user);
-        Taxi taxi = taxiRepository.findByTaxiSeq(guest.getTaxi().getTaxiSeq());
+        Taxi taxi = taxiRepository.findById(guest.getTaxi().getTaxiSeq()).orElseThrow();
         return new TaxiSelectResponse(taxi);
     }
 }

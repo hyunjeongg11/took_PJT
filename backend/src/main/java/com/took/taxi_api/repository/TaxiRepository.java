@@ -7,6 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TaxiRepository extends JpaRepository<Taxi, Long>, TaxiRepositoryCustom {
-
-    Taxi findByTaxiSeq(Long taxiSeq);
 }

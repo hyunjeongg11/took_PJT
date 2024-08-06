@@ -180,14 +180,14 @@ public class TaxiController {
     }
 
     @Operation(summary = "특정 게스트 조회", description = "특정 게스트를 조회합니다.")
-    @GetMapping("/guest/{userSeq}")
+    @GetMapping("/guest/{guestSeq}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "특정 게스트 조회 성공"),
             @ApiResponse(responseCode = "404", description = "게스트를 찾을 수 없음")
     })
     ResponseEntity<GuestSelectResponse> getGuest(
-            @PathVariable @Parameter(description = "사용자 식별 번호", required = true) Long userSeq) {
-        GuestSelectResponse guest = taxiGuestService.getGuest(userSeq);
+            @PathVariable @Parameter(description = "사용자 식별 번호", required = true) Long guestSeq) {
+        GuestSelectResponse guest = taxiGuestService.getGuest(guestSeq);
         return ResponseEntity.ok(guest);
     }
 

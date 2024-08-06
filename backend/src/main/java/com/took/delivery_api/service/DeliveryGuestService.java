@@ -28,7 +28,7 @@ public class DeliveryGuestService {
     // 파티 참가
     @Transactional
     public void joinParty(DeliveryGuestCreateRequest request) {
-        Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
+        Delivery delivery = deliveryRepository.findById(request.getDeliverySeq()).orElseThrow();
         UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
         deliveryGuestRepository.save(DeliveryGuest.builder()
                 .delivery(delivery)
@@ -42,15 +42,15 @@ public class DeliveryGuestService {
     // 파티 퇴장
     @Transactional
     public void leaveParty(DeliveryGuestDeleteRequest request) {
-        deliveryGuestRepository.deleteByDeliveryGuestSeq(request.getDeliveryGuestSeq());
-        Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
+        deliveryGuestRepository.deleteById(request.getDeliveryGuestSeq());
+        Delivery delivery = deliveryRepository.findById(request.getDeliverySeq()).orElseThrow();
         delivery.updateCount(-1);
     }
 
     // 파티 참가자 리스트
     @Transactional
     public List<DeliveryGuestSelectResponse> getGuestList(Long deliverySeq) {
-        Delivery delivery = deliveryRepository.findByDeliverySeq(deliverySeq);
+        Delivery delivery = deliveryRepository.findById(deliverySeq).orElseThrow();
         List<DeliveryGuest> deliveryGuests = deliveryGuestRepository.findAllByDelivery(delivery);
         return deliveryGuests.stream()
                 .map(DeliveryGuestSelectResponse::new)
@@ -60,21 +60,21 @@ public class DeliveryGuestService {
     // 파티 참가자 조회
     @Transactional
     public DeliveryGuestSelectResponse getGuest(Long deliveryGuestSeq) {
-        DeliveryGuest deliveryGuest = deliveryGuestRepository.findByDeliveryGuestSeq(deliveryGuestSeq);
+        DeliveryGuest deliveryGuest = deliveryGuestRepository.findById(deliveryGuestSeq).orElseThrow();
         return new DeliveryGuestSelectResponse(deliveryGuest);
     }
     
     // 배달 픽업 여부 변경
     @Transactional
     public void setPickUp(Long deliveryGuestSeq) {
-        DeliveryGuest deliveryGuest = deliveryGuestRepository.findByDeliveryGuestSeq(deliveryGuestSeq);
+        DeliveryGuest deliveryGuest = deliveryGuestRepository.findById(deliveryGuestSeq).orElseThrow();
         deliveryGuest.updatePickUp(true);
     }
 
     // 해당 방 참가 여부
     @Transactional
     public boolean isJoin(DeliveryGuestIsJoinRequest request) {
-        Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
+        Delivery delivery = deliveryRepository.findById(request.getDeliverySeq()).orElseThrow();
         UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
         DeliveryGuest deliveryGuest = deliveryGuestRepository.findByDeliveryAndUser(delivery,user);
         return deliveryGuest != null;

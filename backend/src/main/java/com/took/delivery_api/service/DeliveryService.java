@@ -1,20 +1,14 @@
 package com.took.delivery_api.service;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.delivery_api.dto.*;
 import com.took.delivery_api.entity.Delivery;
-import com.took.delivery_api.entity.DeliveryGuest;
-import com.took.delivery_api.entity.QDelivery;
-import com.took.delivery_api.entity.QDeliveryGuest;
+
 import com.took.delivery_api.repository.DeliveryGuestRepository;
 import com.took.delivery_api.repository.DeliveryRepository;
-import com.took.shop_api.entity.QShop;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -36,7 +30,6 @@ public class DeliveryService {
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    private final JPAQueryFactory queryFactory;
 
     // 배달 생성 메서드
     @Transactional
@@ -66,49 +59,41 @@ public class DeliveryService {
     // 정산 연결
     @Transactional
     public void setParty(DeliverySerPartyRequest request) {
-        Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
+        Delivery delivery = deliveryRepository.findById(request.getDeliverySeq()).orElseThrow();
         delivery.updateParty(request.getPartySeq());
     }
 
     // 글 수정
     @Transactional
     public void modifyDelivery(DeliveryModifyRequest request) {
-        Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
+        Delivery delivery = deliveryRepository.findById(request.getDeliverySeq()).orElseThrow();
         delivery.updateDelivery(request);
     }
 
     // 글 삭제
     @Transactional
     public void deleteDelivery(Long deliverySeq) {
-        QDeliveryGuest qDeliveryGuest = QDeliveryGuest.deliveryGuest;
-        // 자식 엔티티인 DeliveryGuest 먼저 삭제
-        queryFactory.delete(qDeliveryGuest)
-                .where(qDeliveryGuest.delivery.deliverySeq.eq(deliverySeq))
-                .execute();
-
-        QDelivery qDelivery = QDelivery.delivery;
-        queryFactory.delete(qDelivery).where(qDelivery.deliverySeq.eq(deliverySeq)).execute();
+        deliveryRepository.deleteById(deliverySeq);
     }
-
 
     // 공지사항 등록
     @Transactional
     public void createNotice(DeliveryNoticeCreateRequest request) {
-        Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
+        Delivery delivery = deliveryRepository.findById(request.getDeliverySeq()).orElseThrow();
         delivery.updateNotice(request.getNotice());
     }
 
     // 공지사항 수정
     @Transactional
     public void modifyNotice(DeliveryNoticeCreateRequest request) {
-        Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
+        Delivery delivery = deliveryRepository.findById(request.getDeliverySeq()).orElseThrow();
         delivery.updateNotice(request.getNotice());
     }
 
     // 공지사항 삭제
     @Transactional
     public void deleteNotice(Long deliverySeq) {
-        Delivery delivery = deliveryRepository.findByDeliverySeq(deliverySeq);
+        Delivery delivery = deliveryRepository.findById(deliverySeq).orElseThrow();
         delivery.updateNotice(null);
     }
 
@@ -135,14 +120,14 @@ public class DeliveryService {
     // 배달 글 상세 조회
     @Transactional
     public DeliverySelectResponse getDetail(Long deliverySeq) {
-        Delivery delivery = deliveryRepository.findByDeliverySeq(deliverySeq);
+        Delivery delivery = deliveryRepository.findById(deliverySeq).orElseThrow();
         return new DeliverySelectResponse(delivery);
     }
 
     // 배달 상태 변경
     @Transactional
     public void setStatus(DeliverySetStatusRequest request) {
-        Delivery delivery = deliveryRepository.findByDeliverySeq(request.getDeliverySeq());
+        Delivery delivery = deliveryRepository.findById(request.getDeliverySeq()).orElseThrow();
         delivery.updateStatus(request.getStatus());
     }
 

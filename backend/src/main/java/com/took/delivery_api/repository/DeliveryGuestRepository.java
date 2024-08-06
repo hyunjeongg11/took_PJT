@@ -13,13 +13,7 @@ import java.util.List;
 public interface DeliveryGuestRepository extends JpaRepository<DeliveryGuest, Long> {
     List<DeliveryGuest> findAllByDelivery(Delivery delivery);
 
-    DeliveryGuest findByDeliveryGuestSeq(Long deliveryGuestSeq);
-
     DeliveryGuest findByDeliveryAndUser(Delivery delivery, UserEntity user);
 
     List<DeliveryGuest> findAllByUser(UserEntity user);
-
-    void deleteByDeliveryGuestSeq(Long deliveryGuestSeq);
-
-    List<DeliveryGuest> findByDelivery(Delivery delivery);
 }

@@ -1,7 +1,5 @@
 package com.took.taxi_api.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
@@ -10,7 +8,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter

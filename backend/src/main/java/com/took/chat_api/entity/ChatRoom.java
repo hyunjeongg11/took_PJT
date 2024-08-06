@@ -1,10 +1,5 @@
 package com.took.chat_api.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.took.delivery_api.entity.Delivery;
-import com.took.shop_api.entity.Shop;
-import com.took.taxi_api.entity.Taxi;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +7,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity  // JPA 엔티티임을 나타내는 어노테이션
 @Getter

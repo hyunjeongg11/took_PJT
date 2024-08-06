@@ -1,6 +1,5 @@
 package com.took.chat_api.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;

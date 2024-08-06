@@ -18,8 +18,4 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     // 카테고리와 사용자 번호 목록으로 채팅방을 조회하는 메서드
     List<ChatRoom> findByCategoryAndUserIn(int category, List<UserEntity> users);
-
-    List<ChatRoom> findByUser(UserEntity user);
-
-    void deleteByRoomSeq(Long roomSeq);
 }

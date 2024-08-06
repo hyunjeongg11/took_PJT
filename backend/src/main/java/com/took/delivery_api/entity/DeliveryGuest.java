@@ -1,6 +1,5 @@
 package com.took.delivery_api.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,9 +39,5 @@ public class DeliveryGuest {
 
     public void updatePickUp(boolean pickUp) {
         this.pickUp = pickUp;
-    }
-
-    public void deleteParent() {
-        this.delivery = null;
     }
 }
