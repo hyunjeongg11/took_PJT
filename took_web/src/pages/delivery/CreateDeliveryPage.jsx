@@ -145,7 +145,7 @@ function CreateDeliveryPage() {
     } else {
       const params = {
         userSeq,
-        roomSeq: 39, // roomSeq를 실제 값으로 대체해야 합니다.
+        roomSeq: 31, // roomSeq를 실제 값으로 대체해야 합니다.
         storeName: form.storeName,
         pickupPlace: form.deliveryAddress,
         pickupLat: 0.0, // 픽업 장소 위도 값을 실제 값으로 대체해야 합니다.

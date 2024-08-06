@@ -10,6 +10,7 @@ function DeliveryCompletePage() {
   const { seq: currentUserSeq } = useUser();
   const [loading, setLoading] = useState(true);
   const [memberInfo, setMemberInfo] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
@@ -29,9 +30,16 @@ function DeliveryCompletePage() {
 
   const handleConfirmClick = async () => {
     try {
+      if (!memberInfo) {
+        throw new Error('현재 사용자의 멤버 정보를 찾을 수 없습니다.');
+      }
+      console.log('Changing pick-up status for deliveryGuestSeq:', memberInfo.deliveryGuestSeq);
       await changePickUpStatusApi(memberInfo.deliveryGuestSeq);
-      alert('수령 확인이 완료되었습니다.');
-      navigate("/");
+      setShowSuccessModal(true);
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        navigate(`/chat/delivery/main`); // roomSeq를 이용하여 채팅방으로 이동
+      }, 1500);
     } catch (error) {
       console.error('수령 확인 중 오류가 발생했습니다:', error);
       alert('수령 확인 중 오류가 발생했습니다.');
@@ -69,6 +77,14 @@ function DeliveryCompletePage() {
       >
         수령 확인
       </button>
+
+      {showSuccessModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white px-4 py-2 rounded-lg shadow-lg text-center">
+            <div className="text-lg font-bold">수령 확인 완료</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

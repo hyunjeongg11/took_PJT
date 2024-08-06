@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import 송금완료 from '../../assets/payment/송금완료.png';
+import took1 from '../../assets/payment/took1.png';
 import { formatNumber } from '../../utils/format';
 import { maskName } from '../../utils/formatName';
 
@@ -32,9 +33,9 @@ function CompletePage() {
         {' '}
         {/* 하단에 margin-bottom 추가 */}
         <img
-          src={송금완료}
+          src={took1}
           alt="송금 완료"
-          className="w-[150px] h-[150px] mb-5"
+          className="w-[130px] h-[150px] mb-10 animate-jump"
         />
         <div className="text-sm text-center mb-1">
           {maskName(tempMember.userName)} 님에게
