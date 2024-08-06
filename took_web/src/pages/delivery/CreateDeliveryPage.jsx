@@ -1,3 +1,4 @@
+// pages/delivery/CreateDeliveryPage.js
 import React, { useState, useEffect } from 'react';
 import BackButton from '../../components/common/BackButton';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,6 +8,7 @@ import {
   getDeliveryDetailApi,
 } from '../../apis/delivery';
 import { useUser } from '../../store/user';
+import SearchDropdown from '../../components/map/SearchDropDown';
 
 const InputField = ({
   label,
@@ -31,11 +33,6 @@ const InputField = ({
         className="flex-grow bg-transparent py-2 placeholder-gray-300 focus:outline-none focus:border-[#FF7F50]"
         min={min}
       />
-      {type === 'text' && (
-        <button className="text-white bg-neutral-400/75 mb-1 px-3 py-1.5 rounded-full text-sm font-bold ml-2">
-          검색
-        </button>
-      )}
       {type === 'number' && <span className="text-neutral-600 ml-2">원</span>}
     </div>
   </div>
@@ -87,7 +84,7 @@ const Modal = ({ show, message, onConfirm, onCancel }) => {
 function CreateDeliveryPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { seq: userSeq } = useUser(); // useUser 훅을 사용하여 seq 값을 가져옵니다.
+  const { seq: userSeq } = useUser();
   const [form, setForm] = useState({
     storeName: '',
     deliveryAddress: '',
@@ -143,18 +140,17 @@ function CreateDeliveryPage() {
   };
 
   const handleSubmit = async () => {
-    // async 추가
     if (Object.values(form).some((field) => field === '')) {
       setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 2000); // 2초 후 알림 메시지 숨김
+      setTimeout(() => setShowAlert(false), 2000);
     } else {
       const params = {
         userSeq,
-        roomSeq: 31, // roomSeq를 실제 값으로 대체해야 합니다.
+        roomSeq: 31,
         storeName: form.storeName,
         pickupPlace: form.deliveryAddress,
-        pickupLat: 0.0, // 픽업 장소 위도 값을 실제 값으로 대체해야 합니다.
-        pickupLon: 0.0, // 픽업 장소 경도 값을 실제 값으로 대체해야 합니다.
+        pickupLat: 0.0,
+        pickupLon: 0.0,
         deliveryTip: form.deliveryTip,
         deliveryTime: form.orderTime,
         content: form.additionalInfo,
@@ -167,8 +163,8 @@ function CreateDeliveryPage() {
         } else {
           response = await writeDeliveryApi(params);
           console.log('API response:', response);
-          const deliverySeq = response.deliverySeq; // 응답에서 deliverySeq를 가져옴
-          navigate(`/delivery/detail/${deliverySeq}`); // 생성된 게시물로 이동
+          const deliverySeq = response.deliverySeq;
+          navigate(`/delivery/detail/${deliverySeq}`);
         }
         setShowCompletionMessage(true);
         setTimeout(() => {
@@ -177,12 +173,12 @@ function CreateDeliveryPage() {
             id
               ? `/delivery/detail/${id}`
               : `/delivery/detail/${response.deliverySeq}`
-          ); // 생성된 게시물로 이동
-        }, 2000); // 2초 후에 완료 메시지 사라짐
+          );
+        }, 2000);
       } catch (error) {
         console.error('배달 글 작성 중 오류 발생:', error);
         setShowAlert(true);
-        setTimeout(() => setShowAlert(false), 2000); // 2초 후 알림 메시지 숨김
+        setTimeout(() => setShowAlert(false), 2000);
       }
     }
   };
@@ -208,14 +204,14 @@ function CreateDeliveryPage() {
       <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
 
       <div className="flex flex-col mt-4 px-6 text-sm h-full">
-        <InputField
+        <SearchDropdown
           label="배달 가게 이름"
           name="storeName"
           value={form.storeName}
           onChange={handleChange}
           placeholder="원하는 배달 가게 이름을 입력해주세요."
         />
-        <InputField
+        <SearchDropdown
           label="배달 수령 장소"
           name="deliveryAddress"
           value={form.deliveryAddress}

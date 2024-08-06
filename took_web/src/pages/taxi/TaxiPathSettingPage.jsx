@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaMapMarkerAlt } from 'react-icons/fa'; // react-icons의 FaMapMarkerAlt 아이콘 사용
 import BackButton from '../../components/common/BackButton';
 import searchIcon from '../../assets/taxi/search.png';
-import Search from '../../components/map/Search'; // Search 컴포넌트 import
+import SearchDropdown from '../../components/map/SearchDropDown';
 
 const TaxiPathSettingPage = () => {
   const [destination, setDestination] = useState('');
@@ -38,12 +38,6 @@ const TaxiPathSettingPage = () => {
   const handleSearchClick = () => {
     // Search 컴포넌트를 열기 위한 상태 변경
     setSearchPageOpen(true);
-  };
-
-  const getDirections = (e) => {
-    e.preventDefault();
-    // 여기에 주소 검색 기능을 처리할 방법을 추가합니다.
-    // 이 함수는 Search 컴포넌트의 getDirections props로 전달되어야 합니다.
   };
 
   return (
@@ -103,11 +97,6 @@ const TaxiPathSettingPage = () => {
 
       {searchPageOpen && (
         <div className="absolute top-0 left-0 right-0 bottom-0 bg-white z-50">
-          <Search
-            getDirections={getDirections}
-            setStartCoord={() => {}}
-            setEndCoord={() => {}}
-          />
           <button
             className="absolute top-2 right-2 text-black"
             onClick={() => setSearchPageOpen(false)}
