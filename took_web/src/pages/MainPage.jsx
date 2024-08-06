@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { TookButton } from '../components/main/TookButton';
 import taxi from '../assets/main/taxi.png';
@@ -6,7 +6,10 @@ import pay from '../assets/main/pay.png';
 import delivery from '../assets/main/delivery.png';
 import shop from '../assets/main/shop.png';
 import took from '../assets/took.png';
+import { useUser } from '../store/user';
 function MainPage() {
+  const { isLoggedIn } = useUser();
+  const linkPath = isLoggedIn ? '/mypage' : '/login';
   return (
     <div className="flex min-h-screen items-center justify-center  flex-col  max-w-screen ">
       <div className="flex gap-5 justify-between w-full items-center bg-white pt-10 px-7">
@@ -18,7 +21,7 @@ function MainPage() {
         </div>
 
         <div className="flex gap-3 self-start pt-4">
-          <Link to="/mypage">
+          <Link to={linkPath}>
             <img
               loading="lazy"
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/c1e55df56d29e4336515bf13d6aa348e4b790a713dffb53d03b32f27bdf6ac66?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
