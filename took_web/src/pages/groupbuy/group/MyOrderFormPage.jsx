@@ -1,11 +1,35 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import BackButton from '../../../components/common/BackButton';
-import { useState } from 'react';
+import { writePurchaseApi, updateMyPurchaseApi } from '../../../apis/groupBuy/purchase';
+import { FaRegTrashAlt } from 'react-icons/fa';
+import { useUser } from '../../../store/user.js';
 
 const initialData = [{ name: '', option: '', etc: '' }];
 
 function MyOrderFormPage() {
+  const { id: shopSeq } = useParams(); // 현재 경로에서 shopSeq 값을 가져옴
+  const { state } = useLocation(); // navigate를 통해 전달된 상태 값 (purchase 정보 포함)
+  const { seq: userSeq } = useUser();
   const [myData, setMyData] = useState(initialData);
   const [total, setTotal] = useState('');
+  const navigate = useNavigate();
+  const isEditMode = state && state.purchase; // 수정 모드인지 확인
+
+  useEffect(() => {
+    // 수정 모드인 경우, 기존 구매 정보를 폼에 설정
+    if (isEditMode) {
+      const { purchase } = state;
+      setTotal(purchase.price); // 기존 총 금액 설정
+      setMyData(
+        purchase.productList.map((product) => ({
+          name: product.productName,
+          option: product.optionDetails,
+          etc: product.etc,
+        }))
+      );
+    }
+  }, [isEditMode, state]);
 
   const handleChange = (idx, field, value) => {
     const newData = myData.map((item, index) =>
@@ -18,6 +42,48 @@ function MyOrderFormPage() {
     setMyData([...myData, { name: '', option: '', etc: '' }]);
   };
 
+  const removeItem = (idx) => {
+    if (idx > 0) {
+      const newData = myData.filter((_, index) => index !== idx);
+      setMyData(newData);
+    }
+  };
+
+  const handleSubmit = async () => {
+    const price = parseInt(total, 10);
+    const shipCost = 0;
+
+    const productList = myData.map((item) => ({
+      productName: item.name,
+      optionDetails: item.option,
+      etc: item.etc,
+    }));
+
+    const params = {
+      userSeq,
+      shopSeq: parseInt(shopSeq, 10),
+      price,
+      shipCost,
+      productList,
+    };
+
+    try {
+      if (isEditMode) {
+        // 수정 모드일 때, updateMyPurchaseApi 호출
+        await updateMyPurchaseApi({ purchaseSeq: state.purchase.purchaseSeq, params });
+        alert('주문 정보가 성공적으로 수정되었습니다.');
+      } else {
+        // 등록 모드일 때, writePurchaseApi 호출
+        await writePurchaseApi(params);
+        alert('주문 정보가 성공적으로 등록되었습니다.');
+      }
+      navigate(`/groupbuy/total/${shopSeq}`);
+    } catch (error) {
+      alert('에러가 발생했습니다. 다시 시도해주세요.');
+      console.error('API call error:', error);
+    }
+  };
+
   return (
     <div className="flex flex-col pt-5 bg-white max-w-screen min-h-screen">
       <div className="flex flex-col px-5 w-full">
@@ -27,15 +93,15 @@ function MyOrderFormPage() {
             공구 <span className="font-dela">took !</span>
           </div>
         </div>
-        <div className="flex flex-col pt-10 pb-1 mt-6 bg-main rounded-2xl shadow-gray-400 shadow-md">
-          <div className="flex flex-col px-4 text-xs text-white">
-            <div className="text-lg font-bold">내 구매 정보 등록</div>
-            <hr className="text-white w-full mx-auto text-opacity-40 my-3" />
+        <div className="flex flex-col border border-neutral-200 pt-5 pb-1 mt-6 bg-neutral-50 rounded-2xl shadow-md">
+          <div className="flex flex-col px-4 text-xs text-black">
+            <div className="text-base font-bold">내 구매 정보 {isEditMode ? '수정' : '등록'}</div>
+            <hr className="border border-neutral-300 w-full mx-auto my-3" />
 
             {myData.map((data, idx) => (
               <div
                 key={idx}
-                className="flex text-sm flex-col items-start py-3 px-5 mt-5 text-main bg-secondary rounded-xl shadow-md shadow-orange-800 font-medium"
+                className="flex text-sm flex-col gap-3 items-start border border-neutral-200 py-3 px-4 mt-2 text-black bg-white rounded-xl shadow-sm font-medium"
               >
                 <label className="w-full flex justify-between items-center">
                   물품명
@@ -43,10 +109,10 @@ function MyOrderFormPage() {
                     type="text"
                     value={data.name}
                     onChange={(e) => handleChange(idx, 'name', e.target.value)}
-                    className="ml-4 mt-2 p-2 rounded-md bg-secondary text-right  focus:outline-none focus:ring-2 focus:ring-main"
+                    className="ml-4 p-2 rounded-md text-right border border-collapse focus:outline-none focus:ring-2 focus:ring-main"
                   />
                 </label>
-                <label className="w-full flex justify-between items-center mt-2">
+                <label className="w-full flex justify-between items-center">
                   선택옵션
                   <input
                     type="text"
@@ -54,41 +120,52 @@ function MyOrderFormPage() {
                     onChange={(e) =>
                       handleChange(idx, 'option', e.target.value)
                     }
-                    className="ml-4 mt-2 p-2 rounded-md bg-secondary text-right  focus:outline-none focus:ring-2 focus:ring-main"
+                    className="ml-4 p-2 rounded-md text-right border border-collapse focus:outline-none focus:ring-2 focus:ring-main"
                   />
                 </label>
-                <label className="w-full flex justify-between items-center mt-2">
+                <label className="w-full flex justify-between items-center">
                   기타사항
                   <input
                     type="text"
                     value={data.etc}
                     onChange={(e) => handleChange(idx, 'etc', e.target.value)}
-                    className="ml-4 mt-2 p-2 rounded-md bg-secondary text-right  focus:outline-none focus:ring-2 focus:ring-main"
+                    className="ml-4 p-2 rounded-md text-right border border-collapse focus:outline-none focus:ring-2 focus:ring-main"
                   />
                 </label>
+                {idx > 0 && data.name === '' && data.option === '' && data.etc === '' && (
+                  <button
+                    onClick={() => removeItem(idx)}
+                    className="self-end mt-1 text-neutral-400"
+                  >
+                    <FaRegTrashAlt />
+                  </button>
+                )}
               </div>
             ))}
             <div
-              className="self-center mt-4 text-xs underline cursor-pointer"
+              className="self-center mt-4 text-main text-xs underline cursor-pointer"
               onClick={addNewItem}
             >
               상품 추가하기
             </div>
           </div>
-          <div className="flex text-sm flex-col items-start py-3 px-5 m-4 text-main bg-secondary rounded-xl shadow-md shadow-orange-800 font-semibold">
+          <div className="flex text-sm flex-col items-start py-3 px-4 m-4 border border-neutral-200 text-black bg-white rounded-xl shadow-sm">
             <label className="w-full flex justify-between items-center">
               총 금액
               <input
                 type="text"
                 value={total}
                 onChange={(e) => setTotal(e.target.value)}
-                className="ml-4 py-2 p-2 rounded-md bg-secondary text-right  focus:outline-none focus:ring-2 focus:ring-main"
+                className="ml-4 py-2 p-2 rounded-md text-right border border-collapse focus:outline-none focus:ring-2 focus:ring-main"
               />
             </label>
           </div>
         </div>
-        <div className="px-16 py-3 my-6 text-md text-center font-bold text-white bg-main rounded-xl shadow-gray-400 shadow-md">
-          등록하기
+        <div
+          onClick={handleSubmit}
+          className="px-16 py-3 my-6 text-md text-center font-bold text-white bg-main rounded-xl shadow-md cursor-pointer"
+        >
+          {isEditMode ? '수정하기' : '등록하기'}
         </div>
       </div>
     </div>

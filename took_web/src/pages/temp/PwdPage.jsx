@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdBackspace } from 'react-icons/md';
-
+import { msgToAndroid } from '../../android/message';
 function PwdPage() {
   const [input, setInput] = useState('');
   const [isError, setIsError] = useState(false);
@@ -25,6 +25,7 @@ function PwdPage() {
       console.log(input); // 최종 입력된 비밀번호 콘솔에 출력
       if (input === correctPassword) {
         alert('비밀번호가 맞습니다!');
+        msgToAndroid('비밀번호가 맞습니다');
         setInput('');
         setIsError(false);
         setAttemptCount(0); // 성공 시 시도 횟수 초기화
@@ -36,13 +37,20 @@ function PwdPage() {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (window.Android) {
+      window.Android.authenticate();
+    }
+  }, []);
+
+  useEffect(() => {
     handleInputChange();
   }, [input]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (attemptCount >= 5) {
       alert('비밀번호 입력 횟수 초과!');
+      msgToAndroid('비밀번호 입력 횟수 초과!');
       // 추가적인 처리 (예: 화면 전환, 잠금 등)
     }
   }, [attemptCount]);

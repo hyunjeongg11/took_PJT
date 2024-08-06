@@ -1,5 +1,6 @@
 import { member_request, request } from './request';
 import { handleApiError } from './errorHandling';
+import Cookies from 'js-cookie';
 
 // signUpApi params
 // {
@@ -78,7 +79,6 @@ export const checkEmailCodeApi = async (params) => {
 // 로그인
 export const loginApi = async (params, setAccessToken) => {
   try {
-
     const response = await member_request.post('/api/auth/sign-in', params);
     const accessToken = response.data.accessToken;
 
@@ -88,7 +88,6 @@ export const loginApi = async (params, setAccessToken) => {
     }
 
     return response.data;
-
   } catch (err) {
     return handleApiError(err);
   }
@@ -109,12 +108,16 @@ export const getUserInfoApi = async (params) => {
 
 // refreshAccessTokenApi
 // params에 refreshToken 담아서 요청
-export const refreshAccessTokenApi = async (params) => {
+export const refreshAccessTokenApi = async () => {
   try {
-    const response = await request.post(
-      '/api/auth/refresh-access-token',
-      params
-    );
+    const refreshToken = Cookies.get('refreshToken');
+    if (!refreshToken) {
+      throw new Error('Refresh token not found');
+    }
+    const response = await request.post('/api/auth/refresh-access-token', {
+      refreshToken: refreshToken,
+    });
+
     return response.data;
   } catch (err) {
     return handleApiError(err);
@@ -126,28 +129,43 @@ export const refreshAccessTokenApi = async (params) => {
   "userName" : "yourName",
   "phoneNumber": "yourPhoneNumber"
   } */
-export const modifyUserInfoApi = async(params) => {
+export const modifyUserInfoApi = async (params) => {
   try {
     const response = await request.post('/api/user/info-change', params);
     return response.data;
-  }catch(err) {
+  } catch (err) {
     return handleApiError(err);
   }
-}
+};
 
-export const modifyPwdApi = async(params) => {
+export const modifyPwdApi = async (params) => {
   try {
     const response = await request.post('/api/user/change-pwd', params);
     return response.data;
-  }
-  catch(err) {
+  } catch (err) {
     return handleApiError(err);
   }
-}
+};
+
 
 export const logoutApi = async () => {
   try {
     const response = await request.get('/api/user/sign-out');
+    return response.data;
+  } catch (err) {
+    return handleApiError(err);
+  }
+}
+
+// 근처에 사는 사람들 List
+// 요청
+// {
+//   ”lon” :  ,
+//   ”lat”  : 
+//   }
+export const nerUserApi = async () => {
+  try {
+    const response = await request.post('/api/user/delivery-near-user');
     return response.data;
   } catch(err) {
     return handleApiError(err);

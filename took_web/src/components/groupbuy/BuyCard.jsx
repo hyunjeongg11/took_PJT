@@ -5,12 +5,12 @@ import { useNavigate } from 'react-router-dom';
 export const BuyCard = ({
   id,
   title,
-  site,
   item,
   place,
-  current_person,
-  max_person,
+  count,
+  maxCount,
   img_no,
+  status, // status 추가
 }) => {
   const navigate = useNavigate();
 
@@ -23,12 +23,12 @@ export const BuyCard = ({
         <div className="flex flex-col text-black">
           <div className="text-sm font-extrabold">{title}</div>
           <div className="mt-2 text-xs">
-            {site} / {item}
+            물품명: {item}
             <br />
             수령 장소: {place}
           </div>
         </div>
-        <div className="flex flex-col items-end text-[10px] mt-2 font-bold text-main whitespace-nowrap">
+        <div className="flex flex-col items-end text-[10px] mt-2 font-bold text-black whitespace-nowrap">
           <img
             loading="lazy"
             src={getProfileImagePath(img_no)}
@@ -36,7 +36,7 @@ export const BuyCard = ({
             alt="Profile"
           />
           <div className="mt-2">
-            {current_person}/{max_person}명
+            {count + 1}/{maxCount + 1}명
           </div>
         </div>
       </div>
