@@ -9,8 +9,8 @@ import com.took.fcm_api.repository.FCMRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -33,17 +33,14 @@ public class FCMService {
         return fcmToken.getToken();
     }
     public List<String> getTokens(List<Long> userSeqList) {
-        List<String> userSeqStringList = userSeqList.stream()
-                .map(String::valueOf)
-                .collect(Collectors.toList());
-
-        List<FCMToken> fcmTokens = fcmRepository.findByUserSeqIn(userSeqStringList).orElse(null);
-        if (fcmTokens == null) {
-            return null;
+        List<String> tokens = new ArrayList<>();
+        for (Long userSeq : userSeqList) {
+            FCMToken fcmToken = fcmRepository.findByUserSeq(String.valueOf(userSeq)).orElse(null);
+            if (fcmToken != null) {
+                tokens.add(fcmToken.getToken());
+            }
         }
-        return fcmTokens.stream()
-                .map(FCMToken::getToken)
-                .collect(Collectors.toList());
+        return tokens;
     }
     // 정산 메서드
     public void sendNotification(FCMRequest request) {
