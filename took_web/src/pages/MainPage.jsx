@@ -14,10 +14,12 @@ function MainPage() {
     <div className="flex min-h-screen items-center justify-center  flex-col  max-w-screen ">
       <div className="flex gap-5 justify-between w-full items-center bg-white pt-10 px-7">
         <div className="flex flex-col justify-center ml-3 items-center">
-          <span className="font-dela text-main text-4xl">took</span>
-          <span className="text-blaxk font-nanum text-[11px] mt-[1px]">
-            올인원 정산 플랫폼
-          </span>
+          <Link to="/pwd">
+            <span className="font-dela text-main text-4xl">took</span>
+            <span className="text-blaxk font-nanum text-[11px] mt-[1px]">
+              올인원 정산 플랫폼
+            </span>
+          </Link>
         </div>
 
         <div className="flex gap-3 self-start pt-4">
