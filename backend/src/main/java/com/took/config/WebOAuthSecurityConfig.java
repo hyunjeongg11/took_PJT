@@ -48,6 +48,7 @@ public class WebOAuthSecurityConfig {
         http.oauth2Login(oauth2 -> oauth2
                 .loginPage("/login")
                 .authorizationEndpoint(authorization -> authorization
+                        .baseUri("/api/oauth2/authorization")
                         .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository()))
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserCustomService))
                         .successHandler(oAuth2SuccessHandler())
