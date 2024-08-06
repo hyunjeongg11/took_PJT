@@ -54,7 +54,7 @@ public class TaxiSelectResponse {
 
     public TaxiSelectResponse(Taxi taxi) {
         this.taxiSeq = taxi.getTaxiSeq();
-        this.roomSeq = taxi.getChatRoom().getRoomSeq();
+        this.roomSeq = taxi.getRoomSeq();
         this.userSeq = taxi.getUser().getUserSeq();
         this.partySeq = taxi.getPartySeq();
         this.startLat = taxi.getStartLat();

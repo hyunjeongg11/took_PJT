@@ -1,6 +1,5 @@
 package com.took.taxi_api.entity;
 
-import com.took.chat_api.entity.ChatRoom;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
