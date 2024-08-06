@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
+import calculator from '../../assets/chat/calculator.png';
 import { formatDateOnly, formatTime } from '../../utils/formatDate';
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { BsTruck } from "react-icons/bs";
@@ -9,6 +10,7 @@ import { TfiWorld } from "react-icons/tfi";
 import { GoBell } from "react-icons/go";
 import { FaChevronUp, FaChevronDown, FaPaperPlane, FaArrowDown, FaBars } from 'react-icons/fa';
 import { MdAdd } from 'react-icons/md';
+import CalculatorModal from '../../components/chat/CalculatorModal';
 import MoneyModal from '../../components/chat/MoneyModal';
 import DeliveryModal from '../../components/chat/DeliveryModal';
 import ParticipantList from '../../components/chat/ParticipantList';
@@ -299,7 +301,16 @@ function GroupBuyChattingMainPage() {
       {showActionIcons && (
         <div className="w-full px-4 py-2 bg-white flex justify-around" ref={actionIconsRef}>
           <div className="flex flex-col items-center mb-4">
-            <div className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center">
+            <div className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center" onClick={() => openModal('calculator')}>
+              <img src={calculator} alt="정산" className="w-6 h-6" />
+            </div>
+            <span className="mt-1 text-[11px] text-gray-500">정산</span>
+          </div>
+          <div className="flex flex-col items-center mb-4">
+            <div
+              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
+              onClick={() => navigate(`/groupbuy/order/${tempData.shopSeq}`)}
+            >
               <BsTruck className="text-white w-7 h-7" />
             </div>
             <span className="mt-1 text-[11px] text-gray-500">배송 정보</span>
@@ -331,8 +342,8 @@ function GroupBuyChattingMainPage() {
         </div>
       )}
 
-      {/* {currentModal === 'money' && <MoneyModal onClose={closeModal} tempMember={tempMember} />} */}
-      {/* {currentModal === 'delivery' && <DeliveryModal onClose={closeModal} tempMember={tempMember}/>} */}
+      {currentModal === 'money' && <MoneyModal onClose={closeModal} tempMember={tempMember} />}
+      {currentModal === 'calculator' && <CalculatorModal onClose={closeModal} tempMember={tempMember} />}
       {showParticipantList && <ParticipantList participants={tempMember} onClose={handleCloseParticipantList} />}
       {showArrivalModal && <ArrivalNotificationModal members={tempMember} onClose={handleCloseArrivalModal} />}
     </div>

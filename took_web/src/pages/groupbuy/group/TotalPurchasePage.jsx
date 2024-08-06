@@ -2,21 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../../components/common/BackButton';
 import getProfileImagePath from '../../../utils/getProfileImagePath';
-import { FiPlusCircle } from "react-icons/fi";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { FiPlusCircle } from 'react-icons/fi';
+import { FaRegTrashAlt } from 'react-icons/fa';
 import { TbPencil } from 'react-icons/tb';
-import { formatNumber } from "../../../utils/format";
-import { getAllPurchaseApi } from '../../../apis/groupBuy/purchase';
+import { formatNumber } from '../../../utils/format';
+import { getAllPurchaseApi, deleteMyPurchaseApi } from '../../../apis/groupBuy/purchase';
 import { getUserInfoApi } from '../../../apis/user.js';
 import { useUser } from '../../../store/user.js';
 
 function TotalPurchasePage() {
-  const navigate = useNavigate();
-  const { id: shopSeq } = useParams();
+  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
+  const { id: shopSeq } = useParams(); // 현재 경로에서 shopSeq 값을 가져옴
   const [purchaseData, setPurchaseData] = useState([]);
   const [totalAmountSum, setTotalAmountSum] = useState(0);
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
-  const { seq: currentUserSeq } = useUser(); // 현재 로그인한 사용자 시퀀스
+  const [loading, setLoading] = useState(true);
+  const { seq: currentUserSeq } = useUser();
+  const [showModal, setShowModal] = useState(false);
+  const [purchaseToDelete, setPurchaseToDelete] = useState(null);
 
   useEffect(() => {
     const fetchPurchaseData = async () => {
@@ -24,13 +26,10 @@ function TotalPurchasePage() {
         const response = await getAllPurchaseApi(shopSeq);
         const purchases = response.purchaseInfoResponseList || [];
 
-        // 각 userSeq에 대해 userName을 가져옴
         const purchasesWithUserNames = await Promise.all(
           purchases.map(async (purchase) => {
             try {
-              const userInfo = await getUserInfoApi({
-                userSeq: purchase.userSeq,
-              });
+              const userInfo = await getUserInfoApi({ userSeq: purchase.userSeq });
               return { ...purchase, userName: userInfo.userName };
             } catch (error) {
               console.error('Error fetching user info:', error);
@@ -39,20 +38,36 @@ function TotalPurchasePage() {
           })
         );
 
-        setPurchaseData(purchasesWithUserNames); // 사용자 이름이 포함된 데이터를 설정
-        setTotalAmountSum(response.listTotal || 0); // 총 금액이 없을 경우 0으로 설정
+        setPurchaseData(purchasesWithUserNames);
+        setTotalAmountSum(response.listTotal || 0);
       } catch (error) {
         console.error('Error fetching purchase data:', error);
       } finally {
-        setLoading(false); // 로딩 상태 해제
+        setLoading(false);
       }
     };
 
     fetchPurchaseData();
   }, [shopSeq]);
 
+  const handleDelete = async () => {
+    try {
+      await deleteMyPurchaseApi(purchaseToDelete);
+      setPurchaseData(purchaseData.filter(purchase => purchase.purchaseSeq !== purchaseToDelete));
+      setShowModal(false);
+    } catch (error) {
+      console.error('Error deleting purchase:', error);
+    }
+  };
+
+  // 수정 버튼 클릭 시 호출되는 함수
+  const handleEdit = (purchase) => {
+    // 특정 구매 정보(purchase)를 상태로 전달하며, /groupbuy/my-order/:shopSeq 페이지로 이동
+    navigate(`/groupbuy/my-order/${shopSeq}`, { state: { purchase } });
+  };
+
   if (loading) {
-    return <div>Loading...</div>; // 로딩 상태 처리
+    return <div>Loading...</div>;
   }
 
   return (
@@ -88,8 +103,17 @@ function TotalPurchasePage() {
                     </div>
                     {el.userSeq === currentUserSeq && (
                       <div className="flex flex-row items-center ml-auto mr-2 gap-2">
-                        <TbPencil className="w-5 h-5 text-neutral-500 cursor-pointer" />
-                        <FaRegTrashAlt className="w-4 h-4 text-neutral-500 cursor-pointer" />
+                        <TbPencil
+                          className="w-5 h-5 text-neutral-500 cursor-pointer"
+                          onClick={() => handleEdit(el)} // 수정 버튼 클릭 시 handleEdit 호출
+                        />
+                        <FaRegTrashAlt
+                          className="w-4 h-4 text-neutral-500 cursor-pointer"
+                          onClick={() => {
+                            setShowModal(true);
+                            setPurchaseToDelete(el.purchaseSeq);
+                          }}
+                        />
                       </div>
                     )}
                   </div>
@@ -120,6 +144,28 @@ function TotalPurchasePage() {
           <div className="text-black font-bold text-lg text-center px-5 py-3">총 금액 : {formatNumber(totalAmountSum)}원</div>
         </div>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 shadow-md rounded-2xl">
+            <div className="mb-4 font-bold">게시물을 삭제하시겠습니까?</div>
+            <div className="flex justify-center gap-2 text-neutral-600 font-bold">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-8 py-2 bg-neutral-200 rounded-xl"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-8 py-2 bg-main text-white rounded-xl"
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -222,3 +222,14 @@ export const getAllPickUpApi = async (shopSeq) => {
     return handleApiError(error);
   }
 };
+
+// 게스트 참여 중인지 확인
+// 응답: boolean
+export const isJoinApi = async (shopSeq, userSeq) => {
+  try {
+    const response = await request.get(`/api/shops/guestCheck/${shopSeq}/${userSeq}`);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
