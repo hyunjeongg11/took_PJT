@@ -1,4 +1,4 @@
-// assets/index.js
+// src/assets/payment/index.js
 import IBK기업 from './bank/IBK기업.png';
 import iM뱅크 from './bank/iM뱅크.png';
 import SC제일 from './bank/SC제일.png';
@@ -97,53 +97,30 @@ export const stockIcons = {
   현대차증권,
 };
 
-export const banks = [
-  { id: 1, name: 'IBK기업', icon: bankIcons.IBK기업 },
-  { id: 2, name: 'iM뱅크', icon: bankIcons.iM뱅크 },
-  { id: 3, name: 'SC제일', icon: bankIcons.SC제일 },
-  { id: 4, name: '경남', icon: bankIcons.경남 },
-  { id: 5, name: '광주', icon: bankIcons.광주 },
-  { id: 6, name: '국민', icon: bankIcons.국민 },
-  { id: 7, name: '농협', icon: bankIcons.농협 },
-  { id: 8, name: '부산', icon: bankIcons.부산 },
-  { id: 9, name: '산림조합', icon: bankIcons.산림조합 },
-  { id: 10, name: '산업', icon: bankIcons.산업 },
-  { id: 11, name: '새마을금고', icon: bankIcons.새마을금고 },
-  { id: 12, name: '수협', icon: bankIcons.수협 },
-  { id: 13, name: '신한', icon: bankIcons.신한 },
-  { id: 14, name: '신협', icon: bankIcons.신협 },
-  { id: 15, name: '씨티', icon: bankIcons.씨티 },
-  { id: 16, name: '우리', icon: bankIcons.우리 },
-  { id: 17, name: '우체국', icon: bankIcons.우체국 },
-  { id: 18, name: '저축', icon: bankIcons.저축 },
-  { id: 19, name: '전북', icon: bankIcons.전북 },
-  { id: 20, name: '제주', icon: bankIcons.제주 },
-  { id: 21, name: '카카오뱅크', icon: bankIcons.카카오뱅크 },
-  { id: 22, name: '케이뱅크', icon: bankIcons.케이뱅크 },
-  { id: 23, name: '토스뱅크', icon: bankIcons.토스뱅크 },
-  { id: 24, name: '하나', icon: bankIcons.하나 },
-];
-
-export const stocks = [
-  { id: 1, name: 'DB금융', icon: stockIcons.DB금융 },
-  { id: 2, name: 'KB증권', icon: stockIcons.KB증권 },
-  { id: 3, name: 'LS증권', icon: stockIcons.LS증권 },
-  { id: 4, name: 'SK증권', icon: stockIcons.SK증권 },
-  { id: 5, name: '교보증권', icon: stockIcons.교보증권 },
-  { id: 6, name: '다올투자', icon: stockIcons.다올투자 },
-  { id: 7, name: '대신증권', icon: stockIcons.대신증권 },
-  { id: 8, name: '메리츠증권', icon: stockIcons.메리츠증권 },
-  { id: 9, name: '미래에셋', icon: stockIcons.미래에셋 },
-  { id: 10, name: '삼성증권', icon: stockIcons.삼성증권 },
-  { id: 11, name: '신한증권', icon: stockIcons.신한증권 },
-  { id: 12, name: '유안타', icon: stockIcons.유안타 },
-  { id: 13, name: '유진투자', icon: stockIcons.유진투자 },
-  { id: 14, name: '키움증권', icon: stockIcons.키움증권 },
-  { id: 15, name: '토스증권', icon: stockIcons.토스증권 },
-  { id: 16, name: '하나증권', icon: stockIcons.하나증권 },
-  { id: 17, name: '하이투자증권', icon: stockIcons.하이투자증권 },
-  { id: 18, name: '한국투자증권', icon: stockIcons.한국투자증권 },
-  { id: 19, name: '한국포스증권', icon: stockIcons.한국포스증권 },
-  { id: 20, name: '한화투자증권', icon: stockIcons.한화투자증권 },
-  { id: 21, name: '현대차증권', icon: stockIcons.현대차증권 },
-];
+// bankNum과 bankName의 매핑 추가
+export const bankNumToName = {
+  1: 'IBK기업',
+  2: 'iM뱅크',
+  3: 'SC제일',
+  4: '경남',
+  5: '광주',
+  6: '국민',
+  7: '농협',
+  8: '부산',
+  9: '산림조합',
+  10: '산업',
+  11: '새마을금고',
+  12: '수협',
+  13: '신한',
+  14: '신협',
+  15: '씨티',
+  16: '우리',
+  17: '우체국',
+  18: '저축',
+  19: '전북',
+  20: '제주',
+  21: '카카오뱅크',
+  22: '케이뱅크',
+  23: '토스뱅크',
+  24: '하나',
+};

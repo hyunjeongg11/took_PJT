@@ -1,5 +1,7 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { msgToAndroid } from './android/message';
+import { usePosition } from './store/position';
 
 import {
   MainPage,
@@ -104,6 +106,7 @@ const ROUTER = createBrowserRouter([
   { path: '/groupbuy/:id', element: <BuyDetailPage /> },
   { path: '/groupbuy/join/:id', element: <BuyJoinPage /> },
   { path: '/groupbuy/form', element: <BuyFormPage /> },
+  { path: '/groupbuy/form/:id', element: <BuyFormPage /> },
   { path: '/taxi/input', element: <TaxiCostInputPage /> },
   { path: '/taxi/request', element: <TaxiCostRequestPages /> },
   { path: '/taxi/main', element: <TaxiMainPage /> },
@@ -118,9 +121,9 @@ const ROUTER = createBrowserRouter([
   { path: '/chat/list', element: <ChattingListPage /> },
   { path: '/chat/took', element: <TookChattingPage /> },
   { path: '/groupbuy/my-purchase', element: <MyPurchasePage /> },
-  { path: '/groupbuy/order', element: <OrderFormPage /> },
+  { path: '/groupbuy/order/:id', element: <OrderFormPage /> },
   { path: '/groupbuy/total/:id', element: <TotalPurchasePage /> },
-  { path: '/groupbuy/my-order', element: <MyOrderFormPage /> },
+  { path: '/groupbuy/my-order/:id', element: <MyOrderFormPage /> },
 ]);
 
 function App() {

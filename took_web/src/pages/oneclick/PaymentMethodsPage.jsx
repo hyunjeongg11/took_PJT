@@ -1,44 +1,30 @@
+// src/pages/oneclick/PaymentMethodsPage.jsx
 import React, { useState, useEffect } from 'react';
 import BackButton from '../../components/common/BackButton';
 import { getAccountListApi, changeMainAccountApi, deleteAccountApi, linkAccountApi } from '../../apis/account/info.js';
 import { useUser } from '../../store/user.js';
+import { bankIcons, bankNumToName } from '../../assets/payment/index.js';
 
-const bankImages = import.meta.glob('../../assets/payment/bank/*.png', {
-  eager: true,
-});
-const stockImages = import.meta.glob('../../assets/payment/stock/*.png', {
-  eager: true,
-});
-
-const getImagePath = (bankName) => {
-  if (!bankName) return ''; // bankName이 정의되지 않았을 때 빈 문자열 반환
-
-  if (bankName.endsWith('은행')) {
-    bankName = bankName.slice(0, -2);
-    return bankImages[`../../assets/payment/bank/${bankName}.png`]?.default || '';
-  }
-  if (bankName.endsWith('증권')) {
-    bankName = bankName.slice(0, -2);
-    return stockImages[`../../assets/payment/stock/${bankName}.png`]?.default || '';
-  }
-  return bankImages[`../../assets/payment/bank/${bankName}.png`]?.default || '';
+const getImagePath = (bankNum) => {
+  const bankName = bankNumToName[bankNum];
+  return bankIcons[bankName] || '';
 };
 
 const PaymentMethodsPage = () => {
-  const { seq: userSeq } = useUser(); // useUser 훅을 사용하여 seq 값을 가져옵니다.
+  const { seq: userSeq } = useUser();
   const [accounts, setAccounts] = useState([]);
   const [draggingIndex, setDraggingIndex] = useState(null);
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
         const response = await getAccountListApi({ userSeq });
-        setAccounts(response.list || []); // response.list가 정의되지 않았을 때 빈 배열로 설정
+        setAccounts(response.list || []);
       } catch (error) {
         console.error('계좌 목록을 가져오는 중 오류가 발생했습니다:', error);
       } finally {
-        setLoading(false); // 로딩 상태 해제
+        setLoading(false);
       }
     };
 
@@ -47,7 +33,7 @@ const PaymentMethodsPage = () => {
 
   useEffect(() => {
     if (accounts.length > 0) {
-      handleSetMainAccount(0); // 첫 번째 계좌를 주계좌로 설정
+      handleSetMainAccount(0);
     }
   }, [accounts]);
 
@@ -94,12 +80,12 @@ const PaymentMethodsPage = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>; // 로딩 중 메시지
+    return <div>Loading...</div>;
   }
 
   return (
     <div className="flex flex-col items-center p-5 h-screen font-nanum">
-      <div className="w-full flex items-center justify-between mb-5 border-b border-gray-300 pb-2 ">
+      <div className="w-full flex items-center justify-between mb-5 border-b border-gray-300 pb-2">
         <BackButton />
         <span className="text-lg font-bold mx-auto">결제수단 관리</span>
       </div>
@@ -119,13 +105,13 @@ const PaymentMethodsPage = () => {
             <div className="text-lg mr-2">≡</div>
             <div className="flex items-center ml-2 flex-1">
               <img
-                src={getImagePath(account.bankName)}
+                src={getImagePath(account.bankNum)}
                 alt={`${account.bankName} 로고`}
                 className="w-10 h-10 mr-2"
               />
               <div className="flex flex-col">
                 <div className="flex items-center text-lg font-bold">
-                  {account.bankName}
+                  {bankNumToName[account.bankNum]}
                   {index === 0 && (
                     <span className="bg-orange-100 text-main text-xs ml-2 px-2 py-1 rounded-full">
                       주계좌
@@ -133,7 +119,7 @@ const PaymentMethodsPage = () => {
                   )}
                 </div>
                 <div className="text-sm text-black">
-                  {account.account_num}
+                  {account.accountNum}
                 </div>
                 <div className="text-sm text-gray-500">
                   {account.accountName}

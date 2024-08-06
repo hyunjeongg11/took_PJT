@@ -7,11 +7,12 @@ import { loginApi } from '../apis/user.js';
 import { useToken } from '../store/token.js';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../store/user.js';
+import { msgToAndroid } from '../android/message.js';
 
 function LoginPage() {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
-  const { setAccessToken, setRefreshToken } = useToken();
+  const { setAccessToken } = useToken();
   const { setUserSeq, setLoggedIn } = useUser();
   const navigate = useNavigate();
   const handleLoginClick = async (e) => {
@@ -19,7 +20,6 @@ function LoginPage() {
     console.log('id:', id);
     console.log('pwd:', password);
 
-    // TODO: 로그인 API 호출
     try {
       const response = await loginApi({ userId: id, password }, setAccessToken);
       console.log(response);
@@ -30,6 +30,7 @@ function LoginPage() {
       }
     } catch (error) {
       alert('로그인 중 오류가 발생했습니다.');
+      msgToAndroid('로그인 중 오류가 발생했습니다');
     }
   };
   return (

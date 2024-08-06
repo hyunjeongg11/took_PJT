@@ -1,11 +1,35 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import BackButton from '../../../components/common/BackButton';
-import { useState } from 'react';
+import { writePurchaseApi, updateMyPurchaseApi } from '../../../apis/groupBuy/purchase';
+import { FaRegTrashAlt } from 'react-icons/fa';
+import { useUser } from '../../../store/user.js';
 
 const initialData = [{ name: '', option: '', etc: '' }];
 
 function MyOrderFormPage() {
+  const { id: shopSeq } = useParams(); // 현재 경로에서 shopSeq 값을 가져옴
+  const { state } = useLocation(); // navigate를 통해 전달된 상태 값 (purchase 정보 포함)
+  const { seq: userSeq } = useUser();
   const [myData, setMyData] = useState(initialData);
   const [total, setTotal] = useState('');
+  const navigate = useNavigate();
+  const isEditMode = state && state.purchase; // 수정 모드인지 확인
+
+  useEffect(() => {
+    // 수정 모드인 경우, 기존 구매 정보를 폼에 설정
+    if (isEditMode) {
+      const { purchase } = state;
+      setTotal(purchase.price); // 기존 총 금액 설정
+      setMyData(
+        purchase.productList.map((product) => ({
+          name: product.productName,
+          option: product.optionDetails,
+          etc: product.etc,
+        }))
+      );
+    }
+  }, [isEditMode, state]);
 
   const handleChange = (idx, field, value) => {
     const newData = myData.map((item, index) =>
@@ -16,6 +40,48 @@ function MyOrderFormPage() {
 
   const addNewItem = () => {
     setMyData([...myData, { name: '', option: '', etc: '' }]);
+  };
+
+  const removeItem = (idx) => {
+    if (idx > 0) {
+      const newData = myData.filter((_, index) => index !== idx);
+      setMyData(newData);
+    }
+  };
+
+  const handleSubmit = async () => {
+    const price = parseInt(total, 10);
+    const shipCost = 0;
+
+    const productList = myData.map((item) => ({
+      productName: item.name,
+      optionDetails: item.option,
+      etc: item.etc,
+    }));
+
+    const params = {
+      userSeq,
+      shopSeq: parseInt(shopSeq, 10),
+      price,
+      shipCost,
+      productList,
+    };
+
+    try {
+      if (isEditMode) {
+        // 수정 모드일 때, updateMyPurchaseApi 호출
+        await updateMyPurchaseApi({ purchaseSeq: state.purchase.purchaseSeq, params });
+        alert('주문 정보가 성공적으로 수정되었습니다.');
+      } else {
+        // 등록 모드일 때, writePurchaseApi 호출
+        await writePurchaseApi(params);
+        alert('주문 정보가 성공적으로 등록되었습니다.');
+      }
+      navigate(`/groupbuy/total/${shopSeq}`);
+    } catch (error) {
+      alert('에러가 발생했습니다. 다시 시도해주세요.');
+      console.error('API call error:', error);
+    }
   };
 
   return (
@@ -29,7 +95,7 @@ function MyOrderFormPage() {
         </div>
         <div className="flex flex-col border border-neutral-200 pt-5 pb-1 mt-6 bg-neutral-50 rounded-2xl shadow-md">
           <div className="flex flex-col px-4 text-xs text-black">
-            <div className="text-lg font-bold">내 구매 정보 등록</div>
+            <div className="text-base font-bold">내 구매 정보 {isEditMode ? '수정' : '등록'}</div>
             <hr className="border border-neutral-300 w-full mx-auto my-3" />
 
             {myData.map((data, idx) => (
@@ -66,6 +132,14 @@ function MyOrderFormPage() {
                     className="ml-4 p-2 rounded-md text-right border border-collapse focus:outline-none focus:ring-2 focus:ring-main"
                   />
                 </label>
+                {idx > 0 && data.name === '' && data.option === '' && data.etc === '' && (
+                  <button
+                    onClick={() => removeItem(idx)}
+                    className="self-end mt-1 text-neutral-400"
+                  >
+                    <FaRegTrashAlt />
+                  </button>
+                )}
               </div>
             ))}
             <div
@@ -87,8 +161,11 @@ function MyOrderFormPage() {
             </label>
           </div>
         </div>
-        <div className="px-16 py-3 my-6 text-md text-center font-bold text-white bg-main rounded-xl shadow-md">
-          등록하기
+        <div
+          onClick={handleSubmit}
+          className="px-16 py-3 my-6 text-md text-center font-bold text-white bg-main rounded-xl shadow-md cursor-pointer"
+        >
+          {isEditMode ? '수정하기' : '등록하기'}
         </div>
       </div>
     </div>
