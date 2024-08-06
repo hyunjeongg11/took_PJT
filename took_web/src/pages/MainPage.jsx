@@ -5,11 +5,11 @@ import taxi from '../assets/main/taxi.png';
 import pay from '../assets/main/pay.png';
 import delivery from '../assets/main/delivery.png';
 import shop from '../assets/main/shop.png';
-
+import took from '../assets/took.png';
 function MainPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center  flex-col   max-w-screen">
-      <div className="flex gap-5 justify-between w-full items-center bg-white pt-14 px-7">
+    <div className="flex min-h-screen items-center justify-center  flex-col  max-w-screen">
+      <div className="flex gap-5 justify-between w-full items-center bg-white pt-10 px-7">
         <div className="flex flex-col justify-center ml-3 items-center">
           <span className="font-dela text-main text-4xl">took</span>
           <span className="text-blaxk font-nanum text-[11px] mt-[1px]">
@@ -67,7 +67,7 @@ function MainPage() {
             </Link>
           </div>
         </div>
-        <div className="flex gap-5 self-center mt-8 w-full items-end justify-around">
+        <div className="flex gap-5 self-center mt-5 w-full items-end justify-around">
           <Link to="chat/list">
             <img
               loading="lazy"
@@ -92,12 +92,16 @@ function MainPage() {
             </Link>
           </div>
         </div>
-        <Link to="/tookHistory">
+        <Link to="/tookHistory" className="relative font-nanum">
           <img
-            loading="lazy"
-            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/bd5fb7e831ea3aa9ff976c00539122c03a4f13b8a089e5557e13a546db9aed00?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd5fb7e831ea3aa9ff976c00539122c03a4f13b8a089e5557e13a546db9aed00?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd5fb7e831ea3aa9ff976c00539122c03a4f13b8a089e5557e13a546db9aed00?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd5fb7e831ea3aa9ff976c00539122c03a4f13b8a089e5557e13a546db9aed00?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd5fb7e831ea3aa9ff976c00539122c03a4f13b8a089e5557e13a546db9aed00?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd5fb7e831ea3aa9ff976c00539122c03a4f13b8a089e5557e13a546db9aed00?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd5fb7e831ea3aa9ff976c00539122c03a4f13b8a089e5557e13a546db9aed00?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/bd5fb7e831ea3aa9ff976c00539122c03a4f13b8a089e5557e13a546db9aed00?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
-            className="object-contain self-center mt-2.5 w-full rounded-none aspect-[3.79] "
+            src={took}
+            alt="took"
+            className="absolute right-2 -top-6 w-7 opacity-90 h-6 z-20"
           />
+          <div className="relative flex justify-between px-5 text-sm py-5 mt-8 bg-white bg-opacity-80 rounded-2xl z-10">
+            <div>툭 히스토리 보러가기</div>
+            <div className="text-gray-700">{'>'}</div>
+          </div>
         </Link>
       </div>
     </div>
