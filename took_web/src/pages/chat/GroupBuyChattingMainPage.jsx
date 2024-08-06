@@ -308,18 +308,12 @@ function GroupBuyChattingMainPage() {
           </div>
           <div className="flex flex-col items-center mb-4">
             <div
-              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
+              className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center"
               onClick={() => navigate(`/groupbuy/order/${tempData.shopSeq}`)}
             >
               <BsTruck className="text-white w-7 h-7" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">배송 정보</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center">
-              <TfiWorld className="text-white w-6 h-6" />
-            </div>
-            <span className="mt-1 text-[11px] text-gray-500">사이트 바로가기</span>
+            <span className="mt-1 text-[11px] text-gray-500">배송</span>
           </div>
           <div className="flex flex-col items-center">
             <div

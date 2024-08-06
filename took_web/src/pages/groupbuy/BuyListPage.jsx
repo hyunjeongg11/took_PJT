@@ -15,7 +15,7 @@ function BuyListPage() {
   useEffect(() => {
     const fetchBuyList = async () => {
       try {
-        const params = [userSeq, 15, 17]; // 배열로 줘야 함
+        const params = [userSeq, 6]; // 배열로 줘야 함
         const data = await getAllShopApi(params);
         if (Array.isArray(data)) {
           const updatedData = data
