@@ -1,52 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import { Link } from 'react-router-dom';
 import { BuyCard } from '../../components/groupbuy/BuyCard';
-
-const temp_data = [
-  {
-    id: 1,
-    title: '마이프로틴 공동구매 모집합니다',
-    site: '마이프로틴',
-    item: '프로틴',
-    place: '송정삼정그린코아더시티 1층',
-    current_person: 4,
-    max_person: 6,
-    img_no: 1,
-  },
-  {
-    id: 2,
-    title: '양파 함께 구매하실 분!',
-    site: '오프라인',
-    item: '양파',
-    place: '송정삼정그린코아더시티 1층',
-    current_person: 3,
-    max_person: 4,
-    img_no: 2,
-  },
-  {
-    id: 3,
-    title: '마이프로틴 공동구매 모집합니다',
-    site: '마이프로틴',
-    item: '프로틴',
-    place: '송정삼정그린코아더시티 1층',
-    current_person: 4,
-    max_person: 6,
-    img_no: 3,
-  },
-  {
-    id: 4,
-    title: '마이프로틴 공동구매 모집합니다',
-    site: '마이프로틴',
-    item: '프로틴',
-    place: '송정삼정그린코아더시티 1층',
-    current_person: 4,
-    max_person: 6,
-    img_no: 4,
-  },
-];
+import { getAllShopApi } from '../../apis/groupBuy/shop';
+import { useUser } from '../../store/user';
 
 function BuyListPage() {
+  const { seq: userSeq } = useUser();
+  const [buyList, setBuyList] = useState([]);
+  const location = useLocation();
+  const shouldRefresh = location.state?.shouldRefresh;
+
+  useEffect(() => {
+    const fetchBuyList = async () => {
+      try {
+        const params = [userSeq, 15, 17]; // 배열로 줘야 함
+        const data = await getAllShopApi(params);
+        if (Array.isArray(data)) {
+          const updatedData = data
+            .map((buy) => ({
+              ...buy,
+              status: buy.count === buy.maxCount ? 'IN_PROGRESSING' : buy.status,
+            }))
+            .filter((buy) => buy.status !== 'IN_PROGRESSING'); // 'IN_PROGRESSING' 상태인 항목 필터링
+          setBuyList(updatedData);
+        } else {
+          setBuyList([]); // 응답이 배열이 아닌 경우 빈 배열로 설정
+        }
+      } catch (error) {
+        console.error('API call error:', error);
+        setBuyList([]); // API 호출 에러 발생 시 빈 배열로 설정
+      }
+    };
+
+    fetchBuyList();
+  }, [userSeq, shouldRefresh]);
+
   return (
     <div className="flex flex-col pt-5 bg-white min-w-screen min-h-screen">
       <div className="flex flex-col items-center justify-center px-5 w-full">
@@ -55,26 +45,27 @@ function BuyListPage() {
           공구 <span className="font-dela">took !</span>
         </div>
         <div className="flex flex-col p-5 mt-2.5 w-full bg-neutral-50 shadow-md rounded-2xl border border-neutral-200 overflow-y-auto">
-          {temp_data.map((buy, index) => (
-            <React.Fragment key={buy.id}>
+          {buyList.map((buy, index) => (
+            <React.Fragment key={buy.shopSeq}>
               <BuyCard
-                id={buy.id}
+                id={buy.shopSeq}
                 title={buy.title}
                 site={buy.site}
                 item={buy.item}
                 place={buy.place}
-                current_person={buy.current_person}
-                max_person={buy.max_person}
-                img_no={buy.img_no}
+                count={buy.count || 0} // 현재 인원 수를 제공하지 않는 경우 기본값 0 설정
+                maxCount={buy.maxCount}
+                img_no={buy.imageNo || 1} // 이미지 번호를 제공하지 않는 경우 기본값 1 설정
+                status={buy.status} // status 전달
               />
-              {index < temp_data.length - 1 && (
+              {index < buyList.length - 1 && (
                 <div className="shrink-0 my-2 border border-solid border-neutral-300 border-opacity-40" />
               )}
             </React.Fragment>
           ))}
         </div>
         <Link to="/groupbuy/form" className="w-full">
-          <button className="bg-main px-12 py-3 mt-6 w-full shadow-sm font-bold text-white rounded-2xl">
+          <button className="bg-main px-12 py-3 mb-8 mt-6 w-full shadow-sm font-bold text-white rounded-2xl">
             공동구매 모집하기
           </button>
         </Link>

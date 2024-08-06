@@ -17,7 +17,7 @@ import { handleApiError } from '../errorHandling';
 // 공동구매 상품 주문 정보 등록
 export const writePurchaseApi = async (params) => {
   try {
-    const response = await request.post('purchase/save', params);
+    const response = await request.post('/api/purchase/save', params);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -50,7 +50,7 @@ export const writePurchaseApi = async (params) => {
 
 export const getAllPurchaseApi = async (shopSeq) => {
   try {
-    const response = await request.get(`purchase/selectAll/${shopSeq}`);
+    const response = await request.get(`/api/purchase/selectAll/${shopSeq}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -78,7 +78,7 @@ export const getAllPurchaseApi = async (shopSeq) => {
 // }
 export const getMyPurchaseApi = async ({ userSeq, shopSeq }) => {
   try {
-    const response = await request.get(`purchase/select/${shopSeq}/${userSeq}`);
+    const response = await request.get(`/api/purchase/select/${shopSeq}/${userSeq}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -88,7 +88,7 @@ export const getMyPurchaseApi = async ({ userSeq, shopSeq }) => {
 // : 상품 주문 정보 삭제
 export const deleteMyPurchaseApi = async (purchaseSeq) => {
   try {
-    await request.delete(`purchase/delete/${purchaseSeq}`);
+    await request.delete(`/api/purchase/delete/${purchaseSeq}`);
     return true;
   } catch (error) {
     return handleApiError(error);
@@ -109,7 +109,7 @@ export const deleteMyPurchaseApi = async (purchaseSeq) => {
 // : 상품 주문 정보 수정
 export const updateMyPurchaseApi = async ({ purchaseSeq, params }) => {
   try {
-    await request.put(`purchase/update/${purchaseSeq}`, params);
+    await request.put(`/api/purchase/update/${purchaseSeq}`, params);
     return true;
   } catch (error) {
     return handleApiError(error);
