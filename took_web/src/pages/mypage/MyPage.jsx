@@ -1,7 +1,21 @@
 import profileImage from '../../assets/profile/img1.png';
 import historyIcon from '../../assets/mypage/history.svg';
 import { Link } from 'react-router-dom';
+import { useUser } from '../../store/user';
+import { useNavigate } from 'react-router-dom';
+import { logoutApi } from '../../apis/user';
 function MyPage() {
+  const { setLoggedOut } = useUser();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    setLoggedOut();
+    try {
+      await logoutApi();
+      navigate('/');
+    } catch (error) {
+      console.error('로그아웃 중 에러 발생', error);
+    }
+  };
   return (
     <div className="max-h-screen ">
       <div className="flex flex-col w-full text-2xl text-center text-white bg-main pt-10">
@@ -69,7 +83,10 @@ function MyPage() {
             />
             <div className="my-auto">결제수단 관리</div>
           </div>
-          <div className="justify-center self-end px-3 py-2.5 mt-11 text-xs tracking-wide leading-5 text-center text-white whitespace-nowrap rounded-xl shadow-sm bg-main">
+          <div
+            onClick={handleLogout}
+            className="justify-center self-end px-3 py-2.5 mt-11 text-xs tracking-wide leading-5 text-center text-white whitespace-nowrap rounded-xl shadow-sm bg-main"
+          >
             로그아웃
           </div>
         </div>
