@@ -3,25 +3,23 @@ import { formatNumber } from '../../utils/format';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 
 const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
-  const [totalAmount, setTotalAmount] = useState(payment.totalAmount);
+  const [totalAmount, setTotalAmount] = useState(formatNumber(payment.totalAmount));
 
   useEffect(() => {
-    if (totalAmount !== payment.totalAmount) {
-      const total = parseFloat(totalAmount.replace(/,/g, ''));
-      const numOfPayments = payment.users.length;
-      const averageAmount = Math.floor(total / numOfPayments);
-      const remainingAmount = total - averageAmount * (numOfPayments - 1);
+    const total = parseFloat(totalAmount.replace(/,/g, '')) || 0;
+    const numOfPayments = payment.users.length;
+    const averageAmount = Math.floor(total / numOfPayments);
+    const remainingAmount = total - averageAmount * (numOfPayments - 1);
 
-      const updatedUsers = payment.users.map((user, index) => ({
-        ...user,
-        amount: formatNumber(
-          index === numOfPayments - 1 ? remainingAmount : averageAmount
-        ),
-      }));
+    const updatedUsers = payment.users.map((user, index) => ({
+      ...user,
+      amount: formatNumber(
+        index === numOfPayments - 1 ? remainingAmount : averageAmount
+      ),
+    }));
 
-      setPayment({ ...payment, users: updatedUsers, totalAmount });
-    }
-  }, [totalAmount, payment, setPayment]);
+    setPayment({ ...payment, users: updatedUsers, totalAmount: formatNumber(total) });
+  }, [totalAmount, payment.users.length]);
 
   const handleAmountChange = (index, amount) => {
     const numericAmount = parseFloat(amount.replace(/,/g, '')) || 0;
@@ -32,12 +30,21 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
     setPayment({ ...payment, users: updatedUsers });
   };
 
+  const handleTotalAmountChange = (e) => {
+    const value = e.target.value.replace(/,/g, '');
+    if (!isNaN(value) && value !== '') {
+      setTotalAmount(formatNumber(value));
+    } else if (value === '') {
+      setTotalAmount('0');
+    }
+  };
+
   return (
     <div className="px-12 pb-6 bg-white ">
       <div className="border-gray-300 border rounded-2xl shadow-md p-6 ">
         <button
           onClick={onCardDelete} // 클릭 시 카드 삭제
-          className="relative top-0 left-0  rounded-full p-1 text-main"
+          className="relative top-0 left-0 rounded-full p-1 text-main"
         >
           <span className="text-xl">×</span>
         </button>
@@ -45,19 +52,16 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
           <input
             type="text"
             value={totalAmount}
-            onChange={(e) => setTotalAmount(formatNumber(e.target.value))}
+            onChange={handleTotalAmountChange}
             placeholder=""
-            className="mx-1  text-right  w-full max-w-xs"
+            className="mx-1 text-right w-full max-w-xs"
           />
           <span>원</span>
         </div>
         <div className="text-main p-1 text-xs mb-2 underline">인원 추가</div>
         <div className="flex flex-col gap-3 overflow-y-scroll h-[30vh] scroll-m-1">
           {payment.users.map((user, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between gap-1"
-            >
+            <div key={index} className="flex items-center justify-between gap-1">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <img
                   loading="lazy"
@@ -77,7 +81,10 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
                   style={{ minWidth: '80px' }}
                 />
                 <img
-                  onClick={() => onDelete(index)}
+                  onClick={() => {
+                    onDelete(index);
+                    handleTotalAmountChange();
+                  }}
                   loading="lazy"
                   src="https://cdn.builder.io/api/v1/image/assets/TEMP/f3f9a2394cc2191cd008c8dab3edbceb90b6adf5025fc60fcb23c80910d0f59b?"
                   className="shrink-0 aspect-[0.82] fill-orange-400 w-2 mt-2 opacity-80"

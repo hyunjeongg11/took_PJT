@@ -300,7 +300,6 @@ function SignupPage() {
             type="number"
             value={certificationNumber}
             onChange={(e) => setCertificationNumber(e.target.value)}
-            placeholder="418908"
             styleClass="flex-grow"
             error={certificationError}
           />
