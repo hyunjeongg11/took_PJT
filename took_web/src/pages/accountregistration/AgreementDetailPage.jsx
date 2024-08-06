@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+// src/pages/accountregistration/AgreementDetailPage.jsx
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 
@@ -35,11 +36,12 @@ const termsData = [
   },
 ];
 
-function AgreementDetailPage({ checkedItems, setCheckedItems }) {
+function AgreementDetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { scrollToIndex } = location.state || {};
+  const { scrollToIndex, checkedItems: initialCheckedItems = {} } = location.state || {};
   const termRefs = useRef([]);
+  const [checkedItems, setCheckedItems] = useState(initialCheckedItems);
 
   useEffect(() => {
     if (scrollToIndex !== undefined) {
@@ -51,7 +53,7 @@ function AgreementDetailPage({ checkedItems, setCheckedItems }) {
   }, [scrollToIndex]);
 
   const handleAgreementChange = (index) => {
-    setCheckedItems((prev) => ({ ...prev, [index]: !prev[index] }));
+    setCheckedItems((prev) => ({ ...prev, [`terms${index + 1}`]: !prev[`terms${index + 1}`] }));
   };
 
   const handleAllAgreementChange = () => {
@@ -104,7 +106,7 @@ function AgreementDetailPage({ checkedItems, setCheckedItems }) {
             </div>
             <div
               className="flex items-center cursor-pointer text-sm"
-              onClick={() => handleAgreementChange(`terms${index + 1}`)}
+              onClick={() => handleAgreementChange(index)}
             >
               <span className="text-base mr-2">
                 {checkedItems[`terms${index + 1}`] ? '🗹' : '☐'}

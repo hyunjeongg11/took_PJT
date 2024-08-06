@@ -1,3 +1,4 @@
+// src/pages/accountregistration/AgreementPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AiOutlineRight } from 'react-icons/ai';
@@ -46,7 +47,7 @@ function AgreementPage() {
   );
 
   const handleNavigateDetail = (index) => {
-    navigate('/agreementdetail', { state: { scrollToIndex: index } });
+    navigate('/agreementdetail', { state: { scrollToIndex: index, checkedItems } });
   };
 
   const handleNextClick = () => {
