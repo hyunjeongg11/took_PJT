@@ -160,4 +160,15 @@ public class ShopService {
         ShopGuest shopGuest = shopGuestRepository.findByShopAndUser(shop, user);
         return shopGuest == null;
     }
+
+    @Transactional
+    public ShopResponse findShopByRoom(Long roomSeq) {
+        Shop shop = shopRepository.findByRoomSeq(roomSeq)
+                .orElseThrow(() -> new IllegalArgumentException("not found : " + roomSeq));
+        UserEntity user = userRepository.findByUserSeq(shop.getUser().getUserSeq());
+
+        shop.updateHit(1);
+
+        return new ShopResponse(shop, user);
+    }
 }
