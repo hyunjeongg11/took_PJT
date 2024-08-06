@@ -106,6 +106,7 @@ public class AccountRepositoryCustomImpl implements AccountRepositoryCustom {
         QAccountEntity account = QAccountEntity.accountEntity;
 
         mainBankSeq = queryFactory.select(account.bank.bankSeq)
+                .from(account)
                 .where(account.user.userSeq.eq(userSeq).and(account.main.isTrue()))
                 .fetchOne();
 

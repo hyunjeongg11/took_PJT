@@ -244,6 +244,7 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
+    @Transactional
     public ResponseEntity<? super PayResponseDto> pay(PayRequestDto requestBody) {
 
         Long bankSeq = null;
@@ -252,9 +253,11 @@ public class AccountServiceImpl implements AccountService {
         try {
 
             bankSeq = accountRepositoryCustom.findMainBank(requestBody.getUserSeq());
+            System.out.println("은행 번호를 클릭합니다."+bankSeq);
             bank = bankRepository.getReferenceById(bankSeq);
-
             if (!bank.minus(requestBody.getCost())) return ResponseDto.nomoney();
+            bankRepositoryCustom.update(bankSeq,bank.getBalance());
+
 
         }catch (Exception e){
             e.printStackTrace();

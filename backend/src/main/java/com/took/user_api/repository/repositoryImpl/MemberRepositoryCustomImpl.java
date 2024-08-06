@@ -74,6 +74,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
 
         List<MemberEntity> result = null;
 
+//userSeq가 null이면 안된다1
         result = jpaQueryFactory.selectFrom(member)
                                 .where(member.party.partySeq.eq(partySeq).and(member.user.userSeq.ne(userSeq)))
                                 .fetch();

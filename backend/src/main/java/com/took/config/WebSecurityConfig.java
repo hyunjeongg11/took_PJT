@@ -21,6 +21,8 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -66,17 +68,15 @@ public class WebSecurityConfig {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
-
-        System.out.println("chain에서 확인합니다.");
-
         httpSecurity
                 .cors(cors -> cors
                         .configurationSource(configurationSource()))
                 .csrf(CsrfConfigurer::disable) // 사이트 요청에 대한 설정 //JWT 기반 인증이 이뤄지 때문에 csrf를 제어!
                 .httpBasic(HttpBasicConfigurer::disable) //이것도 JWT 기반 인증이 이뤄지기 때문에 disable로 제어!
                 .sessionManagement(sessionManagement -> sessionManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 일단 세션 안쓰게끔
+                        .maximumSessions(1)
+                        .sessionRegistry(sessionRegistry()))
+                // 세션을 하나만 쓰도록 설정
                 .authorizeHttpRequests(request -> request
 
 //                                                로그인 전에 이뤄지는 작업은 인증이 푤요하지 않다.
@@ -113,6 +113,11 @@ public class WebSecurityConfig {
 
         return httpSecurity.build();
     }
+
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
 }
 
 // jwt인증에 실패하게 되면 위 값을 넣어주게 된다.
@@ -129,4 +134,6 @@ class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.getWriter().write("{\"code\" : \"NP\" , \"message\" : \"No Permission.\"}");
 
     }
+
+
 }
