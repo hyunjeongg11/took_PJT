@@ -37,3 +37,31 @@ export const getAddr = (lat, lng) => {
     geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
   });
 };
+
+/**
+ * 검색어를 받아서 검색 결과 배열을 반환하는 함수
+ * @param {string} input - 검색어
+ * @returns {Promise<Array>} 검색 결과 배열
+ */
+export const searchPlaces = async (input) => {
+  try {
+    const searchResults = await keywordSearch(input);
+    return searchResults.map((place) => ({
+      address_name: place.address_name,
+      category_group_code: place.category_group_code,
+      category_group_name: place.category_group_name,
+      category_name: place.category_name,
+      distance: place.distance,
+      id: place.id,
+      phone: place.phone,
+      place_name: place.place_name,
+      place_url: place.place_url,
+      road_address_name: place.road_address_name,
+      x: place.x,
+      y: place.y,
+    }));
+  } catch (error) {
+    console.error('검색 실패:', error);
+    throw error;
+  }
+};

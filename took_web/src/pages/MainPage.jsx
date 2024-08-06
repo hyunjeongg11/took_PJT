@@ -8,7 +8,7 @@ import shop from '../assets/main/shop.png';
 import took from '../assets/took.png';
 function MainPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center  flex-col  max-w-screen">
+    <div className="flex min-h-screen items-center justify-center  flex-col  max-w-screen ">
       <div className="flex gap-5 justify-between w-full items-center bg-white pt-10 px-7">
         <div className="flex flex-col justify-center ml-3 items-center">
           <span className="font-dela text-main text-4xl">took</span>
