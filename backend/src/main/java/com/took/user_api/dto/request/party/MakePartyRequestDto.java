@@ -20,7 +20,7 @@ public class MakePartyRequestDto {
     private int category;
 
     @Schema(description = "총 비용 (예: 100000)", example = "100000", required = true)
-    private int cost;
+    private Long cost;
 
     @Schema(description = "총 인원 수 (예: 10)", example = "10", required = true)
     private int totalMember;

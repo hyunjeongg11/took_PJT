@@ -23,9 +23,8 @@ public class MemberEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberSeq;
 
-
     @Column(name="cost")
-    private int cost;
+    private Long cost;
 
     @Column(name="status")
     private boolean status;
@@ -51,7 +50,7 @@ public class MemberEntity {
 
 
 
-    public MemberEntity(PartyEntity party,UserEntity user,int cost,Boolean status,Boolean receive){
+    public MemberEntity(PartyEntity party,UserEntity user,Long cost,Boolean status,Boolean receive){
      this.party = party;
      this.status = status;
      this.cost = cost;
@@ -65,12 +64,21 @@ public class MemberEntity {
     public MemberEntity(PartyEntity party,UserEntity user){
         this.party = party;
         this.status = false;
-        this.cost = 0;
+        this.cost = 0L;
         this.receive = false;
         this.isLeader = false;
         this.createdAt = LocalDateTime.now();
         this.user = user;
+    }
 
+    public MemberEntity(PartyEntity party,UserEntity user,Long cost){
+        this.party = party;
+        this.status = false;
+        this.cost = cost;
+        this.receive = false;
+        this.isLeader = false;
+        this.createdAt = LocalDateTime.now();
+        this.user = user;
     }
 
 

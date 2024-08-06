@@ -49,6 +49,10 @@ public class BankEntity {
         return false;
     }
 
+    public void add(Long money){
+        this.balance+=money;
+    }
+
     public void plus(int money){
         this.balance+=money;
     }

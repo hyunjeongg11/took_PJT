@@ -8,8 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface MemberService {
 
+
     ResponseEntity<? super MemberSaveResponseDto> insertMember(MemberSaveRequestDto requestBody);
-
-    void delete(Long memberSeq);
-
+    ResponseEntity<? super MemberSaveResponseDto> deleteMember(MemberSaveRequestDto requestBody);
 }

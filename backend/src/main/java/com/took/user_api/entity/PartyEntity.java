@@ -29,7 +29,7 @@ public class PartyEntity {
     private int category;
 
     @Column(name = "cost")
-    private int cost;
+    private Long cost;
 
     @Column(name="status")
     private Boolean status;
@@ -47,7 +47,7 @@ public class PartyEntity {
     private Long receiveCost;
 
 
-    public PartyEntity(String title, int category, int cost, int totalMember) {
+    public PartyEntity(String title, int category, Long cost, int totalMember) {
         this.title = title;
         this.category = category;
         this.cost = cost;

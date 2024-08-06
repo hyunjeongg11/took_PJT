@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.took.user_api.entity.QPartyEntity.partyEntity;
+
 @Repository
 @RequiredArgsConstructor
 public class PartyRepositoryCustomImpl implements PartyRepositoryCustom {
@@ -19,7 +21,7 @@ public class PartyRepositoryCustomImpl implements PartyRepositoryCustom {
 
     @Override
     public List<PartyEntity> findMyPartyList(Long userSeq) {
-        QPartyEntity party = QPartyEntity.partyEntity;
+        QPartyEntity party = partyEntity;
         QMemberEntity member = QMemberEntity.memberEntity;
 
         List<Long> userSeqList = jpaQueryFactory.select(member.party.partySeq).where(member.user.userSeq.eq(userSeq)).fetch();
@@ -38,8 +40,29 @@ public class PartyRepositoryCustomImpl implements PartyRepositoryCustom {
     @Override
     public void updateCostBypartyId(Long partySeq, Long newCost) {
 
-        QPartyEntity party = QPartyEntity.partyEntity;
+        QPartyEntity party = partyEntity;
 
-        jpaQueryFactory.update(party).set(party.partySeq, newCost).where(party.partySeq.eq(partySeq)).execute();
+        jpaQueryFactory.update(party)
+                .set(party.cost, newCost)
+                .where(partyEntity.partySeq.eq(partySeq))
+                .execute(); }
+
+    @Override
+    public void changeStatusBySeq(Long partySeq) {
+
+        QPartyEntity party = partyEntity;
+
+        jpaQueryFactory.update(party)
+                .set(party.status,true)
+                .where(partyEntity.partySeq.eq(partySeq))
+                .execute();
+    }
+
+    @Override
+    public Long findCostByPartySeq(Long partySeq) {
+
+        QPartyEntity party = partyEntity;
+        return jpaQueryFactory.select(party.cost).from(party).where(party.partySeq.eq(partySeq)).fetchOne();
+
     }
 }

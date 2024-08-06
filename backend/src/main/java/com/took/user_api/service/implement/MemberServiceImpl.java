@@ -14,6 +14,7 @@ import com.took.user_api.repository.MemberRepository;
 import com.took.user_api.repository.PartyRepository;
 import com.took.user_api.repository.UserRepository;
 import com.took.user_api.repository.custom.BankRepositoryCustom;
+import com.took.user_api.repository.custom.MemberRepositoryCustom;
 import com.took.user_api.service.MemberService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final UserRepository userRepository;
     private final BankRepositoryCustom bankRepositoryCustom;
+    private final MemberRepositoryCustom memberRepositoryCustom;
 
 
 
@@ -56,9 +58,20 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void delete(Long memberSeq) {
-        memberRepository.deleteById(memberSeq);
+    @Transactional
+    public ResponseEntity<? super MemberSaveResponseDto> deleteMember(MemberSaveRequestDto requestBody) {
+        try{
+
+            memberRepositoryCustom.deleteMemberByPartySeq(requestBody.getPartySeq(),requestBody.getUserSeq());
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return MemberSaveResponseDto.success();
     }
+
+
 
 
 }

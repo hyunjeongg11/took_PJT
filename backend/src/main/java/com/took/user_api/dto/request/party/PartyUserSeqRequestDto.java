@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PartyDoneRequestDto {
+public class PartyUserSeqRequestDto {
 
     @Schema(description = "파티 시퀀스 (예: 1)", example = "1", required = true)
     private Long partySeq;
