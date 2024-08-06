@@ -50,17 +50,6 @@ public class MemberEntity {
     private LocalDateTime createdAt;
 
 
-    public MemberEntity(MemberSaveRequestDto dto, PartyEntity party, UserEntity user){
-
-        this.cost = dto.getCost();
-        this.status = false;
-        this.receive = dto.isReceive();
-        this.isLeader = dto.isLeader();
-
-        this.party = party;
-        this.user = user;
-
-    }
 
     public MemberEntity(PartyEntity party,UserEntity user,int cost,Boolean status,Boolean receive){
      this.party = party;
@@ -70,6 +59,17 @@ public class MemberEntity {
      this.isLeader = true;
      this.createdAt = LocalDateTime.now();
      this.user = user;
+
+    }
+
+    public MemberEntity(PartyEntity party,UserEntity user){
+        this.party = party;
+        this.status = false;
+        this.cost = 0;
+        this.receive = false;
+        this.isLeader = false;
+        this.createdAt = LocalDateTime.now();
+        this.user = user;
 
     }
 

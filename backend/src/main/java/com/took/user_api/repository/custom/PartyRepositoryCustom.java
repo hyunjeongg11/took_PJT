@@ -7,4 +7,5 @@ import java.util.List;
 public interface PartyRepositoryCustom {
 
     List<PartyEntity> findMyPartyList(Long userSeq);
+    void updateCostBypartyId(Long partySeq, Long newCost);
 }

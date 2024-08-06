@@ -4,9 +4,11 @@ package com.took.user_api.service.implement;
 import com.took.user_api.dto.request.party.PartyDetailRequestDto;
 import com.took.user_api.dto.request.party.PartyDoneRequestDto;
 import com.took.user_api.dto.request.party.MakePartyRequestDto;
+import com.took.user_api.dto.request.party.hostPayRequestDto;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.party.*;
+import com.took.user_api.entity.BankEntity;
 import com.took.user_api.entity.MemberEntity;
 import com.took.user_api.entity.PartyEntity;
 import com.took.user_api.entity.UserEntity;
@@ -24,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +57,15 @@ public class PartyServiceImpl implements PartyService {
                 }
 
             }
+
+            PartyEntity party = partyRepository.getReferenceById(dto.getPartySeq());
+            Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(dto.getUserSeq());
+            BankEntity bank = bankRepository.getReferenceById(bankSeq);
+
+            Long newBalance = bank.getBalance() + party.getReceiveCost();
+
+            bankRepositoryCustom.updateBalanceByBankSeq(newBalance,bankSeq);
+
 
         } catch (Exception e) {
 
@@ -123,6 +135,30 @@ public class PartyServiceImpl implements PartyService {
     public ResponseEntity<?> partyDelete(Long partySeq) {
         partyRepository.deleteById(partySeq);
         return null;
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<? super VoidResponseDto> hostpay(hostPayRequestDto requestBody) {
+
+        try {
+            Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(requestBody.getUserSeq());
+            Optional<BankEntity> bank = bankRepository.findById(bankSeq);
+            BankEntity nowbank = bank.get();
+
+            if(!nowbank.minus(requestBody.getTotal_cost()))return ResponseDto.nomoney();
+            bankRepositoryCustom.updateBalanceByBankSeq(nowbank.getBalance(),nowbank.getBankSeq());
+
+            MemberEntity member = memberRepository.getReferenceById(requestBody.getMemberSeq());
+
+            memberRepositoryCustom.changeStatus(requestBody.getUserSeq(),true);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return VoidResponseDto.success();
     }
 
 }

@@ -1,10 +1,8 @@
 package com.took.user_api.controller;
 
 import com.took.user_api.dto.request.member.MemberSaveRequestDto;
-import com.took.user_api.dto.request.party.PartyDetailRequestDto;
-import com.took.user_api.dto.request.party.PartyDoneRequestDto;
-import com.took.user_api.dto.request.party.MakePartyRequestDto;
-import com.took.user_api.dto.request.party.PayRequestDto;
+import com.took.user_api.dto.request.party.*;
+import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.member.MemberSaveResponseDto;
 import com.took.user_api.dto.response.party.*;
 import com.took.user_api.service.AccountService;
@@ -55,6 +53,31 @@ public class PartyController {
         return memberService.insertMember(requestBody);
     }
 
+    @Operation(summary = "멤버 삭제", description = "파티에서 맴버가 갑니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "멤버 삭제 성공",
+                    content = @Content(schema = @Schema(implementation = MemberSaveResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @DeleteMapping("/delete-member/{memberSeq}")
+    public ResponseEntity<?> deleteMember(@PathVariable("memberSeq") Long memberSeq){
+        memberService.delete(memberSeq);
+        return ResponseEntity.ok("Done!");
+    }
+
+    @Operation(summary = "호스트 결제", description = "호스트가 결제를 시도합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "호스트의 결제 성공",
+                    content = @Content(schema = @Schema(implementation = MemberSaveResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PostMapping("/host-pay")
+    public ResponseEntity<? super VoidResponseDto> hostpay(@RequestBody @Valid hostPayRequestDto requestBody){
+
+        partyService.hostpay(requestBody);
+        return ResponseEntity.ok("Done!");
+    }
+
     @Operation(summary = "사용자 파티 목록 조회", description = "특정 사용자의 파티 목록을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "파티 목록 조회 성공",
@@ -75,11 +98,11 @@ public class PartyController {
                     content = @Content(schema = @Schema(implementation = MemberSaveResponseDto.class))),
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
-    @PostMapping("/pay")
-    public ResponseEntity<? super PayResponseDto>pay(@RequestBody @Valid PayRequestDto requestBody){
+    @PostMapping("/guest-pay")
+    public ResponseEntity<? super PayResponseDto>guestpay(@RequestBody @Valid PayRequestDto requestBody){
 
-//        userSeq 보고 바로 짜르면 된다.
-        ResponseEntity<? super PayResponseDto> response = accountService.pay(requestBody);
+//      userSeq 보고 바로 짜르면 된다.
+        ResponseEntity<? super PayResponseDto> response = accountService.guestpay(requestBody);
         return response;
     }
 

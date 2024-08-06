@@ -7,15 +7,12 @@ import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.account.*;
 import com.took.user_api.dto.response.party.PayResponseDto;
-import com.took.user_api.entity.AccountEntity;
-import com.took.user_api.entity.BankEntity;
-import com.took.user_api.entity.MemberEntity;
-import com.took.user_api.entity.UserEntity;
-import com.took.user_api.repository.AccountRepository;
-import com.took.user_api.repository.BankRepository;
-import com.took.user_api.repository.UserRepository;
+import com.took.user_api.entity.*;
+import com.took.user_api.repository.*;
 import com.took.user_api.repository.custom.AccountRepositoryCustom;
 import com.took.user_api.repository.custom.BankRepositoryCustom;
+import com.took.user_api.repository.custom.PartyRepositoryCustom;
+import com.took.user_api.repository.repositoryImpl.MemberRepositoryCustomImpl;
 import com.took.user_api.service.AccountService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +32,10 @@ public class AccountServiceImpl implements AccountService {
     private final BankRepositoryCustom bankRepositoryCustom;
     private final AccountRepository accountRepository;
     private final AccountRepositoryCustom accountRepositoryCustom;
+    private final MemberRepository memberRepository;
+    private final MemberRepositoryCustomImpl memberRepositoryCustomImpl;
+    private final PartyRepositoryCustom partyRepositoryCustom;
+    private final PartyRepository partyRepository;
 
     @Transactional
     @Override
@@ -223,8 +224,6 @@ public class AccountServiceImpl implements AccountService {
         Long bankSeq = null;
         BankEntity bank = null;
 
-
-
         try{
 
             bankSeq = accountRepositoryCustom.findBankSeqByAccountSeq(requestBody.getAccountSeq());
@@ -248,18 +247,29 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public ResponseEntity<? super PayResponseDto> pay(PayRequestDto requestBody) {
+    public ResponseEntity<? super PayResponseDto> guestpay(PayRequestDto requestBody) {
 
         Long bankSeq = null;
         BankEntity bank = null;
 
+        MemberEntity member = null;
+
+
         try {
 
             bankSeq = accountRepositoryCustom.findMainBank(requestBody.getUserSeq());
-            System.out.println("은행 번호를 클릭합니다."+bankSeq);
             bank = bankRepository.getReferenceById(bankSeq);
             if (!bank.minus(requestBody.getCost())) return ResponseDto.nomoney();
+
+//         돈 빼주고
             bankRepositoryCustom.update(bankSeq,bank.getBalance());
+//           빼진 만큼 돈 더 넣어주고
+            PartyEntity party = partyRepository.getReferenceById(requestBody.getPartySeq());
+            Long newCost = party.getReceiveCost() + requestBody.getCost();
+            partyRepositoryCustom.updateCostBypartyId(requestBody.getPartySeq(),newCost);
+//          상태 업데이트 해주고
+            memberRepositoryCustomImpl.changeStatusBySeq(requestBody.getMemberSeq());
+
 
 
         }catch (Exception e){

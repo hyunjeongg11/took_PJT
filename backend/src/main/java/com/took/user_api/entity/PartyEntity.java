@@ -43,6 +43,10 @@ public class PartyEntity {
     @Column(name="total_member")
     private int totalMember;
 
+    @Column(name="receive_cost")
+    private Long receiveCost;
+
+
     public PartyEntity(String title, int category, int cost, int totalMember) {
         this.title = title;
         this.category = category;
@@ -50,6 +54,7 @@ public class PartyEntity {
         this.status = false;
         this.createdAt = LocalDateTime.now();
         this.totalMember = totalMember;
+        this.receiveCost = 0L;
 
     }
 

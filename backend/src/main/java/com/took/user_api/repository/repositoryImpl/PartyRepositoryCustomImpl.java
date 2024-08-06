@@ -33,4 +33,13 @@ public class PartyRepositoryCustomImpl implements PartyRepositoryCustom {
 
         return list;
     }
+
+
+    @Override
+    public void updateCostBypartyId(Long partySeq, Long newCost) {
+
+        QPartyEntity party = QPartyEntity.partyEntity;
+
+        jpaQueryFactory.update(party).set(party.partySeq, newCost).where(party.partySeq.eq(partySeq)).execute();
+    }
 }

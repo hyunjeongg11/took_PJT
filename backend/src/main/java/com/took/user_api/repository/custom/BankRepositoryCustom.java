@@ -12,4 +12,5 @@ public interface BankRepositoryCustom {
     Long findBalanceByBankSeq(Long bankSeq);
     void update(Long bankSeq, Long bankCost);
     List<BankEntity> findBanksByBankSeq(List<Long> bankSeq);
+    void updateBalanceByBankSeq(Long balance, Long bankSeq);
 }

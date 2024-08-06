@@ -83,4 +83,13 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     }
 
 
+    public void changeStatusBySeq(Long memberSeq) {
+
+        QMemberEntity member = QMemberEntity.memberEntity;
+
+        jpaQueryFactory.update(member)
+                .where(member.user.userSeq.eq(memberSeq))
+                .set(member.status,true)
+                .execute();
+    }
 }
