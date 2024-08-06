@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -26,14 +28,13 @@ public class ChatMessage {
     @Enumerated(EnumType.STRING)  // Enum 값을 문자열로 데이터베이스에 저장
     private MessageType type;  // 메시지 타입
 
-    @JsonBackReference
-    @ManyToOne  // 다대일 관계 설정
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "room_seq", nullable = false)  // 외래 키 설정 및 Not Null 설정
     private ChatRoom chatRoom;  // 메시지가 속한 채팅방
 
-
-    @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_seq", nullable = false)  // 외래 키 설정 및 Not Null 설정
     private UserEntity user;  // 메시지 송신자
 

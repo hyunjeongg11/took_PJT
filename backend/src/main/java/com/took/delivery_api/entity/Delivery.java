@@ -7,6 +7,8 @@ import com.took.delivery_api.dto.DeliveryModifyRequest;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,14 +33,14 @@ public class Delivery {
     private Long deliverySeq;
 
     // 사용자의 고유 식별자 필드
-    @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_seq", nullable = false)
     private UserEntity user;
 
     // 채팅방 번호
-    @JsonBackReference
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "room_seq", nullable = false)
     private ChatRoom chatRoom;
 
@@ -92,11 +94,6 @@ public class Delivery {
     // 종료 시간 필드
     @Column(nullable = false)
     private LocalDateTime finishTime;
-
-    // 배달 손님 관계설정
-    @JsonManagedReference
-    @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<DeliveryGuest> deliveryGuests;
 
     // 업데이트 메서드 추가
     public void updateDelivery(DeliveryModifyRequest request) {

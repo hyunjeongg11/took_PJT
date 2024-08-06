@@ -43,10 +43,6 @@ public class PartyEntity {
     @Column(name="total_member")
     private int totalMember;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<AlramEntity> alrams;
-
     public PartyEntity(String title, int category, int cost, int totalMember) {
         this.title = title;
         this.category = category;

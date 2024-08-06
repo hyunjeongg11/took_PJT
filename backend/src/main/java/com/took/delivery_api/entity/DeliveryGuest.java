@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 // 엔티티 클래스 정의
 @Entity
@@ -20,14 +22,14 @@ public class DeliveryGuest {
     private Long deliveryGuestSeq;
 
     // Delivery 엔티티와 다대일(Many-to-One) 관계 설정
-    @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "delivery_seq", nullable = false)
     private Delivery delivery;
 
     // 사용자의 고유 식별자 필드
-    @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_seq", nullable = false)
     private UserEntity user;
 

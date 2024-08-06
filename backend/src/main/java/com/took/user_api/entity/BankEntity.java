@@ -39,10 +39,6 @@ public class BankEntity {
     @Column(name="is_bank")
     private boolean isBank;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<AccountEntity> accounts;
-
     public boolean minus(Long money){
 
         if(this.balance >= money){

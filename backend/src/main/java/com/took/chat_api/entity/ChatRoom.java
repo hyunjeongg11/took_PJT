@@ -8,6 +8,8 @@ import com.took.taxi_api.entity.Taxi;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,8 +26,8 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // 자동 증가 설정
     private Long roomSeq;  // 채팅방 고유 번호
 
-    @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_seq", nullable = false)  // 외래키(FK) 설정
     private UserEntity user;
 
@@ -37,24 +39,4 @@ public class ChatRoom {
 
     @Column(nullable = false) // Not Null 설정
     private int category;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)  // 일대다 관계 설정
-    private List<ChatMessage> messages;  // 채팅방에 속한 메시지들
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // 일대다 관계 설정
-    private List<ChatUser> users;  // 채팅방에 속한 사용자들
-
-    @JsonManagedReference
-    @OneToOne(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // 일대일 관계 설정
-    private Delivery delivery;  // 채팅방에 속한 배달 정보
-
-    @JsonManagedReference
-    @OneToOne(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // 일대일 관계 설정
-    private Taxi taxi;  // 채팅방에 속한 택시 정보
-
-    @JsonManagedReference
-    @OneToOne(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // 일대일 관계 설정
-    private Shop shop;  // 채팅방에 속한 가게 정보
 }

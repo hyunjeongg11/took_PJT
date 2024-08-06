@@ -6,6 +6,8 @@ import com.took.chat_api.entity.ChatRoom;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,13 +29,13 @@ public class Taxi {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long taxiSeq;  // 택시 번호
 
-    @JsonBackReference
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "room_seq", nullable = false)
     private ChatRoom chatRoom;  // 채팅방 참조 번호
 
-    @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_seq", nullable = false)
     private UserEntity user;  // 사용자 참조
 
@@ -70,11 +72,6 @@ public class Taxi {
 
     @Column(nullable = false)
     private Long master;  // 결제자 번호
-
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "taxi", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<TaxiGuest> taxiGuests;  // 택시 게스트 목록
 
     public void updateTaxi(Long master, int max, boolean gender) {
         this.master = master;

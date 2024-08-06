@@ -6,6 +6,8 @@ import com.took.chat_api.entity.ChatRoom;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,13 +40,13 @@ public class Shop {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shopSeq;
 
-    @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_seq", nullable = false)
     private UserEntity user;
 
-    @JsonBackReference
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "room_seq", nullable = false)
     private ChatRoom chatRoom;
 
@@ -84,18 +86,6 @@ public class Shop {
 
     @Column
     private int maxCount;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "shop", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    List<ShopGuest> shopGuests;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "shop", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ShipInfo> shipInfos;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "shop", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<PurchaseInfo> purchaseInfos;
 
     @PrePersist
     protected void onCreate() {

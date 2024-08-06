@@ -90,65 +90,6 @@ public class UserEntity {
     @Column(nullable = false, length = 10)
     private String role;
 
-    // 계좌와 관계 설정
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<AccountEntity> accounts;
-
-    //party member와 관계 설정
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<MemberEntity> members;
-
-    // 채팅방과 관계설정
-    @JsonBackReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<ChatRoom> chatRooms;
-
-    // 채팅방 유저와 관계설정
-    @JsonBackReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<ChatUser> chatUsers;
-
-    // 배달파티와 관계설정
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<Delivery> deliveries;
-
-//    알림방과의 관계 설정
-// 배달파티와 관계설정
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<AlramEntity> alrams;
-
-
-    // 배달 파티 멤버와 관계설정
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<DeliveryGuest> deliveryGuests;
-
-    // 택시파티와 관계설정
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<Taxi> taxis;
-
-    // 택시 파티 멤버와 관계설정
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<TaxiGuest> taxiGuests;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<PurchaseInfo> purchaseInfos;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<Shop> shops;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<ShopGuest> shopGuests;
-
     @Column(name="nickname")
     private String nickname;
 

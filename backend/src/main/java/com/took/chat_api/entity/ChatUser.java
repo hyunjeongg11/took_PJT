@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -19,16 +21,16 @@ public class ChatUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // 자동 증가 설정
     private Long chatUserSeq;  // 유저 고유 번호
 
-    @JsonBackReference
-    @ManyToOne  // 다대일 관계 설정
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "room_seq", nullable = false)  // 외래 키 설정 및 Not Null 설정
     private ChatRoom chatRoom;  // 유저가 속한 채팅방
 
     @Column(nullable = false)  // Not Null 설정
     private LocalDateTime joinTime;  // 방에 들어간 시간
 
-    @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name="user_seq", nullable = false)
     private UserEntity user;
 }

@@ -71,22 +71,24 @@ public class ShopService {
         UserEntity user = userRepository.findByUserSeq(shop.getUser().getUserSeq());
 
         shop.updateHit(1);
+
         return new ShopResponse(shop, user);
     }
 
     @Transactional
     public void delete(Long id) {
-        QShopGuest qShopGuest = QShopGuest.shopGuest;
-        queryFactory.delete(qShopGuest).where(qShopGuest.shop.shopSeq.eq(id)).execute();
-
-        QShipInfo qShipInfo = QShipInfo.shipInfo;
-        queryFactory.delete(qShipInfo).where(qShipInfo.shop.shopSeq.eq(id)).execute();
-
-        QPurchaseInfo qPurchaseInfo = QPurchaseInfo.purchaseInfo;
-        queryFactory.delete(qPurchaseInfo).where(qPurchaseInfo.shop.shopSeq.eq(id)).execute();
-
-        QShop shop = QShop.shop;
-        queryFactory.delete(shop).where(shop.shopSeq.eq(id)).execute();
+//        QShopGuest qShopGuest = QShopGuest.shopGuest;
+//        queryFactory.delete(qShopGuest).where(qShopGuest.shop.shopSeq.eq(id)).execute();
+//
+//        QShipInfo qShipInfo = QShipInfo.shipInfo;
+//        queryFactory.delete(qShipInfo).where(qShipInfo.shop.shopSeq.eq(id)).execute();
+//
+//        QPurchaseInfo qPurchaseInfo = QPurchaseInfo.purchaseInfo;
+//        queryFactory.delete(qPurchaseInfo).where(qPurchaseInfo.shop.shopSeq.eq(id)).execute();
+//
+//        QShop shop = QShop.shop;
+//        queryFactory.delete(shop).where(shop.shopSeq.eq(id)).execute();
+        shopRepository.deleteById(id);
     }
 
     @Transactional

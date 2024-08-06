@@ -3,6 +3,8 @@ package com.took.shop_api.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 
 @Entity
@@ -20,9 +22,8 @@ public class Product {
     @Column(nullable = false)
     private String productName;
 
-
-    @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "purchase_seq", nullable = false)
     private PurchaseInfo purchaseInfo;
 

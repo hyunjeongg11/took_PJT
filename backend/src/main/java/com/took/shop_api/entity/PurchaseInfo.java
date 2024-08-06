@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -22,14 +24,14 @@ public class PurchaseInfo {
     private Long purchaseSeq;
 
 
-    @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_seq", nullable = false)
     private UserEntity user;
 
 
-    @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "shop_seq", nullable = false)
     private Shop shop;
 
@@ -38,10 +40,6 @@ public class PurchaseInfo {
 
     @Column
     private int shipCost;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "purchaseInfo",cascade = CascadeType.REMOVE,orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Product> products;
 
     public void update(int price, int shipCost) {
         this.price = price;
