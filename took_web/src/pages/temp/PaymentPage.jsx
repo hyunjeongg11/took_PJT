@@ -28,7 +28,6 @@ const tempData = [
   },
 ];
 
-
 function PaymentPage({
   userName = '사용자',
   amount,
@@ -82,9 +81,14 @@ function PaymentPage({
         <div className="flex items-center justify-between w-full px-8">
           <div className="text-gray-500 font-bold">출금계좌</div>
           <div className="relative">
-            <button onClick={() => setIsModalOpen(true)} className="flex items-center space-x-1">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center space-x-1"
+            >
               <span className="text-black font-bold mr-1">
-                {selectedAccount.bankName} ({selectedAccount.accountNum.slice(-4)}) ({formatNumber(selectedAccount.balance)}원)
+                {selectedAccount.bankName} (
+                {selectedAccount.accountNum.slice(-4)}) (
+                {formatNumber(selectedAccount.balance)}원)
               </span>
               <img src={SelectArrow} alt="selectArrow" />
             </button>
@@ -106,7 +110,7 @@ function PaymentPage({
           </button>
         </div>
       </div>
-      
+
       {isModalOpen && (
         <AccountCard
           accounts={tempData}

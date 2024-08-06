@@ -21,13 +21,21 @@ const ArrivalNotificationModal = ({ members, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-50 z-50">
-      <div ref={modalRef} className="bg-main w-full max-w-md h-1/2 rounded-t-3xl p-6 shadow-lg">
+      <div
+        ref={modalRef}
+        className="bg-main w-full max-w-md h-1/2 rounded-t-3xl p-6 shadow-lg"
+      >
         <div className="flex justify-between items-center">
-          <button onClick={onClose} className="text-white focus:outline-none ml-auto">
+          <button
+            onClick={onClose}
+            className="text-white focus:outline-none ml-auto"
+          >
             <MdAdd className="rotate-45 w-6 h-6" />
           </button>
         </div>
-        <h2 className="text-white text-lg font-bold text-center mt-4">물품이 도착했나요?</h2>
+        <h2 className="text-white text-lg font-bold text-center mt-4">
+          물품이 도착했나요?
+        </h2>
         <div className="flex justify-center mt-4 space-x-2">
           {members.map((member) => (
             <img
@@ -39,7 +47,9 @@ const ArrivalNotificationModal = ({ members, onClose }) => {
           ))}
         </div>
         <p className="text-white text-center mt-6">
-          공동구매 그룹원들에게<br />물품 도착 알림을 보내시겠습니까?
+          공동구매 그룹원들에게
+          <br />
+          물품 도착 알림을 보내시겠습니까?
         </p>
         <button
           className="w-full bg-white text-main font-semibold py-2 rounded-lg mt-6"

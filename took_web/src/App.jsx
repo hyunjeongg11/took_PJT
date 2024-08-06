@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { msgToAndroid } from './android/message';
 import { usePosition } from './store/position';
+import { getUserLocation } from './android/message';
 
 import {
   MainPage,
@@ -36,6 +37,7 @@ import {
   OrderFormPage,
   TotalPurchasePage,
   MyOrderFormPage,
+  TempChattingPage,
 } from './pages';
 
 import PaymentMethods from './pages/oneclick/PaymentMethodsPage';
@@ -114,19 +116,46 @@ const ROUTER = createBrowserRouter([
   { path: '/taxi/setting', element: <TaxiChattingSettingPage /> },
   { path: '/taxi/path', element: <TaxiPathSettingPage /> },
   { path: '/taxi/path-list', element: <CurrentPathListPage /> },
-  { path: '/chat/delivery/main', element: <DeliveryChattingMainPage /> },
   { path: '/chat/delivery/:id/notice', element: <DeliveryNoticePage /> },
-  { path: '/chat/groupbuy/main', element: <GroupBuyChattingMainPage /> },
-  { path: '/chat/taxi/main', element: <TaxiChattingMainPage /> },
   { path: '/chat/list', element: <ChattingListPage /> },
   { path: '/chat/took', element: <TookChattingPage /> },
   { path: '/groupbuy/my-purchase', element: <MyPurchasePage /> },
   { path: '/groupbuy/order/:id', element: <OrderFormPage /> },
   { path: '/groupbuy/total/:id', element: <TotalPurchasePage /> },
   { path: '/groupbuy/my-order/:id', element: <MyOrderFormPage /> },
+  { path: '/chat/temp', element: <TempChattingPage /> },
+  { path: '/chat/delivery/:id', element: <DeliveryChattingMainPage /> },
+  { path: '/chat/taxi/:id', element: <TaxiChattingMainPage /> },
+  { path: '/chat/buy/:id', element: <GroupBuyChattingMainPage /> },
 ]);
 
 function App() {
+  const { setPosition } = usePosition();
+
+  useEffect(() => {
+    getUserLocation();
+
+    window.onLocation = (latitude, longitude) => {
+      console.log('Received location:', latitude, longitude);
+      msgToAndroid(
+        `Received location in onLocation:, ${latitude}, ${longitude}`
+      );
+      setPosition({ latitude, longitude });
+    };
+
+    window.onNotification = (notificationData) => {
+      // const notification = JSON.parse(notificationData);
+      msgToAndroid(notificationData);
+    };
+
+    getUserLocation();
+
+    return () => {
+      delete window.onLocation;
+      delete window.onNotification;
+    };
+  }, []);
+
   return <RouterProvider router={ROUTER} />;
 }
 

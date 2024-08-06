@@ -47,12 +47,16 @@ function AgreementPage() {
   );
 
   const handleNavigateDetail = (index) => {
-    navigate('/agreementdetail', { state: { scrollToIndex: index, checkedItems } });
+    navigate('/agreementdetail', {
+      state: { scrollToIndex: index, checkedItems },
+    });
   };
 
   const handleNextClick = () => {
     if (isFormValid) {
-      navigate('/verification', { state: { bank, account, password, accountName } });
+      navigate('/verification', {
+        state: { bank, account, password, accountName },
+      });
     }
   };
 

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import BackButton from '../../../components/common/BackButton';
-import { writePurchaseApi, updateMyPurchaseApi } from '../../../apis/groupBuy/purchase';
+import {
+  writePurchaseApi,
+  updateMyPurchaseApi,
+} from '../../../apis/groupBuy/purchase';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { useUser } from '../../../store/user.js';
 
@@ -70,7 +73,10 @@ function MyOrderFormPage() {
     try {
       if (isEditMode) {
         // 수정 모드일 때, updateMyPurchaseApi 호출
-        await updateMyPurchaseApi({ purchaseSeq: state.purchase.purchaseSeq, params });
+        await updateMyPurchaseApi({
+          purchaseSeq: state.purchase.purchaseSeq,
+          params,
+        });
         alert('주문 정보가 성공적으로 수정되었습니다.');
       } else {
         // 등록 모드일 때, writePurchaseApi 호출
@@ -95,7 +101,9 @@ function MyOrderFormPage() {
         </div>
         <div className="flex flex-col border border-neutral-200 pt-5 pb-1 mt-6 bg-neutral-50 rounded-2xl shadow-md">
           <div className="flex flex-col px-4 text-xs text-black">
-            <div className="text-base font-bold">내 구매 정보 {isEditMode ? '수정' : '등록'}</div>
+            <div className="text-base font-bold">
+              내 구매 정보 {isEditMode ? '수정' : '등록'}
+            </div>
             <hr className="border border-neutral-300 w-full mx-auto my-3" />
 
             {myData.map((data, idx) => (
@@ -132,14 +140,17 @@ function MyOrderFormPage() {
                     className="ml-4 p-2 rounded-md text-right border border-collapse focus:outline-none focus:ring-2 focus:ring-main"
                   />
                 </label>
-                {idx > 0 && data.name === '' && data.option === '' && data.etc === '' && (
-                  <button
-                    onClick={() => removeItem(idx)}
-                    className="self-end mt-1 text-neutral-400"
-                  >
-                    <FaRegTrashAlt />
-                  </button>
-                )}
+                {idx > 0 &&
+                  data.name === '' &&
+                  data.option === '' &&
+                  data.etc === '' && (
+                    <button
+                      onClick={() => removeItem(idx)}
+                      className="self-end mt-1 text-neutral-400"
+                    >
+                      <FaRegTrashAlt />
+                    </button>
+                  )}
               </div>
             ))}
             <div

@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import BackButton from '../../components/common/BackButton';
 import { useNavigate, useParams } from 'react-router-dom';
-import { writeDeliveryApi, modifyDeliveryApi, getDeliveryDetailApi } from '../../apis/delivery';
+import {
+  writeDeliveryApi,
+  modifyDeliveryApi,
+  getDeliveryDetailApi,
+} from '../../apis/delivery';
 import { useUser } from '../../store/user';
 
 const InputField = ({
@@ -138,7 +142,8 @@ function CreateDeliveryPage() {
     navigate(-1);
   };
 
-  const handleSubmit = async () => { // async 추가
+  const handleSubmit = async () => {
+    // async 추가
     if (Object.values(form).some((field) => field === '')) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 2000); // 2초 후 알림 메시지 숨김
@@ -168,7 +173,11 @@ function CreateDeliveryPage() {
         setShowCompletionMessage(true);
         setTimeout(() => {
           setShowCompletionMessage(false);
-          navigate(id ? `/delivery/detail/${id}` : `/delivery/detail/${response.deliverySeq}`); // 생성된 게시물로 이동
+          navigate(
+            id
+              ? `/delivery/detail/${id}`
+              : `/delivery/detail/${response.deliverySeq}`
+          ); // 생성된 게시물로 이동
         }, 2000); // 2초 후에 완료 메시지 사라짐
       } catch (error) {
         console.error('배달 글 작성 중 오류 발생:', error);
@@ -185,7 +194,8 @@ function CreateDeliveryPage() {
           <BackButton />
         </button>
         <div className="mt-2 ml-12 flex-grow text-center text-lg font-bold text-black">
-          배달 <span className="font-dela">took</span> {id ? '수정하기' : '작성하기'}
+          배달 <span className="font-dela">took</span>{' '}
+          {id ? '수정하기' : '작성하기'}
         </div>
         <button
           className="text-white mt-2 bg-[#FF7F50] px-3 py-1.5 rounded-full text-sm font-bold"
@@ -249,7 +259,8 @@ function CreateDeliveryPage() {
       {showCompletionMessage && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white px-6 py-4 rounded-lg shadow-lg text-center text-base font-bold">
-            배달 <span className="font-dela">took</span> {id ? '수정 완료' : '작성 완료'}
+            배달 <span className="font-dela">took</span>{' '}
+            {id ? '수정 완료' : '작성 완료'}
           </div>
         </div>
       )}

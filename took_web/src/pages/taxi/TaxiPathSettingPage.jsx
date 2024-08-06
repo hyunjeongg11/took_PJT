@@ -2,26 +2,22 @@ import React, { useState } from 'react';
 import { FaMapMarkerAlt } from 'react-icons/fa'; // react-icons의 FaMapMarkerAlt 아이콘 사용
 import BackButton from '../../components/common/BackButton';
 import searchIcon from '../../assets/taxi/search.png';
+import Search from '../../components/map/Search'; // Search 컴포넌트 import
 
-const tempData = [
-  {
-    address: '부산 강서구 녹산산단335로 7 송정삼정그린코아더시티',
-  },
-];
-
-function TaxiPathSettingPage() {
+const TaxiPathSettingPage = () => {
   const [destination, setDestination] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState('');
+  const [searchPageOpen, setSearchPageOpen] = useState(false); // Search 컴포넌트와 관련된 상태
 
   const handleDestinationChange = (e) => {
     const value = e.target.value;
     setDestination(value);
 
-    const filtered = tempData.filter((data) =>
-      data.address.includes(value)
-    );
+    // 필터링된 데이터 상태 업데이트
+    // 원본 데이터는 예시로 넣어두었으며, 실제 데이터로 대체 필요
+    const filtered = tempData.filter((data) => data.address.includes(value));
     setFilteredData(filtered);
   };
 
@@ -40,10 +36,14 @@ function TaxiPathSettingPage() {
   };
 
   const handleSearchClick = () => {
-    const filtered = tempData.filter((data) =>
-      data.address.includes(destination)
-    );
-    setFilteredData(filtered);
+    // Search 컴포넌트를 열기 위한 상태 변경
+    setSearchPageOpen(true);
+  };
+
+  const getDirections = (e) => {
+    e.preventDefault();
+    // 여기에 주소 검색 기능을 처리할 방법을 추가합니다.
+    // 이 함수는 Search 컴포넌트의 getDirections props로 전달되어야 합니다.
   };
 
   return (
@@ -70,14 +70,14 @@ function TaxiPathSettingPage() {
               value={destination}
               onChange={handleDestinationChange}
             />
-            <button 
+            <button
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
-              onClick={handleSearchClick}
+              onClick={handleSearchClick} // Search 컴포넌트를 여는 클릭 핸들러
             >
               <img
                 src={searchIcon}
                 alt="목적지 검색"
-                className="h-6 w-6 text-gray-400" 
+                className="h-6 w-6 text-gray-400"
               />
             </button>
           </div>
@@ -85,8 +85,11 @@ function TaxiPathSettingPage() {
 
         <div className="relative mt-1">
           {filteredData.map((data, index) => (
-            <div key={index} className="flex items-center rounded-md justify-between p-2 bg-neutral-100 border-b border-gray-300">
-              <span className='text-sm'>{data.address}</span>
+            <div
+              key={index}
+              className="flex items-center rounded-md justify-between p-2 bg-neutral-100 border-b border-gray-300"
+            >
+              <span className="text-sm">{data.address}</span>
               <button
                 onClick={() => handleAddClick(data.address)}
                 className="bg-gray-500 text-white text-xs ml-2 px-2 py-1 rounded-lg whitespace-nowrap"
@@ -98,23 +101,53 @@ function TaxiPathSettingPage() {
         </div>
       </div>
 
+      {searchPageOpen && (
+        <div className="absolute top-0 left-0 right-0 bottom-0 bg-white z-50">
+          <Search
+            getDirections={getDirections}
+            setStartCoord={() => {}}
+            setEndCoord={() => {}}
+          />
+          <button
+            className="absolute top-2 right-2 text-black"
+            onClick={() => setSearchPageOpen(false)}
+          >
+            X
+          </button>
+        </div>
+      )}
+
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-xl max-w-[250px] w-full text-center">
-            <div className="mb-6 text-left font-bold">해당 경로를 추가하시겠습니까?</div>
+            <div className="mb-6 text-left font-bold">
+              해당 경로를 추가하시겠습니까?
+            </div>
             <div className="flex items-center justify-center mb-4">
               <FaMapMarkerAlt className="h-9 w-9 mr-2 ml-1 mb-5 text-main" />
-              <span className='text-sm text-left ml-2 mb-3'>{selectedAddress}</span>
+              <span className="text-sm text-left ml-2 mb-3">
+                {selectedAddress}
+              </span>
             </div>
             <div className="">
-              <button onClick={handleCloseModal} className="bg-gray-200 text-gray-700 w-24 py-2 rounded-xl mr-4">이전</button>
-              <button onClick={handleConfirmAdd} className="bg-main text-white w-24 py-2 rounded-xl">추가하기</button>
+              <button
+                onClick={handleCloseModal}
+                className="bg-gray-200 text-gray-700 w-24 py-2 rounded-xl mr-4"
+              >
+                이전
+              </button>
+              <button
+                onClick={handleConfirmAdd}
+                className="bg-main text-white w-24 py-2 rounded-xl"
+              >
+                추가하기
+              </button>
             </div>
           </div>
         </div>
       )}
     </div>
   );
-}
+};
 
 export default TaxiPathSettingPage;

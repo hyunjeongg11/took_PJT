@@ -21,7 +21,8 @@ function BuyListPage() {
           const updatedData = data
             .map((buy) => ({
               ...buy,
-              status: buy.count === buy.maxCount ? 'IN_PROGRESSING' : buy.status,
+              status:
+                buy.count === buy.maxCount ? 'IN_PROGRESSING' : buy.status,
             }))
             .filter((buy) => buy.status !== 'IN_PROGRESSING'); // 'IN_PROGRESSING' 상태인 항목 필터링
           setBuyList(updatedData);

@@ -47,7 +47,7 @@ function CreateChattingPage() {
               <img
                 src={searchIcon}
                 alt="목적지 검색"
-                className="h-6 w-6 text-gray-400" 
+                className="h-6 w-6 text-gray-400"
               />
             </button>
           </div>

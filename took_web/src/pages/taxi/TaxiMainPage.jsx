@@ -10,7 +10,7 @@ const tempUser = {
   gender: '여성',
   location: '부산광역시 부산진구 부전동 169-1',
 };
- 
+
 const tempData = [
   {
     imgNo: 1,

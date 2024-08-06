@@ -96,7 +96,7 @@ const UserListPage = () => {
           style={getMyStyle(imageSize - 6)}
         >
           <img
-            src={`/src/assets/profile/img10.png`}
+            src={getProfileImagePath(10)}
             alt="나"
             style={{
               width: `${imageSize - 6}px`,

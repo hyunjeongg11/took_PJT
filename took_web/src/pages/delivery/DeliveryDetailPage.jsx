@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import backIcon from '../../assets/delivery/whiteBack.svg';
-import { getDeliveryDetailApi, deleteDeliveryApi, joinDeliveryApi, getDeliveryMembersApi, changeDeliveryStatusApi } from '../../apis/delivery';
+import {
+  getDeliveryDetailApi,
+  deleteDeliveryApi,
+  joinDeliveryApi,
+  getDeliveryMembersApi,
+  changeDeliveryStatusApi,
+} from '../../apis/delivery';
 import { getUserInfoApi } from '../../apis/user';
 import { useUser } from '../../store/user';
 import getProfileImagePath from '../../utils/getProfileImagePath';
@@ -21,7 +27,7 @@ const BackButton = () => {
       className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
       onClick={handleBackClick}
     />
-  ); 
+  );
 };
 
 function formatDeliveryTime(timeString) {
@@ -60,13 +66,17 @@ function DeliveryDetailPage() {
 
         const deliveryUserSeq = deliveryResponse.userSeq;
         if (deliveryUserSeq) {
-          const userResponse = await getUserInfoApi({ userSeq: deliveryUserSeq });
+          const userResponse = await getUserInfoApi({
+            userSeq: deliveryUserSeq,
+          });
           setUserInfo(userResponse);
           setIsLeader(deliveryUserSeq === currentUserSeq);
         }
 
         const membersResponse = await getDeliveryMembersApi(id);
-        const isCurrentUserParticipant = membersResponse.some(member => member.userSeq === currentUserSeq);
+        const isCurrentUserParticipant = membersResponse.some(
+          (member) => member.userSeq === currentUserSeq
+        );
         setIsParticipant(isCurrentUserParticipant);
 
         const deliveryTime = new Date(deliveryResponse.deliveryTime);
@@ -75,7 +85,10 @@ function DeliveryDetailPage() {
           navigate('/');
         }
       } catch (error) {
-        console.error('배달 글 상세 조회 중 오류 발생:', error.response?.data || error.message);
+        console.error(
+          '배달 글 상세 조회 중 오류 발생:',
+          error.response?.data || error.message
+        );
       }
     };
 
@@ -90,7 +103,10 @@ function DeliveryDetailPage() {
       alert('배달 파티에 참여하였습니다!');
       setIsParticipant(true);
     } catch (error) {
-      console.error('참여 중 오류 발생:', error.response?.data || error.message);
+      console.error(
+        '참여 중 오류 발생:',
+        error.response?.data || error.message
+      );
       alert('참여 중 오류가 발생했습니다.');
     }
   };
@@ -106,7 +122,10 @@ function DeliveryDetailPage() {
         navigate('/');
       }, 2000);
     } catch (error) {
-      console.error('삭제 중 오류 발생:', error.response?.data || error.message);
+      console.error(
+        '삭제 중 오류 발생:',
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -125,7 +144,10 @@ function DeliveryDetailPage() {
       await changeDeliveryStatusApi({ deliverySeq: id, status: 'DONE' });
       navigate('/');
     } catch (error) {
-      console.error('모집 종료 중 오류 발생:', error.response?.data || error.message);
+      console.error(
+        '모집 종료 중 오류 발생:',
+        error.response?.data || error.message
+      );
       alert('모집 종료 중 오류가 발생했습니다.');
     }
   };
@@ -160,8 +182,14 @@ function DeliveryDetailPage() {
           </div>
           {isLeader && (
             <div className="flex items-center">
-              <TbPencil className="w-5 h-5 text-neutral-500 mr-4" onClick={handleModify} />
-              <FaRegTrashAlt className="w-5 h-4 text-neutral-500" onClick={() => setShowDeleteModal(true)} />
+              <TbPencil
+                className="w-5 h-5 text-neutral-500 mr-4"
+                onClick={handleModify}
+              />
+              <FaRegTrashAlt
+                className="w-5 h-4 text-neutral-500"
+                onClick={() => setShowDeleteModal(true)}
+              />
             </div>
           )}
         </div>
@@ -198,7 +226,7 @@ function DeliveryDetailPage() {
               onClick={isLeader ? handleEndRecruitment : handleParticipate}
               className="bg-main text-white py-2 px-10 rounded-2xl text-lg font-bold"
             >
-              {isLeader ? "모집 종료하기" : "참여하기"}
+              {isLeader ? '모집 종료하기' : '참여하기'}
             </button>
           )}
         </div>
@@ -207,7 +235,9 @@ function DeliveryDetailPage() {
       {showDeleteModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white px-6 py-4 rounded-lg shadow-lg text-center">
-            <div className="text-base font-bold mb-2">게시글을 삭제하시겠습니까?</div>
+            <div className="text-base font-bold mb-2">
+              게시글을 삭제하시겠습니까?
+            </div>
             <div className="mb-4 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
             <div className="flex justify-center">
               <button

@@ -4,7 +4,12 @@ import BackButton from '../../../components/common/BackButton';
 import getProfileImagePath from '../../../utils/getProfileImagePath';
 import { TbPencil } from 'react-icons/tb';
 import { FaRegTrashAlt } from 'react-icons/fa';
-import { writeShipApi, getShipApi, modifyShipApi, deleteShipApi } from '../../../apis/groupBuy/ship.js';
+import {
+  writeShipApi,
+  getShipApi,
+  modifyShipApi,
+  deleteShipApi,
+} from '../../../apis/groupBuy/ship.js';
 
 const initialData = [{ name: '', option: '', etc: '' }];
 
@@ -129,7 +134,9 @@ function OrderFormPage() {
             <div className="text-lg font-bold">상품 주문 정보 등록</div>
             <hr className="border border-neutral-300 w-full mx-auto my-3" />
             <div className="flex flex-row justify-between items-center">
-              <div className="text-base font-semibold pl-2 pt-2 ">배송 정보</div>
+              <div className="text-base font-semibold pl-2 pt-2 ">
+                배송 정보
+              </div>
               {hasOrderInfo && !isEditMode && (
                 <div className="flex flex-row gap-2 mt-2 mr-1">
                   <button onClick={() => setIsEditMode(true)}>

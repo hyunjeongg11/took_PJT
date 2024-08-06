@@ -1,7 +1,12 @@
 // src/pages/oneclick/PaymentMethodsPage.jsx
 import React, { useState, useEffect } from 'react';
 import BackButton from '../../components/common/BackButton';
-import { getAccountListApi, changeMainAccountApi, deleteAccountApi, linkAccountApi } from '../../apis/account/info.js';
+import {
+  getAccountListApi,
+  changeMainAccountApi,
+  deleteAccountApi,
+  linkAccountApi,
+} from '../../apis/account/info.js';
 import { useUser } from '../../store/user.js';
 import { bankIcons, bankNumToName } from '../../assets/payment/index.js';
 
@@ -118,9 +123,7 @@ const PaymentMethodsPage = () => {
                     </span>
                   )}
                 </div>
-                <div className="text-sm text-black">
-                  {account.accountNum}
-                </div>
+                <div className="text-sm text-black">{account.accountNum}</div>
                 <div className="text-sm text-gray-500">
                   {account.accountName}
                 </div>

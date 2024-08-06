@@ -189,7 +189,10 @@ export const joinGroupBuyApi = async (params) => {
     console.log('API Response:', response);
     return response.data;
   } catch (error) {
-    console.error('API call error:', error.response ? error.response.data : error.message);
+    console.error(
+      'API call error:',
+      error.response ? error.response.data : error.message
+    );
     return handleApiError(error);
   }
 };
@@ -227,7 +230,9 @@ export const getAllPickUpApi = async (shopSeq) => {
 // 응답: boolean
 export const isJoinApi = async (shopSeq, userSeq) => {
   try {
-    const response = await request.get(`/api/shops/guestCheck/${shopSeq}/${userSeq}`);
+    const response = await request.get(
+      `/api/shops/guestCheck/${shopSeq}/${userSeq}`
+    );
     return response.data;
   } catch (error) {
     return handleApiError(error);

@@ -168,7 +168,6 @@ export const modifyPwdApi = async (params) => {
   }
 };
 
-
 export const logoutApi = async () => {
   try {
     const response = await request.get('/api/user/sign-out');
@@ -176,19 +175,19 @@ export const logoutApi = async () => {
   } catch (err) {
     return handleApiError(err);
   }
-}
+};
 
 // 근처에 사는 사람들 List
 // 요청
 // {
 //   ”lon” :  ,
-//   ”lat”  : 
+//   ”lat”  :
 //   }
 export const nerUserApi = async () => {
   try {
     const response = await request.post('/api/user/delivery-near-user');
     return response.data;
-  } catch(err) {
+  } catch (err) {
     return handleApiError(err);
   }
-}
+};
