@@ -216,11 +216,14 @@ public class AccountServiceImpl implements AccountService {
         return CheckEasyPwdResponseDto.success(result);
     }
 
+    @Transactional
     @Override
     public ResponseEntity<? super VoidResponseDto> repay(RepayRequestDto requestBody) {
 
         Long bankSeq = null;
         BankEntity bank = null;
+
+
 
         try{
 

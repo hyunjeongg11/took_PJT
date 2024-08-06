@@ -16,4 +16,5 @@ public interface PartyService {
     ResponseEntity<? super PartyDetailResponseDto>partyDetail(PartyDetailRequestDto dto);
     ResponseEntity<? super MakePartyResponseDto> makeParty(MakePartyRequestDto dto);
     ResponseEntity<? super PartyListResponseDto> myPartyList(Long userSeq);
+    ResponseEntity<?> partyDelete(Long partySeq);
 }

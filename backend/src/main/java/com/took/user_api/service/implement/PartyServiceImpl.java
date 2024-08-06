@@ -119,4 +119,10 @@ public class PartyServiceImpl implements PartyService {
         return PartyListResponseDto.success(list);
     }
 
+    @Override
+    public ResponseEntity<?> partyDelete(Long partySeq) {
+        partyRepository.deleteById(partySeq);
+        return null;
+    }
+
 }

@@ -110,4 +110,9 @@ public class PartyController {
     ) {
         return partyService.partyDetail(requestBody);
     }
+
+    @DeleteMapping("/party-delete/{partySeq}")
+    public ResponseEntity<?> partyDelete(@PathVariable("partySeq") Long partySeq) {
+        return partyService.partyDelete(partySeq);
+    }
 }
