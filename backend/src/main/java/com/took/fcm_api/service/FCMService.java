@@ -3,10 +3,9 @@ package com.took.fcm_api.service;
 import com.google.firebase.messaging.*;
 import com.took.fcm_api.dto.FCMRequest;
 import com.took.fcm_api.dto.FCMTokenRequest;
+import com.took.fcm_api.dto.MessageRequest;
 import com.took.fcm_api.entity.FCMToken;
 import com.took.fcm_api.repository.FCMRepository;
-import com.took.positionsave_api.dto.PositionSelectResponse;
-import com.took.positionsave_api.entity.Position;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +32,19 @@ public class FCMService {
         }
         return fcmToken.getToken();
     }
+    public List<String> getTokens(List<Long> userSeqList) {
+        List<String> userSeqStringList = userSeqList.stream()
+                .map(String::valueOf)
+                .collect(Collectors.toList());
 
+        List<FCMToken> fcmTokens = fcmRepository.findByUserSeqIn(userSeqStringList).orElse(null);
+        if (fcmTokens == null) {
+            return null;
+        }
+        return fcmTokens.stream()
+                .map(FCMToken::getToken)
+                .collect(Collectors.toList());
+    }
     // 정산 메서드
     public void sendNotification(FCMRequest request) {
         Notification notification = Notification.builder()
@@ -58,54 +69,24 @@ public class FCMService {
         }
     }
 
-//    // 독촉 알림 메서드
-//    public void sendReminderNotification(long userSeq, long partySeq, String title, int cost) {
-//        Notification notification = Notification.builder()
-//                .setTitle(title)
-//                .setBody(cost + "얼른 보내주세요")
-//                .build();
-//
-//        Message message = Message.builder()
-//                .setToken(getToken(userSeq))
-//                .setNotification(notification)
-//                .putData("click_action", "ClickAction")
-//                .putData("userSeq", String.valueOf(userSeq))
-//                .putData("partySeq", String.valueOf(partySeq))
-//                .putData("cost", String.valueOf(cost))
-//                .build();
-//
-//        try {
-//            FirebaseMessaging.getInstance().send(message);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    // 방 생성 알림 메서드
-//    public void sendCreateNotification(List<String> userSeqList, long userSeq, long partySeq, String title) {
-//
-//        Notification notification = Notification.builder()
-//                .setTitle(title)
-//                .setBody("방이 생성되었습니다.")
-//                .build();
-//
-//        // 각 토큰에 대해 메시지를 생성하고 멀티캐스트 메시지로 설정
-//        MulticastMessage message = MulticastMessage.builder()
-//                .addAllTokens(getTokens(userSeqList))
-//                .putData("click_action", "ClickAction")
-//                .putData("userSeq", String.valueOf(userSeq))
-//                .putData("partySeq", String.valueOf(partySeq))
-//                .setNotification(notification)
-//                .build();
-//
-//        try {
-//            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
-//            System.out.println(response.getSuccessCount() + " messages were sent successfully");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public void sendMessage(MessageRequest request) {
+        Notification notification = Notification.builder()
+                .setTitle(request.getTitle())
+                .setBody(request.getBody())
+                .build();
 
+        // 각 토큰에 대해 메시지를 생성하고 멀티캐스트 메시지로 설정
+        MulticastMessage message = MulticastMessage.builder()
+                .addAllTokens(getTokens(request.getUserSeqList()))
+                .setNotification(notification)
+                .putAllData(request.getData())
+                .build();
 
+        try {
+            FirebaseMessaging.getInstance().sendMulticast(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

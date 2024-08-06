@@ -1,7 +1,7 @@
 package com.took.fcm_api.controller;
 
-import com.took.fcm_api.dto.FCMRequest;
 import com.took.fcm_api.dto.FCMTokenRequest;
+import com.took.fcm_api.dto.MessageRequest;
 import com.took.fcm_api.service.FCMService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +21,8 @@ public class FCMController {
     }
 
     @PostMapping("/send")
-    public ResponseEntity<?> sendNotification(@RequestBody FCMRequest request) {
-        fcmService.sendNotification(request);
+    public ResponseEntity<?> sendMessage(@RequestBody MessageRequest request) {
+        fcmService.sendMessage(request);
         return ResponseEntity.ok().build();
     }
-
 }
