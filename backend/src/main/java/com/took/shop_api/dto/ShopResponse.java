@@ -64,7 +64,7 @@ public class ShopResponse {
     public ShopResponse(Shop shop, UserEntity user) {
         this.shopSeq = shop.getShopSeq();
         this.userSeq = shop.getUser().getUserSeq();
-        this.roomSeq = shop.getChatRoom().getRoomSeq();
+        this.roomSeq = shop.getRoomSeq();
         this.title = shop.getTitle();
         this.content = shop.getContent();
         this.hit = shop.getHit();
