@@ -25,7 +25,7 @@ public class Taxi {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long taxiSeq;  // 택시 번호
 
-    @Column
+    @Column(nullable = false)
     private Long roomSeq;  // 채팅방 참조 번호
 
     @ManyToOne(fetch = FetchType.LAZY)

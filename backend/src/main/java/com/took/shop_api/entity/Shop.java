@@ -45,6 +45,7 @@ public class Shop {
     @JoinColumn(name = "user_seq", nullable = false)
     private UserEntity user;
 
+    @Column(nullable = false)
     private Long roomSeq;
 
     @Column(nullable = false)

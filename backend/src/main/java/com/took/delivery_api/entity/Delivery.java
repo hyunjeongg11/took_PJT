@@ -38,7 +38,7 @@ public class Delivery {
     private UserEntity user;
 
     // 채팅방 번호
-    @Column
+    @Column(nullable = false)
     private Long roomSeq;
 
     // 정산 번호
