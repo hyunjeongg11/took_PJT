@@ -99,7 +99,10 @@ public class SmsService {
         Optional<Identity> identityOpt = identityRepository.findById(phoneNumber); // 전화번호로 Identity 조회
         if (identityOpt.isPresent()) {
             Identity identity = identityOpt.get();
-            return identity.getCode() == code;
+            if(identity.getCode() == code) {
+                identityRepository.delete(identity);
+                return true;
+            }
         }
         return false; // Identity가 없으면 false 반환
     }
