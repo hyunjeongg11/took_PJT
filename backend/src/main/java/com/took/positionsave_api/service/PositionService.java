@@ -12,6 +12,7 @@ import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -46,6 +47,9 @@ public class PositionService {
      */
     public void savePosition(PositionCreateRequest request) {
         // Position 객체 생성
+        System.out.println("위치 저장 UserSeq: " + request.getUserSeq());
+        System.out.println("위치 저장 Lat: " + request.getLat());
+        System.out.println("위치 저장 Lon: " + request.getLon());
         Position position = Position.builder()
                 .userSeq(String.valueOf(request.getUserSeq()))  // request에서 userId 가져옴
                 .lat(request.getLat())        // request에서 위도 가져옴
