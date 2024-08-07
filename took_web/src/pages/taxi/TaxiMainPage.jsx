@@ -1,10 +1,26 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import backIcon from '../../assets/delivery/whiteBack.svg';
 import plusIcon from '../../assets/taxi/plus.png'; // '+' 아이콘 경로
 import enterIcon from '../../assets/taxi/enter.png'; // 입장 가능 아이콘
 import notEnterIcon from '../../assets/taxi/notEnter.png'; // 입장 불가능 아이콘
 import locationIcon from '../../assets/taxi/location.png';
 import getProfileImagePath from '../../utils/getProfileImagePath';
+
+const BackButton = () => {
+  const navigate = useNavigate();
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+  return (
+    <img
+      src={backIcon}
+      alt="뒤로"
+      className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0"
+      onClick={handleBackClick}
+    />
+  );
+};
 
 const tempUser = {
   gender: '여성',
@@ -68,11 +84,12 @@ function TaxiMainPage() {
   return (
     <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main">
       <div className="bg-main py-4">
-        <div className="flex items-center px-4">
-          <div className="flex-grow text-left text-2xl ml-2 font-bold text-white">
+        <div className="flex flex-row px-4">
+        <BackButton />
+          <div className="ml-10 mt-0.5 items-center flex-grow text-2xl font-bold text-white">
             택시{' '}
             <span className="font-dela">
-              took<span className="font-noto">!</span>
+              took <span className="font-noto">!</span>
             </span>
           </div>
         </div>
@@ -87,7 +104,7 @@ function TaxiMainPage() {
           </div>
         </div>
       </div>
-      <div className="px-2 py-4 mt-3 bg-white h-screen rounded-t-3xl">
+      <div className="px-2 py-4 bg-white h-screen rounded-t-3xl">
         {filteredData.map((item, index) => (
           <div key={index} className="px-4 py-2 rounded-lg">
             <div className="flex items-center">
