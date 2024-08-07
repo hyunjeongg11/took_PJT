@@ -7,6 +7,8 @@ import com.took.positionsave_api.dto.PositionUserListRequest;
 import com.took.positionsave_api.dto.PositionUserListResponse;
 import com.took.positionsave_api.entity.Position;
 import com.took.positionsave_api.repository.PositionRepository;
+import com.took.user_api.entity.UserEntity;
+import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class PositionService {
 
     private final PositionRepository positionRepository;
+    private final UserRepository userRepository;
 
     // 두 지점 간의 거리 계산 (단위: m)
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -85,6 +88,14 @@ public class PositionService {
                         PositionUserListResponse response = new PositionUserListResponse();
                         response.setUserSeq(Long.valueOf(user.getUserSeq()));
                         response.setDistance((int) distance); // 거리 차이를 미터 단위로 설정
+
+                        // userSeq로 userName과 imageNo를 userRepository에서 찾음
+                        UserEntity userDetails = userRepository.findById(Long.valueOf(user.getUserSeq())).orElse(null);
+                        if (userDetails != null) {
+                            response.setUserName(userDetails.getUserName());
+                            response.setImageNo(userDetails.getImageNo());
+                        }
+
                         return response;
                     } else {
                         return null;
@@ -93,4 +104,5 @@ public class PositionService {
                 .filter(Objects::nonNull) // null 값 필터링
                 .collect(Collectors.toList());
     }
+
 }

@@ -11,4 +11,10 @@ public class PositionUserListResponse {
 
     @Schema(description = "사용자와의 거리차이 (단위: m)", example = "100")
     private int distance;  // 사용자와의 거리차이 (단위: m)
+
+    @Schema(description = "사용자 이름", example = "홍길동")
+    private String userName;
+
+    @Schema(description = "사용자 이미지 번호", example = "1")
+    private int imageNo;
 }
