@@ -199,6 +199,7 @@ public class PartyServiceImpl implements PartyService {
             Long nowtotal = party.getCost()-membercost;
             partyRepositoryCustom.updateCostBypartyId(nowtotal,partySeq);
 
+            System.out.println("돈이 빠지고 리더에게 송금됩니다!");
 //           빼주는 순간 리더에게 돈 들어가게
             Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(partySeq);
             Long leaderBankSeq = bankRepositoryCustom.findBankSeqByUserSeq(leaderSeq);
@@ -207,6 +208,7 @@ public class PartyServiceImpl implements PartyService {
             bankRepositoryCustom.updateBalanceByBankSeq(leaderBankEntity.getBalance(),leaderBankSeq);
 
 
+            System.out.println("리더에게 알림이 송금됩니다!");
             MessageRequest message = new MessageRequest();
             UserEntity sender = userRepository.getReferenceById(userSeq);
             String name = sender.getUserName();
@@ -220,6 +222,8 @@ public class PartyServiceImpl implements PartyService {
             message.setUserSeqList(lst);
             fcmService.sendMessage(message);
 
+
+            System.out.println("나눠지지 않는다면 차액은 리더에게!");
 
             if(nowtotal.equals(membercost)){
 //              정산완료
