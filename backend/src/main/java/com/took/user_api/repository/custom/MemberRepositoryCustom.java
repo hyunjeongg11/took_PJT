@@ -14,4 +14,6 @@ public interface MemberRepositoryCustom {
     Long findCostByMemberSeq(Long memberSeq);
     Long findPartySeqByMemberSeq(Long memberSeq);
     void changeStatusBySeq(Long memberSeq);
+
+    Long findLeaderByPartySeq(Long partySeq);
 }

@@ -70,4 +70,19 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
                 .set(member.status,true)
                 .execute();
     }
+
+    @Override
+    public Long findLeaderByPartySeq(Long partySeq) {
+
+        QMemberEntity member = QMemberEntity.memberEntity;
+
+        Long result = null;
+
+        result = jpaQueryFactory.select(member.user.userSeq)
+                                .from(member)
+                                .where(member.memberSeq.eq(partySeq).and(member.isLeader.isTrue()))
+                                .fetchOne();
+
+        return result;
+    }
 }

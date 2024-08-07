@@ -1,6 +1,8 @@
 package com.took.user_api.service.implement;
 
 
+import com.took.fcm_api.dto.AlarmRequest;
+import com.took.fcm_api.service.FCMService;
 import com.took.user_api.dto.request.party.*;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
@@ -36,6 +38,8 @@ public class PartyServiceImpl implements PartyService {
     private final MemberRepository memberRepository;
     private final BankRepository bankRepository;
     private final BankRepositoryCustom bankRepositoryCustom;
+    private final FCMService fcmService;
+
 
 
     @Override
@@ -92,16 +96,69 @@ public class PartyServiceImpl implements PartyService {
         try {
             Long partySeq = requestBody.getPartySeq();
             PartyEntity party = partyRepository.getReferenceById(partySeq);
+            int cate = party.getCategory();
+
+
+            Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(partySeq);
+            UserEntity leader = userRepository.getReferenceById(leaderSeq);
+            String name = leader.getUserName();
+
 
             for (InsertAllMemberRequestDto.userCost userCost : requestBody.getUserCosts()) {
                 UserEntity user = userRepository.getReferenceById(userCost.getUserSeq());
-                memberRepository.save(new MemberEntity(party, user, userCost.getCost()));
+                MemberEntity member = memberRepository.save(new MemberEntity(party, user, userCost.getCost()));
 
+                AlarmRequest alarm = new AlarmRequest();
+                alarm.setBody(name.charAt(0)+"*"+name.charAt(2)+"에게"+requestBody.getUserCosts()+"원을 송금해 주세요");
+                alarm.setSender(leaderSeq);
+                alarm.setUserSeq(userCost.getUserSeq());
+                alarm.setPartySeq(partySeq);
+
+
+                if(party.getDeliveryTip()!=0L) {
+                    alarm.setDeliveryCost(party.getDeliveryTip()/party.getTotalMember());
+                    alarm.setCost(party.getDeliveryTip()/party.getTotalMember()+member.getCost());
+                }
+
+
+//              배달
+                if(cate==1){
+
+                    alarm.setTitle("{배달} took 정산 요청이 왔어요!");
+                    alarm.setCategory(1);
+
+
+//              택시
+                }else if (cate==2){
+
+                    alarm.setTitle("{택시} took 정산 요청이 왔어요!");
+                    alarm.setCategory(2);
+
+//               공동구매
+                }else if (cate==3){
+
+                    alarm.setTitle("{공동구매} took 정산 요청이 왔어요!");
+                    alarm.setCategory(3);
+
+
+//               더치페이
+                }else if (cate==4){
+
+                    alarm.setTitle("{정산} took 정산 요청이 왔어요!");
+                    alarm.setCategory(4);
+
+//                  정산이니까 엔빵
+                    alarm.setCost(member.getCost());
+
+                }
+
+                fcmService.sendNotification(alarm);
             }
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
+
 
         return VoidResponseDto.success();
     }
