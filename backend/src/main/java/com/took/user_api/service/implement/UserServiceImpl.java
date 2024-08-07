@@ -100,11 +100,11 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<? super DeliNearUserResponseDto> searchNearUser(NearUserRequestDto requestBody) {
 
         List<Long> nearList = new ArrayList<>();
-        Double myLng;
-        Double myLat;
+        double myLng;
+        double myLat;
 
         try{
-            myLng = requestBody.getLng();
+            myLng = requestBody.getLon();
             myLat = requestBody.getLat();
 
 //          위경도 정보 모두 불러와서 리턴
