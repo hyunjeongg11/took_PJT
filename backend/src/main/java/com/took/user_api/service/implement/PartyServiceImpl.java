@@ -197,8 +197,8 @@ public class PartyServiceImpl implements PartyService {
             bankRepositoryCustom.updateBalanceByBankSeq(bank.getBalance(),bankSeq);
 
 //          총 금액에서 빼주기
-            Long nowtotal = party.getCost()-membercost;
-            partyRepositoryCustom.updateCostBypartyId(nowtotal,partySeq);
+            Long leftBalance = party.getCost()-membercost;
+            party.updateCost(leftBalance);
 
             System.out.println("돈이 빠지고 리더에게 송금됩니다!");
 //           빼주는 순간 리더에게 돈 들어가게
@@ -226,20 +226,19 @@ public class PartyServiceImpl implements PartyService {
 
             System.out.println("나눠지지 않는다면 차액은 리더에게!");
 
-            if(nowtotal.equals(membercost)){
+
+            if(leftBalance.equals(membercost)){
 //              정산완료
                 done = true;
                 partyRepositoryCustom.changeStatusBySeq(partySeq);
 
-
             }
-            else if(nowtotal < membercost){
+            else if(leftBalance < membercost){
 
                 done = true;
-                Long change = membercost - nowtotal;
+                Long change = membercost - party.getCost();
                 leaderBankEntity.add(change);
                 bankRepositoryCustom.updateBalanceByBankSeq(leaderBankEntity.getBalance(),leaderBankSeq);
-
 
                 message.setTitle("송금 알림");
                 message.setBody("정산이 완료되어 차액이 납부 되었습니다!");

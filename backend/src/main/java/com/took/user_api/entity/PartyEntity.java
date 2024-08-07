@@ -48,6 +48,10 @@ public class PartyEntity {
     private Long deliveryTip;
 
 
+    public void updateCost(Long cost){
+        this.cost = cost;
+    }
+
     public PartyEntity(String title, int category, Long cost, int totalMember, Long deliveryTip) {
         this.title = title;
         this.category = category;
