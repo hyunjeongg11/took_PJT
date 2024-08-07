@@ -82,8 +82,10 @@ public class PositionService {
      */
     public List<PositionUserListResponse> getNearbyUsers(PositionUserListRequest request) {
         List<Position> allUsers = (List<Position>) positionRepository.findAll();
+        System.out.println("유저리스트:" + allUsers);
 
         return allUsers.stream()
+                .filter(Objects::nonNull)
                 .map(user -> {
                     // userSeq가 null인지 확인
                     if (user.getUserSeq() != null && !user.getUserSeq().trim().isEmpty()) {
