@@ -123,4 +123,11 @@ public class ShopController {
                 .body(shopService.findShopByRoom(roomSeq));
     }
 
+    @Operation(summary = "상점 목록 조회", description = "유저 ID로 상점 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "상점 목록 조회 성공")
+    @GetMapping("/selectAll/{id}")
+    public ResponseEntity<List<ShopResponse>> findShopsByUserId(@PathVariable @Schema(description = "상점 ID 리스트") long id) {
+        return ResponseEntity.ok()
+                .body(shopService.findShopsByUserId(id));
+    }
 }

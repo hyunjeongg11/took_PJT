@@ -2,6 +2,8 @@ package com.took.shop_api.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.chat_api.repository.ChatRoomRepository;
+import com.took.delivery_api.dto.DeliverySelectResponse;
+import com.took.delivery_api.entity.Delivery;
 import com.took.shop_api.dto.*;
 import com.took.shop_api.entity.*;
 import com.took.shop_api.repository.ShopGuestRepository;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -170,5 +173,43 @@ public class ShopService {
         shop.updateHit(1);
 
         return new ShopResponse(shop, user);
+    }
+
+
+    @Transactional
+    public List<ShopResponse> findShopsByUserId(Long id) {
+
+        List<Shop> shops = shopRepository.findAll();
+        UserEntity user = userRepository.findByUserSeq(id);
+
+        return shops.stream()
+                .map(shop -> {
+                    double shopLat = shop.getLat();
+                    double shopLon = shop.getLon();
+                    double distance = calculateDistance(user.getLat(), user.getLng(), shopLat, shopLon);
+                    if (distance <= 1000) { // 거리 범위를 1000m로 설정
+                        return new ShopResponse(shop, user);
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull) // null 값 필터링
+                .collect(Collectors.toList());
+    }
+
+    // 두 지점 간의 거리 계산 (단위: m)
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        } else {
+            double theta = lon1 - lon2;
+            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2))
+                    + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                    * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 60 * 1.1515 * 1.609344;  // km 단위로 변환
+            return (dist * 1000);  // m 단위로 변환
+        }
     }
 }
