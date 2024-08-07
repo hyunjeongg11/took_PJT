@@ -146,7 +146,7 @@ function App() {
       msgToAndroid(
         `Received location in onLocation:, ${latitude}, ${longitude}`
       );
-      savePosition();
+      savePosition({ latitude, longitude });
       setPosition({ latitude, longitude });
     };
 
