@@ -66,9 +66,12 @@ public class DeliveryGuestService {
     
     // 배달 픽업 여부 변경
     @Transactional
-    public void setPickUp(Long deliveryGuestSeq) {
+    public boolean setPickUp(Long deliveryGuestSeq) {
         DeliveryGuest deliveryGuest = deliveryGuestRepository.findById(deliveryGuestSeq).orElseThrow();
         deliveryGuest.updatePickUp(true);
+        // 변경 사항을 강제로 데이터베이스에 반영
+        deliveryGuestRepository.flush();
+        return deliveryGuestRepository.areAllGuestsPickedUp(deliveryGuest.getDelivery());
     }
 
     // 해당 방 참가 여부

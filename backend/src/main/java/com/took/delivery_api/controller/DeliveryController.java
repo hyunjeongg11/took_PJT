@@ -201,10 +201,9 @@ public class DeliveryController {
             @ApiResponse(responseCode = "404", description = "배달 파티 참가자를 찾을 수 없음")
     })
     @GetMapping("/guest/setPickUp/{deliveryGuestSeq}")
-    ResponseEntity<?> setPickUp(
+    ResponseEntity<Boolean> setPickUp(
             @PathVariable @Parameter(description = "픽업 여부를 변경할 배달 파티 참가자의 고유 번호", required = true) Long deliveryGuestSeq) {
-        deliveryGuestService.setPickUp(deliveryGuestSeq);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(deliveryGuestService.setPickUp(deliveryGuestSeq));
     }
 
     @Operation(summary = "참가 중인 방 리스트 조회", description = "사용자가 참가 중인 배달 방 리스트를 조회합니다.")

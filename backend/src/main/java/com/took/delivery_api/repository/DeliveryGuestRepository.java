@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DeliveryGuestRepository extends JpaRepository<DeliveryGuest, Long> {
+public interface DeliveryGuestRepository extends JpaRepository<DeliveryGuest, Long>, DeliveryGuestCustomRepository {
     List<DeliveryGuest> findAllByDelivery(Delivery delivery);
 
     DeliveryGuest findByDeliveryAndUser(Delivery delivery, UserEntity user);
