@@ -87,6 +87,7 @@ public class PositionService {
                 .map(user -> {
                     // userSeq가 null인지 확인
                     if (user.getUserSeq() != null && !user.getUserSeq().trim().isEmpty()) {
+                        System.out.println("근처 위치 사용자리스트 비교 유저 UserSeq: " + user.getUserSeq());
                         double distance = calculateDistance(
                                 request.getLat(), request.getLon(),
                                 user.getLat(), user.getLon());
