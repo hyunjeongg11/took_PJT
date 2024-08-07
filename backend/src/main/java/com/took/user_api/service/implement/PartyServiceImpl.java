@@ -118,7 +118,7 @@ public class PartyServiceImpl implements PartyService {
                 alarm.setPartySeq(partySeq);
 
 
-                if(party.getDeliveryTip()!=0L) {
+                if(party.getDeliveryTip()!=null) {
                     alarm.setDeliveryCost(party.getDeliveryTip()/party.getTotalMember());
                     alarm.setCost(party.getDeliveryTip()/party.getTotalMember()+member.getCost());
                 }
@@ -149,7 +149,6 @@ public class PartyServiceImpl implements PartyService {
 
                     alarm.setTitle("{정산} took 정산 요청이 왔어요!");
                     alarm.setCategory(4);
-
 //                  정산이니까 엔빵
                     alarm.setCost(member.getCost());
 
