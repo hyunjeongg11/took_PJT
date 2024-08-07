@@ -107,6 +107,7 @@ public class PartyServiceImpl implements PartyService {
 
 
             for (InsertAllMemberRequestDto.userCost userCost : requestBody.getUserCosts()) {
+                if(userCost.getUserSeq().equals(leaderSeq)) continue;
                 UserEntity user = userRepository.getReferenceById(userCost.getUserSeq());
                 MemberEntity member = memberRepository.save(new MemberEntity(party, user, userCost.getCost()));
 
