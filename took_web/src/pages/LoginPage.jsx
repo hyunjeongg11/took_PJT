@@ -60,7 +60,7 @@ function LoginPage() {
             name="로그인"
             textColor="white"
             width="full"
-            handleClick={handleLoginClick}
+            onClick={handleLoginClick}
             style="mt-10 font-bold bg-main"
           />
           <div className="flex justify-between text-main text-xs mb-16 mt-6">
