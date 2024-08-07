@@ -175,7 +175,6 @@ public class PartyServiceImpl implements PartyService {
         BankEntity bank = null;
 
         try{
-
             MemberEntity member = memberRepositoryCustom.findMemberByPartySeqAndUserSeq(partySeq,userSeq);
             Long membercost = member.getCost();
             System.out.println("맴버가 내야할 돈은"+membercost);
