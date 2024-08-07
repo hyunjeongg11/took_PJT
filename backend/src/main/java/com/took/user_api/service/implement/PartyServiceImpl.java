@@ -169,16 +169,16 @@ public class PartyServiceImpl implements PartyService {
 //   게스트들이 송금 버튼을 눌렀을 때
     @Override
     @Transactional
-    public ResponseEntity<? super ojResponseDto> onlyjungsanPay(Long npartySeq,Long userSeq) {
+    public ResponseEntity<? super ojResponseDto> onlyjungsanPay(Long partySeq,Long userSeq) {
 
         boolean done = false;
         BankEntity bank = null;
 
         try{
 
-            MemberEntity member = memberRepositoryCustom.findMemberByPartySeqAndUserSeq(npartySeq,userSeq);
+            MemberEntity member = memberRepositoryCustom.findMemberByPartySeqAndUserSeq(partySeq,userSeq);
             Long membercost = member.getCost();
-            Long partySeq = member.getParty().getPartySeq();
+            System.out.println("맴버가 내야할 돈은"+membercost);
 
             PartyEntity party = partyRepository.getReferenceById(partySeq);
 
@@ -188,6 +188,7 @@ public class PartyServiceImpl implements PartyService {
 
             if(!bank.minus(membercost)) return ResponseDto.nomoney();
 
+            System.out.println("맴버의 잔액이 충분합니다!!");
 //          맴버 상태 업데이트
             memberRepositoryCustom.changeStatusBySeq(member.getMemberSeq());
 
