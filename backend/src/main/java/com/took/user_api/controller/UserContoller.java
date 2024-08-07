@@ -1,9 +1,6 @@
 package com.took.user_api.controller;
 
-import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
-import com.took.user_api.dto.request.user.NearUserRequestDto;
-import com.took.user_api.dto.request.user.PwdChangeRequestDto;
-import com.took.user_api.dto.request.user.UserSeqRequestDto;
+import com.took.user_api.dto.request.user.*;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
 import com.took.user_api.dto.response.user.KakaoChangeResponseDto;
@@ -127,5 +124,20 @@ public class UserContoller {
             @RequestBody @Valid UserSeqRequestDto requestBody
     ) {
         return userService.changeAlram(requestBody);
+    }
+
+
+
+    @Operation(summary = "주소 설정", description = "사용자의 주소를 설정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "주소 설정 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PutMapping("/setAddress")
+    public ResponseEntity<?> setAddress(
+            @RequestBody @Valid UserAddressRequestDto requestBody
+    ) {
+        userService.setAddress(requestBody);
+        return ResponseEntity.noContent().build();
     }
 }

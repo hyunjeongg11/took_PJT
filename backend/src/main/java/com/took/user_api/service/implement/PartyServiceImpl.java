@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +46,7 @@ public class PartyServiceImpl implements PartyService {
 
         try{
 
-            PartyEntity party = new PartyEntity(dto.getTitle(),dto.getCategory(),dto.getCost(),dto.getTotalMember());
+            PartyEntity party = new PartyEntity(dto.getTitle(),dto.getCategory(),dto.getCost(),dto.getTotalMember(), dto.getDeliveryTip());
             PartyEntity newparty = partyRepository.save(party);
             partySeq = newparty.getPartySeq();
             UserEntity user = userRepository.getReferenceById(dto.getUserSeq());

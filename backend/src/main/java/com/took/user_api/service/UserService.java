@@ -1,10 +1,7 @@
 package com.took.user_api.service;
 
 
-import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
-import com.took.user_api.dto.request.user.NearUserRequestDto;
-import com.took.user_api.dto.request.user.PwdChangeRequestDto;
-import com.took.user_api.dto.request.user.UserSeqRequestDto;
+import com.took.user_api.dto.request.user.*;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
 import com.took.user_api.dto.response.user.KakaoChangeResponseDto;
@@ -24,6 +21,7 @@ public interface UserService {
     ResponseEntity<? super VoidResponseDto> changeAlram(UserSeqRequestDto requestBody);
 //  Google Oauth 인증 때문에 만듬.
     UserEntity findByEmail(String email);
-
-
+    
+    // 주소 설정
+    void setAddress(UserAddressRequestDto requestBody);
 }

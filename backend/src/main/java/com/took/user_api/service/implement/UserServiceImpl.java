@@ -2,10 +2,7 @@ package com.took.user_api.service.implement;
 
 
 import com.querydsl.core.Tuple;
-import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
-import com.took.user_api.dto.request.user.NearUserRequestDto;
-import com.took.user_api.dto.request.user.PwdChangeRequestDto;
-import com.took.user_api.dto.request.user.UserSeqRequestDto;
+import com.took.user_api.dto.request.user.*;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
@@ -182,6 +179,13 @@ public class UserServiceImpl implements UserService {
     public UserEntity findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
+    }
+
+    @Transactional
+    @Override
+    public void setAddress(UserAddressRequestDto requestBody) {
+        UserEntity user = userRepository.getReferenceById(requestBody.getUserSeq());
+        user.setAddress(requestBody.getAddr(),requestBody.getLat(),requestBody.getLon());
     }
 
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {

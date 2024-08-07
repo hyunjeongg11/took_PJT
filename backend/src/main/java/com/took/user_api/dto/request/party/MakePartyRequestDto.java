@@ -27,4 +27,7 @@ public class MakePartyRequestDto {
 
     @Schema(description = "수령 여부 (예: true - 수령, false - 미수령)", example = "false")
     private boolean reciever;
+
+    @Schema(description = "배달 팁 (예: 5000)", example = "5000") 
+    private Long deliveryTip;
 }

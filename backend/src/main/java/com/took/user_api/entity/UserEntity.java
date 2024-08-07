@@ -63,20 +63,14 @@ public class UserEntity {
     @Column(nullable = false)
     private Boolean alarm = false;
 
-    @Column(nullable = false, length = 50)
-    private String sido = "부산광역시";
+    @Column(length = 100)
+    private String addr;
 
-    @Column(nullable = false, length = 50)
-    private String gugun = "강서구";
+    @Column
+    private Double lat;
 
-    @Column(nullable = false, length = 100)
-    private String addr = "녹산산업중로 333(송정동)";
-
-    @Column(nullable = false)
-    private Double lat = 35.096235;
-
-    @Column(nullable = false)
-    private Double lng = 128.855274;
+    @Column
+    private Double lon;
 
     @Column(nullable = false)
     private Integer imageNo;
@@ -133,9 +127,9 @@ public class UserEntity {
         this.imageNo = (int)(Math.random() * 23) + 1;
     }
 
-    public UserEntity(Double lat,Double lng){
+    public UserEntity(Double lat,Double lon){
         this.lat = lat;
-        this.lng = lng;
+        this.lon = lon;
     }
 
     public UserEntity update(String nickname){
@@ -149,5 +143,12 @@ public class UserEntity {
 
     public enum Gender{
       M,F
+    }
+
+
+    public void setAddress(String addr, Double lat, Double lon){
+        this.addr = addr;
+        this.lat = lat;
+        this.lon = lon;
     }
 }

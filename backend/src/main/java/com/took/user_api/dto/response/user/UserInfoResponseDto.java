@@ -38,12 +38,6 @@ public class UserInfoResponseDto extends ResponseDto {
     @Schema(description = "계정 생성 일시")
     private LocalDateTime createdAt;
 
-    @Schema(description = "시도")
-    private String sido;
-
-    @Schema(description = "구군")
-    private String gugun;
-
     @Schema(description = "주소")
     private String addr;
 
@@ -51,7 +45,7 @@ public class UserInfoResponseDto extends ResponseDto {
     private Double lat;
 
     @Schema(description = "경도")
-    private Double lng;
+    private Double lon;
 
     @Schema(description = "이미지 번호")
     private Integer imageNo;
@@ -72,11 +66,9 @@ public class UserInfoResponseDto extends ResponseDto {
                 user.getPhoneNumber(),
                 user.getBirth(),
                 user.getCreatedAt(),
-                user.getSido(),
-                user.getGugun(),
                 user.getAddr(),
                 user.getLat(),
-                user.getLng(),
+                user.getLon(),
                 user.getImageNo(),
                 user.getRole(),
                 user.getNickname()

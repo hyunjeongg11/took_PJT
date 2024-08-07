@@ -1,14 +1,12 @@
 package com.took.user_api.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Entity(name = "party")
@@ -46,8 +44,11 @@ public class PartyEntity {
     @Column(name="receive_cost")
     private Long receiveCost;
 
+    @Column(name="delivery_tip")
+    private Long deliveryTip;
 
-    public PartyEntity(String title, int category, Long cost, int totalMember) {
+
+    public PartyEntity(String title, int category, Long cost, int totalMember, Long deliveryTip) {
         this.title = title;
         this.category = category;
         this.cost = cost;
@@ -55,8 +56,6 @@ public class PartyEntity {
         this.createdAt = LocalDateTime.now();
         this.totalMember = totalMember;
         this.receiveCost = 0L;
-
+        this.deliveryTip = deliveryTip;
     }
-
-    
 }
