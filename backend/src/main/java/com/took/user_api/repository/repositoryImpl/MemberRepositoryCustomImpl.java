@@ -66,7 +66,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
         QMemberEntity member = QMemberEntity.memberEntity;
 
         jpaQueryFactory.update(member)
-                .where(member.user.userSeq.eq(memberSeq))
+                .where(member.memberSeq.eq(memberSeq))
                 .set(member.status,true)
                 .execute();
     }
