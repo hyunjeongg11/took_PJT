@@ -25,4 +25,9 @@ public class FCMController {
         fcmService.sendMessage(request);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/alarmList/{userSeq}")
+    public ResponseEntity<?> alarmList(@PathVariable long userSeq) {
+        return ResponseEntity.ok().body(fcmService.alarmList(userSeq));
+    }
 }
