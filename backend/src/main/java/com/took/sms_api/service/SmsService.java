@@ -84,8 +84,6 @@ public class SmsService {
                 .build();
         identityRepository.save(identity);
 
-        System.out.println("Saved Identity: " + identity);
-
         sendSms(phoneNumber, code); // SMS 전송
     }
 
@@ -99,11 +97,8 @@ public class SmsService {
     public boolean verifyCode(String phoneNumber, int code) {
         System.out.println(phoneNumber + " : " + code);
         Optional<Identity> identityOpt = identityRepository.findById(phoneNumber); // 전화번호로 Identity 조회
-        System.out.println("IdentityOpt: " + identityOpt);
         if (identityOpt.isPresent()) {
             Identity identity = identityOpt.get();
-            System.out.println("저장된 인증번호: " + identity.getCode());
-            System.out.println("입력한 인증번호: " + code);
             return identity.getCode() == code;
         }
         return false; // Identity가 없으면 false 반환
