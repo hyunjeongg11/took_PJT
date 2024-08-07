@@ -50,7 +50,7 @@ public class UserCustomRespositoryImpl implements UserCustomRepository {
 
         List<Tuple> result = null;
 
-        result= queryFactory.select(user.lat, user.lng,user.userSeq)
+        result= queryFactory.select(user.lat, user.lon,user.userSeq)
                 .from(user)
                 .where(user.userSeq.ne(userSeq))
                 .fetch();
