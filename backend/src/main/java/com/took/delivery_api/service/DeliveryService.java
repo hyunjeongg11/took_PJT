@@ -141,6 +141,7 @@ public class DeliveryService {
             dist = Math.acos(dist);
             dist = Math.toDegrees(dist);
             dist = dist * 60 * 1.1515 * 1.609344;  // km 단위로 변환
+            System.out.println("distance: " + dist);
             return (dist * 1000);  // m 단위로 변환
         }
     }
