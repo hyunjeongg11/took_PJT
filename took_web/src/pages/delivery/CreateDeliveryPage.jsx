@@ -153,8 +153,8 @@ function CreateDeliveryPage() {
         roomSeq: 31,
         storeName: form.storeName,
         pickupPlace: form.deliveryAddress,
-        pickupLat: latitude,
-        pickupLon: longitude,
+        pickupLat: 0.0, //todo
+        pickupLon: 0.0, //todo
         deliveryTip: form.deliveryTip,
         deliveryTime: form.orderTime,
         content: form.additionalInfo,
