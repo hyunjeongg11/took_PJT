@@ -11,6 +11,5 @@ import java.util.Map;
 public class MessageRequest {
     private String title;
     private String body;
-    private Map<String, String> data;
     private List<Long> userSeqList;
 }

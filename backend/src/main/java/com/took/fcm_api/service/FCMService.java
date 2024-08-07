@@ -102,7 +102,6 @@ public class FCMService {
         MulticastMessage message = MulticastMessage.builder()
                 .addAllTokens(getTokens(request.getUserSeqList()))
                 .setNotification(notification)
-                .putAllData(request.getData())
                 .build();
 
         try {
