@@ -80,7 +80,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
 
         result = jpaQueryFactory.select(member.user.userSeq)
                                 .from(member)
-                                .where(member.memberSeq.eq(partySeq).and(member.isLeader.isTrue()))
+                                .where(member.party.partySeq.eq(partySeq).and(member.isLeader.isTrue()))
                                 .fetchOne();
 
         return result;

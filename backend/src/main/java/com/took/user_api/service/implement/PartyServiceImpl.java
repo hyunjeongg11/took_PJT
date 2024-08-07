@@ -222,6 +222,25 @@ public class PartyServiceImpl implements PartyService {
                 done = true;
                 partyRepositoryCustom.changeStatusBySeq(partySeq);
 
+
+            }
+            else if(nowtotal < membercost){
+
+                done = true;
+                Long change = membercost - nowtotal;
+                leaderBankEntity.add(change);
+                bankRepositoryCustom.updateBalanceByBankSeq(leaderBankEntity.getBalance(),leaderBankSeq);
+
+
+                message.setTitle("송금 알림");
+                message.setBody("정산이 완료되어 차액이 납부 되었습니다!");
+
+                lst = new ArrayList<Long>();
+                lst.add(leaderSeq);
+
+                message.setUserSeqList(lst);
+                fcmService.sendMessage(message);
+
             }
 
         }catch (Exception e){
