@@ -11,6 +11,9 @@ import { handleApiError } from '../errorHandling';
 // - 응답
 // 1
 export const saveUserPositionApi = async (params) => {
+  if (params.userSeq == null) {
+    return null;
+  }
   try {
     const response = await request.post('/api/position/save', params);
     return response.data;

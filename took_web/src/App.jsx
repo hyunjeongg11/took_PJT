@@ -5,6 +5,7 @@ import { usePosition } from './store/position';
 import { getUserLocation } from './android/message';
 import { saveUserPositionApi } from './apis/position/userPosition';
 import { useUser } from './store/user';
+import { getUserSeq } from './utils/getUserSeq'
 import {
   MainPage,
   LoginPage,
@@ -132,8 +133,8 @@ const ROUTER = createBrowserRouter([
 
 function App() {
   const { setPosition } = usePosition();
-  const { seq } = useUser(); // make sure to destructure `setUserSeq`
-
+  // const { seq } = useUser(); // make sure to destructure `setUserSeq`
+  const seq = getUserSeq();
   const savePosition = async ({ latitude, longitude }) => {
     if (seq) { // Check if `seq` is not null
       await saveUserPositionApi({ userSeq: seq, lat: latitude, lon: longitude });
