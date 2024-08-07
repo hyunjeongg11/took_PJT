@@ -30,7 +30,7 @@ function LoginPage() {
         navigate('/');
       }else{
         alert("로그인 실패");
-        msgToAndroid("로그인 실패");
+        msgToAndroid(`로그인 실패 ${response}`);
       }
     } catch (error) {
       alert('로그인 중 오류가 발생했습니다.');
