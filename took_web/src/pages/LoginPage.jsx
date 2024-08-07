@@ -16,6 +16,7 @@ function LoginPage() {
   const { setUserSeq, setLoggedIn } = useUser();
   const navigate = useNavigate();
   const handleLoginClick = async (e) => {
+    msgToAndroid("button clicked");
     e.preventDefault();
     console.log('id:', id);
     console.log('pwd:', password);
@@ -27,6 +28,9 @@ function LoginPage() {
         setUserSeq(response.userSeq);
         setLoggedIn();
         navigate('/');
+      }else{
+        alert("로그인 실패");
+        msgToAndroid("로그인 실패");
       }
     } catch (error) {
       alert('로그인 중 오류가 발생했습니다.');
@@ -60,7 +64,7 @@ function LoginPage() {
             name="로그인"
             textColor="white"
             width="full"
-            onClick={handleLoginClick}
+            handleClick={handleLoginClick}
             style="mt-10 font-bold bg-main"
           />
           <div className="flex justify-between text-main text-xs mb-16 mt-6">

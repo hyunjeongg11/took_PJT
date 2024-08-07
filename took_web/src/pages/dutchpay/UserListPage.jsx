@@ -3,19 +3,24 @@ import { getUserStyle, getMyStyle } from '../../utils/getCharacterPostion';
 import questionIcon from '../../assets/payment/question.svg';
 import { Link } from 'react-router-dom';
 import getProfileImagePath from '../../utils/getProfileImagePath';
+import { getNearByUserPositionApi } from '../../apis/position/userPosition';
+import { useUser } from '../../store/user';
+import { usePosition } from '../../store/position';
 
-const res_data = [
-  { name: '정희수', img_no: 6 },
-  { name: '조현정', img_no: 1 },
+// const res_data = [
+//   { name: '정희수', img_no: 6 },
+//   { name: '조현정', img_no: 1 },
 
-  { name: '이재찬', img_no: 5 },
-  { name: '정희수', img_no: 6 },
-  { name: '조현정', img_no: 1 },
+//   { name: '이재찬', img_no: 5 },
+//   { name: '정희수', img_no: 6 },
+//   { name: '조현정', img_no: 1 },
 
-  { name: '이재찬', img_no: 5 },
-];
+//   { name: '이재찬', img_no: 5 },
+// ];
 
 const UserListPage = () => {
+  const { seq } = useUser();
+  const { latitude, longitude } = usePosition();
   const [users, setUsers] = useState([]);
   const [showHelp, setShowHelp] = useState(false);
 
@@ -23,15 +28,31 @@ const UserListPage = () => {
   const fontSize = Math.max(imageSize / 3, 12);
 
   useEffect(() => {
-    const fetchUsers = () => {
-      const updatedUsers = res_data.map((user) => ({
-        ...user,
-        selected: false,
-      }));
-      setUsers(updatedUsers);
-    };
-    fetchUsers();
+    // const fetchUsers = () => {
+    //   const updatedUsers = res_data.map((user) => ({
+    //     ...user,
+    //     selected: false,
+    //   }));
+    //   setUsers(updatedUsers);
+    // };
+    // fetchUsers();
+    loadNearUsers();
   }, []);
+
+  const loadNearUsers = async () => {
+    const res = await getNearByUserPositionApi({
+      userSeq: seq,
+      lat: latitude,
+      lon: longitude,
+    });
+    const updatedUsers = res.map((user) => ({
+      ...user,
+      seleced: false,
+      name: user.userName,
+      img_no: user.imageNo,
+    }));
+    setUsers(updatedUsers);
+  };
 
   const handleSelect = (index) => {
     setUsers((prevUsers) =>
@@ -107,7 +128,7 @@ const UserListPage = () => {
           <span className="text-xs mt-1 text-white">나</span>
         </div>
       </div>
-      <Link to="/dutch/input">
+      <Link to={{ pathname: '/dutch/input', state: { users } }}>
         <button className="bg-white px-12 py-2 shadow font-bold text-main rounded-full">
           정산하러 가기
         </button>

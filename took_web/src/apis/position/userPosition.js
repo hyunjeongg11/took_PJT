@@ -51,9 +51,9 @@ export const getSavedUserPositionApi = async (userSeq) => {
 //   },
 //   ...
 // ]
-export const getNearByUserPositionApi = async () => {
+export const getNearByUserPositionApi = async (params) => {
   try {
-    const response = await request.post('/api/position/nearby');
+    const response = await request.post('/api/position/nearby', params);
     return response.data;
   } catch (error) {
     return handleApiError(error);

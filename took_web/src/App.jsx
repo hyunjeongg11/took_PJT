@@ -3,7 +3,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { msgToAndroid } from './android/message';
 import { usePosition } from './store/position';
 import { getUserLocation } from './android/message';
-
+import { saveUserPositionApi } from './apis/position/userPosition';
+import { useUser } from './store/user';
 import {
   MainPage,
   LoginPage,
@@ -131,6 +132,11 @@ const ROUTER = createBrowserRouter([
 
 function App() {
   const { setPosition } = usePosition();
+  const { seq } = useUser();
+
+  const savePosition = async ({ latitude, longitude }) => {
+    await saveUserPositionApi({ userSeq: seq, lat: latitude, lon: longitude });
+  };
 
   useEffect(() => {
     getUserLocation();
@@ -140,6 +146,7 @@ function App() {
       msgToAndroid(
         `Received location in onLocation:, ${latitude}, ${longitude}`
       );
+      savePosition();
       setPosition({ latitude, longitude });
     };
 
