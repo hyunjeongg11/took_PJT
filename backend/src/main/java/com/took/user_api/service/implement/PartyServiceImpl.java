@@ -112,7 +112,7 @@ public class PartyServiceImpl implements PartyService {
                 MemberEntity member = memberRepository.save(new MemberEntity(party, user, userCost.getCost()));
 
                 AlarmRequest alarm = new AlarmRequest();
-                alarm.setBody(name.charAt(0)+"*"+name.charAt(2)+"에게"+requestBody.getUserCosts()+"원을 송금해 주세요");
+                alarm.setBody(name.charAt(0)+"*"+name.charAt(2)+"님에게 "+userCost.getCost()+"원 TOOK!!");
                 alarm.setSender(leaderSeq);
                 alarm.setUserSeq(userCost.getUserSeq());
                 alarm.setPartySeq(partySeq);
