@@ -20,7 +20,6 @@ public class Identity {
     @Id
     private String phoneNumber;
 
-    @Indexed
     private int code;
 
     @TimeToLive
