@@ -8,7 +8,6 @@ import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
 import com.took.user_api.dto.response.user.KakaoChangeResponseDto;
 import com.took.user_api.dto.response.user.UserInfoResponseDto;
-import com.took.user_api.entity.QUserEntity;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
 import com.took.user_api.repository.custom.UserCustomRepository;
@@ -100,11 +99,11 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<? super DeliNearUserResponseDto> searchNearUser(NearUserRequestDto requestBody) {
 
         List<Long> nearList = new ArrayList<>();
-        double myLng;
+        double myLon;
         double myLat;
 
         try{
-            myLng = requestBody.getLon();
+            myLon = requestBody.getLon();
             myLat = requestBody.getLat();
 
 //          위경도 정보 모두 불러와서 리턴
@@ -112,10 +111,10 @@ public class UserServiceImpl implements UserService {
 
             for(Tuple user : userList){
                 Double lat = user.get(0, Double.class); // 첫 번째 값 (lat)
-                Double lng = user.get(1, Double.class); // 두 번째 값 (lng)
+                Double lon = user.get(1, Double.class); // 두 번째 값 (lon)
                 Long userSeq = user.get(2, Long.class); // 세 번째 값 (userSeq)
 
-                double distance = calculateDistance(myLat, myLng, lat, lng);
+                double distance = calculateDistance(myLat, myLon, lat, lon);
                 if(distance<=distanceThreshold) nearList.add(userSeq);
             }
 

@@ -10,5 +10,5 @@ public class LocationDto {
     private double lat;
 
     @Schema(description = "경도", example = "126.978")
-    private double lng;
+    private double lon;
 }
