@@ -15,15 +15,15 @@ function BuyListPage() {
   useEffect(() => {
     const fetchBuyList = async () => {
       try {
-        const params = [userSeq, 6]; // 배열로 줘야 함
+        const params = [userSeq, 1, 2, 3]; // todo: 수령장소가 현위치 근처인 곳의 게시물을 작성한 userSeq를 받아와야 함
         const data = await getAllShopApi(params);
         if (Array.isArray(data)) {
           const updatedData = data
             .map((buy) => ({
               ...buy,
-              status: buy.count === buy.maxCount ? 'IN_PROGRESSING' : buy.status,
+              status: buy.count === buy.maxCount ? 'IN_PROGRESS' : buy.status,
             }))
-            .filter((buy) => buy.status !== 'IN_PROGRESSING'); // 'IN_PROGRESSING' 상태인 항목 필터링
+            .filter((buy) => buy.status === 'OPEN'); // 'OPEN' 상태인 항목만 필터링
           setBuyList(updatedData);
         } else {
           setBuyList([]); // 응답이 배열이 아닌 경우 빈 배열로 설정

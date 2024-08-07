@@ -6,19 +6,20 @@ import { FiPlusCircle } from 'react-icons/fi';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { TbPencil } from 'react-icons/tb';
 import { formatNumber } from '../../../utils/format';
-import { getAllPurchaseApi, deleteMyPurchaseApi } from '../../../apis/groupBuy/purchase';
+import { getAllPurchaseApi, deleteMyPurchaseApi, getMyPurchaseApi } from '../../../apis/groupBuy/purchase';
 import { getUserInfoApi } from '../../../apis/user.js';
 import { useUser } from '../../../store/user.js';
 
 function TotalPurchasePage() {
-  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
-  const { id: shopSeq } = useParams(); // 현재 경로에서 shopSeq 값을 가져옴
+  const navigate = useNavigate();
+  const { id: shopSeq } = useParams();
   const [purchaseData, setPurchaseData] = useState([]);
   const [totalAmountSum, setTotalAmountSum] = useState(0);
   const [loading, setLoading] = useState(true);
   const { seq: currentUserSeq } = useUser();
   const [showModal, setShowModal] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState(null);
+  const [hasMyPurchase, setHasMyPurchase] = useState(false);
 
   useEffect(() => {
     const fetchPurchaseData = async () => {
@@ -50,6 +51,24 @@ function TotalPurchasePage() {
     fetchPurchaseData();
   }, [shopSeq]);
 
+  useEffect(() => {
+    const checkMyPurchase = async () => {
+      try {
+        const myPurchase = await getMyPurchaseApi({ userSeq: currentUserSeq, shopSeq });
+        setHasMyPurchase(!myPurchase);
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          console.log('No purchase info found, user can create one.');
+          setHasMyPurchase(false);
+        } else {
+          console.error('Error checking my purchase:', error);
+        }
+      }
+    };
+
+    checkMyPurchase();
+  }, [currentUserSeq, shopSeq]);
+
   const handleDelete = async () => {
     try {
       await deleteMyPurchaseApi(purchaseToDelete);
@@ -60,9 +79,7 @@ function TotalPurchasePage() {
     }
   };
 
-  // 수정 버튼 클릭 시 호출되는 함수
   const handleEdit = (purchase) => {
-    // 특정 구매 정보(purchase)를 상태로 전달하며, /groupbuy/my-order/:shopSeq 페이지로 이동
     navigate(`/groupbuy/my-order/${shopSeq}`, { state: { purchase } });
   };
 
@@ -83,7 +100,9 @@ function TotalPurchasePage() {
           <div className="flex flex-col px-4 text-xs text-black">
             <div className="flex flex-row justify-between">
               <div className="text-lg font-bold">전체 구매 정보</div>
-              <FiPlusCircle onClick={() => navigate(`/groupbuy/my-order/${shopSeq}`)} className="w-5 h-5 mt-1 mr-1" />
+              {!hasMyPurchase && (
+                <FiPlusCircle onClick={() => navigate(`/groupbuy/my-order/${shopSeq}`)} className="w-5 h-5 mt-1 mr-1" />
+              )}
             </div>
             <hr className="border border-neutral-300 w-full mx-auto my-3" />
             {purchaseData.length === 0 ? (
@@ -105,7 +124,7 @@ function TotalPurchasePage() {
                       <div className="flex flex-row items-center ml-auto mr-2 gap-2">
                         <TbPencil
                           className="w-5 h-5 text-neutral-500 cursor-pointer"
-                          onClick={() => handleEdit(el)} // 수정 버튼 클릭 시 handleEdit 호출
+                          onClick={() => handleEdit(el)}
                         />
                         <FaRegTrashAlt
                           className="w-4 h-4 text-neutral-500 cursor-pointer"

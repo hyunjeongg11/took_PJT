@@ -2,6 +2,7 @@ import BackButton from '../../../components/common/BackButton';
 import getProfileImagePath from '../../../utils/getProfileImagePath';
 import { formatNumber } from "../../../utils/format"
 
+// todo: 실제 데이터와 연결해야 함
 const my_temp_data = {
   id: 1,
   items: ["삼성 갤럭시 S23", "삼성 갤럭시 워치 5", "삼성 갤럭시 버즈 2 프로", "삼성 프리미어 프로젝터"],

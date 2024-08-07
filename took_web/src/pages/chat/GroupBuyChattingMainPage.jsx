@@ -1,3 +1,4 @@
+// GroupBuyChattingMainPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
@@ -7,7 +8,7 @@ import { formatDateOnly, formatTime } from '../../utils/formatDate';
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { BsTruck } from "react-icons/bs";
 import { TfiWorld } from "react-icons/tfi";
-import { GoBell } from "react-icons/go";
+import { PiHandArrowDown } from "react-icons/pi";
 import { FaChevronUp, FaChevronDown, FaPaperPlane, FaArrowDown, FaBars } from 'react-icons/fa';
 import { MdAdd } from 'react-icons/md';
 import CalculatorModal from '../../components/chat/CalculatorModal';
@@ -16,6 +17,7 @@ import DeliveryModal from '../../components/chat/DeliveryModal';
 import ParticipantList from '../../components/chat/ParticipantList';
 import ArrivalNotificationModal from '../../components/chat/ArrivalNotificationModal';
 
+// todo: 실제 데이터와 연결 필요
 const tempMember = [
   { member_seq: 1, party_seq: 1, user_seq: 1, userName: '조현정', imgNo: 19, cost: 13000, real_cost: 12000, status: true, receive: false, is_leader: true, created_at: '2024-07-06T00:23:00' },
   { member_seq: 2, party_seq: 1, user_seq: 2, userName: '정희수', imgNo: 12, cost: 8000, real_cost: 7500, status: true, receive: false, is_leader: false, created_at: '2024-07-06T00:23:00' },
@@ -24,7 +26,7 @@ const tempMember = [
 ];
 
 const tempData = {
-  shopSeq: 8, // 채팅방 연결 전까지는 임시로 8번으로 !!
+  shopSeq: 8, // todo: 실제 shopSeq로 연결 필요 / 채팅방 연결 전까지는 임시로 8번으로 !!
   title: '마이프로틴 공동구매 모집합니다',
   site: '마이프로틴',
   item: '프로틴',
@@ -198,7 +200,7 @@ function GroupBuyChattingMainPage() {
               <span
                 onClick={() => navigate(`/groupbuy/order/${tempData.shopSeq}`)}
               >
-                상품 주문 정보 등록
+                배송 정보
               </span>{' '}
               |
               <button
@@ -329,9 +331,9 @@ function GroupBuyChattingMainPage() {
             className="flex flex-col items-center"
           >
             <div className="w-11 h-11 rounded-full bg-[#C0E0A0] flex items-center justify-center">
-              <GoBell className="text-white w-6 h-6" />
+              <PiHandArrowDown className="text-white w-6 h-6" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">물품 도착</span>
+            <span className="mt-1 text-[11px] text-gray-500">수령 확인</span>
           </div>
         </div>
       )}
@@ -339,7 +341,7 @@ function GroupBuyChattingMainPage() {
       {currentModal === 'money' && <MoneyModal onClose={closeModal} tempMember={tempMember} />}
       {currentModal === 'calculator' && <CalculatorModal onClose={closeModal} tempMember={tempMember} />}
       {showParticipantList && <ParticipantList participants={tempMember} onClose={handleCloseParticipantList} />}
-      {showArrivalModal && <ArrivalNotificationModal members={tempMember} onClose={handleCloseArrivalModal} />}
+      {showArrivalModal && <ArrivalNotificationModal members={tempMember} onClose={handleCloseArrivalModal} shopSeq={tempData.shopSeq} />}
     </div>
   );
 }

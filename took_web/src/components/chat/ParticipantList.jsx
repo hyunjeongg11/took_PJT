@@ -3,6 +3,7 @@ import React from 'react';
 import { FaCrown, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 
+// todo: 특정 채팅방의 속한 모든 유저 조회 api 연결 필요
 const ParticipantList = ({ participants, onClose, onSignOut }) => {
   return (
     <div className="fixed inset-0 flex justify-end bg-black bg-opacity-50 z-50">
