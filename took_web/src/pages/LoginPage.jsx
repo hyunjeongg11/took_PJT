@@ -16,17 +16,15 @@ function LoginPage() {
   const { setUserSeq, setLoggedIn } = useUser();
   const navigate = useNavigate();
   const handleLoginClick = async (e) => {
-    msgToAndroid("button clicked");
     e.preventDefault();
     console.log('id:', id);
     console.log('pwd:', password);
 
     try {
       const response = await loginApi({ userId: id, password }, setAccessToken);
-      // console.log("status" ,response.status);
-      msgToAndroid(response.status);
-      if (response.status == 200) {
-        setUserSeq(response.data.userSeq);
+      if (response.code == 'su') {
+        console.log(response);
+        setUserSeq(response.userSeq);
         setLoggedIn();
         navigate('/');
       }else{

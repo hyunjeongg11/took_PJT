@@ -46,6 +46,7 @@ export const getAddr = (lat, lng) => {
 export const searchPlaces = async (input) => {
   try {
     const searchResults = await keywordSearch(input);
+    console.log(searchResults);
     return searchResults.map((place) => ({
       address_name: place.address_name,
       category_group_code: place.category_group_code,

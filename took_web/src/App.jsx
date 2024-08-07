@@ -132,36 +132,34 @@ const ROUTER = createBrowserRouter([
 
 function App() {
   const { setPosition } = usePosition();
-  const { seq } = useUser();
+  const { seq } = useUser(); // make sure to destructure `setUserSeq`
 
   const savePosition = async ({ latitude, longitude }) => {
-    await saveUserPositionApi({ userSeq: seq, lat: latitude, lon: longitude });
+    if (seq) { // Check if `seq` is not null
+      await saveUserPositionApi({ userSeq: seq, lat: latitude, lon: longitude });
+    } else {
+      console.log('User sequence is not available');
+    }
   };
 
   useEffect(() => {
     getUserLocation();
-
     window.onLocation = (latitude, longitude) => {
       console.log('Received location:', latitude, longitude);
-      msgToAndroid(
-        `Received location in onLocation:, ${latitude}, ${longitude}`
-      );
+      msgToAndroid(`Received location in onLocation:, ${latitude}, ${longitude}`);
       savePosition({ latitude, longitude });
       setPosition({ latitude, longitude });
     };
 
     window.onNotification = (notificationData) => {
-      // const notification = JSON.parse(notificationData);
       msgToAndroid(notificationData);
     };
-
-    getUserLocation();
 
     return () => {
       delete window.onLocation;
       delete window.onNotification;
     };
-  }, []);
+  }, [seq]);
 
   return <RouterProvider router={ROUTER} />;
 }

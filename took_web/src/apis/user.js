@@ -87,7 +87,7 @@ export const loginApi = async (params, setAccessToken) => {
       localStorage.setItem('accessToken', accessToken);
     }
     
-    return response;
+    return response.data;
   } catch (err) {
     return handleApiError(err);
   }
