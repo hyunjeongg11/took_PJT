@@ -189,6 +189,7 @@ public class PartyServiceImpl implements PartyService {
             if(!bank.minus(membercost)) return ResponseDto.nomoney();
 
             System.out.println("맴버의 잔액이 충분합니다!!");
+            System.out.println("맴버의 일련 번호"+member.getMemberSeq());
 //          맴버 상태 업데이트
             memberRepositoryCustom.changeStatusBySeq(member.getMemberSeq());
 
@@ -209,10 +210,10 @@ public class PartyServiceImpl implements PartyService {
 
 
             System.out.println("리더에게 알림이 송금됩니다!");
+
             MessageRequest message = new MessageRequest();
             UserEntity sender = userRepository.getReferenceById(userSeq);
             String name = sender.getUserName();
-
             message.setTitle("송금 알림");
             message.setBody(name.charAt(0)+"*"+name.charAt(2)+"님이 "+membercost+"원을 송금하였습니다!");
 
