@@ -2,6 +2,7 @@ package com.took.user_api.service.implement;
 
 
 import com.took.fcm_api.dto.AlarmRequest;
+import com.took.fcm_api.dto.MessageRequest;
 import com.took.fcm_api.service.FCMService;
 import com.took.user_api.dto.request.party.*;
 import com.took.user_api.dto.response.ResponseDto;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -163,6 +165,7 @@ public class PartyServiceImpl implements PartyService {
         return VoidResponseDto.success();
     }
 
+//   게스트들이 송금 버튼을 눌렀을 때
     @Override
     @Transactional
     public ResponseEntity<? super ojResponseDto> onlyjungsanPay(Long memberSeq,Long userSeq) {
@@ -192,9 +195,33 @@ public class PartyServiceImpl implements PartyService {
             Long nowtotal = party.getCost()-membercost;
             partyRepositoryCustom.updateCostBypartyId(nowtotal,partySeq);
 
+//           빼주는 순간 리더에게 돈 들어가게
+            Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(partySeq);
+            Long leaderBankSeq = bankRepositoryCustom.findBankSeqByUserSeq(leaderSeq);
+            BankEntity leaderBankEntity = bankRepository.getReferenceById(leaderBankSeq);
+            leaderBankEntity.add(membercost);
+            bankRepositoryCustom.updateBalanceByBankSeq(leaderBankEntity.getBalance(),leaderBankSeq);
+
+
+            MessageRequest message = new MessageRequest();
+            UserEntity sender = userRepository.getReferenceById(userSeq);
+            String name = sender.getUserName();
+
+            message.setTitle("송금 알림");
+            message.setBody(name.charAt(0)+"*"+name.charAt(2)+"님이 "+membercost+"원을 송금하였습니다!");
+
+            List<Long> lst = new ArrayList<Long>();
+            lst.add(leaderSeq);
+
+            message.setUserSeqList(lst);
+            fcmService.sendMessage(message);
+
+
             if(nowtotal.equals(membercost)){
+//              정산완료
                 done = true;
                 partyRepositoryCustom.changeStatusBySeq(partySeq);
+
             }
 
         }catch (Exception e){
@@ -307,7 +334,6 @@ public class PartyServiceImpl implements PartyService {
             Long N = (long) party.getTotalMember();
 
             Long recieveCost = party.getReceiveCost()*(N-1L)/N;
-
 
 //          뱅크 가져와서 업데이트
             Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(userSeq);
