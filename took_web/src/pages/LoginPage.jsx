@@ -23,14 +23,14 @@ function LoginPage() {
 
     try {
       const response = await loginApi({ userId: id, password }, setAccessToken);
-      console.log(response);
-      if (response.code == 'su') {
-        setUserSeq(response.userSeq);
+      // console.log("status" ,response.status);
+      msgToAndroid(response.status);
+      if (response.status == 200) {
+        setUserSeq(response.data.userSeq);
         setLoggedIn();
         navigate('/');
       }else{
         alert("로그인 실패");
-        msgToAndroid(`로그인 실패 ${response}`);
       }
     } catch (error) {
       alert('로그인 중 오류가 발생했습니다.');
