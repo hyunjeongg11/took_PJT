@@ -85,4 +85,15 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
 
         return result;
     }
+
+    @Override
+    public MemberEntity findMemberByPartySeqAndUserSeq(Long partySeq, Long userSeq) {
+
+        QMemberEntity member = QMemberEntity.memberEntity;
+
+        MemberEntity result = null;
+
+        result = jpaQueryFactory.selectFrom(member).where(member.party.partySeq.eq(partySeq).and(member.user.userSeq.eq(userSeq))).fetchOne();
+        return result;
+    }
 }

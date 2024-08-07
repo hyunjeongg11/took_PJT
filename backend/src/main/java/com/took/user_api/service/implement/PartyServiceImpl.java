@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -168,15 +169,17 @@ public class PartyServiceImpl implements PartyService {
 //   게스트들이 송금 버튼을 눌렀을 때
     @Override
     @Transactional
-    public ResponseEntity<? super ojResponseDto> onlyjungsanPay(Long memberSeq,Long userSeq) {
+    public ResponseEntity<? super ojResponseDto> onlyjungsanPay(Long npartySeq,Long userSeq) {
 
         boolean done = false;
         BankEntity bank = null;
 
         try{
 
-            Long membercost = memberRepositoryCustom.findCostByMemberSeq(memberSeq);
-            Long partySeq = memberRepositoryCustom.findPartySeqByMemberSeq(memberSeq);
+            MemberEntity member = memberRepositoryCustom.findMemberByPartySeqAndUserSeq(npartySeq,userSeq);
+            Long membercost = member.getCost();
+            Long partySeq = member.getParty().getPartySeq();
+
             PartyEntity party = partyRepository.getReferenceById(partySeq);
 
 //          빼주기 전에 돈 있는 없는지 검사
@@ -186,7 +189,7 @@ public class PartyServiceImpl implements PartyService {
             if(!bank.minus(membercost)) return ResponseDto.nomoney();
 
 //          맴버 상태 업데이트
-            memberRepositoryCustom.changeStatusBySeq(memberSeq);
+            memberRepositoryCustom.changeStatusBySeq(member.getMemberSeq());
 
 //          돈빼주고 저장
             bankRepositoryCustom.updateBalanceByBankSeq(bank.getBalance(),bankSeq);

@@ -3,7 +3,6 @@ package com.took.user_api.controller;
 import com.took.user_api.dto.request.member.MemberSaveRequestDto;
 import com.took.user_api.dto.request.member.MemberPartySeqRequestDto;
 import com.took.user_api.dto.request.party.*;
-import com.took.user_api.dto.request.user.UserSeqRequestDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.member.MemberSaveResponseDto;
 import com.took.user_api.dto.response.party.*;
@@ -91,8 +90,8 @@ public class PartyController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
     @PostMapping("/only-jungsan-pay")
-    public ResponseEntity<? super ojResponseDto> onlyjungsan(@RequestBody MemberUserSeqRequestDto requestBody){
-        ResponseEntity<? super ojResponseDto> response = partyService.onlyjungsanPay(requestBody.getMemberSeq(),requestBody.getUserSeq());
+    public ResponseEntity<? super ojResponseDto> onlyjungsan(@RequestBody OnlyJungsanRequestDto requestBody){
+        ResponseEntity<? super ojResponseDto> response = partyService.onlyjungsanPay(requestBody.getPartySeq(),requestBody.getUserSeq());
         return  response;
     }
 
@@ -117,8 +116,8 @@ public class PartyController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
     @PostMapping("/deli-gongu-pay")
-    public ResponseEntity<? super ojResponseDto>deligonguPay(@RequestBody MemberUserSeqRequestDto requestBody){
-        ResponseEntity<? super ojResponseDto> response = partyService.deligonguPay(requestBody.getMemberSeq(),requestBody.getUserSeq());
+    public ResponseEntity<? super ojResponseDto>deligonguPay(@RequestBody OnlyJungsanRequestDto requestBody){
+        ResponseEntity<? super ojResponseDto> response = partyService.deligonguPay(requestBody.getPartySeq(),requestBody.getUserSeq());
         return response;
     }
 

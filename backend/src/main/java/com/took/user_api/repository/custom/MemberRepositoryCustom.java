@@ -16,4 +16,5 @@ public interface MemberRepositoryCustom {
     void changeStatusBySeq(Long memberSeq);
 
     Long findLeaderByPartySeq(Long partySeq);
+    MemberEntity findMemberByPartySeqAndUserSeq(Long partySeq, Long userSeq);
 }
