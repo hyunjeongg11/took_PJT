@@ -68,7 +68,6 @@ public class PartyController {
         return memberService.deleteMember(requestBody);
     }
 
-
     //  알람 보내는 로직 여기에 추가할 것.
     //  결제자도 자기 돈을 입력해야한다.
     @Operation(summary = "맴버 전체 저장", description = "파티에 존재 하는 모든 맴버를 추가합니다.")
@@ -82,7 +81,6 @@ public class PartyController {
         ResponseEntity<? super VoidResponseDto> response = partyService.insertAllMember(requestBody);
         return response;
     }
-
 
     @Operation(summary = "오직 정산, 맴버들이 돈 보낼때", description = "참여 맴버가 확인 버튼을 누를 떄 호출됩니다.")
     @ApiResponses(value = {
@@ -107,8 +105,6 @@ public class PartyController {
         ResponseEntity<? super ojResponseDto> response = partyService.onlyjungsanRecieve(requestBody.getPartySeq(),requestBody.getUserSeq());
         return  response;
     }
-
-
 
     @Operation(summary = "[배달, 공구] 유저가 돈 보낼때", description = "참여 맴버가 확인 버튼을 누를 떄 호출됩니다. 완료시 done에 true 반환")
     @ApiResponses(value = {

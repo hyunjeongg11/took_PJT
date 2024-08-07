@@ -24,8 +24,6 @@ public class QPurchaseInfo extends EntityPathBase<PurchaseInfo> {
 
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
 
-    public final ListPath<Product, QProduct> products = this.<Product, QProduct>createList("products", Product.class, QProduct.class, PathInits.DIRECT2);
-
     public final NumberPath<Long> purchaseSeq = createNumber("purchaseSeq", Long.class);
 
     public final NumberPath<Integer> shipCost = createNumber("shipCost", Integer.class);
