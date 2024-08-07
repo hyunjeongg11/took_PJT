@@ -106,12 +106,8 @@ public class DeliveryService {
                     double deliveryLon = delivery.getPickupLon();
                     double distance = calculateDistance(request.getLat(), request.getLon(), deliveryLat, deliveryLon);
                     if (distance <= 1000) { // 거리 범위를 1000m로 설정
-                        System.out.println("distance: " + distance);
-                        System.out.println("선택된 delivery: " + delivery.getDeliverySeq());
                         return new DeliverySelectResponse(delivery);
                     } else {
-                        System.out.println("distance: " + distance);
-                        System.out.println("선택안된 delivery: " + delivery.getDeliverySeq());
                         return null;
                     }
                 })

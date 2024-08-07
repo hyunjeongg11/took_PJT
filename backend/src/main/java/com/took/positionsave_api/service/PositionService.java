@@ -47,9 +47,6 @@ public class PositionService {
      */
     public void savePosition(PositionCreateRequest request) {
         // Position 객체 생성
-        System.out.println("위치 저장 UserSeq: " + request.getUserSeq());
-        System.out.println("위치 저장 Lat: " + request.getLat());
-        System.out.println("위치 저장 Lon: " + request.getLon());
         Position position = Position.builder()
                 .userSeq(String.valueOf(request.getUserSeq()))  // request에서 userId 가져옴
                 .lat(request.getLat())        // request에서 위도 가져옴
@@ -82,14 +79,12 @@ public class PositionService {
      */
     public List<PositionUserListResponse> getNearbyUsers(PositionUserListRequest request) {
         List<Position> allUsers = (List<Position>) positionRepository.findAll();
-        System.out.println("유저리스트:" + allUsers);
 
         return allUsers.stream()
                 .filter(Objects::nonNull)
                 .map(user -> {
                     // userSeq가 null인지 확인
                     if (user.getUserSeq() != null && !user.getUserSeq().trim().isEmpty()) {
-                        System.out.println("근처 위치 사용자리스트 비교 유저 UserSeq: " + user.getUserSeq());
                         double distance = calculateDistance(
                                 request.getLat(), request.getLon(),
                                 user.getLat(), user.getLon());
@@ -106,7 +101,6 @@ public class PositionService {
                                 response.setUserName(userDetails.getUserName());
                                 response.setImageNo(userDetails.getImageNo());
                             }
-                            System.out.println("근처 위치 사용자 리스트(현재위치기반) response: " + response);
                             return response;
                         }
                     }
