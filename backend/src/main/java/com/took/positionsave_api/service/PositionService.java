@@ -85,28 +85,31 @@ public class PositionService {
 
         return allUsers.stream()
                 .map(user -> {
-                    double distance = calculateDistance(
-                            request.getLat(), request.getLon(),
-                            user.getLat(), user.getLon());
-                    if (distance <= 1000) { // 거리 범위를 1000m로 설정
-                        PositionUserListResponse response = new PositionUserListResponse();
-                        response.setUserSeq(Long.valueOf(user.getUserSeq()));
-                        response.setDistance((int) distance); // 거리 차이를 미터 단위로 설정
+                    // userSeq가 null인지 확인
+                    if (user.getUserSeq() != null && !user.getUserSeq().trim().isEmpty()) {
+                        double distance = calculateDistance(
+                                request.getLat(), request.getLon(),
+                                user.getLat(), user.getLon());
 
-                        // userSeq로 userName과 imageNo를 userRepository에서 찾음
-                        UserEntity userDetails = userRepository.findById(Long.valueOf(user.getUserSeq())).orElse(null);
-                        if (userDetails != null) {
-                            response.setUserName(userDetails.getUserName());
-                            response.setImageNo(userDetails.getImageNo());
+                        if (distance <= 1000) { // 거리 범위를 1000m로 설정
+                            PositionUserListResponse response = new PositionUserListResponse();
+                            // userSeq를 Long으로 변환
+                            response.setUserSeq(Long.valueOf(user.getUserSeq()));
+                            response.setDistance((int) distance); // 거리 차이를 미터 단위로 설정
+
+                            // userSeq로 userName과 imageNo를 userRepository에서 찾음
+                            UserEntity userDetails = userRepository.findById(Long.valueOf(user.getUserSeq())).orElse(null);
+                            if (userDetails != null) {
+                                response.setUserName(userDetails.getUserName());
+                                response.setImageNo(userDetails.getImageNo());
+                            }
+                            System.out.println("근처 위치 사용자 리스트(현재위치기반) response: " + response);
+                            return response;
                         }
-
-                        return response;
-                    } else {
-                        return null;
                     }
+                    return null; // userSeq가 null인 경우 또는 거리가 1000m를 초과하는 경우
                 })
                 .filter(Objects::nonNull) // null 값 필터링
                 .collect(Collectors.toList());
     }
-
 }
