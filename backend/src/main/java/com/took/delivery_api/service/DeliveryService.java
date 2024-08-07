@@ -106,8 +106,12 @@ public class DeliveryService {
                     double deliveryLon = delivery.getPickupLon();
                     double distance = calculateDistance(request.getLat(), request.getLon(), deliveryLat, deliveryLon);
                     if (distance <= 1000) { // 거리 범위를 1000m로 설정
+                        System.out.println("distance: " + distance);
+                        System.out.println("선택된 delivery: " + delivery.getDeliverySeq());
                         return new DeliverySelectResponse(delivery);
                     } else {
+                        System.out.println("distance: " + distance);
+                        System.out.println("선택안된 delivery: " + delivery.getDeliverySeq());
                         return null;
                     }
                 })
@@ -141,7 +145,6 @@ public class DeliveryService {
             dist = Math.acos(dist);
             dist = Math.toDegrees(dist);
             dist = dist * 60 * 1.1515 * 1.609344;  // km 단위로 변환
-            System.out.println("distance: " + dist);
             return (dist * 1000);  // m 단위로 변환
         }
     }
