@@ -57,8 +57,8 @@ public class WebSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                         .maximumSessions(1)
                         .sessionRegistry(sessionRegistry()))
-                .authorizeHttpRequests(authorize ->authorize
-                        .requestMatchers("/","/login","/signup").permitAll()
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/", "/login", "/signup").permitAll()
                 )
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/", "/api/auth/**", "/api/oauth2/**").permitAll()
