@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
-import { getDeliveryDetailApi, writeNoticeApi, modifyNoticeApi } from '../../apis/delivery';
+import {
+  getDeliveryDetailApi,
+  writeNoticeApi,
+  modifyNoticeApi,
+} from '../../apis/delivery';
 import { useUser } from '../../store/user';
 
 function DeliveryNoticePage() {
@@ -89,7 +93,9 @@ function DeliveryNoticePage() {
     <div className="flex flex-col p-4 h-screen font-[Nanum_Gothic]">
       <div className="flex items-center justify-between mb-4">
         <BackButton />
-        <div className="flex-grow text-center text-lg font-bold ml-5 mt-1">공지사항 설정</div>
+        <div className="flex-grow text-center text-lg font-bold ml-5 mt-1">
+          공지사항 설정
+        </div>
         <button
           className="bg-main text-white font-bold px-3 py-1 rounded-xl mt-1"
           onClick={handleComplete}

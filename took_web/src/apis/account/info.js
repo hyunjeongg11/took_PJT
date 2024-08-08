@@ -46,7 +46,10 @@ export const linkAccountApi = async (params) => {
 */
 export const changeMainAccountApi = async (params) => {
   try {
-    const response = await request.post('/api/account/change-main-account', params);
+    const response = await request.post(
+      '/api/account/change-main-account',
+      params
+    );
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -84,11 +87,13 @@ export const getAccountListApi = async (params) => {
     const response = await request.post('/api/account/account-list', params);
     return response.data;
   } catch (error) {
-    console.error('getAccountListApi 에러:', error.response ? error.response.data : error.message);
+    console.error(
+      'getAccountListApi 에러:',
+      error.response ? error.response.data : error.message
+    );
     return handleApiError(error);
   }
 };
-
 
 // 계좌 잔액 보기
 // 요청
@@ -129,7 +134,9 @@ export const getAccountBalanceApi = async (params) => {
 */
 export const deleteAccountApi = async ({ accountSeq }) => {
   try {
-    const response = await request.delete(`/api/account/account-delete/${accountSeq}`);
+    const response = await request.delete(
+      `/api/account/account-delete/${accountSeq}`
+    );
     return response.data;
   } catch (error) {
     return handleApiError(error);

@@ -35,9 +35,15 @@ const ArrivalNotificationModal = ({ members, onClose, shopSeq }) => {
 
   return (
     <div className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-50 z-50">
-      <div ref={modalRef} className="bg-main w-full max-w-md h-1/2 rounded-t-3xl p-6 shadow-lg">
+      <div
+        ref={modalRef}
+        className="bg-main w-full max-w-md h-1/2 rounded-t-3xl p-6 shadow-lg"
+      >
         <div className="flex justify-between items-center">
-          <button onClick={onClose} className="text-white focus:outline-none ml-auto">
+          <button
+            onClick={onClose}
+            className="text-white focus:outline-none ml-auto"
+          >
             <MdAdd className="rotate-45 w-6 h-6" />
           </button>
         </div>

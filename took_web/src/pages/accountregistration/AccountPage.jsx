@@ -61,8 +61,8 @@ function AccountPage() {
           bank,
           account,
           password,
-          accountName
-        }
+          accountName,
+        },
       });
     }
   };

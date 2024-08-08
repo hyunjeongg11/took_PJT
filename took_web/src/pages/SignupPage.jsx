@@ -215,6 +215,7 @@ function SignupPage() {
             value={id}
             onChange={(e) => {
               setId(e.target.value);
+              setIdError('');
               setIsIdValid(false);
             }}
             placeholder="아이디를 입력해주세요"
@@ -300,7 +301,6 @@ function SignupPage() {
             type="number"
             value={certificationNumber}
             onChange={(e) => setCertificationNumber(e.target.value)}
-            placeholder="418908"
             styleClass="flex-grow"
             error={certificationError}
           />

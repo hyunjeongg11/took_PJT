@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { msgToAndroid } from './android/message';
 import { usePosition } from './store/position';
-
+import { getUserLocation } from './android/message';
+import { saveUserPositionApi } from './apis/position/userPosition';
+import { useUser } from './store/user';
+import { getUserSeq } from './utils/getUserSeq'
 import {
   MainPage,
   LoginPage,
@@ -36,6 +39,7 @@ import {
   OrderFormPage,
   TotalPurchasePage,
   MyOrderFormPage,
+  TempChattingPage,
 } from './pages';
 
 import PaymentMethods from './pages/oneclick/PaymentMethodsPage';
@@ -114,19 +118,50 @@ const ROUTER = createBrowserRouter([
   { path: '/taxi/setting', element: <TaxiChattingSettingPage /> },
   { path: '/taxi/path', element: <TaxiPathSettingPage /> },
   { path: '/taxi/path-list', element: <CurrentPathListPage /> },
-  { path: '/chat/delivery/main', element: <DeliveryChattingMainPage /> },
   { path: '/chat/delivery/:id/notice', element: <DeliveryNoticePage /> },
-  { path: '/chat/groupbuy/main', element: <GroupBuyChattingMainPage /> },
-  { path: '/chat/taxi/main', element: <TaxiChattingMainPage /> },
   { path: '/chat/list', element: <ChattingListPage /> },
   { path: '/chat/took', element: <TookChattingPage /> },
   { path: '/groupbuy/my-purchase', element: <MyPurchasePage /> },
   { path: '/groupbuy/order/:id', element: <OrderFormPage /> },
   { path: '/groupbuy/total/:id', element: <TotalPurchasePage /> },
   { path: '/groupbuy/my-order/:id', element: <MyOrderFormPage /> },
+  { path: '/chat/temp', element: <TempChattingPage /> },
+  { path: '/chat/delivery/:id', element: <DeliveryChattingMainPage /> },
+  { path: '/chat/taxi/:id', element: <TaxiChattingMainPage /> },
+  { path: '/chat/buy/:id', element: <GroupBuyChattingMainPage /> },
 ]);
 
 function App() {
+  const { setPosition } = usePosition();
+  // const { seq } = useUser(); // make sure to destructure `setUserSeq`
+  const seq = getUserSeq();
+  const savePosition = async ({ latitude, longitude }) => {
+    if (seq) { // Check if `seq` is not null
+      await saveUserPositionApi({ userSeq: seq, lat: latitude, lon: longitude });
+    } else {
+      console.log('User sequence is not available');
+    }
+  };
+
+  useEffect(() => {
+    getUserLocation();
+    window.onLocation = (latitude, longitude) => {
+      console.log('Received location:', latitude, longitude);
+      msgToAndroid(`Received location in onLocation:, ${latitude}, ${longitude}`);
+      savePosition({ latitude, longitude });
+      setPosition({ latitude, longitude });
+    };
+
+    window.onNotification = (notificationData) => {
+      msgToAndroid(notificationData);
+    };
+
+    return () => {
+      delete window.onLocation;
+      delete window.onNotification;
+    };
+  }, [seq]);
+
   return <RouterProvider router={ROUTER} />;
 }
 

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import deliveryIcon from '../../assets/delivery/delivery.png';
-import { getDeliveryMembersApi, changePickUpStatusApi } from '../../apis/delivery';
+import {
+  getDeliveryMembersApi,
+  changePickUpStatusApi,
+} from '../../apis/delivery';
 import { useUser } from '../../store/user';
 
 function DeliveryCompletePage() {
@@ -16,7 +19,9 @@ function DeliveryCompletePage() {
     const fetchMemberInfo = async () => {
       try {
         const membersResponse = await getDeliveryMembersApi(id);
-        const currentUserMemberInfo = membersResponse.find(member => member.userSeq === currentUserSeq);
+        const currentUserMemberInfo = membersResponse.find(
+          (member) => member.userSeq === currentUserSeq
+        );
         setMemberInfo(currentUserMemberInfo);
       } catch (error) {
         console.error('참가자 정보를 가져오는 중 오류가 발생했습니다:', error);
@@ -33,7 +38,10 @@ function DeliveryCompletePage() {
       if (!memberInfo) {
         throw new Error('현재 사용자의 멤버 정보를 찾을 수 없습니다.');
       }
-      console.log('Changing pick-up status for deliveryGuestSeq:', memberInfo.deliveryGuestSeq);
+      console.log(
+        'Changing pick-up status for deliveryGuestSeq:',
+        memberInfo.deliveryGuestSeq
+      );
       await changePickUpStatusApi(memberInfo.deliveryGuestSeq);
       setShowSuccessModal(true);
       setTimeout(() => {

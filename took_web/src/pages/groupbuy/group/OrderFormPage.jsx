@@ -4,7 +4,12 @@ import BackButton from '../../../components/common/BackButton';
 import getProfileImagePath from '../../../utils/getProfileImagePath';
 import { TbPencil } from 'react-icons/tb';
 import { FaRegTrashAlt } from 'react-icons/fa';
-import { writeShipApi, getShipApi, modifyShipApi, deleteShipApi } from '../../../apis/groupBuy/ship.js';
+import {
+  writeShipApi,
+  getShipApi,
+  modifyShipApi,
+  deleteShipApi,
+} from '../../../apis/groupBuy/ship.js';
 
 const initialData = [{ name: '', option: '', etc: '' }];
 
@@ -126,10 +131,14 @@ function OrderFormPage() {
         </div>
         <div className="flex flex-col pt-5 pb-1 mt-6 bg-neutral-50 border border-neutral-200 rounded-2xl shadow-md">
           <div className="flex flex-col px-4 text-xs text-black">
-            <div className="flex flex-row justify-between">
-              <div className="text-lg font-bold">배송 정보</div>
+            <div className="text-lg font-bold">상품 주문 정보 등록</div>
+            <hr className="border border-neutral-300 w-full mx-auto my-3" />
+            <div className="flex flex-row justify-between items-center">
+              <div className="text-base font-semibold pl-2 pt-2 ">
+                배송 정보
+              </div>
               {hasOrderInfo && !isEditMode && (
-                <div className="flex flex-row gap-2 mr-1">
+                <div className="flex flex-row gap-2 mt-2 mr-1">
                   <button onClick={() => setIsEditMode(true)}>
                     <TbPencil className="text-neutral-500 w-5 h-5" />
                   </button>
@@ -139,8 +148,6 @@ function OrderFormPage() {
                 </div>
               )}
             </div>
-            <hr className="border border-neutral-300 w-full mx-auto my-3" />
-            <div className="flex flex-row justify-end"></div>
             <div className="flex text-sm flex-col items-start py-1 px-4 mt-5 text-black bg-white rounded-xl shadow-sm border border-neutral-200 font-medium">
               {isEditMode || !hasOrderInfo ? (
                 <>

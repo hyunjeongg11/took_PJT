@@ -3,7 +3,10 @@ import { useParams } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import deliveryIcon from '../../assets/payment/deliveryTook.png'; // 배달 took 아이콘 경로
 import isMeIcon from '../../assets/payment/isMe.png'; // 본인 아이콘 경로
-import { getDeliveryMembersApi, changePickUpStatusApi } from '../../apis/delivery';
+import {
+  getDeliveryMembersApi,
+  changePickUpStatusApi,
+} from '../../apis/delivery';
 import { getUserInfoApi } from '../../apis/user';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { useUser } from '../../store/user';
@@ -18,7 +21,7 @@ function TookDetailsPage() {
     const fetchUsers = async () => {
       try {
         const membersResponse = await getDeliveryMembersApi(id);
-        const userPromises = membersResponse.map(async member => {
+        const userPromises = membersResponse.map(async (member) => {
           const userInfo = await getUserInfoApi({ userSeq: member.userSeq });
           return {
             name: userInfo.userName,
@@ -32,7 +35,10 @@ function TookDetailsPage() {
         const usersData = await Promise.all(userPromises);
         setUsers(usersData);
       } catch (error) {
-        console.error('파티 참가자 정보를 가져오는 중 오류가 발생했습니다:', error);
+        console.error(
+          '파티 참가자 정보를 가져오는 중 오류가 발생했습니다:',
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -44,8 +50,8 @@ function TookDetailsPage() {
   const handleConfirmClick = async (deliveryGuestSeq) => {
     try {
       await changePickUpStatusApi(deliveryGuestSeq);
-      setUsers(prevUsers =>
-        prevUsers.map(user =>
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
           user.deliveryGuestSeq === deliveryGuestSeq
             ? { ...user, status: '완료' }
             : user
@@ -72,7 +78,11 @@ function TookDetailsPage() {
             </div>
             <div className="text-right">
               <button
-                onClick={() => user.isMe && !isCompleted && handleConfirmClick(user.deliveryGuestSeq)}
+                onClick={() =>
+                  user.isMe &&
+                  !isCompleted &&
+                  handleConfirmClick(user.deliveryGuestSeq)
+                }
                 className={`py-2.5 w-24 rounded-full text-sm font-bold ${isCompleted ? 'bg-[#FF7F50] text-white' : 'bg-neutral-400 text-white'}`}
               >
                 {isCompleted ? '확인 완료' : '미확인'}
@@ -104,13 +114,13 @@ function TookDetailsPage() {
 
       <div className="flex flex-col mt-4 px-4 font-bold">
         <div className="bg-[#FBFBFB] p-5 rounded-xl shadow-lg border border-inherit max-h-[550px] overflow-y-scroll">
-          <div className="text-gray-500 mb-4 text-sm">{/* 날짜 정보 추가 필요 */}</div>
+          <div className="text-gray-500 mb-4 text-sm">
+            {/* 날짜 정보 추가 필요 */}
+          </div>
           <div className="flex items-center mb-4">
             <img src={deliveryIcon} alt="Took" className="w-14 h-14" />
             <div className="ml-4">
-              <div className="text-base text-black">
-                총 {users.length}명
-              </div>
+              <div className="text-base text-black">총 {users.length}명</div>
             </div>
           </div>
 

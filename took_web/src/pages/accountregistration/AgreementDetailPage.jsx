@@ -39,7 +39,8 @@ const termsData = [
 function AgreementDetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { scrollToIndex, checkedItems: initialCheckedItems = {} } = location.state || {};
+  const { scrollToIndex, checkedItems: initialCheckedItems = {} } =
+    location.state || {};
   const termRefs = useRef([]);
   const [checkedItems, setCheckedItems] = useState(initialCheckedItems);
 
@@ -53,7 +54,10 @@ function AgreementDetailPage() {
   }, [scrollToIndex]);
 
   const handleAgreementChange = (index) => {
-    setCheckedItems((prev) => ({ ...prev, [`terms${index + 1}`]: !prev[`terms${index + 1}`] }));
+    setCheckedItems((prev) => ({
+      ...prev,
+      [`terms${index + 1}`]: !prev[`terms${index + 1}`],
+    }));
   };
 
   const handleAllAgreementChange = () => {

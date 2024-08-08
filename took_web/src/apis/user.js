@@ -86,7 +86,7 @@ export const loginApi = async (params, setAccessToken) => {
       setAccessToken(accessToken);
       localStorage.setItem('accessToken', accessToken);
     }
-
+    
     return response.data;
   } catch (err) {
     return handleApiError(err);
@@ -168,7 +168,6 @@ export const modifyPwdApi = async (params) => {
   }
 };
 
-
 export const logoutApi = async () => {
   try {
     const response = await request.get('/api/user/sign-out');
@@ -176,19 +175,45 @@ export const logoutApi = async () => {
   } catch (err) {
     return handleApiError(err);
   }
-}
+};
 
 // 근처에 사는 사람들 List
 // 요청
 // {
 //   ”lon” :  ,
-//   ”lat”  : 
+//   ”lat”  :
 //   }
-export const nerUserApi = async () => {
+export const getUserApi = async () => {
   try {
     const response = await request.post('/api/user/delivery-near-user');
     return response.data;
-  } catch(err) {
+  } catch (err) {
+    return handleApiError(err);
+  }
+};
+
+
+export const getUserLocation = async () => {
+  try {
+    
+  } catch (error) {
+
+  }
+}
+
+export const writeUserLocation = async ( {latitude, longitude} ) => {
+  try {
+    
+  } catch (error) {
+
+  }
+}
+
+export const modifyUserLocation = async ( params) => {
+  try {
+    const response = await request.put('/api/user/setAddress', params);
+    return response.data;
+  } catch (error) {
     return handleApiError(err);
   }
 }

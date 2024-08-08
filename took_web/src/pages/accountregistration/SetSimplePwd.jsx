@@ -65,7 +65,9 @@ function SetSimplePwdPage() {
     try {
       const response = await linkAccountApi(params);
       console.log(response);
-      navigate('/accountcomplete', { state: { bank, account, password, accountName, easyPwd: firstPassword } });
+      navigate('/accountcomplete', {
+        state: { bank, account, password, accountName, easyPwd: firstPassword },
+      });
     } catch (error) {
       console.error('API 호출 중 오류 발생:', error);
     }
@@ -128,8 +130,10 @@ function SetSimplePwdPage() {
             비밀번호가 일치하지 않아요 <br /> 다시 입력해주세요{' '}
             <span className="text-black"> {attemptCount}/3</span>
           </div>
+        ) : isPasswordSet ? (
+          '다시 한 번 입력해주세요'
         ) : (
-          isPasswordSet ? '다시 한 번 입력해주세요' : '간편 비밀번호 설정'
+          '간편 비밀번호 설정'
         )}
       </div>
       <div className="flex justify-center mb-5">{renderDots()}</div>

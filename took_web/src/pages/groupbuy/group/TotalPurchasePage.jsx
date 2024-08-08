@@ -6,20 +6,22 @@ import { FiPlusCircle } from 'react-icons/fi';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { TbPencil } from 'react-icons/tb';
 import { formatNumber } from '../../../utils/format';
-import { getAllPurchaseApi, deleteMyPurchaseApi, getMyPurchaseApi } from '../../../apis/groupBuy/purchase';
+import {
+  getAllPurchaseApi,
+  deleteMyPurchaseApi,
+} from '../../../apis/groupBuy/purchase';
 import { getUserInfoApi } from '../../../apis/user.js';
 import { useUser } from '../../../store/user.js';
 
 function TotalPurchasePage() {
-  const navigate = useNavigate();
-  const { id: shopSeq } = useParams();
+  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
+  const { id: shopSeq } = useParams(); // 현재 경로에서 shopSeq 값을 가져옴
   const [purchaseData, setPurchaseData] = useState([]);
   const [totalAmountSum, setTotalAmountSum] = useState(0);
   const [loading, setLoading] = useState(true);
   const { seq: currentUserSeq } = useUser();
   const [showModal, setShowModal] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState(null);
-  const [hasMyPurchase, setHasMyPurchase] = useState(false);
 
   useEffect(() => {
     const fetchPurchaseData = async () => {
@@ -30,7 +32,9 @@ function TotalPurchasePage() {
         const purchasesWithUserNames = await Promise.all(
           purchases.map(async (purchase) => {
             try {
-              const userInfo = await getUserInfoApi({ userSeq: purchase.userSeq });
+              const userInfo = await getUserInfoApi({
+                userSeq: purchase.userSeq,
+              });
               return { ...purchase, userName: userInfo.userName };
             } catch (error) {
               console.error('Error fetching user info:', error);
@@ -51,35 +55,23 @@ function TotalPurchasePage() {
     fetchPurchaseData();
   }, [shopSeq]);
 
-  useEffect(() => {
-    const checkMyPurchase = async () => {
-      try {
-        const myPurchase = await getMyPurchaseApi({ userSeq: currentUserSeq, shopSeq });
-        setHasMyPurchase(!myPurchase);
-      } catch (error) {
-        if (error.response && error.response.status === 403) {
-          console.log('No purchase info found, user can create one.');
-          setHasMyPurchase(false);
-        } else {
-          console.error('Error checking my purchase:', error);
-        }
-      }
-    };
-
-    checkMyPurchase();
-  }, [currentUserSeq, shopSeq]);
-
   const handleDelete = async () => {
     try {
       await deleteMyPurchaseApi(purchaseToDelete);
-      setPurchaseData(purchaseData.filter(purchase => purchase.purchaseSeq !== purchaseToDelete));
+      setPurchaseData(
+        purchaseData.filter(
+          (purchase) => purchase.purchaseSeq !== purchaseToDelete
+        )
+      );
       setShowModal(false);
     } catch (error) {
       console.error('Error deleting purchase:', error);
     }
   };
 
+  // 수정 버튼 클릭 시 호출되는 함수
   const handleEdit = (purchase) => {
+    // 특정 구매 정보(purchase)를 상태로 전달하며, /groupbuy/my-order/:shopSeq 페이지로 이동
     navigate(`/groupbuy/my-order/${shopSeq}`, { state: { purchase } });
   };
 
@@ -100,13 +92,16 @@ function TotalPurchasePage() {
           <div className="flex flex-col px-4 text-xs text-black">
             <div className="flex flex-row justify-between">
               <div className="text-lg font-bold">전체 구매 정보</div>
-              {!hasMyPurchase && (
-                <FiPlusCircle onClick={() => navigate(`/groupbuy/my-order/${shopSeq}`)} className="w-5 h-5 mt-1 mr-1" />
-              )}
+              <FiPlusCircle
+                onClick={() => navigate(`/groupbuy/my-order/${shopSeq}`)}
+                className="w-5 h-5 mt-1 mr-1"
+              />
             </div>
             <hr className="border border-neutral-300 w-full mx-auto my-3" />
             {purchaseData.length === 0 ? (
-              <div className="text-center text-gray-500">등록된 구매 정보가 없습니다.</div>
+              <div className="text-center text-gray-500">
+                등록된 구매 정보가 없습니다.
+              </div>
             ) : (
               purchaseData.map((el, idx) => (
                 <div key={idx} className="my-4">
@@ -124,7 +119,7 @@ function TotalPurchasePage() {
                       <div className="flex flex-row items-center ml-auto mr-2 gap-2">
                         <TbPencil
                           className="w-5 h-5 text-neutral-500 cursor-pointer"
-                          onClick={() => handleEdit(el)}
+                          onClick={() => handleEdit(el)} // 수정 버튼 클릭 시 handleEdit 호출
                         />
                         <FaRegTrashAlt
                           className="w-4 h-4 text-neutral-500 cursor-pointer"
@@ -141,18 +136,24 @@ function TotalPurchasePage() {
                       <span className="font-bold">물품명</span>
                       <div className="text-right">
                         {el.productList.map((product, productIdx) => (
-                          <div key={productIdx} className="text-xs">{product.productName}</div>
+                          <div key={productIdx} className="text-xs">
+                            {product.productName}
+                          </div>
                         ))}
                       </div>
                     </div>
                     <div className="flex justify-between mb-2">
                       <span className="font-bold">배달비</span>
-                      <div className="text-right">{formatNumber(el.shipCost)}원</div>
+                      <div className="text-right">
+                        {formatNumber(el.shipCost)}원
+                      </div>
                     </div>
                     <hr className="my-2 border-neutral-300" />
                     <div className="flex justify-between">
                       <span className="font-bold text-black">전체 금액</span>
-                      <div className="text-right text-black font-semibold">{formatNumber(el.total)}원</div>
+                      <div className="text-right text-black font-semibold">
+                        {formatNumber(el.total)}원
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -160,7 +161,9 @@ function TotalPurchasePage() {
             )}
           </div>
           <hr className="border border-neutral-300 w-[90%] my-2 mx-auto" />
-          <div className="text-black font-bold text-lg text-center px-5 py-3">총 금액 : {formatNumber(totalAmountSum)}원</div>
+          <div className="text-black font-bold text-lg text-center px-5 py-3">
+            총 금액 : {formatNumber(totalAmountSum)}원
+          </div>
         </div>
       </div>
 

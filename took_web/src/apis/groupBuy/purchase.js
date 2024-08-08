@@ -78,7 +78,9 @@ export const getAllPurchaseApi = async (shopSeq) => {
 // }
 export const getMyPurchaseApi = async ({ userSeq, shopSeq }) => {
   try {
-    const response = await request.get(`/api/purchase/select/${shopSeq}/${userSeq}`);
+    const response = await request.get(
+      `/api/purchase/select/${shopSeq}/${userSeq}`
+    );
     return response.data;
   } catch (error) {
     return handleApiError(error);

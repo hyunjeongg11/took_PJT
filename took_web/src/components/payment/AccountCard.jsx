@@ -1,16 +1,13 @@
-import React from "react";
+import React from 'react';
 // import { formatAccountNumber } from '../../utils/accountNumFormat'
 import { formatNumber } from '../../utils/format';
 
-
-
 const bankImages = import.meta.glob('../../assets/payment/bank/*.png', {
-    eager: true,
-  });
-  const stockImages = import.meta.glob('../../assets/payment/stock/*.png', {
-    eager: true,
-  });
-  
+  eager: true,
+});
+const stockImages = import.meta.glob('../../assets/payment/stock/*.png', {
+  eager: true,
+});
 
 function AccountCard({ accounts, onClose, onSelect }) {
   const getImagePath = (bankName) => {
@@ -42,12 +39,19 @@ function AccountCard({ accounts, onClose, onSelect }) {
             />
             <div className="text-left">
               <div className="text-sm font-bold">{account.bankName}</div>
-              <div className="text-xs">{account.accountNum} ({formatNumber(account.balance)}원)</div>
+              <div className="text-xs">
+                {account.accountNum} ({formatNumber(account.balance)}원)
+              </div>
               <div className="text-xs text-gray-500">{account.accountName}</div>
             </div>
           </div>
         ))}
-        <button onClick={onClose} className="mt-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-md">닫기</button>
+        <button
+          onClick={onClose}
+          className="mt-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-md"
+        >
+          닫기
+        </button>
       </div>
     </div>
   );

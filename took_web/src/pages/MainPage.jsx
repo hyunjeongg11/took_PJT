@@ -1,285 +1,113 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-
+import { TookButton } from '../components/main/TookButton';
+import taxi from '../assets/main/taxi.png';
+import pay from '../assets/main/pay.png';
+import delivery from '../assets/main/delivery.png';
+import shop from '../assets/main/shop.png';
+import took from '../assets/took.png';
+import { useUser } from '../store/user';
 function MainPage() {
+  const { isLoggedIn } = useUser();
+  console.log(isLoggedIn);
+  const linkPath = isLoggedIn ? '/mypage' : '/login';
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-gray-100 p-4">
-      <h1 className="text-3xl font-bold mb-8 font-dela text-main">took!</h1>
-      <div className="space-y-4">
-        <Link to="/login">
-          <button className="w-full px-6 py-3 bg-main bg-opacity-90 text-white rounded hover:bg-blue-700 transition">
-            Login
-          </button>
-        </Link>
-        <Link to="/signup">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Sign Up
-          </button>
-        </Link>
-        <Link to="/mypage">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Mypage
-          </button>
-        </Link>
-        <Link to="/userinfo">
-          <button className="w-full px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-700 transition">
-            User Info
-          </button>
-        </Link>
-        <Link to="/account">
-          <button className="w-full px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-700 transition">
-            계좌정보등록
-          </button>
-        </Link>
-        <Link to="/complete">
-          <button className="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 transition">
-            3번째 화면
-          </button>
-        </Link>
-        <Link to="/paymentTemp">
-          <button className="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 transition">
-            1번째 화면
-          </button>
-        </Link>
-        <Link to="/pwd">
-          <button className="w-full px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700 transition">
-            2번째 화면
-          </button>
-        </Link>
-        <Link to="/payment">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Payment
-          </button>
-        </Link>
-        <Link to="/modifyPwd">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Modify Password
-          </button>
-        </Link>
-        <Link to="/select">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Select
-          </button>
-        </Link>
-        <Link to="/agreement">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Agreement
-          </button>
-        </Link>
-        <Link to="/agreementdetail">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Agreement Detail
-          </button>
-        </Link>
-        <Link to="/verification">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Verification
-          </button>
-        </Link>
-        <Link to="/accountcomplete">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Account Complete
-          </button>
-        </Link>
-        <Link to="/notification">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Notification
-          </button>
-        </Link>
-        <Link to="/location">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Location Setting
-          </button>
-        </Link>
-        <Link to="/tookDetails">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Took Details
-          </button>
-        </Link>
-        <Link to="/tookHistory">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Took History
-          </button>
-        </Link>
-        <Link to="/payment-methods">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Payment Methods
-          </button>
-        </Link>
-        <Link to="/transaction-history">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Transaction History
-          </button>
-        </Link>
-        <Link to="/transaction-detail">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Transaction Detail
-          </button>
-        </Link>
-        <Link to="/mytook">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            My Took
-          </button>
-        </Link>
-        <Link to="/sendinput">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Send Input
-          </button>
-        </Link>
-        <Link to="/dutch/userlist">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            User List
-          </button>
-        </Link>
-        <Link to="/dutch/input">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Payment Input
-          </button>
-        </Link>
-        <Link to="/dutch/total">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Payment Total
-          </button>
-        </Link>
-        <Link to="/dutch/request">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Pay Request
-          </button>
-        </Link>
-        <Link to="/mytookmoney">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            My Took Money
-          </button>
-        </Link>
-        <Link to="/delivery/create">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Create Delivery
-          </button>
-        </Link>
-        <Link to="/delivery/detail">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Delivery Detail
-          </button>
-        </Link>
-        <Link to="/delivery/list">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Delivery List
-          </button>
-        </Link>
-        <Link to="/delivery/input">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Delivery Pay Input
-          </button>
-        </Link>
-        <Link to="/delivery/21/complete">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Delivery Complete
-          </button>
-        </Link>
-        <Link to="/delivery/21/status">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Delivery Status
-          </button>
-        </Link>
-        <Link to="/groupbuy/list">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Buy List
-          </button>
-        </Link>
-        <Link to="/groupbuy/:id">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Buy Detail
-          </button>
-        </Link>
-        <Link to="/groupbuy/join/:id">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Buy Join
-          </button>
-        </Link>
-        <Link to="/groupbuy/form">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Buy Form
-          </button>
-        </Link>
-        <Link to="/taxi/input">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Taxi Cost Input
-          </button>
-        </Link>
-        <Link to="/taxi/request">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Taxi Cost Request
-          </button>
-        </Link>
-        <Link to="/taxi/main">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Taxi Main
-          </button>
-        </Link>
-        <Link to="/taxi/create">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Create Chatting
-          </button>
-        </Link>
-        <Link to="/taxi/setting">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Taxi Chatting Setting
-          </button>
-        </Link>
-        <Link to="/taxi/path">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Taxi Path Setting
-          </button>
-        </Link>
-        <Link to="/taxi/path-list">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Current Path List
-          </button>
-        </Link>
-        <Link to="/chat/delivery/main">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Delivery Chatting Main
-          </button>
-        </Link>
-        <Link to="/chat/groupbuy/main">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Groupbuy Chatting Main
-          </button>
-        </Link>
-        <Link to="/chat/taxi/main">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Taxi Chatting Main
-          </button>
-        </Link>
-        <Link to="/chat/list">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Chatting List
-          </button>
-        </Link>
-        <Link to="/chat/took">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Took Chatting
-          </button>
-        </Link>
-        <Link to="/groupbuy/my-purchase">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            My Purchase
-          </button>
-        </Link>
-        <Link to="/groupbuy/order">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Order Form
-          </button>
-        </Link>
-        <Link to="/groupbuy/total/:id">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            Total Purchase
-          </button>
-        </Link>
-        <Link to="/groupbuy/my-order">
-          <button className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition">
-            GroupBuy My Order Form
-          </button>
+    <div className="flex min-h-screen items-center justify-center  flex-col  max-w-screen ">
+      <div className="flex gap-5 justify-between w-full items-center bg-white pt-10 px-7">
+        <div className="flex flex-col justify-center ml-3 items-center">
+          <Link to="/pwd">
+            <div className="font-dela text-main text-4xl">took</div>
+            <span className="text-blaxk font-nanum text-[11px] mt-[1px]">
+              올인원 정산 플랫폼
+            </span>
+          </Link>
+        </div>
+
+        <div className="flex gap-3 self-start pt-4">
+          <Link to={linkPath}>
+            <img
+              loading="lazy"
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/c1e55df56d29e4336515bf13d6aa348e4b790a713dffb53d03b32f27bdf6ac66?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
+              className="object-contain shrink-0 aspect-square w-[29px]"
+            />
+          </Link>
+          <Link to="/chat/took">
+            <img
+              loading="lazy"
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/0f0ec4c383e210e79fc72139b11f1158345010bba96d1495c2b7636af6b5e5d8?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
+              className="object-contain shrink-0 my-auto w-6 aspect-square"
+            />
+          </Link>
+        </div>
+      </div>
+      <div className="bg-gradient-to-b from-white to-[#FFDCCF] pb-5 px-7 w-full">
+        <div className="flex flex-col p-4 mt-12 mx-auto w-full font-nanum rounded-3xl bg-[#ffe1d6]">
+          <div className="grid grid-cols-2 gap-2">
+            <Link to="/dutch/userlist">
+              <TookButton
+                title="정산 툭"
+                content="<div>주변 사람들과<br/>간편한 정산</div>"
+                img={pay}
+              />
+            </Link>
+            <Link to="/taxi/main">
+              <TookButton
+                title="택시 툭"
+                content="<div>먼거리 이동도<br/>저렴하고 빠르게</div>"
+                img={taxi}
+              />
+            </Link>
+            <Link to="/delivery/list">
+              <TookButton
+                title="배달 툭"
+                content="<div>배달비 절약하고<br/>음식도 맛있게</div>"
+                img={delivery}
+              />
+            </Link>
+            <Link to="groupbuy/main">
+              <TookButton
+                title="공구 툭"
+                content="<div>공동구매로<br/>알뜰하게 구매</div>"
+                img={shop}
+              />
+            </Link>
+          </div>
+        </div>
+        <div className="flex gap-5 self-center mt-5 w-full items-end justify-around">
+          <Link to="chat/list">
+            <img
+              loading="lazy"
+              srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/9b7cf5453b4748f0f35ba95b2c3864245916cbd798cffe83216258f085f64f0d?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/9b7cf5453b4748f0f35ba95b2c3864245916cbd798cffe83216258f085f64f0d?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/9b7cf5453b4748f0f35ba95b2c3864245916cbd798cffe83216258f085f64f0d?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/9b7cf5453b4748f0f35ba95b2c3864245916cbd798cffe83216258f085f64f0d?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/9b7cf5453b4748f0f35ba95b2c3864245916cbd798cffe83216258f085f64f0d?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/9b7cf5453b4748f0f35ba95b2c3864245916cbd798cffe83216258f085f64f0d?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/9b7cf5453b4748f0f35ba95b2c3864245916cbd798cffe83216258f085f64f0d?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/9b7cf5453b4748f0f35ba95b2c3864245916cbd798cffe83216258f085f64f0d?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
+              className="object-contain shrink-0 max-w-full rounded-none aspect-[0.87] w-[122px]"
+            />
+          </Link>
+          <div className="flex flex-col">
+            <Link to="/account">
+              <img
+                loading="lazy"
+                src="https://cdn.builder.io/api/v1/image/assets/TEMP/0b78b4f2a34b054ea6b200953659047054914f073223a91dba4e7707856cce89?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
+                className="object-contain rounded-none  w-full"
+              />
+            </Link>
+            <Link to="/transaction-history">
+              <img
+                loading="lazy"
+                src="https://cdn.builder.io/api/v1/image/assets/TEMP/85f4160bae50be89544857494d7049d87b93b2c4a8df0bcd5704b860230a5afc?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
+                className="object-contain mt-5 rounded-none  w-full"
+              />
+            </Link>
+          </div>
+        </div>
+        <Link to="/tookHistory" className="relative font-nanum">
+          <img
+            src={took}
+            alt="took"
+            className="absolute right-2 -top-6 w-7 opacity-90 h-6 z-20"
+          />
+          <div className="relative flex justify-between px-5 text-sm py-5 mt-8 bg-white bg-opacity-80 rounded-2xl z-10">
+            <div>툭 히스토리 보러가기</div>
+            <div className="text-gray-700">{'>'}</div>
+          </div>
         </Link>
       </div>
     </div>

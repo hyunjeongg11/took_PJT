@@ -1,77 +1,12 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import taxiIcon from '../../assets/chat/taxiIcon.png';
 import deliveryIcon from '../../assets/chat/deliveryIcon.png';
 import buyingIcon from '../../assets/chat/buyingIcon.png';
 import tookIcon from '../../assets/chat/tookIcon.png';
-
-const tempData = [
-  {
-    chatRoomId: 1,
-    chatCategory: 'taxi',
-    chatUser: '명지',
-    recentChatMessage: '정산 완료 되었습니다.',
-    recentChatTime: '2024-07-30 08:58:00',
-    unreadMessages: 2,
-  },
-  {
-    chatRoomId: 2,
-    chatCategory: 'delivery',
-    chatUser: 'BBQ 명지점',
-    recentChatMessage: '메뉴 다 넣었어요!',
-    recentChatTime: '2024-07-29 18:58:00',
-    unreadMessages: 1,
-  },
-  {
-    chatRoomId: 3,
-    chatCategory: 'delivery',
-    chatUser: '정희수',
-    recentChatMessage: '메뉴 다 정하셨나요?',
-    recentChatTime: '2024-07-26 20:58:00',
-    unreadMessages: 0,
-  },
-  {
-    chatRoomId: 4,
-    chatCategory: 'taxi',
-    chatUser: '공지환',
-    recentChatMessage: '정산 완료 되었습니다.',
-    recentChatTime: '2024-07-22 08:58:00',
-    unreadMessages: 0,
-  },
-  {
-    chatRoomId: 5,
-    chatCategory: 'buying',
-    chatUser: '김태훈',
-    recentChatMessage: '공구 사이트 공유 드리겠습니다~',
-    recentChatTime: '2024-07-20 08:58:00',
-    unreadMessages: 0,
-  },
-  {
-    chatRoomId: 6,
-    chatCategory: 'delivery',
-    chatUser: '이재찬',
-    recentChatMessage: '메뉴 다 넣었어요!',
-    recentChatTime: '2024-07-14 08:58:00',
-    unreadMessages: 0,
-  },
-  {
-    chatRoomId: 7,
-    chatCategory: 'took',
-    chatUser: 'took',
-    recentChatMessage: '최근 업데이트 세부 사항입니다.',
-    recentChatTime: '2024-07-25 08:58:00',
-    unreadMessages: 0,
-  },
-  {
-    chatRoomId: 8,
-    chatCategory: 'delivery',
-    chatUser: '정성찬',
-    recentChatMessage: '배달 예정 기간은 일주일입니다.',
-    recentChatTime: '2024-07-11 08:58:00',
-    unreadMessages: 0,
-  },
-];
+import { getChatListApi } from '../../apis/chat/chat';
+import { useUser } from '../../store/user';
 
 function formatTime(timeString) {
   const date = new Date(timeString);
@@ -97,32 +32,52 @@ function formatTime(timeString) {
 
 function getIcon(category) {
   switch (category) {
-    case 'taxi':
+    case 2:
       return taxiIcon;
-    case 'delivery':
+    case 1:
       return deliveryIcon;
-    case 'buying':
+    case 3:
       return buyingIcon;
-    case 'took':
+    case 4:
       return tookIcon;
     default:
       return null;
   }
 }
 
-function isEnglish(str) {
-  return /^[A-Za-z\s]+$/.test(str);
-}
-
 function ChattingListPage() {
   const navigate = useNavigate();
-  const sortedTempData = tempData.sort(
-    (a, b) => new Date(b.recentChatTime) - new Date(a.recentChatTime)
-  );
+  const [rooms, setRooms] = useState([]);
+  const { seq } = useUser();
+  const handleChatRoomClick = (chatRoom) => {
+    let route;
+    switch (chatRoom.category) {
+      case 1:
+        route = `/chat/delivery/${chatRoom.roomSeq}`;
+        break;
+      case 2:
+        route = `/chat/taxi/${chatRoom.roomSeq}`;
+        break;
+      case 3:
+        route = `/chat/buy/${chatRoom.roomSeq}`;
+        break;
+      default:
+        route = `/chat/${chatRoom.roomSeq}`;
+    }
 
-  const handleChatRoomClick = (chatRoomId) => {
-    navigate(`/chat/${chatRoomId}`);
+    navigate(route, { state: { chatRoom } });
   };
+
+  const loadChatRooms = async () => {
+    const response = await getChatListApi(seq);
+    console.log(response);
+    setRooms(response);
+    console.log('rooms', rooms);
+  };
+
+  useEffect(() => {
+    loadChatRooms();
+  }, []);
 
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
@@ -136,26 +91,24 @@ function ChattingListPage() {
       <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
 
       <div className="flex flex-col">
-        {sortedTempData.map((chat) => (
+        {rooms.map((chat) => (
           <div
-            key={chat.chatRoomId}
+            key={chat.roomSeq}
             className="flex items-center px-6 py-4 border-b border-gray-200 cursor-pointer"
-            onClick={() => handleChatRoomClick(chat.chatRoomId)}
+            onClick={() => handleChatRoomClick(chat)}
           >
             <img
-              src={getIcon(chat.chatCategory)}
-              alt={chat.chatCategory}
+              src={getIcon(chat.category)}
+              alt={chat.category}
               className="w-11 h-11 mr-4"
             />
             <div className="flex-grow">
               <div className="flex justify-between">
-                <div
-                  className={`text-base font-bold ${isEnglish(chat.chatUser) ? 'font-dela mb-1' : ''}`}
-                >
-                  {chat.chatUser}
+                <div className={`text-base font-extrabold`}>
+                  {chat.roomTitle}
                 </div>
                 <div className="text-xs text-gray-500">
-                  {formatTime(chat.recentChatTime)}
+                  {formatTime(chat.createdAt)}
                 </div>
               </div>
               <div className="flex justify-between">

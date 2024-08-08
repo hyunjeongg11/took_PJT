@@ -5,7 +5,11 @@ import getProfileImagePath from '../../utils/getProfileImagePath';
 import { TbPencil } from 'react-icons/tb';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { getShopApi, deleteShopApi, joinGroupBuyApi, modifyShopStatusApi, isJoinApi } from '../../apis/groupBuy/shop';
+import {
+  getShopApi,
+  deleteShopApi,
+  joinGroupBuyApi,
+} from '../../apis/groupBuy/shop';
 import { useUser } from '../../store/user';
 
 const getRandomNumber = (min, max) => {

@@ -239,7 +239,10 @@ export const addTaxiPartyMemberApi = async (params) => {
 // 응답: 없음
 export const removeTaxiPartyMemberApi = async (params) => {
   try {
-    const response = await request.post(`/api/taxi/guest/${params.userSeq}`, params);
+    const response = await request.post(
+      `/api/taxi/guest/${params.userSeq}`,
+      params
+    );
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -369,7 +372,10 @@ export const isUserJoinedTaxiPartyApi = async (userSeq) => {
 // 응답: 없음
 export const setDestinationAndCostApi = async (params) => {
   try {
-    const response = await request.put('/api/taxi/guest/set/destinationAndCost', params);
+    const response = await request.put(
+      '/api/taxi/guest/set/destinationAndCost',
+      params
+    );
     return response.data;
   } catch (error) {
     return handleApiError(error);
