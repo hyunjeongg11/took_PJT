@@ -56,6 +56,8 @@ public class UserInfoResponseDto extends ResponseDto {
     @Schema(description = "닉네임")
     private String nickname;
 
+    @Schema(description = "성별")
+    private UserEntity.Gender gender;
     // 정적 팩토리 메서드 추가
     public static UserInfoResponseDto fromEntity(UserEntity user) {
         return new UserInfoResponseDto(
@@ -71,7 +73,8 @@ public class UserInfoResponseDto extends ResponseDto {
                 user.getLon(),
                 user.getImageNo(),
                 user.getRole(),
-                user.getNickname()
+                user.getNickname(),
+                user.getGender()
         );
     }
 
