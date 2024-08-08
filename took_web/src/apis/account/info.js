@@ -64,24 +64,20 @@ export const changeMainAccountApi = async (params) => {
 }
 */
 // 응답
-/*
-{
-  "code": "su",
-  "message": "Success.",
-  "list": [
-    {
-      "accountSeq": 1,
-      "main": true,
-      "accountName": "일반 결제 계좌"
-    },
-    {
-      "accountSeq": 2,
-      "main": false,
-      "accountName": "두번째 계좌"
-    }
-  ]
-}
-*/
+// {
+//   "code": "string",
+//   "message": "string",
+//   "list": [
+//     {
+//       "userSeq": 2,
+//       "accountSeq": 3,
+//       "accountName": "일반계좌",
+//       "accountNum": "508134283342",
+//       "bankNum": 21,
+//       "balance": 150000
+//     }
+//   ]
+// }
 export const getAccountListApi = async (params) => {
   try {
     const response = await request.post('/api/account/account-list', params);
