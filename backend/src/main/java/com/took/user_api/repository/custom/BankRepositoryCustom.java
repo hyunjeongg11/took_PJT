@@ -10,7 +10,5 @@ public interface BankRepositoryCustom {
     BankEntity isMatched(String accountNum, int accountPwd);
     Long findBankSeqByUserSeq(Long userSeq);
     Long findBalanceByBankSeq(Long bankSeq);
-    void update(Long bankSeq, Long bankCost);
     List<BankEntity> findBanksByBankSeq(List<Long> bankSeq);
-    void updateBalanceByBankSeq(Long balance, Long bankSeq);
 }

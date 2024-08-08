@@ -65,17 +65,6 @@ public class BankRepositoryCustomImpl implements BankRepositoryCustom {
     }
 
     @Override
-    public void update(Long bankSeq, Long bankCost) {
-
-        QBankEntity bank = QBankEntity.bankEntity;
-
-        jpaQueryFactory.update(bank)
-                .set(bank.balance, bankCost)
-                .where(bank.bankSeq.eq(bankSeq))
-                .execute();
-    }
-
-    @Override
     public List<BankEntity> findBanksByBankSeq(List<Long> bankSeq) {
 
         QBankEntity bank = QBankEntity.bankEntity;
@@ -84,15 +73,4 @@ public class BankRepositoryCustomImpl implements BankRepositoryCustom {
         return result;
 
     }
-
-    @Override
-    public void updateBalanceByBankSeq(Long balance, Long bankSeq) {
-        QBankEntity bank = QBankEntity.bankEntity;
-
-        jpaQueryFactory.update(bank)
-                .where(bank.bankSeq.eq(bankSeq))
-                .set(bank.balance, balance)
-                .execute();
-    }
-
 }

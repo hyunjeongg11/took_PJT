@@ -17,20 +17,6 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<MemberEntity> partyDetail(Long userSeq, Long partySeq) {
-        
-        QMemberEntity member = QMemberEntity.memberEntity;
-
-        List<MemberEntity> result = null;
-
-        result = jpaQueryFactory.selectFrom(member)
-                                .where(member.party.partySeq.eq(partySeq).and(member.user.userSeq.ne(userSeq)))
-                                .fetch();
-
-        return result;
-    }
-
-    @Override
     public void deleteMemberByPartySeq(Long partySeq, Long userSeq) {
 
         QMemberEntity member = QMemberEntity.memberEntity;

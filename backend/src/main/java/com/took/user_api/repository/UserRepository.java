@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-    UserEntity findByUserSeq(Long userSeq);
     boolean existsByUserId(String userId);
     UserEntity findByUserId(String userId);
     List<UserEntity> findByUserSeqIn(List<Long> userSeqs);
