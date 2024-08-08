@@ -26,173 +26,156 @@ import ParticipantList from '../../components/chat/ParticipantList';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
-const tempMember = [
-  {
-    member_seq: 1,
-    party_seq: 1,
-    user_seq: 1,
-    userName: '차민주',
-    imgNo: 19,
-    cost: 13000,
-    real_cost: 12000,
-    status: true,
-    receive: false,
-    is_leader: true,
-    gender: false,
-    created_at: '2024-07-06T00:23:00',
-    destination: '부산시 강서구 녹산산단335로 7 송정삼정그린코아더시티',
-  },
-  {
-    member_seq: 2,
-    party_seq: 1,
-    user_seq: 2,
-    userName: '조현정',
-    imgNo: 20,
-    cost: 8000,
-    real_cost: 7500,
-    status: true,
-    receive: false,
-    is_leader: false,
-    gender: false,
-    created_at: '2024-07-06T00:23:00',
-    destination: '부산시 강서구 명지국제5로 170-5 명일초등학교',
-  },
-  {
-    member_seq: 3,
-    party_seq: 1,
-    user_seq: 3,
-    userName: '정희수',
-    imgNo: 18,
-    cost: 16000,
-    real_cost: 14500,
-    status: true,
-    receive: false,
-    is_leader: false,
-    gender: false,
-    created_at: '2024-07-06T00:23:00',
-    destination: '부산시 서구 대영로73번길 39',
-  },
-];
-
-const tempUser = {
-  user_seq: 1,
-  userName: '차민주',
-  imgNo: 19,
-  gender: false,
-};
-
-const tempTaxi = {
-  taxi_seq: 1,
-  user_seq: 1,
-  room_seq: 1,
-  party_seq: 1,
-  room_title: '강서구 명지동',
-  gender: false, // 여성
-  count: 3,
-  max: 3,
-  status: 'OPEN',
-  created_at: '2024-07-06T00:23:00',
-  finishTime: '2024-07-06T18:30:00',
-  cost: 37000, // 현재 위치에서 목적지까지 예상 비용
-  master: 1, // 방장
-  payer: 1, // 결제자
-};
-
-const tempMessages = [
-  {
-    id: 1,
-    user_seq: 1,
-    userName: '차민주',
-    message: '안녕하세요!목적지가 어디신가요?',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 2,
-    user_seq: 2,
-    userName: '조현정',
-    message: '안녕하세요~ 강서구 녹산동에 삼정그린코아더시티 가능한가요?',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 3,
-    user_seq: 1,
-    userName: '차민주',
-    message: '네 가능합니다! 경로에 추가해주세요',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 4,
-    user_seq: 3,
-    userName: '정희수',
-    message: '안녕하세요~ 서구 동대신동2가에 삼익아파트 가능한가요?',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 5,
-    user_seq: 1,
-    userName: '차민주',
-    message: '네 가능합니다! 경로에 추가해주세요',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 6,
-    user_seq: 3,
-    userName: '정희수',
-    message: '알겠습니다!',
-    timestamp: '2024-07-06T10:12:00',
-  },
-];
 
 function TaxiChattingMainPage() {
+  const { id } = useParams();
+  const { seq } = useUser();
   const [messages, setMessages] = useState(tempMessages);
+  const [ users, setUsers ] = useState([]); 
   const [inputMessage, setInputMessage] = useState('');
+  const [ isCollapsed, setIsCollapsed ] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [showActionIcons, setShowActionIcons] = useState(false);
-  const [showMenu, setShowMenu] = useState(false); // 메뉴 보이기 상태 추가
-  const [showModal, setShowModal] = useState(false); // 모달창 보이기 상태 추가
-  const [modalMessage, setModalMessage] = useState(''); // 모달 메시지 상태 추가
+  const [ currentModal, setCurrentModal ] = useState(null);
+  const [showParticipantList, setShowParticipantList] = useState(false);
+
+  const scrollContainerRef = useRef(null);
+  const actionIconsRef = useRef(null);
+  const messagesEndRef = useRef(null);
+  const lastDateRef = useRef('');
+  const textareaRef = useRef(null);
+  const stompClient = useRef(null);
+  const currentSubscription = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [taxiInfo, setTaxiInfo] = useState(null);
+  const chatRoom = location.state?.chatRoom || null;
+  // todo : 채팅방 목록에서는 chatRoom에 roomTitle, 리더의 userSeq 담고, 
+  // id에 url 파라미터로 roomSeq 담아서 보내도록 했는데, 택시 상세 페이지에서 채팅방으로 넘어갈 때도 동일하게 넘어가도록 구현 필요 ( ChattingListPage 참고)
+
+
+  // const [showMenu, setShowMenu] = useState(false); // 메뉴 보이기 상태 추가
+  // const [showModal, setShowModal] = useState(false); // 모달창 보이기 상태 추가
+  // const [modalMessage, setModalMessage] = useState(''); // 모달 메시지 상태 추가
   const [taxiStatus, setTaxiStatus] = useState(tempTaxi.status); // 택시 상태 추가
   const [showSettlementButton, setShowSettlementButton] = useState(false); // 정산 버튼 상태 추가
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false); // 키보드 보이기 상태 추가
-  const navigate = useNavigate();
-  const messagesEndRef = useRef(null);
-  const scrollContainerRef = useRef(null);
-  const actionIconsRef = useRef(null);
-  const lastDateRef = useRef('');
+  useEffect(() => {
+    const socket = new SockJS(`${SERVER_URL}/ws`);
+    stompClient.current = Stomp.over(socket);
+
+    stompClient.current.connect({}, () => {
+      console.log('WebSocket connected');
+      enterRoom();
+      loadUsers();
+      // loadTaxiInfo(); // todo: 이 함수 구현 후 주석 해제하기
+    });
+
+    return () => {
+      if (stompClient.current && stompClient.current.connected) {
+        stompClient.current.disconnect();
+      }
+    };
+  });
+
+  const loadTaxiInfo = async () => {
+    // RoomSeq는 id에서 확인 가능
+    // todo:  RoomSeq 가지고 택시 정보 api로 불러오기
+    //
+  }
+
+  const fetchRoomMessages = async () => {
+    try {
+      const response = await getChatRoomMessageApi({
+        roomSeq: id,
+        userSeq: seq,
+      });
+      setMessages(response);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
+
+  const loadUsers = async () => {
+    try {
+      const response = await getUsersApi(id);
+      setUsers(response);
+      console.log(response);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+  
+  
+  const enterRoom = () => {
+    if (currentSubscription.current) {
+      currentSubscription.current.unsubscribe();
+    }
+    currentSubscription.current = subscribeToRoomMessages(id);
+    fetchRoomMessages();
+  };
+
+  function subscribeToRoomMessages(roomSeq) {
+    return stompClient.current.subscribe(
+      `/sub/chat/room/${roomSeq}`,
+      (messageOutput) => {
+        const newMessage = JSON.parse(messageOutput.body);
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      }
+    );
+  }
+
 
   const handleSendMessage = () => {
     if (inputMessage.trim() === '') return;
 
-    const newMessage = {
-      id: messages.length + 1,
-      user_seq: 1,
-      userName: '차민주',
+    const messageRequest = {
+      type: 'TALK',
+      roomSeq: id,
+      userSeq: seq,
       message: inputMessage,
-      timestamp: new Date().toISOString(),
     };
 
-    setMessages([...messages, newMessage]);
-    setInputMessage('');
-
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      setShowScrollButton(false);
-    }, 100);
+    if (stompClient.current && stompClient.current.connected) {
+      stompClient.current.send(
+        '/pub/message/send',
+        {},
+        JSON.stringify(messageRequest)
+      );
+      setInputMessage('');
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      console.error('WebSocket is not connected.');
+    }
   };
 
-  const getUserProfileImgNo = (user_seq) => {
-    const user = tempMember.find((member) => member.user_seq === user_seq);
-    return user ? user.imgNo : 1; // imgNo 기본값을 1로 설정
-  };
+  const leaveRoom = ({ roomSeq, userSeq }) => {
+    if (stompClient.current && stompClient.current.connected) {
+      const leaveRequest = { roomSeq, userSeq };
+      stompClient.current.send(
+        '/pub/room/leave',
+        {},
+        JSON.stringify(leaveRequest)
+      );
+      // todo 채팅방 나갈 때 로직 더 생각해보기! 일단은 채팅방만 나가도록 구현해둠
+      navigate(-1);
+    }
+  
+    const toggleCollapse = () => {
+      setIsCollapsed(!isCollapsed);
+    };}
+  
 
-  const handleScroll = () => {
-    const container = scrollContainerRef.current;
-    const isAtBottom =
-      container.scrollHeight - container.scrollTop <=
-      container.clientHeight + 100;
-    setShowScrollButton(!isAtBottom);
-  };
-
+    const handleScroll = () => {
+      const container = scrollContainerRef.current;
+      const isAtBottom =
+        container.scrollHeight - container.scrollTop <=
+        container.clientHeight + 1;
+      setShowScrollButton(!isAtBottom);
+    };
+  
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     setShowScrollButton(false);
@@ -202,47 +185,64 @@ function TaxiChattingMainPage() {
     setShowActionIcons(!showActionIcons);
   };
 
-  const handleClickOutside = (event) => {
-    if (
-      actionIconsRef.current &&
-      !actionIconsRef.current.contains(event.target)
-    ) {
-      setShowActionIcons(false);
-    }
-  };
-
-  const handleSettingDestination = () => {
-    navigate('/taxi/path');
-  };
-
-  const handleCheckDestinationList = () => {
-    navigate('/taxi/path-list');
-  };
-
-  const handleChatSetting = () => {
-    navigate('/taxi/setting');
-  };
-
-  const openModal = (message) => {
-    setModalMessage(message);
-    setShowModal(true);
+  
+  const openModal = (modalType) => {
+    setCurrentModal(modalType);
   };
 
   const closeModal = () => {
-    setShowModal(false);
+    setCurrentModal(null);
   };
 
-  const handleMenuToggle = () => {
-    setShowMenu(!showMenu);
+  const handleShowParticipantList = () => {
+    setShowParticipantList(true);
   };
 
-  const handleKickMember = (userName) => {
-    openModal(`${userName}님을 채팅방에서 내보내시겠습니까?`);
+  const handleCloseParticipantList = () => {
+    setShowParticipantList(false);
   };
 
-  const handleLeaveChatting = () => {
-    openModal('채팅방을 나가시겠습니까?');
-  };
+  // const handleClickOutside = (event) => {
+  //   if (
+  //     actionIconsRef.current &&
+  //     !actionIconsRef.current.contains(event.target)
+  //   ) {
+  //     setShowActionIcons(false);
+  //   }
+  // };
+
+  // const handleSettingDestination = () => {
+  //   navigate('/taxi/path');
+  // };
+
+  // const handleCheckDestinationList = () => {
+  //   navigate('/taxi/path-list');
+  // };
+
+  // const handleChatSetting = () => {
+  //   navigate('/taxi/setting');
+  // };
+
+  // const openModal = (message) => {
+  //   setModalMessage(message);
+  //   setShowModal(true);
+  // };
+
+  // const closeModal = () => {
+  //   setShowModal(false);
+  // };
+
+  // const handleMenuToggle = () => {
+  //   setShowMenu(!showMenu);
+  // };
+
+  // const handleKickMember = (userName) => {
+  //   openModal(`${userName}님을 채팅방에서 내보내시겠습니까?`);
+  // };
+
+  // const handleLeaveChatting = () => {
+  //   openModal('채팅방을 나가시겠습니까?');
+  // };
 
   const handleConfirmLeaveChatting = () => {
     navigate('/chat/list');
@@ -272,18 +272,25 @@ function TaxiChattingMainPage() {
     navigate('/taxi/input');
   };
 
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
 
   useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop =
-        scrollContainerRef.current.scrollHeight;
-    }
+    const handleResize = () => {
+      if (textareaRef.current) {
+        textareaRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -300,34 +307,70 @@ function TaxiChattingMainPage() {
     }
   }, [tempTaxi.count]);
 
+  // useEffect(() => {
+  //   const handleKeyboardShow = () => {
+  //     setIsKeyboardVisible(true);
+  //   };
+  //   const handleKeyboardHide = () => {
+  //     setIsKeyboardVisible(false);
+  //   };
+
+  //   window.addEventListener('keyboardDidShow', handleKeyboardShow);
+  //   window.addEventListener('keyboardDidHide', handleKeyboardHide);
+
+  //   return () => {
+  //     window.removeEventListener('keyboardDidShow', handleKeyboardShow);
+  //     window.removeEventListener('keyboardDidHide', handleKeyboardHide);
+  //   };
+  // }, []);
+
   useEffect(() => {
-    const handleKeyboardShow = () => {
-      setIsKeyboardVisible(true);
-    };
-    const handleKeyboardHide = () => {
-      setIsKeyboardVisible(false);
-    };
-
-    window.addEventListener('keyboardDidShow', handleKeyboardShow);
-    window.addEventListener('keyboardDidHide', handleKeyboardHide);
-
-    return () => {
-      window.removeEventListener('keyboardDidShow', handleKeyboardShow);
-      window.removeEventListener('keyboardDidHide', handleKeyboardHide);
-    };
-  }, []);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 72)}px`;
+    }
+  }, [inputMessage]);
 
   return (
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-5 py-3">
         <BackButton />
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
-          {tempTaxi.room_title}
+          {chatRoom?.roomTitle || '채팅방'}
         </div>
-        <FaBars className="mt-2.5" onClick={handleMenuToggle} />
-      </div>
+        <FaBars className="mt-2.5" onClick={handleShowParticipantList} />
+      </div><div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
-      {showMenu && (
+<div className="w-full px-2 py-1">
+  <div
+    className={`flex items-start p-2 m-1 rounded-lg shadow-md ${isCollapsed ? 'bg-opacity-80 bg-white shadow-none' : 'bg-white'}`}
+  >
+    <img src={speaker} alt="speaker" className="w-6 h-6 ml-1" />
+    <div className="ml-2 flex-grow">
+      <div className="text-sm mt-[2px]"></div>
+      {!isCollapsed && (
+        <div className="text-xs flex-col gap-2 justify-between flex py-2">
+          <div className="mb-1.5">수령 장소
+            <span className="ml-5">{deliveryInfo?.pickupPlace || ''}</span>
+          </div>
+          <div className="mb-1.5">주문 링크
+            <span className="ml-5"><a href={deliveryInfo?.notice || ''} className="underline">함께 주문하러 가기</a></span>
+          
+          </div>
+        </div>
+      )}
+    </div>
+    <button onClick={toggleCollapse} className="focus:outline-none">
+      {isCollapsed ? (
+        <FaChevronDown className="h-4 w-4 text-gray-400" />
+      ) : (
+        <FaChevronUp className="h-4 w-4 text-gray-400" />
+      )}
+    </button>
+  </div>
+</div>
+{/* 
+      {/* {showMenu && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-50">
           <div className="w-4/5 h-full bg-white shadow-md p-4 relative">
             <button
@@ -412,9 +455,9 @@ function TaxiChattingMainPage() {
             )}
           </div>
         </div>
-      )}
+      )} */}
 
-      {showModal && (
+      {/* {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center text-base items-center z-50">
           <div className="bg-white rounded-2xl p-6 w-64">
             <p className="mb-4">{modalMessage}</p>
@@ -450,194 +493,182 @@ function TaxiChattingMainPage() {
             </div>
           </div>
         </div>
-      )}
-
+      )} */}
+{/* 
       <div className="w-full px-2 py-1">
         <div className="flex items-center bg-white p-2 rounded-lg shadow-md">
           <img src={speaker} alt="speaker" className="w-6 h-6 mx-1" />
           <div className="text-sm text-gray-700">경로를 설정해주세요!</div>
         </div>
-      </div>
+      </div> */} */}
 
-      <div
+    <div
         className="flex-grow overflow-y-scroll px-4 py-2 space-y-4 relative"
         onScroll={handleScroll}
         ref={scrollContainerRef}
-        style={{ paddingBottom: '100px' }}
       >
-        {messages.map((msg, index, array) => {
-          const sameUserAndTime =
-            index > 0 &&
-            msg.user_seq === array[index - 1].user_seq &&
-            msg.timestamp === array[index - 1].timestamp;
-          const lastMessageFromSameUser =
-            index < array.length - 1 &&
-            msg.user_seq === array[index + 1].user_seq &&
-            msg.timestamp === array[index + 1].timestamp;
-          const showDate =
-            lastDateRef.current !== formatDateOnly(msg.timestamp);
-          lastDateRef.current = formatDateOnly(msg.timestamp);
+        {Array.isArray(messages) && messages.length > 0 ? (
+          messages.map((message, index) => {
+            const { userSeq, message: text, createdAt } = message;
+            const isCurrentUser = userSeq === seq;
+            const messageDate = new Date(createdAt);
+            const formattedTime = formatTime(messageDate);
 
-          return (
-            <div key={msg.id}>
-              {showDate && (
-                <div className="w-1/2 text-center text-xs mx-auto py-1 bg-neutral-200 bg-opacity-70 rounded-full text-black mt-2 mb-5">
-                  {formatDateOnly(msg.timestamp)}
-                </div>
-              )}
+            const user = users.find((user) => user.userSeq === userSeq);
+            const userProfileImage = user
+              ? getProfileImagePath(user.imageNo)
+              : '';
+            const userName = user ? user.userName : '';
+
+            return (
               <div
-                className={`flex ${msg.user_seq === 1 ? 'justify-end' : 'justify-start'}`}
+                key={index}
+                className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-2`}
               >
-                {msg.user_seq !== 1 && (
-                  <div className="flex flex-col items-center mr-2">
-                    <img
-                      src={getProfileImagePath(
-                        getUserProfileImgNo(msg.user_seq)
-                      )}
-                      alt={msg.userName}
-                      className="w-9 h-9 rounded-full self-start"
-                    />
-                  </div>
-                )}
-                <div className="flex flex-col max-w-[88%]">
-                  {!sameUserAndTime && (
-                    <span
-                      className={`text-[9px] mb-1 text-black ${msg.user_seq === 1 ? 'text-right' : 'text-left'}`}
-                    >
-                      {msg.userName}
-                    </span>
-                  )}
-                  <div className="flex items-end">
-                    {msg.user_seq === 1 && !lastMessageFromSameUser && (
-                      <div className="text-[9px] text-gray-400 mr-2 whitespace-nowrap">
-                        {formatTime(msg.timestamp)}
+                {isCurrentUser ? (
+                  <>
+                    <div className="flex items-end flex-col mr-2">
+                      {/* <span className="text-xs text-gray-500 text-right mb-1">{userName}</span> */}
+                      <div className="flex items-end ">
+                        <div className="text-[10px] text-gray-500 top-full mr-2 left-0 mt-1">
+                          {formattedTime}
+                        </div>
+                        <div className="px-4 py-2 rounded-xl max-w-xs shadow-md bg-main text-white relative">
+                          {text}
+                        </div>
                       </div>
-                    )}
-                    <div
-                      className={`p-2 rounded-xl shadow-md ${msg.user_seq === 1 ? 'bg-main text-white' : 'bg-white text-black'}`}
-                    >
-                      <div className="text-sm">{msg.message}</div>
                     </div>
-                    {msg.user_seq !== 1 && !lastMessageFromSameUser && (
-                      <div className="text-[9px] text-gray-400 ml-2 whitespace-nowrap">
-                        {formatTime(msg.timestamp)}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                {msg.user_seq === 1 && (
-                  <div className="flex flex-col items-center ml-2">
                     <img
-                      src={getProfileImagePath(
-                        getUserProfileImgNo(msg.user_seq)
-                      )}
-                      alt={msg.userName}
-                      className="w-9 h-9 rounded-full self-start"
+                      src={userProfileImage}
+                      alt={userName}
+                      className="w-8 h-8 ml-2"
                     />
-                  </div>
+                  </>
+                ) : (
+                  <>
+                    <img
+                      src={userProfileImage}
+                      alt={userName}
+                      className="w-8 h-8 mr-2 mt-2"
+                    />
+                    <div className="flex items-start flex-col ml-2">
+                      <span className="text-xs text-gray-500 text-left mb-1">
+                        {userName}
+                      </span>
+                      <div className="flex items-end">
+                        <div className="px-4 py-2 rounded-xl max-w-xs shadow-md bg-white relative">
+                          {text}
+                        </div>
+                        <div className="text-[10px] text-gray-500  mt-1 ml-2">
+                          {formattedTime}
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <div className="text-center rounded-xl m-2 text-sm py-1 shadow bg-gray-500 bg-opacity-10">
+            메시지가 없습니다.
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
-      <div
-        className={`absolute bottom-0 left-0 w-full ${isKeyboardVisible ? 'hidden' : ''}`}
-      >
-        {showSettlementButton && (
+
+      {showScrollButton && (
+        <button
+          onClick={scrollToBottom}
+          className="absolute bottom-4 right-4 p-2 bg-main text-white rounded-full"
+        >
+          <FaArrowDown />
+        </button>
+      )}
+
+      <div className="flex flex-col">
+        <div className="relative bottom-0 left-0 right-0 bg-white p-2 shadow-md flex items-center">
+          <textarea
+            ref={textareaRef}
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            rows="1"
+            onKeyDown={handleKeyPress}
+            className="flex-grow p-2 border rounded-lg resize-none overflow-hidden"
+            placeholder="메시지를 입력하세요"
+          />
           <button
-            onClick={handleSettlement}
-            className="w-full py-4 bg-neutral-400 text-white text-lg font-bold flex items-center justify-center"
+            onClick={handleSendMessage}
+            className="ml-2 p-2 bg-main text-white rounded-full"
           >
-            <FaCalculator className="mr-2" />
-            정산하기
+            <FaPaperPlane />
           </button>
-        )}
-        <div className="w-full px-2 py-2 bg-white flex items-center relative">
-          <button onClick={toggleActionIcons} className="focus:outline-none">
-            <MdAdd
-              className={`text-gray-400 cursor-pointer mr-2 w-6 h-6 transform transition-transform ${showActionIcons ? 'rotate-45' : ''}`}
-            />
-          </button>
-          <div className="relative flex-grow">
-            <input
-              type="text"
-              className="flex-grow w-full pl-4 pr-10 py-2 rounded-2xl bg-gray-100 focus:outline-none"
-              placeholder="채팅 메시지 보내기 "
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-            />
-            <button
-              className={`absolute inset-y-1 right-0 px-3 py-2 ${inputMessage.trim() === '' ? 'bg-gray-300' : 'bg-main'} text-white rounded-2xl mr-2 flex items-center justify-center focus:outline-none`}
-              onClick={handleSendMessage}
-              disabled={inputMessage.trim() === ''}
-            >
-              <FaPaperPlane className="w-5 h-4" />
-            </button>
-          </div>
-          {showScrollButton && (
-            <button
-              onClick={scrollToBottom}
-              className="absolute bottom-16 right-4 p-2 bg-white text-gray-500 rounded-full shadow-md"
-            >
-              <FaArrowDown className="w-3 h-3" />
-            </button>
-          )}
+          <MdAdd
+            onClick={toggleActionIcons}
+            className="ml-2 text-2xl text-main cursor-pointer"
+          />
         </div>
       </div>
-
       {showActionIcons && (
         <div
-          className="w-full px-4 py-2 bg-white flex justify-around absolute bottom-14 left-0 z-50"
+          className="w-full px-4 py-12 bg-white flex justify-around"
           ref={actionIconsRef}
         >
           <div className="flex flex-col items-center mb-4">
             <div
               className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
-              onClick={handleSettingDestination}
+              onClick={() => openModal('calculator')}
             >
-              <img src={locationIcon} alt="경로 설정" className="w-5 h-6" />
+              <img src={calculator} alt="정산" className="w-6 h-6" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">경로 설정</span>
+            <span className="mt-1 text-[11px] text-gray-500">정산</span>
           </div>
           <div className="flex flex-col items-center">
             <div
               className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center"
-              onClick={handleCheckDestinationList}
+              onClick={() => openModal('money')}
             >
-              <img src={listIcon} alt="현재 경로 목록" className="w-5 h-6" />
+              <img src={money} alt="주문금액" className="w-7 h-7" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">
-              현재 경로 목록
-            </span>
+            <span className="mt-1 text-[11px] text-gray-500">주문금액</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <div
+              className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center"
+              onClick={() => openModal('delivery')}
+            >
+              <img src={delivery} alt="배달" className="w-6 h-5" />
+            </div>
+            <span className="mt-1 text-[11px] text-gray-500">배달</span>
           </div>
         </div>
       )}
+      {currentModal === 'calculator' && (
+        <CalculatorModal
+          onClose={closeModal}
+          tempMember={users}
+          leader={chatRoom.userSeq}
+        />
+      )}
+      {currentModal === 'money' && (
+        <MoneyModal onClose={closeModal} tempMember={users} />
+      )}
+      {currentModal === 'delivery' && (
+        <DeliveryModal onClose={closeModal} tempMember={users} />
+      )}
 
-      {tempTaxi.payer === tempUser.user_seq && (
-        <>
-          {taxiStatus === 'FILLED' && (
-            <button
-              onClick={handleBoardTaxi}
-              className="absolute bottom-16 left-4"
-            >
-              <img src={boardIcon} alt="탑승하기" className="w-14 h-14" />
-            </button>
-          )}
-          {taxiStatus === 'BOARD' && (
-            <button
-              onClick={handleDoneTaxi}
-              className="absolute bottom-16 left-4"
-            >
-              <img src={doneIcon} alt="하차하기" className="w-14 h-14" />
-            </button>
-          )}
-        </>
+      {showParticipantList && (
+        <ParticipantList
+          participants={users}
+          onClose={handleCloseParticipantList}
+          onSignOut={leaveRoom}
+          leaderSeq={chatRoom.userSeq}
+        />
       )}
     </div>
   );
 }
+
 
 export default TaxiChattingMainPage;
