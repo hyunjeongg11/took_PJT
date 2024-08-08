@@ -5,7 +5,7 @@ import { usePosition } from './store/position';
 import { getUserLocation } from './android/message';
 import { saveUserPositionApi } from './apis/position/userPosition';
 import { useUser } from './store/user';
-import { getUserSeq } from './utils/getUserSeq'
+import { getUserSeq } from './utils/getUserSeq';
 import {
   MainPage,
   LoginPage,
@@ -136,8 +136,13 @@ function App() {
   // const { seq } = useUser(); // make sure to destructure `setUserSeq`
   const seq = getUserSeq();
   const savePosition = async ({ latitude, longitude }) => {
-    if (seq) { // Check if `seq` is not null
-      await saveUserPositionApi({ userSeq: seq, lat: latitude, lon: longitude });
+    if (seq) {
+      // Check if `seq` is not null
+      await saveUserPositionApi({
+        userSeq: seq,
+        lat: latitude,
+        lon: longitude,
+      });
     } else {
       console.log('User sequence is not available');
     }
@@ -147,7 +152,9 @@ function App() {
     getUserLocation();
     window.onLocation = (latitude, longitude) => {
       console.log('Received location:', latitude, longitude);
-      msgToAndroid(`Received location in onLocation:, ${latitude}, ${longitude}`);
+      msgToAndroid(
+        `Received location in onLocation:, ${latitude}, ${longitude}`
+      );
       savePosition({ latitude, longitude });
       setPosition({ latitude, longitude });
     };

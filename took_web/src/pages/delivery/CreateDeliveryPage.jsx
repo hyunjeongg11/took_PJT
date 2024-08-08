@@ -35,7 +35,7 @@ function CreateDeliveryPage() {
   const [pickLat, setPickLat] = useState();
   const [pickLng, setPickLng] = useState();
   const [room, setRoom] = useState();
- 
+
   useEffect(() => {
     const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
     const stompClientInstance = Stomp.over(socket);
@@ -56,15 +56,19 @@ function CreateDeliveryPage() {
 
   const enterRoom = ({ roomSeq, userSeq }) => {
     if (stompClient && connected) {
-      stompClient.send('/pub/room/enter', {}, JSON.stringify({
-        roomSeq,
-        userSeq,
-      }));
+      stompClient.send(
+        '/pub/room/enter',
+        {},
+        JSON.stringify({
+          roomSeq,
+          userSeq,
+        })
+      );
     } else {
       console.error('WebSocket 연결이 아직 준비되지 않았습니다.');
       // 재시도 로직을 추가하거나 사용자에게 알림
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -141,7 +145,8 @@ function CreateDeliveryPage() {
     } else {
       try {
         let response;
-        if (id) { // 배달 글 수정
+        if (id) {
+          // 배달 글 수정
           await modifyDeliveryApi({
             userSeq,
             roomSeq: room,
@@ -156,13 +161,13 @@ function CreateDeliveryPage() {
         } else {
           // 채팅방 생성
           const newRoom = await createRoom();
-          
+
           // 룸 번호 받아서 배달 방 생성
           const newDelivery = await createDelivery(newRoom.roomSeq);
           response = newDelivery; // 새로운 배달 정보 저장
           await enterRoom({ roomSeq: newRoom.roomSeq, userSeq });
         }
-        
+
         setShowCompletionMessage(true);
         setTimeout(() => {
           setShowCompletionMessage(false);
@@ -179,7 +184,6 @@ function CreateDeliveryPage() {
       }
     }
   };
-  
 
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
