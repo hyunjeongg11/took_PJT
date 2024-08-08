@@ -1,13 +1,15 @@
 package com.took.shop_api.controller;
 
+import com.took.fcm_api.dto.MessageRequest;
+import com.took.fcm_api.service.FCMService;
 import com.took.shop_api.dto.*;
 import com.took.shop_api.entity.Shop;
 import com.took.shop_api.service.ShopService;
-import com.took.taxi_api.dto.TaxiSetPartyRequest;
+import com.took.user_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,12 +24,24 @@ import java.util.List;
 public class ShopController {
 
     private final ShopService shopService;
+    private final UserService userService;
+    private final FCMService fcmService;
 
     @Operation(summary = "상점 생성", description = "새로운 상점을 생성합니다.")
     @ApiResponse(responseCode = "201", description = "상점이 성공적으로 생성됨")
     @PostMapping("/create")
     public ResponseEntity<Shop> addShop(@RequestBody @Schema(description = "상점 생성 요청 데이터") AddShopRequest request) {
         Shop saveShop = shopService.save(request);
+        // 알림 생성
+        List<Long> userSeqs = userService.searchNearUser(request.getUserSeq(), request.getLat(), request.getLon());
+        fcmService.sendMessage(
+                MessageRequest.builder()
+                        .title("같이 주문해요!")
+                        .body("공동 구매 모집 글이 올라왔어요!")
+                        .userSeqList(userSeqs)
+                        .build()
+        );
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(saveShop);
     }
