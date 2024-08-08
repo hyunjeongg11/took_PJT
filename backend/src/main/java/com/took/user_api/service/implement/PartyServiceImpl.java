@@ -336,6 +336,7 @@ public class PartyServiceImpl implements PartyService {
                 .status(false)
                 .createdAt(LocalDateTime.now())
                 .count(requestBody.getUsers().size())
+                .receiveCost(0L)
                 .totalMember(requestBody.getUsers().size())
                 .build();
         PartyEntity newParty = partyRepository.save(party);
