@@ -3,10 +3,10 @@ package com.took.taxi_api.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.taxi_api.entity.QTaxiGuest;
+import com.took.taxi_api.entity.Taxi;
 import com.took.taxi_api.entity.TaxiGuest;
 import com.took.user_api.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -36,11 +36,11 @@ public class TaxiGuestRepositoryCustomImpl implements TaxiGuestRepositoryCustom 
 
     /**
      * 특정 택시의 경로를 순위별로 조회합니다.
-     * @param taxiSeq 택시 번호
+     * @param taxi 택시 번호
      * @return 경로 목록
      */
     @Override
-    public List<TaxiGuest> findDestinationsByTaxiSeqOrderedByRouteRank(Long taxiSeq) {
+    public List<TaxiGuest> findDestinationsByTaxiOrderedByRouteRank(Taxi taxi) {
         QTaxiGuest taxiGuest = QTaxiGuest.taxiGuest;
 
         return queryFactory.select(Projections.fields(TaxiGuest.class,
@@ -51,7 +51,7 @@ public class TaxiGuestRepositoryCustomImpl implements TaxiGuestRepositoryCustom 
                         taxiGuest.routeRank,
                         taxiGuest.cost))
                 .from(taxiGuest)
-                .where(taxiGuest.taxi.taxiSeq.eq(taxiSeq))
+                .where(taxiGuest.taxi.eq(taxi))
                 .orderBy(taxiGuest.routeRank.asc())
                 .fetch();
     }
