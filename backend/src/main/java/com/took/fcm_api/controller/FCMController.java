@@ -1,5 +1,6 @@
 package com.took.fcm_api.controller;
 
+import com.took.fcm_api.dto.AlarmRequest;
 import com.took.fcm_api.dto.FCMTokenRequest;
 import com.took.fcm_api.dto.MessageRequest;
 import com.took.fcm_api.service.FCMService;
@@ -23,6 +24,12 @@ public class FCMController {
     @PostMapping("/send")
     public ResponseEntity<?> sendMessage(@RequestBody MessageRequest request) {
         fcmService.sendMessage(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/remindSend")
+    public ResponseEntity<?> remindSend(@RequestBody AlarmRequest request) {
+        fcmService.sendNotification(request);
         return ResponseEntity.ok().build();
     }
 
