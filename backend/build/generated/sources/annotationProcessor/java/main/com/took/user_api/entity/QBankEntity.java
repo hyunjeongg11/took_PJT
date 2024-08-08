@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -22,15 +21,15 @@ public class QBankEntity extends EntityPathBase<BankEntity> {
 
     public final StringPath accountNum = createString("accountNum");
 
-    public final StringPath accountPwd = createString("accountPwd");
-
-    public final ListPath<AccountEntity, QAccountEntity> accounts = this.<AccountEntity, QAccountEntity>createList("accounts", AccountEntity.class, QAccountEntity.class, PathInits.DIRECT2);
+    public final NumberPath<Integer> accountPwd = createNumber("accountPwd", Integer.class);
 
     public final NumberPath<Long> balance = createNumber("balance", Long.class);
 
-    public final StringPath bankName = createString("bankName");
+    public final NumberPath<Integer> bankNum = createNumber("bankNum", Integer.class);
 
     public final NumberPath<Long> bankSeq = createNumber("bankSeq", Long.class);
+
+    public final BooleanPath isBank = createBoolean("isBank");
 
     public final StringPath own = createString("own");
 

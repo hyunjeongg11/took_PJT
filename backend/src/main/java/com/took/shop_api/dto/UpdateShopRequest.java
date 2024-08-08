@@ -1,0 +1,30 @@
+package com.took.shop_api.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+public class UpdateShopRequest {
+
+    @Schema(description = "상점 제목", example = "스타벅스 강남점")
+    private String title;  // 상점 제목
+
+    @Schema(description = "상점 설명", example = "편안한 분위기의 커피숍")
+    private String content;  // 상점 설명
+
+    @Schema(description = "판매 품목", example = "커피, 차, 디저트")
+    private String item;  // 판매 품목
+
+    @Schema(description = "상점 웹사이트 URL", example = "https://www.starbucks.co.kr")
+    private String site;  // 상점 웹사이트 URL
+
+    @Schema(description = "상점 위치", example = "서울 강남구 테헤란로 123")
+    private String place;  // 상점 위치
+
+    @Schema(description = "최대 수용 인원", example = "50")
+    private int maxCount;  // 최대 수용 인원
+}

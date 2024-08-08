@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE Test</title>
+</head>
+<body>
+<h1>SSE 테스트</h1>
+<button id="subscribeButton">알림 등록</button>
+<button id="unsubscribeButton">알림 해제</button>
+<div id="events"></div>
+<script>
+    const userSeq = 2;  // B 사용자의 ID를 여기에 설정
+    let eventSource = null;
+
+    // 알림 등록 버튼 클릭 이벤트 핸들러
+    document.getElementById("subscribeButton").addEventListener("click", function() {
+        eventSource = new EventSource('/noti/subscribe/' + userSeq);
+
+        eventSource.onmessage = function(event) {
+            alert("메시지: " + event.data);
+        };
+
+        eventSource.addEventListener("알림", function(event) {
+            alert("알림: " + event.data);
+        });
+
+        eventSource.onerror = function(event) {
+            const newElement = document.createElement("div");
+            newElement.innerHTML = "오류 발생";
+            document.getElementById("events").appendChild(newElement);
+        };
+
+        // 알림 등록 버튼 비활성화 및 해제 버튼 활성화
+        document.getElementById("subscribeButton").style.display = "none";
+        document.getElementById("unsubscribeButton").style.display = "block";
+    });
+
+    // 알림 해제 버튼 클릭 이벤트 핸들러
+    document.getElementById("unsubscribeButton").addEventListener("click", function() {
+        if (eventSource) {
+            eventSource.close();  // EventSource 연결 해제
+            eventSource = null;
+            document.getElementById("events").innerHTML = "";  // 이벤트 로그 초기화
+
+            // 알림 해제 버튼 비활성화 및 등록 버튼 활성화
+            document.getElementById("unsubscribeButton").style.display = "none";
+            document.getElementById("subscribeButton").style.display = "block";
+        }
+    });
+</script>
+</body>
+</html>
