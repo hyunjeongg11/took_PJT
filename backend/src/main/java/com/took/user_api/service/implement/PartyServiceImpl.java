@@ -50,6 +50,7 @@ public class PartyServiceImpl implements PartyService {
                 .count(0)
                 .totalMember(dto.getTotalMember())
                 .deliveryTip(dto.getDeliveryTip())
+                .receiveCost(0L)
                 .build();
 
         PartyEntity newParty = partyRepository.save(party);
@@ -215,7 +216,6 @@ public class PartyServiceImpl implements PartyService {
                             .userSeqList(List.of(leaderSeq))
                             .build()
             );
-
 
             partyRepository.flush();
 
