@@ -1,5 +1,4 @@
-// pages/delivery/CreateDeliveryPage.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../../components/common/BackButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -9,6 +8,9 @@ import {
 } from '../../apis/delivery';
 import { useUser } from '../../store/user';
 import SearchDropdown from '../../components/map/SearchDropDown';
+import { createChatApi } from '../../apis/chat/chat';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
 
 const InputField = ({
   label,
@@ -86,16 +88,51 @@ function CreateDeliveryPage() {
   const { id } = useParams();
   const { seq: userSeq } = useUser();
   const [form, setForm] = useState({
-    storeName: '',
+    storeName: '', // lat이 y, lng이 x
     deliveryAddress: '',
     deliveryTip: '',
     orderTime: '',
     additionalInfo: '',
   });
+  const [stompClient, setStompClient] = useState(null);
+  const [connected, setConnected] = useState(false);
 
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [pickLat, setPickLat] = useState();
+  const [pickLng, setPickLng] = useState();
+  const [room, setRoom] = useState();
+ 
+  useEffect(() => {
+    const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
+    const stompClientInstance = Stomp.over(socket);
+    stompClientInstance.connect({}, () => {
+      console.log('WebSocket 연결 성공');
+      setConnected(true);
+    });
+    setStompClient(stompClientInstance);
+
+    return () => {
+      if (stompClientInstance && stompClientInstance.connected) {
+        stompClientInstance.disconnect(() => {
+          console.log('WebSocket 연결 해제');
+        });
+      }
+    };
+  }, []);
+
+  const enterRoom = ({ roomSeq, userSeq }) => {
+    if (stompClient && connected) {
+      stompClient.send('/pub/room/enter', {}, JSON.stringify({
+        roomSeq,
+        userSeq,
+      }));
+    } else {
+      console.error('WebSocket 연결이 아직 준비되지 않았습니다.');
+      // 재시도 로직을 추가하거나 사용자에게 알림
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,6 +146,7 @@ function CreateDeliveryPage() {
             orderTime: response.deliveryTime,
             additionalInfo: response.content,
           });
+          setRoom(response.roomSeq);
         } catch (error) {
           console.error('배달 글 조회 중 오류 발생:', error);
         }
@@ -139,33 +177,61 @@ function CreateDeliveryPage() {
     navigate(-1);
   };
 
+  const createRoom = async () => {
+    const response = await createChatApi({
+      roomTitle: form.storeName,
+      category: 1,
+      userSeq,
+    });
+    console.log(response); // 응답
+    return response;
+  };
+
+  const createDelivery = async (roomSeq) => {
+    const response = await writeDeliveryApi({
+      userSeq,
+      roomSeq,
+      storeName: form.storeName,
+      pickupPlace: form.deliveryAddress,
+      pickupLat: pickLat,
+      pickupLon: pickLng,
+      deliveryTip: form.deliveryTip,
+      deliveryTime: form.orderTime,
+      content: form.additionalInfo,
+    });
+    return response;
+  };
+
   const handleSubmit = async () => {
     if (Object.values(form).some((field) => field === '')) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 2000);
     } else {
-      const params = {
-        userSeq,
-        roomSeq: 31,
-        storeName: form.storeName,
-        pickupPlace: form.deliveryAddress,
-        pickupLat: 0.0,
-        pickupLon: 0.0,
-        deliveryTip: form.deliveryTip,
-        deliveryTime: form.orderTime,
-        content: form.additionalInfo,
-      };
-
       try {
         let response;
-        if (id) {
-          await modifyDeliveryApi({ deliverySeq: id, ...params });
+        if (id) { // 배달 글 수정
+          await modifyDeliveryApi({
+            userSeq,
+            roomSeq: room,
+            storeName: form.storeName,
+            pickupPlace: form.deliveryAddress,
+            pickupLat: pickLat,
+            pickupLon: pickLng,
+            deliveryTip: form.deliveryTip,
+            deliveryTime: form.orderTime,
+            content: form.additionalInfo,
+          });
         } else {
-          response = await writeDeliveryApi(params);
-          console.log('API response:', response);
-          const deliverySeq = response.deliverySeq;
-          navigate(`/delivery/detail/${deliverySeq}`);
+          // 채팅방 생성
+          const newRoom = await createRoom();
+          
+          // 룸 번호 받아서 배달 방 생성
+          const newDelivery = await createDelivery(newRoom.roomSeq);
+          response = newDelivery; // 새로운 배달 정보 저장
+
+          await enterRoom({ roomSeq: newRoom.roomSeq, userSeq });
         }
+        
         setShowCompletionMessage(true);
         setTimeout(() => {
           setShowCompletionMessage(false);
@@ -182,6 +248,7 @@ function CreateDeliveryPage() {
       }
     }
   };
+  
 
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
@@ -209,6 +276,8 @@ function CreateDeliveryPage() {
           name="storeName"
           value={form.storeName}
           onChange={handleChange}
+          setLatitude={() => {}}
+          setLongitude={() => {}}
           placeholder="원하는 배달 가게 이름을 입력해주세요."
         />
         <SearchDropdown
@@ -216,6 +285,8 @@ function CreateDeliveryPage() {
           name="deliveryAddress"
           value={form.deliveryAddress}
           onChange={handleChange}
+          setLatitude={setPickLat}
+          setLongitude={setPickLng}
           placeholder="배달 수령 장소를 입력해주세요."
         />
         <InputField
