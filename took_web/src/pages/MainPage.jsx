@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React,{useState} from 'react';
+import { Link,useNavigate } from 'react-router-dom';
 import { TookButton } from '../components/main/TookButton';
 import taxi from '../assets/main/taxi.png';
 import pay from '../assets/main/pay.png';
@@ -7,9 +7,40 @@ import delivery from '../assets/main/delivery.png';
 import shop from '../assets/main/shop.png';
 import took from '../assets/took.png';
 import { useUser } from '../store/user';
+import { makePartyApi } from '../apis/payment/jungsan';
+
 function MainPage() {
-  const { isLoggedIn } = useUser();
+  const [partySeq,setPartySeq] = useState(null);
+  
+  const { isLoggedIn, seq} = useUser();
   const linkPath = isLoggedIn ? '/mypage' : '/login';
+  const navigate = useNavigate();// useHistory 훅을 사용하여 history 객체를 가져옵니다.
+
+  console.log("유저 seq는"+seq);
+  
+  const jungsanClick = async (event) => {
+    event.preventDefault(); // Link의 기본 동작을 막음
+    const params = {
+      userSeq: seq,
+      title: "",
+      // 하드코딩 해결해야 할수도
+      category: 4,
+      cost: 0,
+      totalMember: 0
+    };
+
+    try {
+      const response = await makePartyApi(params);
+      if (response && response.partySeq) {
+        setPartySeq(response.partySeq); // 상태 업데이트
+        navigate('/dutch/userlist', { state: { partySeq: response.partySeq } }); // 페이지 이동
+      }
+    } catch (error) {
+      console.error("API 호출 에러:", error);
+    }
+  };
+
+  
   return (
     <div className="flex min-h-screen items-center justify-center  flex-col  max-w-screen ">
       <div className="flex gap-5 justify-between w-full items-center bg-white pt-10 px-7">
@@ -42,13 +73,13 @@ function MainPage() {
       <div className="bg-gradient-to-b from-white to-[#FFDCCF] pb-5 px-7 w-full">
         <div className="flex flex-col p-4 mt-12 mx-auto w-full font-nanum rounded-3xl bg-[#ffe1d6]">
           <div className="grid grid-cols-2 gap-2">
-            <Link to="/dutch/userlist">
-              <TookButton
-                title="정산 툭"
-                content="<div>주변 사람들과<br/>간편한 정산</div>"
-                img={pay}
-              />
-            </Link>
+          <button onClick={jungsanClick}>
+        <TookButton
+          title="정산 툭"
+          content="<div>주변 사람들과<br/>간편한 정산</div>"
+          img={pay}
+        />
+      </button>
             <Link to="/taxi/main">
               <TookButton
                 title="택시 툭"
