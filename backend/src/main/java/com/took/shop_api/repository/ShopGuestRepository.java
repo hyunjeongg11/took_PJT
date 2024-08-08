@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ShopGuestRepository extends JpaRepository<ShopGuest, Long> {
+public interface ShopGuestRepository extends JpaRepository<ShopGuest, Long>, ShopGuestCustomRepository {
     ShopGuest findByShopAndUser(Shop shop, UserEntity user);
     @Transactional
     void deleteByShopAndUser(Shop shop, UserEntity user);

@@ -4,14 +4,20 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.delivery_api.dto.DeliverySelectResponse;
 import com.took.delivery_api.entity.Delivery;
+import com.took.delivery_api.entity.DeliveryGuest;
 import com.took.shop_api.dto.*;
 import com.took.shop_api.entity.*;
 import com.took.shop_api.repository.ShopGuestRepository;
 import com.took.shop_api.repository.ShopRepository;
 import com.took.taxi_api.dto.TaxiSetPartyRequest;
 import com.took.taxi_api.entity.Taxi;
+import com.took.user_api.entity.MemberEntity;
+import com.took.user_api.entity.PartyEntity;
 import com.took.user_api.entity.UserEntity;
+import com.took.user_api.repository.MemberRepository;
+import com.took.user_api.repository.PartyRepository;
 import com.took.user_api.repository.UserRepository;
+import com.took.user_api.service.PartyService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,8 +34,10 @@ public class ShopService {
     private final ShopGuestRepository shopGuestRepository;
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
-
+    private final PartyService partyService;
+    private final PartyRepository partyRepository;
     private final JPAQueryFactory queryFactory;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public Shop save(AddShopRequest request) {
@@ -143,7 +151,16 @@ public class ShopService {
         UserEntity user = userRepository.findByUserSeq(userSeq);
         ShopGuest shopGuest = shopGuestRepository.findByShopAndUser(shop, user);
         shopGuest.updatePickUp(true);
-        shopGuestRepository.save(shopGuest);
+
+        PartyEntity party = partyRepository.findById(shop.getPartySeq()).orElseThrow();
+        MemberEntity member = memberRepository.findByPartyAndUser(party, user);
+        member.updateRecieve(true);
+        shopGuestRepository.flush();
+        memberRepository.flush();
+        if(shopGuestRepository.areAllGuestsPickedUp(shopGuest.getShop())) {
+            shop.updateStatus(Shop.statusType.COMPLETED);
+            partyService.deligonguHostRecieve(shop.getPartySeq(), shop.getUser().getUserSeq());
+        }
     }
 
     @Transactional
