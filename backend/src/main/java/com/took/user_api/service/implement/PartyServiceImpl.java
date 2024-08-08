@@ -225,7 +225,7 @@ public class PartyServiceImpl implements PartyService {
 
         try {
             MemberEntity member = memberRepositoryCustom.findMemberByPartySeqAndUserSeq(partySeq, userSeq);
-            Long membercost = member.getCost();
+            Long memberCost = member.getCost();
 
             PartyEntity party = partyRepository.getReferenceById(partySeq);
 
@@ -234,20 +234,20 @@ public class PartyServiceImpl implements PartyService {
             bank = bankRepository.getReferenceById(bankSeq);
             long balance = bank.getBalance();
 
-            if (balance < membercost) return ResponseDto.nomoney();
+            if (balance < memberCost) return ResponseDto.nomoney();
 
 //          맴버 상태 업데이트
             member.updateStatus(true);
             party.updateCount(1);
 
 //          돈빼주고 저장
-            bank.updateBalance(balance - membercost);
+            bank.updateBalance(balance - memberCost);
 
 //          빼주는 순간 리더에게 돈 들어가게
             Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(partySeq);
             Long leaderBankSeq = bankRepositoryCustom.findBankSeqByUserSeq(leaderSeq);
             BankEntity leaderBankEntity = bankRepository.getReferenceById(leaderBankSeq);
-            balance = leaderBankEntity.getBalance() + membercost;
+            balance = leaderBankEntity.getBalance() + memberCost;
             leaderBankEntity.updateBalance(balance);
 
             UserEntity sender = userRepository.findById(userSeq).orElseThrow();
@@ -256,7 +256,7 @@ public class PartyServiceImpl implements PartyService {
             fcmService.sendMessage(
                     MessageRequest.builder()
                             .title("송금 알림")
-                            .body(name.charAt(0) + "*" + name.charAt(2) + "님이 " + membercost + "원을 송금하였습니다!")
+                            .body(name.charAt(0) + "*" + name.charAt(2) + "님이 " + memberCost + "원을 송금하였습니다!")
                             .userSeqList(List.of(leaderSeq))
                             .build()
             );
