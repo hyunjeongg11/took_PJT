@@ -43,14 +43,7 @@ public class TaxiGuestRepositoryCustomImpl implements TaxiGuestRepositoryCustom 
     public List<TaxiGuest> findDestinationsByTaxiOrderedByRouteRank(Taxi taxi) {
         QTaxiGuest taxiGuest = QTaxiGuest.taxiGuest;
 
-        return queryFactory.select(Projections.fields(TaxiGuest.class,
-                        taxiGuest.user.userSeq,
-                        taxiGuest.destiName,
-                        taxiGuest.destiLat,
-                        taxiGuest.destiLon,
-                        taxiGuest.routeRank,
-                        taxiGuest.cost))
-                .from(taxiGuest)
+        return queryFactory.selectFrom(taxiGuest)
                 .where(taxiGuest.taxi.eq(taxi))
                 .orderBy(taxiGuest.routeRank.asc())
                 .fetch();
