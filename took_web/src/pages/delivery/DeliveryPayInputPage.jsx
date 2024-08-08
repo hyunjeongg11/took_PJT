@@ -5,6 +5,8 @@ import BackButton from '../../components/common/BackButton';
 import { makePartyApi } from '../../apis/pay';
 import { useUser } from '../../store/user';
 import { getDeliveryByRoom } from '../../apis/findByRoom';
+import { connectDeliveryToPay } from '../../apis/delivery';
+import { insertAllMemberApi } from '../../apis/payment/jungsan';
 
 function DeliveryPayInputPage() {
   const navigate = useNavigate();
@@ -12,10 +14,25 @@ function DeliveryPayInputPage() {
   const { seq } = useUser();
   const { id } = useParams();
   const [deliveryInfo, setDeliveryInfo] = useState();
+  const [orderAmounts, setOrderAmounts] = useState([]);
+  const [tipAmount, setTipAmount] = useState('');
+  const [participants, setParticipants] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     loadDeliveryInfo();
-  }, []);
+    // Replace with actual participants data from location.state
+    setParticipants(
+      Array.isArray(location.state?.users)
+        ? location.state.users[0]
+        : [
+            { userSeq: 1, userName: '참가자1' },
+            { userSeq: 2, userName: '참가자2' },
+            { userSeq: 3, userName: '참가자3' },
+            { userSeq: 4, userName: '참가자4' },
+          ]
+    );
+  }, [location.state]);
 
   const loadDeliveryInfo = async () => {
     try {
@@ -25,24 +42,6 @@ function DeliveryPayInputPage() {
       console.error('Error fetching delivery info', err);
     }
   };
-
-  // 임시 데이터 todo
-  const participants = Array.isArray(location.state?.users)
-    ? location.state.users[0]
-    : [
-        { member_seq: 1, userName: '참가자1' },
-        { member_seq: 2, userName: '참가자2' },
-        { member_seq: 3, userName: '참가자3' },
-        { member_seq: 4, userName: '참가자4' },
-      ];
-
-  console.log(participants);
-
-  const [orderAmounts, setOrderAmounts] = useState(
-    Array(participants.length).fill('')
-  );
-
-  const [tipAmount, setTipAmount] = useState('');
 
   const handleOrderAmountChange = (index, value) => {
     const formattedValue = formatNumber(value.replace(/,/g, '')); // Remove existing commas and format
@@ -56,20 +55,67 @@ function DeliveryPayInputPage() {
     setTipAmount(formattedValue);
   };
 
-  const handleSubmit = () => {
-    //navigate('/payment');
+  const handleSubmit = async () => {
+    const userCosts = participants.map((participant, index) => ({
+      userSeq: participant.userSeq,
+      cost: parseInt(orderAmounts[index] || '0', 10),
+    }));
+
+    const deliveryTip = parseInt(tipAmount || '0', 10);
+    console.log(userCosts, deliveryTip);
+
+    try {
+      const partySeq = await makeParty();
+      await connectPartyToDelivery(id, partySeq);
+      await requestPayment(partySeq, userCosts, deliveryTip);
+
+      // Show success modal
+      setShowModal(true);
+
+      // Navigate to the previous page after 2 seconds
+      setTimeout(() => {
+        navigate(-1);
+      }, 2000);
+    } catch (err) {
+      console.error('Error processing payment', err);
+    }
   };
 
   const makeParty = async () => {
     try {
       const res = await makePartyApi({
         userSeq: seq,
-        title: deliveryInfo.storeName,
+        title: deliveryInfo?.storeName || 'Default Store Name',
         category: 1,
       });
-      console.log('정산 파티 생성 완료', res);
+      return res.partySeq;
     } catch (err) {
-      console.log(err);
+      console.error('Error creating party', err);
+      throw err;
+    }
+  };
+
+  const connectPartyToDelivery = async (deliverySeq, partySeq) => {
+    try {
+      await connectDeliveryToPay({ deliverySeq, partySeq });
+      console.log('Party connected to delivery successfully');
+    } catch (err) {
+      console.error('Error connecting party to delivery', err);
+      throw err;
+    }
+  };
+
+  const requestPayment = async (partySeq, userCosts, deliveryTip) => {
+    try {
+      await insertAllMemberApi({
+        partySeq,
+        userCosts,
+        deliveryTip,
+      });
+      console.log('Payment request successful');
+    } catch (err) {
+      console.error('Error requesting payment', err);
+      throw err;
     }
   };
 
@@ -89,21 +135,21 @@ function DeliveryPayInputPage() {
         <div className="text-left shadow-md rounded-xl border border-neutral-200 py-2 mb-6 w-64">
           <input
             type="text"
-            className="text-lg ml-5 "
+            className="text-lg ml-5"
             placeholder="배달 팁(원)"
             value={tipAmount}
             onChange={(e) => handleTipAmountChange(e.target.value)}
           />
         </div>
         {participants.map((participant, index) => (
-          <div key={participant.member_seq} className="mb-6 w-64">
+          <div key={participant.userSeq} className="mb-6 w-64">
             <div className="text-left mb-1">{participant.userName}</div>
             <div className="text-left shadow-md rounded-xl border border-neutral-200 py-2 mx-1">
               <input
                 type="text"
                 className="text-lg ml-5"
                 placeholder="주문 금액(원)"
-                value={orderAmounts[index]}
+                value={orderAmounts[index] || ''}
                 onChange={(e) => handleOrderAmountChange(index, e.target.value)}
               />
             </div>
@@ -117,6 +163,16 @@ function DeliveryPayInputPage() {
       >
         확인
       </button>
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <p className="text-lg font-semibold text-center">
+              정산 요청이 완료되었습니다
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -447,7 +447,7 @@ function ChattingMainPage() {
         <MoneyModal
           onClose={closeModal}
           tempMember={users}
-          deliverySeq={deliveryInfo.deliverSeq}
+          deliverySeq={deliveryInfo.deliverySeq}
         />
       )}
       {currentModal === 'calculator' && isLeader && (
