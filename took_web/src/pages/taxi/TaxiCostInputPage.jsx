@@ -6,6 +6,7 @@ import getProfileImagePath from '../../utils/getProfileImagePath';
 import { formatNumber } from '../../utils/format';
 import { formatDate } from '../../utils/formatDate';
 
+// todo: 실제 데이터 받아서 연동
 // 임시 데이터
 const tempTaxi = {
   taxi_seq: 1,
