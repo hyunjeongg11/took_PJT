@@ -45,7 +45,7 @@ public class DeliveryService {
                 .deliveryTip(request.getDeliveryTip()) // 배달 팁 설정
                 .deliveryTime(request.getDeliveryTime()) // 배달 시간 설정
                 .content(request.getContent()) // 배달 내용 설정
-                .count(0) // 초기 카운트 설정
+                .count(1) // 초기 카운트 설정
                 .status(Delivery.Status.OPEN) // 초기 상태 설정
                 .createdAt(LocalDateTime.now()) // 생성 시간 설정
                 .finishTime(LocalDateTime.now().plusHours(1)) // 종료 시간 설정
