@@ -19,6 +19,7 @@ function DeliveryCompletePage() {
     const fetchMemberInfo = async () => {
       try {
         const membersResponse = await getDeliveryMembersApi(id);
+        console.log(membersResponse);
         const currentUserMemberInfo = membersResponse.find(
           (member) => member.userSeq === currentUserSeq
         );

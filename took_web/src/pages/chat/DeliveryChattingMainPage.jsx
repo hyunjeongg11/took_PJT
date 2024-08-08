@@ -423,15 +423,6 @@ function ChattingMainPage() {
             </div>
             <span className="mt-1 text-[11px] text-gray-500">주문금액</span>
           </div>
-          <div className="flex flex-col items-center mb-4">
-            <div
-              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
-              onClick={() => openModal('calculator')}
-            >
-              <img src={calculator} alt="정산" className="w-6 h-6" />
-            </div>
-            <span className="mt-1 text-[11px] text-gray-500">정산</span>
-          </div>
           <div className="flex flex-col items-center">
             <div
               className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center"
@@ -440,6 +431,15 @@ function ChattingMainPage() {
               <img src={delivery} alt="배달" className="w-6 h-5" />
             </div>
             <span className="mt-1 text-[11px] text-gray-500">배달</span>
+          </div>
+          <div className="flex flex-col items-center mb-4">
+            <div
+              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
+              onClick={() => openModal('calculator')}
+            >
+              <img src={calculator} alt="정산" className="w-6 h-6" />
+            </div>
+            <span className="mt-1 text-[11px] text-gray-500">정산</span>
           </div>
         </div>
       )}
@@ -459,7 +459,11 @@ function ChattingMainPage() {
       )}
 
       {currentModal === 'delivery' && (
-        <DeliveryModal onClose={closeModal} tempMember={users} />
+        <DeliveryModal
+          onClose={closeModal}
+          tempMember={users}
+          deliverySeq={deliveryInfo.deliverySeq}
+        />
       )}
 
       {showParticipantList && (
