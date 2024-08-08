@@ -9,28 +9,25 @@ const stockImages = import.meta.glob('../../assets/payment/stock/*.png', {
   eager: true,
 });
 
-const getImagePath = (bankNum) => {
-  const bankName = bankNumToName[bankNum];
-  if (!bankName) {
-    return '';
-  }
-  if (bankName.endsWith('은행')) {
-    return bankImages[`../../assets/payment/bank/${bankName.slice(0, -2)}.png`]?.default || '';
-  }
-  if (bankName.endsWith('증권')) {
-    return stockImages[`../../assets/payment/stock/${bankName.slice(0, -2)}.png`]?.default || '';
-  }
-  return bankImages[`../../assets/payment/bank/${bankName}.png`]?.default || '';
-};
-
 function AccountCard({ accounts, onClose, onSelect }) {
+  const getImagePath = (bankNum) => {
+    const bankName = bankNumToName[bankNum];
+    if (bankName.endsWith('은행')) {
+      return bankImages[`../../assets/payment/bank/${bankName.slice(0, -2)}.png`].default;
+    }
+    if (bankName.endsWith('증권')) {
+      return stockImages[`../../assets/payment/stock/${bankName.slice(0, -2)}.png`].default;
+    }
+    return bankImages[`../../assets/payment/bank/${bankName}.png`].default;
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-4 rounded-2xl max-w-[300px] w-full text-center">
         <div className="mb-4 text-lg font-bold">출금계좌 선택</div>
         {accounts.map((account, index) => (
           <div
-            // key={index}
+            key={index}
             onClick={() => onSelect(account)}
             className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
           >

@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdBackspace } from 'react-icons/md';
 import { msgToAndroid } from '../../android/message';
+import { checkEasyPasswordApi } from '../../apis/account/oneclick';
+import { useUser } from '../../store/user'; // 로그인한 사용자 정보를 가져오는 훅
+
+
+
 function PwdPage() {
   const [input, setInput] = useState('');
   const [isError, setIsError] = useState(false);
