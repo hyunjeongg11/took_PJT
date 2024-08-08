@@ -11,8 +11,6 @@ import com.took.user_api.entity.*;
 import com.took.user_api.repository.*;
 import com.took.user_api.repository.custom.AccountRepositoryCustom;
 import com.took.user_api.repository.custom.BankRepositoryCustom;
-import com.took.user_api.repository.custom.PartyRepositoryCustom;
-import com.took.user_api.repository.repositoryImpl.MemberRepositoryCustomImpl;
 import com.took.user_api.service.AccountService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +31,6 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountRepositoryCustom accountRepositoryCustom;
     private final MemberRepository memberRepository;
-    private final MemberRepositoryCustomImpl memberRepositoryCustomImpl;
-    private final PartyRepositoryCustom partyRepositoryCustom;
     private final PartyRepository partyRepository;
 
     @Transactional
