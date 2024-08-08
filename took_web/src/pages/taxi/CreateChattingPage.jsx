@@ -1,21 +1,36 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import searchIcon from '../../assets/taxi/search.png';
 import { useUser } from '../../store/user.js';
 import { usePosition } from '../../store/position.js';
 import { createChatApi } from '../../apis/chat/chat.js';
-import { createTaxiPartyApi, addTaxiPartyMemberApi, calculateIndividualExpectedCostApi } from '../../apis/taxi.js';
+import {
+  createTaxiPartyApi,
+  addTaxiPartyMemberApi,
+  calculateIndividualExpectedCostApi,
+  isUserJoinedTaxiPartyApi,
+} from '../../apis/taxi.js';
 
 const CreateChattingPage = () => {
   const [destination, setDestination] = useState('');
   const [userCount, setUserCount] = useState(1);
   const [genderPreference, setGenderPreference] = useState('무관');
-  const { seq: userSeq } = useUser(); // useUser 훅을 사용하여 seq 값을 가져옵니다.
-  const { latitude, longitude } = usePosition(); // usePosition 훅을 사용하여 위치 값을 가져옵니다.
+  const { seq: userSeq } = useUser();
+  const { latitude, longitude } = usePosition();
+  const navigate = useNavigate();
 
   const handleCreateChatRoom = async () => {
     try {
-      // 1. 방생성
+      // 1. 파티 참가 여부 확인
+      const isJoined = await isUserJoinedTaxiPartyApi(userSeq);
+      if (isJoined) {
+        alert('이미 참여중입니다');
+        navigate('/taxi/main');
+        return;
+      }
+
+      // 2. 방생성
       const chatParams = {
         roomTitle: destination,
         userSeq,
@@ -24,7 +39,7 @@ const CreateChattingPage = () => {
       const chatResponse = await createChatApi(chatParams);
       const { roomSeq } = chatResponse;
 
-      // 2. 파티 생성
+      // 3. 파티 생성
       const genderValue = genderPreference === '동성';
 
       const taxiParams = {
@@ -36,23 +51,23 @@ const CreateChattingPage = () => {
       const taxiResponse = await createTaxiPartyApi(taxiParams);
       const { taxiSeq } = taxiResponse;
 
-      // 3. 비용 계산
+      // 4. 비용 계산
       const costParams = {
         startLat: latitude,
         startLon: longitude,
-        endLat: 35, // todo 임시로 35로 설정
-        endLon: 128, // todo 임시로 35로 설정
+        endLat: 35, // todo : 임시로 35로 설정
+        endLon: 128, // todo : 임시로 128로 설정
       };
       const costResponse = await calculateIndividualExpectedCostApi(costParams);
       const { cost } = costResponse;
 
-      // 4. 방장 정보 추가
+      // 5. 방장 정보 추가
       const memberParams = {
         taxiSeq,
         userSeq,
         destiName: destination,
-        destiLat: 35, // todo 임시로 35로 설정
-        destiLon: 128, // todo 임시로 35로 설정
+        destiLat: 35, // 임시로 35로 설정
+        destiLon: 128, // 임시로 128로 설정
         cost,
         routeRank: 1,
       };

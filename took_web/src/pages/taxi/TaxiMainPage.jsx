@@ -30,11 +30,13 @@ const BackButton = () => {
 
 function TaxiMainPage() {
   const navigate = useNavigate();
-  const { gender, seq: userSeq } = useUser();
+  const user = useUser();
+  const { seq: userSeq } = user;
   const { latitude, longitude } = usePosition();
 
   const [location, setLocation] = useState('');
   const [taxiParties, setTaxiParties] = useState([]);
+  const [userGender, setUserGender] = useState('');
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -45,6 +47,15 @@ function TaxiMainPage() {
         } catch (error) {
           console.error('Error fetching address:', error);
         }
+      }
+    };
+
+    const fetchUserGender = async () => {
+      try {
+        const userInfo = await getUserInfoApi({ userSeq });
+        setUserGender(userInfo.gender);
+      } catch (error) {
+        console.error('Error fetching user info:', error);
       }
     };
 
@@ -59,17 +70,22 @@ function TaxiMainPage() {
         userSeqs.push(userSeq); // 나의 userSeq를 추가
 
         const taxiPartyList = await getTaxiPartyListApi({ userSeqs });
+
         const taxiPartiesData = await Promise.all(
           taxiPartyList.map(async (party) => {
             const userInfo = await getUserInfoApi({ userSeq: party.userSeq });
-            const taxiPathResponse = await getTaxiPartyPathApi(party.taxiSeq); // 이부분 수정!
 
-            // const taxiPath = Array.isArray(taxiPathResponse) ? taxiPathResponse : [];
-            // const destinations = taxiPath.map((path) => path.destiName);
+            const taxiPathResponse = await getTaxiPartyPathApi(party.taxiSeq);
+
+            const taxiPath = Array.isArray(taxiPathResponse)
+              ? taxiPathResponse
+              : [];
+            const destinations = taxiPath.map((path) => path.destiName);
 
             return {
               ...party,
               imgNo: userInfo.imageNo,
+              userGender: userInfo.gender, // 작성자의 성별 추가
               destinations,
             };
           })
@@ -81,8 +97,11 @@ function TaxiMainPage() {
       }
     };
 
-    fetchLocation();
-    fetchTaxiParties();
+    if (userSeq) {
+      fetchLocation();
+      fetchUserGender();
+      fetchTaxiParties();
+    }
   }, [userSeq, latitude, longitude]);
 
   const handleCreateTaxi = () => {
@@ -90,12 +109,16 @@ function TaxiMainPage() {
   };
 
   const handleEnterChatRoom = (chatRoomId) => {
-    navigate(`/chat-room/${chatRoomId}`);
+    navigate(`/chat/taxi/${chatRoomId}`);
   };
 
-  const filteredData = taxiParties.filter(
-    (item) => item.gender === '무관' || item.gender === gender
-  );
+  // 필터링 로직 수정
+  const filteredData = taxiParties.filter((item) => {
+    if (item.gender === false) {
+      return true; // gender가 false이면 무관이므로 항상 포함
+    }
+    return item.userGender === userGender; // 작성자의 성별과 현재 유저의 성별 비교
+  });
 
   return (
     <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main">
@@ -115,9 +138,7 @@ function TaxiMainPage() {
             alt="location"
             className="w-4 h-4 mr-2 ml-2"
           />
-          <div className="text-sm font-semibold text-gray-700">
-            {location}
-          </div>
+          <div className="text-sm font-semibold text-gray-700">{location}</div>
         </div>
       </div>
       <div className="px-2 py-4 bg-white h-screen rounded-t-3xl overflow-y-auto">
@@ -133,14 +154,14 @@ function TaxiMainPage() {
                 <div className="flex items-center mb-2">
                   <div
                     className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      item.gender === '무관'
+                      item.gender === false
                         ? 'bg-white border border-neutral-300 text-gray-700'
-                        : item.gender === '여성'
+                        : item.gender
                         ? 'bg-pink-200 text-pink-600'
                         : 'bg-blue-200 text-blue-600'
                     }`}
                   >
-                    {item.gender}
+                    {item.gender ? '여성' : '무관'}
                   </div>
                 </div>
                 <div className="flex flex-wrap mb-2 overflow-x-auto space-x-1">
@@ -164,11 +185,7 @@ function TaxiMainPage() {
                   }}
                 >
                   <img
-                    src={
-                      item.count < item.max
-                        ? enterIcon
-                        : notEnterIcon
-                    }
+                    src={item.count < item.max ? enterIcon : notEnterIcon}
                     alt="enter status"
                     className="w-8 h-8"
                   />
