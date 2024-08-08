@@ -7,6 +7,8 @@ import com.took.user_api.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface MemberRepository extends JpaRepository<MemberEntity,Long> {
 
@@ -14,4 +16,7 @@ public interface MemberRepository extends JpaRepository<MemberEntity,Long> {
 
     MemberEntity findByPartyAndUser(PartyEntity party, UserEntity user);
 
+    List<MemberEntity> findByParty(PartyEntity party);
+
+    List<MemberEntity> findByUser(UserEntity user);
 }

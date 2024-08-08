@@ -4,10 +4,14 @@ package com.took.user_api.service.implement;
 import com.took.fcm_api.dto.AlarmRequest;
 import com.took.fcm_api.dto.MessageRequest;
 import com.took.fcm_api.service.FCMService;
-import com.took.user_api.dto.request.party.*;
+import com.took.user_api.dto.request.party.FinalTaxiPartyRequest;
+import com.took.user_api.dto.request.party.InsertAllMemberRequestDto;
+import com.took.user_api.dto.request.party.MakePartyRequestDto;
+import com.took.user_api.dto.request.party.MakeTaxiPartyRequest;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.party.MakePartyResponseDto;
+import com.took.user_api.dto.response.party.MyPartyListResponseDto;
 import com.took.user_api.dto.response.party.PartyDetailResponseDto;
 import com.took.user_api.dto.response.party.ojResponseDto;
 import com.took.user_api.entity.*;
@@ -22,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,11 +49,11 @@ public class PartyServiceImpl implements PartyService {
         PartyEntity party = PartyEntity.builder()
                 .title(dto.getTitle())
                 .category(dto.getCategory())
-                .cost(dto.getCost())
+                .cost(0L)
                 .status(false)
                 .createdAt(LocalDateTime.now())
                 .count(0)
-                .totalMember(dto.getTotalMember())
+                .totalMember(1)
                 .deliveryTip(dto.getDeliveryTip())
                 .receiveCost(0L)
                 .build();
@@ -77,14 +82,28 @@ public class PartyServiceImpl implements PartyService {
 
     @Transactional
     @Override
-    public ResponseEntity<? super PartyDetailResponseDto> partyDetail(PartyDetailRequestDto dto) {
-
-        Long userSeq = dto.getUserSeq();
-        Long partySeq = dto.getPartySeq();
-        // party리스트 넘기기
-        // userSeq를 불러온 이유? 내꺼는 올라오면 안되기 때문
-        List<MemberEntity> partyDetailList = memberRepositoryCustom.partyDetail(userSeq, partySeq);
+    public ResponseEntity<? super PartyDetailResponseDto> partyDetail(Long partySeq) {
+        PartyEntity party = partyRepository.findById(partySeq).orElseThrow();
+        List<MemberEntity> partyDetailList = memberRepository.findByParty(party);
         return PartyDetailResponseDto.success(partyDetailList);
+    }
+
+    @Transactional
+    @Override
+    public List<MyPartyListResponseDto> myPartyList(Long userSeq) {
+        UserEntity user = userRepository.findById(userSeq).orElseThrow();
+        List<MemberEntity> memberList = memberRepository.findByUser(user);
+
+        // 멤버 리스트에서 partySeq를 추출하여 PartyEntity 리스트를 만듭니다.
+        List<Long> partySeqList = memberList.stream()
+                .map(member -> member.getParty().getPartySeq())
+                .collect(Collectors.toList());
+        List<PartyEntity> partyList = partyRepository.findByPartySeqIn(partySeqList);
+
+        // PartyEntity 리스트를 MyPartyListResponseDto 리스트로 변환합니다.
+        return partyList.stream()
+                .map(MyPartyListResponseDto::new)
+                .collect(Collectors.toList());
     }
 
 
@@ -103,7 +122,6 @@ public class PartyServiceImpl implements PartyService {
             PartyEntity party = partyRepository.findById(requestBody.getPartySeq()).orElseThrow();
             int cate = party.getCategory();
 
-
             Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(party.getPartySeq());
             UserEntity leader = userRepository.findById(leaderSeq).orElseThrow();
             String name = leader.getUserName();
@@ -113,13 +131,24 @@ public class PartyServiceImpl implements PartyService {
                 deliveryTip = party.getDeliveryTip() / party.getTotalMember();
             }
 
+            long totalCost = 0L;
+            int memberCount = 0;
             for (InsertAllMemberRequestDto.userCost userCost : requestBody.getUserCosts()) {
-                if (userCost.getUserSeq().equals(leaderSeq)) continue;
-                UserEntity user = userRepository.getReferenceById(userCost.getUserSeq());
+                long cost = userCost.getCost() + deliveryTip;
+                totalCost += cost;
+
+                if (userCost.getUserSeq().equals(leaderSeq)) { // 결제자는 이미 디비에 추가되어있으니, COST만 업데이트
+                    MemberEntity leaderMember = memberRepository.findByPartyAndLeaderTrue(party);
+                    leaderMember.updateCost(userCost.getCost());
+                    continue;
+                }
+
+                memberCount++;
+                UserEntity user = userRepository.findById(userCost.getUserSeq()).orElseThrow();
                 MemberEntity member = MemberEntity.builder()
                         .party(party)
                         .user(user)
-                        .cost(userCost.getCost() + deliveryTip)
+                        .cost(cost)
                         .status(false)
                         .receive(false)
                         .leader(false)
@@ -129,7 +158,7 @@ public class PartyServiceImpl implements PartyService {
                 memberRepository.save(member);
 
                 AlarmRequest alarm = new AlarmRequest();
-                alarm.setBody(name.charAt(0) + "*" + name.charAt(2) + "님에게 " + userCost.getCost() + "원 TOOK!!");
+                alarm.setBody(name.charAt(0) + "*" + name.charAt(2) + "님에게 " + cost + "원 TOOK!!");
                 alarm.setSender(leaderSeq);
                 alarm.setUserSeq(userCost.getUserSeq());
                 alarm.setPartySeq(party.getPartySeq());
@@ -137,7 +166,7 @@ public class PartyServiceImpl implements PartyService {
 
                 if (party.getDeliveryTip() != null) {
                     alarm.setDeliveryCost(deliveryTip);
-                    alarm.setCost(deliveryTip + userCost.getCost());
+                    alarm.setCost(cost);
                 }
 
 //              배달
@@ -164,6 +193,8 @@ public class PartyServiceImpl implements PartyService {
                 }
                 fcmService.sendNotification(alarm);
             }
+            party.updateCost(totalCost);
+            party.updateTotalMember(memberCount + 1);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
@@ -237,33 +268,6 @@ public class PartyServiceImpl implements PartyService {
         }
         return ojResponseDto.success(done);
     }
-
-
-    @Transactional
-    @Override
-    public ResponseEntity<? super ojResponseDto> onlyjungsanRecieve(Long partySeq, Long userSeq) {
-
-        try {
-
-            PartyEntity party = partyRepository.getReferenceById(partySeq);
-            long N = (long) party.getTotalMember();
-
-            Long receiveCost = party.getReceiveCost() * (N - 1L) / N;
-
-//          뱅크 가져와서 업데이트
-            Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(userSeq);
-            BankEntity bank = bankRepository.getReferenceById(bankSeq);
-            Long balance = bank.getBalance();
-            bank.updateBalance(balance + receiveCost);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-
-        return ojResponseDto.success(true);
-    }
-
 
     @Transactional
     @Override
