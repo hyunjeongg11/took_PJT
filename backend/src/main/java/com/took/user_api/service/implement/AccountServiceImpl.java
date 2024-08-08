@@ -225,13 +225,12 @@ public class AccountServiceImpl implements AccountService {
 
             bankSeq = accountRepositoryCustom.findBankSeqByAccountSeq(requestBody.getAccountSeq());
             bank = bankRepository.getReferenceById(bankSeq);
+            long balance = bank.getBalance();
 
-            if(!bank.minus(requestBody.getCost())) return ResponseDto.nomoney();
+            if(balance < requestBody.getCost()) return ResponseDto.nomoney();
 
 //           뱅크 업데이트 필요
-            Long bankCost = bank.getBalance();
-
-            bankRepositoryCustom.update(bankSeq,bankCost);
+            bank.updateBalance(balance + requestBody.getCost());
 
         }catch(Exception e){
             e.printStackTrace();
@@ -246,29 +245,24 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public ResponseEntity<? super PayResponseDto> guestpay(PayRequestDto requestBody) {
 
-        Long bankSeq = null;
-        BankEntity bank = null;
-
-        MemberEntity member = null;
-
-
         try {
 
-            bankSeq = accountRepositoryCustom.findMainBank(requestBody.getUserSeq());
-            bank = bankRepository.getReferenceById(bankSeq);
-            if (!bank.minus(requestBody.getCost())) return ResponseDto.nomoney();
+            Long bankSeq = accountRepositoryCustom.findMainBank(requestBody.getUserSeq());
+            BankEntity bank = bankRepository.getReferenceById(bankSeq);
+            long balance = bank.getBalance();
+
+            if (balance < bank.getBalance()) return ResponseDto.nomoney();
 
 //         돈 빼주고
-            bankRepositoryCustom.update(bankSeq,bank.getBalance());
+            bank.updateBalance(balance - requestBody.getCost());
 //           빼진 만큼 돈 더 넣어주고
-            PartyEntity party = partyRepository.getReferenceById(requestBody.getPartySeq());
+            PartyEntity party = partyRepository.findById(requestBody.getPartySeq()).orElseThrow();
             Long newCost = party.getReceiveCost() + requestBody.getCost();
-            partyRepositoryCustom.updateCostBypartyId(requestBody.getPartySeq(),newCost);
+            party.updateReceiveCost(newCost);
 //          상태 업데이트 해주고
-            memberRepositoryCustomImpl.changeStatusBySeq(requestBody.getMemberSeq());
-
-
-
+            UserEntity user = userRepository.findById(requestBody.getUserSeq()).orElseThrow();
+            MemberEntity member = memberRepository.findByPartyAndUser(party, user);
+            member.updateStatus(true);
         }catch (Exception e){
             e.printStackTrace();
             return ResponseDto.databaseError();

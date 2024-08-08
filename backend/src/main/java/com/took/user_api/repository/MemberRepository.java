@@ -13,4 +13,5 @@ public interface MemberRepository extends JpaRepository<MemberEntity,Long> {
     MemberEntity findByPartyAndLeaderTrue(PartyEntity party);
 
     MemberEntity findByPartyAndUser(PartyEntity party, UserEntity user);
+
 }
