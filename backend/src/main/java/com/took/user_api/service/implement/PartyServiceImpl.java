@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -173,7 +172,6 @@ public class PartyServiceImpl implements PartyService {
         try {
             MemberEntity member = memberRepositoryCustom.findMemberByPartySeqAndUserSeq(partySeq, userSeq);
             Long membercost = member.getCost();
-            System.out.println("맴버가 내야할 돈은" + membercost);
 
             PartyEntity party = partyRepository.getReferenceById(partySeq);
 
@@ -183,8 +181,6 @@ public class PartyServiceImpl implements PartyService {
 
             if (!bank.minus(membercost)) return ResponseDto.nomoney();
 
-            System.out.println("맴버의 잔액이 충분합니다!!");
-            System.out.println("맴버의 일련 번호" + member.getMemberSeq());
 //          맴버 상태 업데이트
             memberRepositoryCustom.changeStatusBySeq(member.getMemberSeq());
 
@@ -195,7 +191,7 @@ public class PartyServiceImpl implements PartyService {
             Long leftBalance = party.getCost() - membercost;
             party.updateCost(leftBalance);
 
-            System.out.println("돈이 빠지고 리더에게 송금됩니다!");
+
 //           빼주는 순간 리더에게 돈 들어가게
             Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(partySeq);
             Long leaderBankSeq = bankRepositoryCustom.findBankSeqByUserSeq(leaderSeq);
@@ -203,23 +199,16 @@ public class PartyServiceImpl implements PartyService {
             leaderBankEntity.add(membercost);
             bankRepositoryCustom.updateBalanceByBankSeq(leaderBankEntity.getBalance(), leaderBankSeq);
 
-
-            System.out.println("리더에게 알림이 송금됩니다!");
-
-            MessageRequest message = new MessageRequest();
             UserEntity sender = userRepository.getReferenceById(userSeq);
             String name = sender.getUserName();
-            message.setTitle("송금 알림");
-            message.setBody(name.charAt(0) + "*" + name.charAt(2) + "님이 " + membercost + "원을 송금하였습니다!");
 
-            List<Long> lst = new ArrayList<Long>();
-            lst.add(leaderSeq);
-
-            message.setUserSeqList(lst);
-            fcmService.sendMessage(message);
-
-
-            System.out.println("나눠지지 않는다면 차액은 리더에게!");
+            fcmService.sendMessage(
+                    MessageRequest.builder()
+                            .title("송금 알림")
+                            .body(name.charAt(0) + "*" + name.charAt(2) + "님이 " + membercost + "원을 송금하였습니다!")
+                            .userSeqList(List.of(leaderSeq))
+                            .build()
+            );
 
 
             if (leftBalance.equals(membercost)) {
@@ -234,17 +223,15 @@ public class PartyServiceImpl implements PartyService {
                 leaderBankEntity.add(change);
                 bankRepositoryCustom.updateBalanceByBankSeq(leaderBankEntity.getBalance(), leaderBankSeq);
 
-                message.setTitle("송금 알림");
-                message.setBody("정산이 완료되어 차액이 납부 되었습니다!");
-
-                lst = new ArrayList<Long>();
-                lst.add(leaderSeq);
-
-                message.setUserSeqList(lst);
-                fcmService.sendMessage(message);
+                fcmService.sendMessage(
+                        MessageRequest.builder()
+                                .title("송금 알림")
+                                .body("정산이 완료되어 차액이 납부 되었습니다!")
+                                .userSeqList(List.of(leaderSeq))
+                                .build()
+                );
 
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
