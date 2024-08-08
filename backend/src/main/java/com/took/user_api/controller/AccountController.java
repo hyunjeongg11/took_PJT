@@ -4,16 +4,15 @@ import com.took.user_api.dto.request.account.*;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.account.*;
 import com.took.user_api.service.AccountService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @RestController
 @RequestMapping("/api/account")
@@ -124,4 +123,19 @@ public class AccountController {
     ) {
         return accountService.deleteAccount(accountSeq);
     }
+
+    // 사용자 번호를 받아서 주계좌정보 반환
+    @Operation(summary = "주계좌 조회", description = "사용자의 주계좌를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "주계좌 조회 성공",
+                    content = @Content(schema = @Schema(implementation = MainAccountSelectResponse.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @GetMapping("/main-account/{userSeq}")
+    public MainAccountSelectResponse mainAccount(
+            @PathVariable("userSeq") Long userSeq
+    ) {
+        return accountService.getMainAccount(userSeq);
+    }
+
 }

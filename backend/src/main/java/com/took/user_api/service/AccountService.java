@@ -21,4 +21,6 @@ public interface AccountService {
     ResponseEntity<? super CheckEasyPwdResponseDto> checkEasyPwd(AccountEasyPwdRequestDto requestBody);
     ResponseEntity<? super VoidResponseDto> repay(RepayRequestDto requestBody);
     ResponseEntity<? super PayResponseDto> guestpay(PayRequestDto requestBody);
+
+    MainAccountSelectResponse getMainAccount(Long userSeq);
 }

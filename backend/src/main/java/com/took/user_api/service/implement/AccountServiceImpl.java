@@ -278,4 +278,13 @@ public class AccountServiceImpl implements AccountService {
         }
         return PayResponseDto.success(requestBody.getUserSeq());
     }
+
+    @Transactional
+    @Override
+    public MainAccountSelectResponse getMainAccount(Long userSeq) {
+        UserEntity user = userRepository.getReferenceById(userSeq);
+        AccountEntity account = accountRepository.findByUserAndMainTrue(user);
+        BankEntity bank = bankRepository.findById(account.getBank().getBankSeq()).orElseThrow();
+        return new MainAccountSelectResponse(account,bank);
+    }
 }

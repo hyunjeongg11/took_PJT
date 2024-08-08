@@ -1,6 +1,5 @@
 package com.took.taxi_api.repository;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.taxi_api.entity.QTaxiGuest;
 import com.took.taxi_api.entity.Taxi;
