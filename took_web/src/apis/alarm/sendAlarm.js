@@ -1,5 +1,5 @@
-import { request } from './request';
-import { handleApiError } from './errorHandling';
+import { request } from '../request';
+import { handleApiError } from '../errorHandling';
 
 // 독촉 알림 보내기
 // 요청
