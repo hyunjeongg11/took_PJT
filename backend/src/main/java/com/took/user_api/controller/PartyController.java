@@ -133,18 +133,6 @@ public class PartyController {
         return response;
     }
 
-    @Operation(summary = "[배달, 공구] 수령 후 입금.", description = "참여 맴버들이 수령을 확인합니다. 모두 수령을 끝내면 done에 true를 반환합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "맴버 수령 성공!!",
-                    content = @Content(schema = @Schema(implementation = MemberSaveResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청")
-    })
-    @PostMapping("/deli-gongu-host-recieve")
-    public ResponseEntity<? super ojResponseDto>deligonguHostRecieve(@RequestBody PartyUserSeqRequestDto requestBody){
-        ResponseEntity<? super ojResponseDto> response = partyService.deligonguHostRecieve(requestBody.getPartySeq(),requestBody.getUserSeq());
-        return response;
-    }
-
     @Operation(summary = "파티 상세 조회", description = "파티의 상세 내역을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "파티 상세 조회 성공",

@@ -59,11 +59,4 @@ public class PartyRepositoryCustomImpl implements PartyRepositoryCustom {
                 .execute();
     }
 
-    @Override
-    public Long findCostByPartySeq(Long partySeq) {
-
-        QPartyEntity party = partyEntity;
-        return jpaQueryFactory.select(party.cost).from(party).where(party.partySeq.eq(partySeq)).fetchOne();
-
-    }
 }

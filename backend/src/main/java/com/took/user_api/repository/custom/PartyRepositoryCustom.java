@@ -9,5 +9,4 @@ public interface PartyRepositoryCustom {
     List<PartyEntity> findMyPartyList(Long userSeq);
     void updateCostBypartyId(Long partySeq, Long newCost);
     void changeStatusBySeq(Long partySeq);
-    Long findCostByPartySeq(Long partySeq);
 }

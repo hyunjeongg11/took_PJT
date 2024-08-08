@@ -17,7 +17,7 @@ public interface PartyService {
     ResponseEntity<? super ojResponseDto> onlyjungsanPay(Long partySeq,Long userSeq);
     ResponseEntity<? super ojResponseDto> deligonguPay(Long memberSeq,Long userSeq);
     ResponseEntity<? super ojResponseDto> deligonguRecieve(Long partySeq,Long memberSeq);
-    ResponseEntity<? super ojResponseDto> deligonguHostRecieve(Long partySeq,Long userSeq);
+    void deligonguHostRecieve(Long partySeq,Long userSeq);
     ResponseEntity<? super ojResponseDto> onlyjungsanRecieve(Long partySeq, Long userSeq);
 
     Long makeTaxiParty(MakeTaxiPartyRequest requestBody);

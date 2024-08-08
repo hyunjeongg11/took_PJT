@@ -123,27 +123,27 @@ public class PartyServiceImpl implements PartyService {
 //              배달
                 if (cate == 1) {
 
-                    alarm.setTitle("{배달} took 정산 요청이 왔어요!");
+                    alarm.setTitle("배달 took 정산 요청이 왔어요!");
                     alarm.setCategory(1);
 
 
 //              택시
                 } else if (cate == 2) {
 
-                    alarm.setTitle("{택시} took 정산 요청이 왔어요!");
+                    alarm.setTitle("택시 took 정산 요청이 왔어요!");
                     alarm.setCategory(2);
 
 //               공동구매
                 } else if (cate == 3) {
 
-                    alarm.setTitle("{공동구매} took 정산 요청이 왔어요!");
+                    alarm.setTitle("공동구매 took 정산 요청이 왔어요!");
                     alarm.setCategory(3);
 
 
 //               더치페이
                 } else if (cate == 4) {
 
-                    alarm.setTitle("{정산} took 정산 요청이 왔어요!");
+                    alarm.setTitle("정산 took 정산 요청이 왔어요!");
                     alarm.setCategory(4);
 //                  정산이니까 엔빵
                     alarm.setCost(member.getCost());
@@ -196,10 +196,10 @@ public class PartyServiceImpl implements PartyService {
             Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(partySeq);
             Long leaderBankSeq = bankRepositoryCustom.findBankSeqByUserSeq(leaderSeq);
             BankEntity leaderBankEntity = bankRepository.getReferenceById(leaderBankSeq);
-            leaderBankEntity.add(membercost);
-            bankRepositoryCustom.updateBalanceByBankSeq(leaderBankEntity.getBalance(), leaderBankSeq);
+            long balance = leaderBankEntity.getBalance() + membercost;
+            leaderBankEntity.updateBalance(balance);
 
-            UserEntity sender = userRepository.getReferenceById(userSeq);
+            UserEntity sender = userRepository.findById(userSeq).orElseThrow();
             String name = sender.getUserName();
 
             fcmService.sendMessage(
@@ -219,9 +219,8 @@ public class PartyServiceImpl implements PartyService {
             } else if (leftBalance < membercost) {
 
                 done = true;
-                Long change = membercost - party.getCost();
-                leaderBankEntity.add(change);
-                bankRepositoryCustom.updateBalanceByBankSeq(leaderBankEntity.getBalance(), leaderBankSeq);
+                long change = membercost - party.getCost();
+                leaderBankEntity.updateBalance(balance + change);
 
                 fcmService.sendMessage(
                         MessageRequest.builder()
@@ -310,26 +309,23 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
-    public ResponseEntity<? super ojResponseDto> deligonguHostRecieve(Long partySeq, Long userSeq) {
+    public void deligonguHostRecieve(Long partySeq, Long userSeq) {
 
-        try {
+        PartyEntity party = partyRepository.findById(partySeq).orElseThrow();
+        Long receiveCost = party.getReceiveCost();
+        Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(userSeq);
+        BankEntity bank = bankRepository.findById(bankSeq).orElseThrow();
+        Long balance = bank.getBalance();
+        bank.updateBalance(receiveCost + balance);
 
-
-            Long recieveCost = partyRepositoryCustom.findCostByPartySeq(partySeq);
-
-//          뱅크 가져와서 업데이트
-            Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(userSeq);
-            BankEntity bank = bankRepository.getReferenceById(bankSeq);
-            bank.add(recieveCost);
-            bankRepositoryCustom.updateBalanceByBankSeq(bank.getBalance(), bankSeq);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-
-        return ojResponseDto.success(true);
+        // 알림 생성
+        fcmService.sendMessage(
+                MessageRequest.builder()
+                        .title(party.getTitle() + " 정산 완료")
+                        .body(receiveCost + "원이 정산 되었습니다.")
+                        .userSeqList(List.of(userSeq))
+                        .build()
+        );
     }
 
     @Override
@@ -345,7 +341,8 @@ public class PartyServiceImpl implements PartyService {
 //          뱅크 가져와서 업데이트
             Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(userSeq);
             BankEntity bank = bankRepository.getReferenceById(bankSeq);
-            bank.add(recieveCost);
+            Long balance = bank.getBalance();
+            bank.updateBalance(balance + recieveCost);
             bankRepositoryCustom.updateBalanceByBankSeq(bank.getBalance(), bankSeq);
 
 

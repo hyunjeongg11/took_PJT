@@ -209,15 +209,16 @@ public class DeliveryController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "배달 픽업 여부 변경", description = "배달 파티 참가자의 픽업 여부를 변경합니다.")
+    @Operation(summary = "배달 픽업 여부 변경", description = "배달 파티 참가자의 픽업 여부를 변경합니다. 모든 파티원이 픽업 완료라면, 배달 상태를 DONE으로 바꾸고, 중간계좌 정산 및 완료 알림 전송")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "픽업 여부 변경 성공"),
             @ApiResponse(responseCode = "404", description = "배달 파티 참가자를 찾을 수 없음")
     })
     @GetMapping("/guest/setPickUp/{deliveryGuestSeq}")
-    ResponseEntity<Boolean> setPickUp(
+    ResponseEntity<?> setPickUp(
             @PathVariable @Parameter(description = "픽업 여부를 변경할 배달 파티 참가자의 고유 번호", required = true) Long deliveryGuestSeq) {
-        return ResponseEntity.ok(deliveryGuestService.setPickUp(deliveryGuestSeq));
+        deliveryGuestService.setPickUp(deliveryGuestSeq);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "참가 중인 방 리스트 조회", description = "사용자가 참가 중인 배달 방 리스트를 조회합니다.")
