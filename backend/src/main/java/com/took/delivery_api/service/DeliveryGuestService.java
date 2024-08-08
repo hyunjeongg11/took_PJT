@@ -38,7 +38,7 @@ public class DeliveryGuestService {
     @Transactional
     public void joinParty(DeliveryGuestCreateRequest request) {
         Delivery delivery = deliveryRepository.findById(request.getDeliverySeq()).orElseThrow();
-        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        UserEntity user = userRepository.findById(request.getUserSeq()).orElseThrow();
         deliveryGuestRepository.save(DeliveryGuest.builder()
                 .delivery(delivery)
                 .user(user)
@@ -81,7 +81,7 @@ public class DeliveryGuestService {
 
         Delivery delivery = deliveryRepository.findById(deliveryGuest.getDelivery().getDeliverySeq()).orElseThrow();
         PartyEntity party = partyRepository.findById(delivery.getPartySeq()).orElseThrow();
-        UserEntity user = userRepository.findByUserSeq(deliveryGuest.getUser().getUserSeq());
+        UserEntity user = userRepository.findById(deliveryGuest.getUser().getUserSeq()).orElseThrow();
         MemberEntity member = memberRepository.findByPartyAndUser(party, user);
         member.updateRecieve(true);
         // 변경 사항을 강제로 데이터베이스에 반영
@@ -98,7 +98,7 @@ public class DeliveryGuestService {
     @Transactional
     public boolean isJoin(DeliveryGuestIsJoinRequest request) {
         Delivery delivery = deliveryRepository.findById(request.getDeliverySeq()).orElseThrow();
-        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        UserEntity user = userRepository.findById(request.getUserSeq()).orElseThrow();
         DeliveryGuest deliveryGuest = deliveryGuestRepository.findByDeliveryAndUser(delivery,user);
         return deliveryGuest != null;
     }
@@ -106,7 +106,7 @@ public class DeliveryGuestService {
     // 참가중인 방 목록
     @Transactional
     public List<DeliverySelectResponse> getJoinList(Long userSeq) {
-        UserEntity user = userRepository.findByUserSeq(userSeq);
+        UserEntity user = userRepository.findById(userSeq).orElseThrow();
 
         List<DeliveryGuest> deliveryGuests = deliveryGuestRepository.findAllByUser(user);
 

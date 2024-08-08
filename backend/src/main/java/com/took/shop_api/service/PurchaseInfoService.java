@@ -28,7 +28,7 @@ public class PurchaseInfoService {
 
     @Transactional
     public void savePurchaseInfo(AddPurchaseInfo request) {
-        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        UserEntity user = userRepository.findById(request.getUserSeq()).orElseThrow();
         Shop shop = shopRepository.findById(request.getShopSeq()).orElseThrow();
 
         PurchaseInfo purchaseInfo = purchaseInfoRepository.save(PurchaseInfo.builder()

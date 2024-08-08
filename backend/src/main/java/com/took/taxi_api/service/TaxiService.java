@@ -34,7 +34,7 @@ public class TaxiService {
      */
     @Transactional
     public TaxiSelectResponse createTaxi(TaxiCreateRequest request) {
-        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        UserEntity user = userRepository.findById(request.getUserSeq()).orElseThrow();
         // Taxi 엔티티를 빌더 패턴을 사용하여 생성합니다.
         Taxi taxi = Taxi.builder()
                 .gender(request.isGender())  // 성별 여부 설정
@@ -185,7 +185,7 @@ public class TaxiService {
     // 참가중인 택시방
     @Transactional
     public TaxiSelectResponse getJoinedTaxi(Long userSeq) {
-        UserEntity user = userRepository.findByUserSeq(userSeq);
+        UserEntity user = userRepository.findById(userSeq).orElseThrow();
         TaxiGuest guest = taxiGuestRepository.findByUser(user);
         Taxi taxi = taxiRepository.findById(guest.getTaxi().getTaxiSeq()).orElseThrow();
         return new TaxiSelectResponse(taxi);

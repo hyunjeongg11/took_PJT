@@ -158,7 +158,17 @@ public class PartyServiceImpl implements PartyService {
                 memberRepository.save(member);
 
                 AlarmRequest alarm = new AlarmRequest();
-                alarm.setBody(name.charAt(0) + "*" + name.charAt(2) + "님에게 " + cost + "원 TOOK!!");
+                String maskedName;
+                if (name.length() == 2) {
+                    maskedName = name.charAt(0) + "*";
+                } else if (name.length() == 3) {
+                    maskedName = name.charAt(0) + "*" + name.charAt(2);
+                } else if (name.length() >= 4) {
+                    maskedName = name.charAt(0) + "**" + name.charAt(name.length() - 1);
+                } else {
+                    maskedName = name; // 이름이 1글자인 경우 그대로 사용
+                }
+                alarm.setBody(maskedName + "님에게 " + cost + "원 TOOK!!");
                 alarm.setSender(leaderSeq);
                 alarm.setUserSeq(userCost.getUserSeq());
                 alarm.setPartySeq(party.getPartySeq());

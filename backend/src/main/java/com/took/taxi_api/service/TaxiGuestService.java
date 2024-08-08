@@ -30,7 +30,7 @@ public class TaxiGuestService {
     @Transactional
     public void joinGuest(GuestCreateRequest request) {
         Taxi taxi = taxiRepository.findById(request.getTaxiSeq()).orElseThrow();
-        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        UserEntity user = userRepository.findById(request.getUserSeq()).orElseThrow();
 
         TaxiGuest taxiGuest = TaxiGuest.builder().taxi(taxi).user(user)
                 .cost(request.getCost())
@@ -50,7 +50,7 @@ public class TaxiGuestService {
     @Transactional
     public void deleteGuest(GuestDeleteRequest request) {
         Taxi taxi = taxiRepository.findById(request.getTaxiSeq()).orElseThrow();
-        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        UserEntity user = userRepository.findById(request.getUserSeq()).orElseThrow();
         TaxiGuest guest = taxiGuestRepository.findByUserAndTaxi(user, taxi);
         taxiGuestRepository.delete(guest);
         taxi.updateCount(-1);

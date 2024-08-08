@@ -27,7 +27,7 @@ public class DeliveryService {
     // 배달 생성 메서드
     @Transactional
     public DeliveryCreateResponse createDelivery(DeliveryCreateRequest request) {
-        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        UserEntity user = userRepository.findById(request.getUserSeq()).orElseThrow();
         // 요청 데이터를 기반으로 Delivery 객체 생성
         Delivery delivery = Delivery.builder()
                 .user(user) // 사용자 식별자 설정

@@ -130,7 +130,7 @@ public class ChatUserService {
     @Transactional
     public List<ChatRoomCategorySelectResponse> findRoomsByUser(Long userSeq) {
         // 주어진 userSeq로 UserEntity 조회
-        UserEntity user = userRepository.findByUserSeq(userSeq);
+        UserEntity user = userRepository.findById(userSeq).orElseThrow();
 
         // 해당 유저가 참여하고 있는 ChatUser 목록 조회
         List<ChatUser> chatUsers = chatUserRepository.findByUser(user);

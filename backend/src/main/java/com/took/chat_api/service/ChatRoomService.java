@@ -28,7 +28,7 @@ public class ChatRoomService {
      */
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
     public ChatRoomCreateResponse createChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
-        UserEntity user = userRepository.findByUserSeq(chatRoomCreateRequest.getUserSeq());  // 사용자 번호로 사용자 조회
+        UserEntity user = userRepository.findById(chatRoomCreateRequest.getUserSeq()).orElseThrow();  // 사용자 번호로 사용자 조회
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomTitle(chatRoomCreateRequest.getRoomTitle())

@@ -2,15 +2,11 @@ package com.took.shop_api.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.chat_api.repository.ChatRoomRepository;
-import com.took.delivery_api.dto.DeliverySelectResponse;
-import com.took.delivery_api.entity.Delivery;
-import com.took.delivery_api.entity.DeliveryGuest;
 import com.took.shop_api.dto.*;
-import com.took.shop_api.entity.*;
+import com.took.shop_api.entity.Shop;
+import com.took.shop_api.entity.ShopGuest;
 import com.took.shop_api.repository.ShopGuestRepository;
 import com.took.shop_api.repository.ShopRepository;
-import com.took.taxi_api.dto.TaxiSetPartyRequest;
-import com.took.taxi_api.entity.Taxi;
 import com.took.user_api.entity.MemberEntity;
 import com.took.user_api.entity.PartyEntity;
 import com.took.user_api.entity.UserEntity;
@@ -41,7 +37,8 @@ public class ShopService {
 
     @Transactional
     public Shop save(AddShopRequest request) {
-        Shop shop = Shop.builder().user(userRepository.findByUserSeq(request.getUserSeq()))
+        UserEntity user = userRepository.findById(request.getUserSeq()).orElseThrow();
+        Shop shop = Shop.builder().user(user)
                 .roomSeq(request.getRoomSeq())
                 .title(request.getTitle())
                 .content(request.getContent())
@@ -54,7 +51,6 @@ public class ShopService {
                 .build();
         shopRepository.save(shop);
 
-        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
         ShopGuest shopGuest = ShopGuest.builder().shop(shop).user(user).build();
         shopGuestRepository.save(shopGuest);
         return shop;
@@ -78,7 +74,7 @@ public class ShopService {
     public ShopResponse findById(Long id) {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
-        UserEntity user = userRepository.findByUserSeq(shop.getUser().getUserSeq());
+        UserEntity user = userRepository.findById(shop.getUser().getUserSeq()).orElseThrow();
 
         shop.updateHit(1);
 
@@ -111,14 +107,14 @@ public class ShopService {
     @Transactional
     public boolean userEnterShop(AddShopGuest request) {
         Shop shop = shopRepository.findById(request.getShopSeq()).orElseThrow();
-        UserEntity user = userRepository.findByUserSeq(request.getUserSeq());
+        UserEntity user = userRepository.findById(request.getUserSeq()).orElseThrow();
         ShopGuest shopGuest = shopGuestRepository.findByShopAndUser(shop, user);
         if (shopGuest == null){
             if (shop.getMaxCount() > shop.getCount()){
                 shop.updateCount(1);
                 shopGuest = ShopGuest.builder().
                         shop(shop).
-                        user(userRepository.findByUserSeq(request.getUserSeq())).
+                        user(user).
                         pickUp(false).
                         build();
                 shopGuestRepository.save(shopGuest);
@@ -137,7 +133,7 @@ public class ShopService {
     @Transactional
     public void exit(Long shopSeq, Long userSeq){
         Shop shop = shopRepository.findById(shopSeq).orElseThrow();
-        UserEntity user = userRepository.findByUserSeq(userSeq);
+        UserEntity user = userRepository.findById(userSeq).orElseThrow();
         shopGuestRepository.deleteByShopAndUser(shop, user);
 
         shop.updateCount(-1);
@@ -148,7 +144,7 @@ public class ShopService {
         Shop shop = shopRepository.findById(shopSeq)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + shopSeq));
 
-        UserEntity user = userRepository.findByUserSeq(userSeq);
+        UserEntity user = userRepository.findById(userSeq).orElseThrow();
         ShopGuest shopGuest = shopGuestRepository.findByShopAndUser(shop, user);
         shopGuest.updatePickUp(true);
 
@@ -177,7 +173,7 @@ public class ShopService {
 
     @Transactional
     public boolean findGuestsById(long userSeq, long shopSeq) {
-        UserEntity user = userRepository.findByUserSeq(userSeq);
+        UserEntity user = userRepository.findById(userSeq).orElseThrow();
         Shop shop = shopRepository.findById(shopSeq).orElseThrow();
         ShopGuest shopGuest = shopGuestRepository.findByShopAndUser(shop, user);
         return shopGuest == null;
@@ -187,7 +183,7 @@ public class ShopService {
     public ShopResponse findShopByRoom(Long roomSeq) {
         Shop shop = shopRepository.findByRoomSeq(roomSeq)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + roomSeq));
-        UserEntity user = userRepository.findByUserSeq(shop.getUser().getUserSeq());
+        UserEntity user = userRepository.findById(shop.getUser().getUserSeq()).orElseThrow();
 
         shop.updateHit(1);
 
@@ -199,7 +195,7 @@ public class ShopService {
     public List<ShopResponse> findShopsByUserId(Long id) {
 
         List<Shop> shops = shopRepository.findAll();
-        UserEntity user = userRepository.findByUserSeq(id);
+        UserEntity user = userRepository.findById(id).orElseThrow();
 
         return shops.stream()
                 .map(shop -> {
