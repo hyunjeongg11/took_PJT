@@ -19,6 +19,9 @@ public class ShopResponse {
     @Schema(description = "채팅방 고유 번호", example = "1")
     private final Long roomSeq;  // 채팅방 고유 번호
 
+    @Schema(description = "파티 고유 번호", example = "1")
+    private final Long partySeq;  // 채팅방 고유 번호
+
     @Schema(description = "상점 제목", example = "상점 제목")
     private final String title;  // 상점 제목
 
@@ -65,6 +68,7 @@ public class ShopResponse {
         this.shopSeq = shop.getShopSeq();
         this.userSeq = shop.getUser().getUserSeq();
         this.roomSeq = shop.getRoomSeq();
+        this.partySeq = shop.getPartySeq();
         this.title = shop.getTitle();
         this.content = shop.getContent();
         this.hit = shop.getHit();

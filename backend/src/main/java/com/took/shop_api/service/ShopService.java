@@ -8,6 +8,8 @@ import com.took.shop_api.dto.*;
 import com.took.shop_api.entity.*;
 import com.took.shop_api.repository.ShopGuestRepository;
 import com.took.shop_api.repository.ShopRepository;
+import com.took.taxi_api.dto.TaxiSetPartyRequest;
+import com.took.taxi_api.entity.Taxi;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -197,6 +199,12 @@ public class ShopService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void setParty(ShopSetPartyRequest request) {
+        Shop shop = shopRepository.findById(request.getShopSeq()).orElseThrow();
+        shop.updateParty(request.getPartySeq());
+    }
+
     // 두 지점 간의 거리 계산 (단위: m)
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         if ((lat1 == lat2) && (lon1 == lon2)) {
@@ -212,4 +220,6 @@ public class ShopService {
             return (dist * 1000);  // m 단위로 변환
         }
     }
+
+
 }

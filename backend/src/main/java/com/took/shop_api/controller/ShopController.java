@@ -3,9 +3,12 @@ package com.took.shop_api.controller;
 import com.took.shop_api.dto.*;
 import com.took.shop_api.entity.Shop;
 import com.took.shop_api.service.ShopService;
+import com.took.taxi_api.dto.TaxiSetPartyRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -129,5 +132,17 @@ public class ShopController {
     public ResponseEntity<List<ShopResponse>> findShopsByUserId(@PathVariable @Schema(description = "상점 ID 리스트") long id) {
         return ResponseEntity.ok()
                 .body(shopService.findShopsByUserId(id));
+    }
+
+    @Operation(summary = "정산방 연결", description = "상점의 정산방을 연결합니다.")
+    @PutMapping("/setParty")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "정산방 연결 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    ResponseEntity<?> setParty(
+            @RequestBody @Parameter(description = "정산방 연결 요청 데이터", required = true) ShopSetPartyRequest request) {
+        shopService.setParty(request);
+        return ResponseEntity.noContent().build();
     }
 }

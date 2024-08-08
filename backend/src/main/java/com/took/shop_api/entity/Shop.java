@@ -48,6 +48,9 @@ public class Shop {
     @Column(nullable = false)
     private Long roomSeq;
 
+    @Column
+    private Long partySeq; // 정산 참조 번호
+
     @Column(nullable = false)
     private String title;
 
@@ -102,5 +105,9 @@ public class Shop {
         this.site = site;
         this.place = place;
         this.maxCount = maxCount;
+    }
+
+    public void updateParty(Long partySeq) {
+        this.partySeq = partySeq;
     }
 }
