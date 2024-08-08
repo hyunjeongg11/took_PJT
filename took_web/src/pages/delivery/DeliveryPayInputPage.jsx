@@ -1,23 +1,47 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { formatNumber } from '../../utils/format';
 import BackButton from '../../components/common/BackButton';
+import { makePartyApi } from '../../apis/pay';
+import { useUser } from '../../store/user';
+import { getDeliveryByRoom } from '../../apis/findByRoom';
 
 function DeliveryPayInputPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { seq } = useUser();
+  const { id } = useParams();
+  const [deliveryInfo, setDeliveryInfo] = useState();
 
-  // 임시 데이터 todo
-  const { participants } = location.state || {
-    participants: [
-      { member_seq: 1, userName: '참가자1' },
-      { member_seq: 2, userName: '참가자2' },
-      { member_seq: 3, userName: '참가자3' },
-      { member_seq: 4, userName: '참가자4' },
-    ],
+  useEffect(() => {
+    loadDeliveryInfo();
+  }, []);
+
+  const loadDeliveryInfo = async () => {
+    try {
+      const res = await getDeliveryByRoom(id);
+      setDeliveryInfo(res);
+    } catch (err) {
+      console.error('Error fetching delivery info', err);
+    }
   };
 
-  const [orderAmounts, setOrderAmounts] = useState(Array(participants.length).fill(''));
+  // 임시 데이터 todo
+  const participants = Array.isArray(location.state?.users)
+    ? location.state.users[0]
+    : [
+        { member_seq: 1, userName: '참가자1' },
+        { member_seq: 2, userName: '참가자2' },
+        { member_seq: 3, userName: '참가자3' },
+        { member_seq: 4, userName: '참가자4' },
+      ];
+
+  console.log(participants);
+
+  const [orderAmounts, setOrderAmounts] = useState(
+    Array(participants.length).fill('')
+  );
+
   const [tipAmount, setTipAmount] = useState('');
 
   const handleOrderAmountChange = (index, value) => {
@@ -33,7 +57,20 @@ function DeliveryPayInputPage() {
   };
 
   const handleSubmit = () => {
-    navigate('/payment'); 
+    //navigate('/payment');
+  };
+
+  const makeParty = async () => {
+    try {
+      const res = await makePartyApi({
+        userSeq: seq,
+        title: deliveryInfo.storeName,
+        category: 1,
+      });
+      console.log('정산 파티 생성 완료', res);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -52,7 +89,7 @@ function DeliveryPayInputPage() {
         <div className="text-left shadow-md rounded-xl border border-neutral-200 py-2 mb-6 w-64">
           <input
             type="text"
-            className="text-lg ml-5 w-full outline-none box-border"
+            className="text-lg ml-5 "
             placeholder="배달 팁(원)"
             value={tipAmount}
             onChange={(e) => handleTipAmountChange(e.target.value)}
@@ -61,10 +98,10 @@ function DeliveryPayInputPage() {
         {participants.map((participant, index) => (
           <div key={participant.member_seq} className="mb-6 w-64">
             <div className="text-left mb-1">{participant.userName}</div>
-            <div className="text-left shadow-md rounded-xl border border-neutral-200 py-2">
+            <div className="text-left shadow-md rounded-xl border border-neutral-200 py-2 mx-1">
               <input
                 type="text"
-                className="text-lg ml-5 w-full outline-none box-border"
+                className="text-lg ml-5"
                 placeholder="주문 금액(원)"
                 value={orderAmounts[index]}
                 onChange={(e) => handleOrderAmountChange(index, e.target.value)}
