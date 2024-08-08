@@ -72,7 +72,7 @@ public class PartyController {
 
     //  알람 보내는 로직 여기에 추가할 것.
     //  결제자도 자기 돈을 입력해야한다.
-    @Operation(summary = "맴버 전체 저장", description = "파티에 존재 하는 모든 맴버를 추가합니다. (정산, 배달, 공구), 멤버 및 요금 확정되고 정산요청시 이거 사용")
+    @Operation(summary = "맴버 전체 저장 (정산요청)", description = "파티에 존재 하는 모든 맴버를 추가합니다. (정산, 배달, 공구), 멤버 및 요금 확정되고 정산요청시 이거 사용")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "멤버 추가 성공",
                     content = @Content(schema = @Schema(implementation = MemberSaveResponseDto.class))),
