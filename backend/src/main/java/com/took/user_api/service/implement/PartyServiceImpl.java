@@ -54,7 +54,6 @@ public class PartyServiceImpl implements PartyService {
                 .createdAt(LocalDateTime.now())
                 .count(0)
                 .totalMember(1)
-                .deliveryTip(dto.getDeliveryTip())
                 .receiveCost(0L)
                 .build();
 
@@ -125,14 +124,19 @@ public class PartyServiceImpl implements PartyService {
             Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(party.getPartySeq());
             UserEntity leader = userRepository.findById(leaderSeq).orElseThrow();
             String name = leader.getUserName();
-
+            Long TotalDeliveryTip = requestBody.getDeliveryTip();
             long deliveryTip = 0L;
-            if (party.getDeliveryTip() != null) {
-                deliveryTip = party.getDeliveryTip() / party.getTotalMember();
+            int totalMember = requestBody.getUserCosts().size();
+
+            if (TotalDeliveryTip != null) {
+                party.updateDeliveryTip(TotalDeliveryTip);
+                deliveryTip = TotalDeliveryTip / totalMember;
+                if (TotalDeliveryTip % totalMember != 0) {
+                    deliveryTip += 1; // 나머지가 있을 경우 deliveryTip을 +1
+                }
             }
 
             long totalCost = 0L;
-            int memberCount = 0;
             for (InsertAllMemberRequestDto.userCost userCost : requestBody.getUserCosts()) {
                 long cost = userCost.getCost() + deliveryTip;
                 totalCost += cost;
@@ -143,7 +147,6 @@ public class PartyServiceImpl implements PartyService {
                     continue;
                 }
 
-                memberCount++;
                 UserEntity user = userRepository.findById(userCost.getUserSeq()).orElseThrow();
                 MemberEntity member = MemberEntity.builder()
                         .party(party)
@@ -204,7 +207,7 @@ public class PartyServiceImpl implements PartyService {
                 fcmService.sendNotification(alarm);
             }
             party.updateCost(totalCost);
-            party.updateTotalMember(memberCount + 1);
+            party.updateTotalMember(totalMember);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();

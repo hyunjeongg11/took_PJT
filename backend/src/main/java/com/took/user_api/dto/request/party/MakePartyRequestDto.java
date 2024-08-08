@@ -19,6 +19,4 @@ public class MakePartyRequestDto {
     @Schema(description = "카테고리 (예: 1 - 배달, 2 - 택시 등)", example = "1", required = true)
     private int category;
 
-    @Schema(description = "배달 팁 (예: 5000)", example = "5000")
-    private Long deliveryTip;
 }
