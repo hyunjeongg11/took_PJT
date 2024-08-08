@@ -22,7 +22,7 @@ function RequestCard({ userName, onClose, member, sender, senderName, partySeq, 
   const handleRequest = async () => {
     const params = {
       title: `${getCategoryTitle(category)} took 정산 요청이 왔어요!`,
-      body: `${senderName}님에게 ${member.cost - member.real_cost}원을 송금해주세요.`,
+      body: `${senderName}님에게 ${Math.abs(member.cost - member.real_cost)}원을 송금해주세요.`,
       sender: sender,
       userSeq: member.user_seq,
       partySeq: partySeq,

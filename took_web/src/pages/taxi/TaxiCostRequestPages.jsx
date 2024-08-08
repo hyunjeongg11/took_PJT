@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaBell } from 'react-icons/fa';
 import BackButton from '../../components/common/BackButton';
@@ -10,6 +10,7 @@ import { formatNumber } from '../../utils/format';
 import { formatDate } from '../../utils/formatDate';
 import RequestCard from '../../components/payment/RequestCard';
 import { useUser } from '../../store/user';
+import { getUserInfoApi } from '../../apis/user';
 
 // 임시 데이터
 const tempTaxi = {
@@ -118,7 +119,21 @@ function TaxiCostRequestPages() {
   const navigate = useNavigate();
   const [popupUserName, setPopupUserName] = useState(null);
   const [popupMember, setPopupMember] = useState(null);
-  const { name: senderName, seq: sender } = useUser();
+  const { seq: sender } = useUser();
+  const [senderName, setSenderName] = useState('');
+
+  useEffect(() => {
+    const fetchSenderName = async () => {
+      try {
+        const response = await getUserInfoApi({ userSeq: sender });
+        setSenderName(response.userName);
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
+    };
+
+    fetchSenderName();
+  }, [sender]);
 
   const allMembersCompleted = tempMember.every((member) => member.status);
 
