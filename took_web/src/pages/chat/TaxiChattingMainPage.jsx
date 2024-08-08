@@ -23,9 +23,13 @@ import { MdAdd } from 'react-icons/md';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import ParticipantList from '../../components/chat/ParticipantList';
+import { updateTaxiPartyStatusApi } from '../../apis/taxi'; // Import the new API function
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
+// todo: 실제 데이터와 연동해야 함
+
+// todo: 택시 파티 모든 멤버 조회 api 연동
 const tempMember = [
   {
     member_seq: 1,
@@ -74,6 +78,7 @@ const tempMember = [
   },
 ];
 
+// todo: useUser로 현재 로그인한 사용자 데이터와 연동
 const tempUser = {
   user_seq: 1,
   userName: '차민주',
@@ -88,8 +93,8 @@ const tempTaxi = {
   party_seq: 1,
   room_title: '강서구 명지동',
   gender: false, // 여성
-  count: 3,
-  max: 3,
+  count: 4,
+  max: 4,
   status: 'OPEN',
   created_at: '2024-07-06T00:23:00',
   finishTime: '2024-07-06T18:30:00',
@@ -237,7 +242,7 @@ function TaxiChattingMainPage() {
   };
 
   const handleKickMember = (userName) => {
-    openModal(`${userName}님을 채팅방에서 내보내시겠습니까?`);
+    openModal(`${userName}님을 채팅방에서\n내보내시겠습니까?`);
   };
 
   const handleLeaveChatting = () => {
@@ -249,20 +254,22 @@ function TaxiChattingMainPage() {
     closeModal();
   };
 
-  const handleBoardTaxi = () => {
+  const handleBoardTaxi = async () => {
     openModal('탑승 처리하시겠습니까?');
   };
 
-  const handleDoneTaxi = () => {
+  const handleDoneTaxi = async () => {
     openModal('하차 처리하시겠습니까?');
   };
 
-  const handleConfirmBoardTaxi = () => {
+  const handleConfirmBoardTaxi = async () => {
+    await updateTaxiPartyStatusApi({ taxiSeq: tempTaxi.taxi_seq });
     setTaxiStatus('BOARD');
     closeModal();
   };
 
-  const handleConfirmDoneTaxi = () => {
+  const handleConfirmDoneTaxi = async () => {
+    await updateTaxiPartyStatusApi({ taxiSeq: tempTaxi.taxi_seq });
     setTaxiStatus('DONE');
     setShowSettlementButton(true);
     closeModal();
@@ -296,7 +303,11 @@ function TaxiChattingMainPage() {
 
   useEffect(() => {
     if (tempTaxi.count === tempTaxi.max) {
-      setTaxiStatus('FILLED');
+      const updateStatus = async () => {
+        await updateTaxiPartyStatusApi({ taxiSeq: tempTaxi.taxi_seq });
+        setTaxiStatus('FILLED');
+      };
+      updateStatus();
     }
   }, [tempTaxi.count]);
 
@@ -417,7 +428,7 @@ function TaxiChattingMainPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center text-base items-center z-50">
           <div className="bg-white rounded-2xl p-6 w-64">
-            <p className="mb-4">{modalMessage}</p>
+            <p className="whitespace-pre-line mb-4">{modalMessage}</p>
             <div className="flex justify-between">
               <button
                 onClick={closeModal}

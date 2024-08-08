@@ -2,22 +2,29 @@ import React, { useState } from 'react';
 import BackButton from '../../components/common/BackButton';
 import CheckExpectedCost from '../../components/taxi/CheckExpectedCost';
 import getProfileImagePath from '../../utils/getProfileImagePath';
+import { calculateTotalExpectedCostApi } from '../../apis/taxi';
+import { usePosition } from '../../store/position';
 
+// todo: 택시 파티 경로 조회 api 연동하여 실제 데이터와 연동 필요
 const tempData = [
   {
     userName: '차민주',
     userId: 1,
-    imgNo: 20,
+    imgNo: 5,
     gender: '여성',
     userDestination: '부산 강서구 녹산산단335로 7 송정삼정그린코아더시티',
+    latitude: 35.0894681,
+    longitude: 128.8535056,
     expectedCost: 13800,
   },
   {
     userName: '조현정',
     userId: 2,
-    imgNo: 19,
+    imgNo: 6,
     gender: '여성',
     userDestination: '부산 강서구 명지국제5로 170-5 명일초등학교',
+    latitude: 35.1094409,
+    longitude: 128.922555,
     expectedCost: 11500,
   },
   {
@@ -25,7 +32,9 @@ const tempData = [
     userId: 3,
     imgNo: 21,
     gender: '여성',
-    userDestination: '부산 강서구 명지국제5로 170-5 명일초등학교',
+    userDestination: '부산 사하구 하신번영로157번길 39 영진돼지국밥',
+    latitude: 35.0966354,
+    longitude: 128.9578812,
     expectedCost: 9500,
   },
 ];
@@ -38,9 +47,35 @@ const tempUser = {
 
 function CurrentPathListPage() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [totalExpectedCost, setTotalExpectedCost] = useState(null);
+  const { latitude, longitude } = usePosition();
 
-  const handleOpenPopup = () => {
-    setIsPopupOpen(true);
+  const handleOpenPopup = async () => {
+    try {
+      const locations = [
+        { lat: latitude, lon: longitude }, // 현재 위치를 첫 번째로 추가
+        ...tempData.map((user) => ({
+          lat: user.latitude,
+          lon: user.longitude,
+        })),
+      ];
+
+      const users = tempData.map((user) => ({
+        userSeq: user.userId,
+        cost: user.expectedCost,
+      }));
+
+      const params = {
+        locations,
+        users,
+      };
+
+      const result = await calculateTotalExpectedCostApi(params);
+      setTotalExpectedCost(result);
+      setIsPopupOpen(true);
+    } catch (error) {
+      console.error('Error calculating total expected cost:', error);
+    }
   };
 
   const handleClosePopup = () => {
@@ -89,12 +124,15 @@ function CurrentPathListPage() {
         예상비용 확인하기
       </button>
 
-      <CheckExpectedCost
-        isOpen={isPopupOpen}
-        onClose={handleClosePopup}
-        destinations={tempData}
-        tempUser={tempUser}
-      />
+      {totalExpectedCost && (
+        <CheckExpectedCost
+          isOpen={isPopupOpen}
+          onClose={handleClosePopup}
+          destinations={tempData}
+          tempUser={tempUser}
+          totalExpectedCost={totalExpectedCost}
+        />
+      )}
     </div>
   );
 }
