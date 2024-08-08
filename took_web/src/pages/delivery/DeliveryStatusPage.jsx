@@ -11,7 +11,7 @@ import { getUserInfoApi } from '../../apis/user';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { useUser } from '../../store/user';
 
-function TookDetailsPage() {
+function DeliveryStatusPage() {
   const { id } = useParams(); // deliverySeq 값
   const { seq: currentUserSeq } = useUser();
   const [users, setUsers] = useState([]);
@@ -131,4 +131,4 @@ function TookDetailsPage() {
   );
 }
 
-export default TookDetailsPage;
+export default DeliveryStatusPage;

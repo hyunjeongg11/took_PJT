@@ -4,7 +4,6 @@ import { msgToAndroid } from './android/message';
 import { usePosition } from './store/position';
 import { getUserLocation } from './android/message';
 import { saveUserPositionApi } from './apis/position/userPosition';
-import { useUser } from './store/user';
 import { getUserSeq } from './utils/getUserSeq';
 import {
   MainPage,

@@ -55,10 +55,6 @@ function DeliveryCompletePage() {
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="flex flex-col items-center bg-white max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-4 mt-20 mb-14">
