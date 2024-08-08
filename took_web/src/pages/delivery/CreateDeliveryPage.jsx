@@ -1,4 +1,3 @@
-// pages/delivery/CreateDeliveryPage.js
 import React, { useState, useEffect } from 'react';
 import BackButton from '../../components/common/BackButton';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -9,77 +8,12 @@ import {
 } from '../../apis/delivery';
 import { useUser } from '../../store/user';
 import SearchDropdown from '../../components/map/SearchDropDown';
-
-const InputField = ({
-  label,
-  name,
-  value,
-  onChange,
-  placeholder,
-  type = 'text',
-  min,
-}) => (
-  <div>
-    <div className="text-base font-bold leading-8 text-neutral-600">
-      {label}
-    </div>
-    <div className="flex items-center mb-4 border-b border-gray-300">
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className="flex-grow bg-transparent py-2 placeholder-gray-300 focus:outline-none focus:border-[#FF7F50]"
-        min={min}
-      />
-      {type === 'number' && <span className="text-neutral-600 ml-2">원</span>}
-    </div>
-  </div>
-);
-
-const TextAreaField = ({ label, name, value, onChange, placeholder }) => (
-  <div className="flex-grow">
-    <div className="text-base font-bold leading-5 text-neutral-600">
-      {label}
-    </div>
-    <textarea
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className="bg-transparent py-2 placeholder-gray-300 focus:outline-none focus:border-[#FF7F50] resize-none w-full h-32" // 높이 조정
-    />
-  </div>
-);
-
-const Modal = ({ show, message, onConfirm, onCancel }) => {
-  if (!show) return null;
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white px-6 py-4 rounded-lg shadow-lg text-center">
-        <div className="text-base font-bold mb-2">안내</div>
-        <div className="mb-4 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
-
-        <div className="text-base mb-4">{message}</div>
-        <div className="flex justify-center">
-          <button
-            className="bg-gray-200 font-bold text-[#3D3D3D] px-10 py-2 rounded-2xl mx-2"
-            onClick={onCancel}
-          >
-            취소
-          </button>
-          <button
-            className="bg-main font-bold text-white px-10 py-2 rounded-2xl mx-2"
-            onClick={onConfirm}
-          >
-            확인
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { createChatApi } from '../../apis/chat/chat';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import InputField from '../../components/delivery/InputField';
+import TextAreaField from '../../components/delivery/TextAreaField';
+import Modal from '../../components/delivery/Modal';
 
 function CreateDeliveryPage() {
   const navigate = useNavigate();
@@ -161,10 +95,13 @@ function CreateDeliveryPage() {
         if (id) {
           await modifyDeliveryApi({ deliverySeq: id, ...params });
         } else {
-          response = await writeDeliveryApi(params);
-          console.log('API response:', response);
-          const deliverySeq = response.deliverySeq;
-          navigate(`/delivery/detail/${deliverySeq}`);
+          // 채팅방 생성
+          const newRoom = await createRoom();
+          
+          // 룸 번호 받아서 배달 방 생성
+          const newDelivery = await createDelivery(newRoom.roomSeq);
+          response = newDelivery; // 새로운 배달 정보 저장
+          await enterRoom({ roomSeq: newRoom.roomSeq, userSeq });
         }
         setShowCompletionMessage(true);
         setTimeout(() => {
