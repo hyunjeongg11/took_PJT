@@ -8,6 +8,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import '../../css/dutchpay/PaymentInputPage.css';
 import PaymentCard from '../../components/payment/PaymentCard';
+import { useUser } from '../../store/user';
 
 const defaultUsers = [
   { name: '정희수', img_no: 1 },
@@ -19,6 +20,9 @@ const defaultUsers = [
 ];
 
 function PaymentInputPage() {
+
+  const { seq: userSeq } = useUser();
+
   const [payments, setPayments] = useState({
     1: {
       users: defaultUsers.map((user) => ({
@@ -72,6 +76,24 @@ function PaymentInputPage() {
 
     setPayments(newPayments);
   };
+
+
+  const [totalMember, setTotalMember] = useState('');
+
+  const handleClick = async () => {
+    setLoading(true);
+    console.log("가격을 출력합니다"+setPayments);
+    const params = {
+      userSeq,
+      title: "",
+      category: 4,
+      cost: Number(setPayments),
+      totalMember: Number(totalMember),
+      reciever: false,
+      deliveryTip: 0,
+    };
+  }
+  
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <h1 className="text-4xl font-bold my-3 text-main mt-5">
@@ -115,6 +137,7 @@ function PaymentInputPage() {
       >
         차수 추가하기
       </button>
+
       <Link to="/dutch/total">
         <button
           onClick={() => {

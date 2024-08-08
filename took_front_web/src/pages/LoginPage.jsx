@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+import React from 'react';
+
+function LoginPage() {
+  return <div>Login Page</div>;
+=======
 import React, { useState } from "react";
 import kakaoImage from "../assets/login/kakao.svg";
 import googleImage from "../assets/login/google.png";
@@ -75,6 +81,7 @@ function LoginPage() {
       </div>
     </div>
   );
+>>>>>>> origin/dev-fe
 }
 
 export default LoginPage;
