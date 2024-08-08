@@ -66,7 +66,7 @@ function BuyFormPage() {
     }
 
     const params = {
-      roomSeq: 28, // todo: 실제 채팅방 시퀀스로 교체
+      roomSeq: 1, // todo: 실제 채팅방 시퀀스로 교체
       userSeq: userSeq,
       title: formData.title,
       content: formData.content,

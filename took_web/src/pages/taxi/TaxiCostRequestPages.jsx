@@ -9,6 +9,7 @@ import getProfileImagePath from '../../utils/getProfileImagePath';
 import { formatNumber } from '../../utils/format';
 import { formatDate } from '../../utils/formatDate';
 import RequestCard from '../../components/payment/RequestCard';
+import { useUser } from '../../store/user';
 
 // 임시 데이터
 const tempTaxi = {
@@ -116,6 +117,8 @@ const tempTaxiGuest = [
 function TaxiCostRequestPages() {
   const navigate = useNavigate();
   const [popupUserName, setPopupUserName] = useState(null);
+  const [popupMember, setPopupMember] = useState(null);
+  const { name: senderName, seq: sender } = useUser();
 
   const allMembersCompleted = tempMember.every((member) => member.status);
 
@@ -156,6 +159,9 @@ function TaxiCostRequestPages() {
 
           {tempMember.map((member, index) => {
             const balance = member.cost - member.real_cost;
+            const formattedBalance = balance > 0 ? `+${formatNumber(balance)}` : formatNumber(balance);
+            const status = balance >= 0 ? true : member.status;
+
             return (
               <div
                 key={member.member_seq}
@@ -175,24 +181,29 @@ function TaxiCostRequestPages() {
                           본인
                         </span>
                       )}
-                      {!member.is_leader && !member.status && (
+                      {!member.is_leader && !status && (
                         <FaBell
                           className="ml-2 text-yellow-400 cursor-pointer"
-                          onClick={() => setPopupUserName(member.userName)}
+                          onClick={() => {
+                            setPopupUserName(member.userName);
+                            setPopupMember(member);
+                          }}
                         />
                       )}
                     </div>
                   </div>
                   <div className="text-right font-bold">
-                    <span className="text-sm">
-                      {formatNumber(member.cost)} 원
-                    </span>
-                    <div
-                      className={`text-sm ${member.status ? 'text-black' : 'text-red-500'}`}
-                    >
-                      {member.status ? '완료' : '미완료'}
+                    <div className={`text-sm ${balance > 0 ? 'text-green-500' : 'text-red-600'}`}>{formattedBalance}</div>
+                    <div className={`text-sm ${status ? 'text-black' : 'text-red-600'}`}>
+                      {status ? '완료' : '미완료'}
                     </div>
                   </div>
+                </div>
+                <div className="flex text-sm justify-between mt-2 ml-1">
+                  선결제금액 <span className="ml-2 text-black">{formatNumber(member.cost)} 원</span>
+                </div>
+                <div className="flex text-sm justify-between mt-2 ml-1 mb-4">
+                  실결제금액 <span className="ml-2 text-black">{formatNumber(member.real_cost)} 원</span>
                 </div>
               </div>
             );
@@ -200,10 +211,15 @@ function TaxiCostRequestPages() {
         </div>
       </div>
 
-      {popupUserName && (
+      {popupUserName && popupMember && (
         <RequestCard
           userName={popupUserName}
           onClose={() => setPopupUserName(null)}
+          member={popupMember}
+          sender={sender}
+          senderName={senderName}
+          partySeq={tempParty.party_seq}
+          category={2} // 카테고리 값 설정 (1(배달), 2(택시), 3(공구), 4(정산))
         />
       )}
     </div>

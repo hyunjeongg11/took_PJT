@@ -1,14 +1,59 @@
-import React from 'react';
+import React, { useState }  from 'react';
 import BackButton from '../../components/common/BackButton';
 import NotificationIcon from '../../assets/mypage/notification.png';
 import LocationIcon from '../../assets/mypage/location.png';
-
+import SearchDropdown from '../../components/map/SearchDropDown';
+import { searchPlaces } from '../../utils/map';
+import {
+  modifyUserLocation
+} from '../../apis/user';
+import { getUserSeq } from '../../utils/getUserSeq'
+import { useNavigate } from 'react-router-dom';
 function LocationSettingPage({
-  location = '부산 강서구 녹산산업중로333 (송정동)',
+  location: initialLocation = '부산 강서구 녹산산업중로333 (송정동)',
 }) {
-  const handleChangeLocation = () => {
+  const [searchInput, setSearchInput] = useState('');
+  const [location, setLocation] = useState(initialLocation);
+  const [searchResults, setSearchResults] = useState([]);
+  const [lat, setLatitude] = useState();
+  const [lng, setLongitude] = useState();
+  const seq = getUserSeq();  
+  const navigate = useNavigate();
+  // 검색어 입력 시 상태 업데이트 함수
+  const handleInputChange = (e) => {
+    setSearchInput(e.target.value);
+    setLocation(e.target.value);
+  };
+
+  // 검색 실행 함수
+  const handleSearch = async () => {
+    if (searchInput.trim()) {
+      try {
+        const results = await searchPlaces(searchInput);
+        setSearchResults(results);
+      } catch (error) {
+        console.error('검색 오류:', error);
+      }
+    }
+  };
+
+  const handleChangeLocation = async () => {
     // todo: 위치 변경 로직 추가
-    console.log('위치 변경');
+    try {
+     console.log(location);
+      const params = {
+        userSeq: seq,
+        lat: parseFloat(lat),
+        lon: parseFloat(lng),
+        addr: location
+      };
+      console.log(params);
+      const response = await modifyUserLocation(params);
+      console.log("위치 변경api", response);
+      navigate(-1);
+    } catch (error) {
+      console.log('에러 발생', error);
+    }
   };
 
   return (
@@ -35,7 +80,15 @@ function LocationSettingPage({
         <div className="bg-[#F3F3F3] px-4 py-5 rounded-3xl w-full flex flex-col items-center shadow-lg">
           <div className="flex items-center text-gray-800 mb-3">
             <img src={LocationIcon} alt="Location" className="w-5.5 h-7 mr-2" />
-            <div className="font-bold">{location}</div>
+            <div className="font-bold"><SearchDropdown
+          name="locationSearch"
+          value={searchInput}
+          onChange={handleInputChange}
+          onSearch={handleSearch}
+          results={searchResults}
+          setLatitude={setLatitude}
+          setLongitude={setLongitude}
+        /></div>
           </div>
           <button
             className="text-white text-sm bg-[#A1A1A1] rounded-full font-bold px-4 py-2 shadow-md transition-shadow"
@@ -44,6 +97,7 @@ function LocationSettingPage({
             변경하기
           </button>
         </div>
+        
       </div>
     </div>
   );

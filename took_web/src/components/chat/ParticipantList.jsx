@@ -4,6 +4,7 @@ import { FaCrown, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { useUser } from '../../store/user';
 
+// todo: 특정 채팅방의 속한 모든 유저 조회 api 연결 필요
 const ParticipantList = ({ participants, onClose, onSignOut, leaderSeq }) => {
   const { seq } = useUser();
   return (

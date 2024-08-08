@@ -1,5 +1,6 @@
 // src/pages/oneclick/PaymentMethodsPage.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // 추가된 부분
 import BackButton from '../../components/common/BackButton';
 import {
   getAccountListApi,
@@ -20,6 +21,7 @@ const PaymentMethodsPage = () => {
   const [accounts, setAccounts] = useState([]);
   const [draggingIndex, setDraggingIndex] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // 추가된 부분
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -138,7 +140,10 @@ const PaymentMethodsPage = () => {
           </div>
         ))}
       </div>
-      <button className="w-[calc(100%-40px)] py-3 rounded-full border-none text-white text-lg font-bold cursor-pointer bg-main-500 mt-5 absolute bottom-5 left-1/2 transform -translate-x-1/2">
+      <button
+        className="w-[calc(100%-40px)] py-3 rounded-full border-none text-white text-lg font-bold cursor-pointer bg-main mt-5 absolute bottom-5 left-1/2 transform -translate-x-1/2"
+        onClick={() => navigate('/account')} // 수정된 부분
+      >
         + 결제 수단 추가
       </button>
     </div>
