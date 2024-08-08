@@ -145,8 +145,6 @@ public class PartyController {
         return response;
     }
 
-
-
     @Operation(summary = "파티 상세 조회", description = "파티의 상세 내역을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "파티 상세 조회 성공",
@@ -171,4 +169,37 @@ public class PartyController {
     public ResponseEntity<?> partyDelete(@PathVariable("partySeq") Long partySeq) {
         return partyService.partyDelete(partySeq);
     }
+
+
+
+    // 택시 정산 파티 생성
+    @Operation(summary = "택시 정산 파티 생성(가결제시)", description = "택시 정산 파티 생성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "택시 정산 파티 생성 성공",
+                    content = @Content(schema = @Schema(implementation = Long.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PostMapping("/make-taxi-party")
+    public ResponseEntity<Long> makeTaxiParty(
+            @RequestBody @Valid MakeTaxiPartyRequest requestBody
+    ) {
+        return ResponseEntity.ok(partyService.makeTaxiParty(requestBody));
+    }
+
+    // 택시 정산 실결제
+    @Operation(summary = "택시 정산 실결제", description = "택시 정산 실결제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "택시 정산 실결제 성공",
+                    content = @Content(schema = @Schema(implementation = VoidResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PostMapping("/final-taxi-party")
+    public ResponseEntity<?> finalTaxiParty(
+            @RequestBody @Valid FinalTaxiPartyRequest requestBody
+    ) {
+        partyService.finalTaxiParty(requestBody);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

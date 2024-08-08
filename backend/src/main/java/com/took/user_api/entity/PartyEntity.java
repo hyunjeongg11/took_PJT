@@ -3,6 +3,7 @@ package com.took.user_api.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Builder
 public class PartyEntity {
 
     @Id
@@ -61,5 +63,9 @@ public class PartyEntity {
         this.totalMember = totalMember;
         this.receiveCost = 0L;
         this.deliveryTip = deliveryTip;
+    }
+
+    public void updateReceiveCost(Long recieveCost) {
+        this.receiveCost = recieveCost;
     }
 }

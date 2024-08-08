@@ -8,14 +8,8 @@ import com.took.user_api.dto.request.party.*;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.party.*;
-import com.took.user_api.entity.BankEntity;
-import com.took.user_api.entity.MemberEntity;
-import com.took.user_api.entity.PartyEntity;
-import com.took.user_api.entity.UserEntity;
-import com.took.user_api.repository.BankRepository;
-import com.took.user_api.repository.MemberRepository;
-import com.took.user_api.repository.PartyRepository;
-import com.took.user_api.repository.UserRepository;
+import com.took.user_api.entity.*;
+import com.took.user_api.repository.*;
 import com.took.user_api.repository.custom.BankRepositoryCustom;
 import com.took.user_api.repository.custom.MemberRepositoryCustom;
 import com.took.user_api.repository.custom.PartyRepositoryCustom;
@@ -25,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Member;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +36,7 @@ public class PartyServiceImpl implements PartyService {
     private final BankRepository bankRepository;
     private final BankRepositoryCustom bankRepositoryCustom;
     private final FCMService fcmService;
-
+    private final AccountRepository accountRepository;
 
 
     @Override
@@ -377,5 +371,100 @@ public class PartyServiceImpl implements PartyService {
         return ojResponseDto.success(true);
     }
 
+    
+
+    @Transactional
+    @Override
+    public Long makeTaxiParty(MakeTaxiPartyRequest requestBody) {
+        PartyEntity party = PartyEntity.builder()
+                .title(requestBody.getTitle())
+                .category(requestBody.getCategory())
+                .cost(requestBody.getCost())
+                .status(false)
+                .createdAt(LocalDateTime.now())
+                .count(requestBody.getUsers().size())
+                .totalMember(requestBody.getUsers().size())
+                .build();
+        PartyEntity newParty = partyRepository.save(party);
+
+        long receiveCost = 0L;
+        for(MakeTaxiPartyRequest.User user : requestBody.getUsers()){
+            boolean check = user.getUserSeq().equals(requestBody.getMaster());
+            UserEntity userEntity = userRepository.findById(user.getUserSeq()).orElseThrow();
+
+            long fakeCost = 0L;
+            if(!check) {
+                // 가결제
+                AccountEntity account = accountRepository.findByUserAndMainTrue(userEntity);
+                BankEntity bank = bankRepository.findById(account.getBank().getBankSeq()).orElseThrow();
+
+                fakeCost = user.getFakeCost();
+                long balance = bank.getBalance() - fakeCost;
+                receiveCost += fakeCost;
+
+                if (balance >= 0) {
+                    bank.updateBalance(balance);
+                } else {
+                    throw new RuntimeException("돈이 부족합니다.");
+                }
+            }
+
+            // member DB 추가
+            MemberEntity member = MemberEntity.builder()
+                    .party(newParty)
+                    .user(userEntity)
+                    .cost(0L)
+                    .status(true)
+                    .receive(false)
+                    .leader(check)
+                    .createdAt(LocalDateTime.now())
+                    .fakeCost(fakeCost)
+                    .build();
+            memberRepository.save(member);
+        }
+        partyRepository.flush();
+        newParty.updateReceiveCost(receiveCost);
+
+        // 여기다 알림 추가 ( ~~원 가결제 완료, 반복문(리더제외) )
+
+        return newParty.getPartySeq();
+    }
+
+    @Transactional
+    @Override
+    public void finalTaxiParty(FinalTaxiPartyRequest requestBody) {
+        PartyEntity party = partyRepository.findById(requestBody.getPartySeq()).orElseThrow();
+        party.updateCost(requestBody.getCost());
+
+        long receiveCost = party.getReceiveCost();
+
+        for(FinalTaxiPartyRequest.User user : requestBody.getUsers()){
+            MemberEntity member = memberRepositoryCustom.findMemberByPartySeqAndUserSeq(party.getPartySeq(), user.getUserSeq());
+            if(member.isLeader()) continue; // 결제자는 패스
+            
+            member.updateCost(user.getCost());
+            long fakecost = member.getFakeCost();
+            long exchange = fakecost - user.getCost();
+
+            UserEntity tmp = userRepository.findById(user.getUserSeq()).orElseThrow();
+            AccountEntity account = accountRepository.findByUserAndMainTrue(tmp);
+            BankEntity bank = bankRepository.findById(account.getBank().getBankSeq()).orElseThrow();
+            long balance = bank.getBalance() + exchange;
+            bank.updateBalance(balance);
+
+            // 여기다 알림 추가 ( ~~ 원 반환 완료 )
+        }
+
+        MemberEntity leaderMember = memberRepository.findByPartyAndLeaderTrue(party);
+        UserEntity leader = userRepository.findById(leaderMember.getUser().getUserSeq()).orElseThrow();
+
+        AccountEntity account = accountRepository.findByUserAndMainTrue(leader);
+        BankEntity bank = bankRepository.findById(account.getBank().getBankSeq()).orElseThrow();
+        long balance = bank.getBalance() + receiveCost;
+        bank.updateBalance(balance);
+
+        // 여기다 알림 추가 ( ~~원 정산 완료 )
+
+    }
 
 }

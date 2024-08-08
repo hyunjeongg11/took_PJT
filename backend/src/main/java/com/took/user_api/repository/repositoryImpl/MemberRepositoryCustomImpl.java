@@ -8,7 +8,6 @@ import com.took.user_api.repository.custom.MemberRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -80,7 +79,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
 
         result = jpaQueryFactory.select(member.user.userSeq)
                                 .from(member)
-                                .where(member.party.partySeq.eq(partySeq).and(member.isLeader.isTrue()))
+                                .where(member.party.partySeq.eq(partySeq).and(member.leader.isTrue()))
                                 .fetchOne();
 
         return result;

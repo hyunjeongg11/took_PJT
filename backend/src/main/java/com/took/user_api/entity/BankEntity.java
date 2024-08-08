@@ -1,13 +1,10 @@
 package com.took.user_api.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -57,4 +54,7 @@ public class BankEntity {
         this.balance+=money;
     }
 
+    public void updateBalance(long balance) {
+        this.balance = balance;
+    }
 }
