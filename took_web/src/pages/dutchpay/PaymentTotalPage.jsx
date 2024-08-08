@@ -1,51 +1,85 @@
-import React from 'react';
+import { React, useEffect, useState } from 'react';
 import getProfileImagePath from '../../utils/getProfileImagePath';
-
-const temp_data = {
-  1: {
-    users: [
-      { name: '정희수', img_no: 1, amount: '0' },
-      { name: '조현정', img_no: 5, amount: '0' },
-      { name: '차민주', img_no: 2, amount: '0' },
-      { name: '김태훈', img_no: 3, amount: '0' },
-    ],
-    totalAmount: 45000,
-  },
-  2: {
-    users: [
-      { name: '정희수', img_no: 1, amount: '0' },
-      { name: '조현정', img_no: 5, amount: '0' },
-      { name: '차민주', img_no: 2, amount: '0' },
-      { name: '김태훈', img_no: 3, amount: '0' },
-      { name: '공지환', img_no: 4, amount: '0' },
-    ],
-    totalAmount: 50000,
-  },
-  3: {
-    users: [
-      { name: '정희수', img_no: 1, amount: '0' },
-      { name: '조현정', img_no: 5, amount: '0' },
-      { name: '차민주', img_no: 2, amount: '0' },
-      { name: '김태훈', img_no: 3, amount: '0' },
-    ],
-    totalAmount: 45000,
-  },
-  4: {
-    users: [
-      { name: '정희수', img_no: 1, amount: '0' },
-      { name: '조현정', img_no: 5, amount: '0' },
-      { name: '차민주', img_no: 2, amount: '0' },
-      { name: '김태훈', img_no: 3, amount: '0' },
-      { name: '공지환', img_no: 4, amount: '0' },
-    ],
-    totalAmount: 50000,
-  },
-};
+import { useLocation } from 'react-router-dom';
+import { makePartyApi } from '../../apis/payment/jungsan';
+import { useUser } from '../../store/user';
+import { insertAllMemberApi } from '../../apis/payment/jungsan';
 
 function PaymentTotalPage() {
-  // 모든 차수의 총 금액 계산
+  const { seq: userSeq } = useUser();
+  const [partySeq, setPartySeq] = useState(null);
+  const location = useLocation();
+  const paymentsLocation = location.state?.payments || [];
+  console.log(paymentsLocation);
+
+  const temp_data = paymentsLocation;
+  console.log(temp_data);
+
+  const calculateUserCosts = (temp_data) => {
+    console.log('calculateUserCosts함수 실행', calculateUserCosts);
+    const userCostsMap = {};
+
+    Object.values(temp_data).forEach((location) => {
+      console.log('location 출력', location);
+      Object.values(location.users).forEach((user) => {
+        const amount = parseFloat(user.amount.replace(/,/g, '')) || 0;
+        if (userCostsMap[user.userSeq]) {
+          userCostsMap[user.userSeq] += amount;
+        } else {
+          userCostsMap[user.userSeq] = amount;
+        }
+      });
+    });
+
+    const userCosts = Object.entries(userCostsMap).map(([userSeq, cost]) => ({
+      userSeq: Number(userSeq),
+      cost,
+    }));
+
+    return userCosts;
+  };
+
+  useEffect(() => {
+    createParty();
+  }, []);
+
+  const createParty = async () => {
+    try {
+      const response = await makePartyApi({
+        userSeq: userSeq,
+        title: 'Took 정산',
+        category: 4,
+      });
+      if (response && response.partySeq) {
+        setPartySeq(response.partySeq);
+        console.log('새로 생성된 파티 번호는' + response.partySeq);
+      }
+    } catch (error) {
+      console.error('API 호출 에러:', error);
+    }
+  };
+
+  const insertAllMemberApiRequest = async () => {
+    const userCosts = calculateUserCosts(temp_data);
+    const params = {
+      partySeq: partySeq,
+      userCosts,
+    };
+
+    console.log('변환된 형태를 출력합니다', params);
+
+    try {
+      const response = await insertAllMemberApi(params);
+      if (response) {
+        console.log('API Response:', response);
+      }
+    } catch (error) {
+      console.error('API 호출 에러:', error);
+    }
+  };
+
   const totalSum = Object.values(temp_data).reduce(
-    (sum, phase) => sum + phase.totalAmount,
+    (sum, phase) => sum + parseFloat(phase.totalAmount.replace(/,/g, '')),
     0
   );
 
@@ -71,11 +105,11 @@ function PaymentTotalPage() {
               >
                 {users.map((user, index) => (
                   <img
-                    key={user.img_no}
+                    key={user.userSeq}
                     loading="lazy"
                     src={getProfileImagePath(user.img_no)}
                     className="w-6 h-6 absolute"
-                    alt={`User ${user.img_no}`}
+                    alt={`User ${user.userSeq}`}
                     style={{
                       transform: `translate(${Math.sin(((2 * Math.PI) / users.length) * index) * 15}px, ${Math.cos(((2 * Math.PI) / users.length) * index) * 15}px)`,
                       zIndex: users.length - index,
@@ -93,7 +127,11 @@ function PaymentTotalPage() {
       <div className="mt-16 text-4xl font-extrabold text-main">
         {totalSum.toLocaleString()}원
       </div>
-      <div className="px-16 py-3.5 mt-10 max-w-full text-base font-extrabold text-white whitespace-nowrap bg-main rounded-2xl shadow-sm w-[197px]">
+
+      <div
+        className="px-16 py-3.5 mt-10 max-w-full text-base font-extrabold text-white whitespace-nowrap bg-main rounded-2xl shadow-sm w-[197px]"
+        onClick={insertAllMemberApiRequest}
+      >
         요청하기
       </div>
     </div>

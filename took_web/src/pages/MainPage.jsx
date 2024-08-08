@@ -46,11 +46,13 @@ function MainPage() {
       <div className="bg-gradient-to-b from-white to-[#FFDCCF] pb-5 px-7 w-full">
         <div className="flex flex-col p-4 mt-12 mx-auto w-full font-nanum rounded-3xl bg-[#ffe1d6]">
           <div className="grid grid-cols-2 gap-2">
-            <TookButton
-              title="정산 툭"
-              content="<div>주변 사람들과<br/>간편한 정산</div>"
-              img={pay}
-            />
+            <Link to="/dutch/userlist">
+              <TookButton
+                title="정산 툭"
+                content="<div>주변 사람들과<br/>간편한 정산</div>"
+                img={pay}
+              />
+            </Link>
             <Link to="/taxi/main">
               <TookButton
                 title="택시 툭"
