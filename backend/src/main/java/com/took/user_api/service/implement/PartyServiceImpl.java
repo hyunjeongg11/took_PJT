@@ -246,17 +246,15 @@ public class PartyServiceImpl implements PartyService {
         try {
 
             PartyEntity party = partyRepository.getReferenceById(partySeq);
-            Long N = (long) party.getTotalMember();
+            long N = (long) party.getTotalMember();
 
-            Long recieveCost = party.getReceiveCost() * (N - 1L) / N;
+            Long receiveCost = party.getReceiveCost() * (N - 1L) / N;
 
 //          뱅크 가져와서 업데이트
             Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(userSeq);
             BankEntity bank = bankRepository.getReferenceById(bankSeq);
             Long balance = bank.getBalance();
-            bank.updateBalance(balance + recieveCost);
-            bankRepositoryCustom.updateBalanceByBankSeq(bank.getBalance(), bankSeq);
-
+            bank.updateBalance(balance + receiveCost);
 
         } catch (Exception e) {
             e.printStackTrace();
