@@ -19,15 +19,17 @@ public class QPartyEntity extends EntityPathBase<PartyEntity> {
 
     public static final QPartyEntity partyEntity = new QPartyEntity("partyEntity");
 
-    public final StringPath category = createString("category");
+    public final NumberPath<Integer> category = createNumber("category", Integer.class);
 
-    public final NumberPath<Integer> cost = createNumber("cost", Integer.class);
+    public final NumberPath<Long> cost = createNumber("cost", Long.class);
 
     public final NumberPath<Integer> count = createNumber("count", Integer.class);
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> partySeq = createNumber("partySeq", Long.class);
+
+    public final NumberPath<Long> receiveCost = createNumber("receiveCost", Long.class);
 
     public final BooleanPath status = createBoolean("status");
 

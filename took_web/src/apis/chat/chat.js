@@ -1,6 +1,20 @@
 import { request } from '../request';
 import { handleApiError } from '../errorHandling';
 
+// 요청
+// {
+//   "roomTitle": "string",  // 채팅방 제목
+//   "userSeq": "long",     // 채팅방 작성자 번호
+//   "category": "int"       // 채팅방 카테고리
+// }
+// 응답
+// {
+//   "roomSeq": "long",      // 채팅방 고유 번호
+//   "roomTitle": "string",  // 채팅방 제목
+//   "userSeq": "long",     // 채팅방 작성자 번호
+//   "createdAt": "string",  // 채팅방 생성 시간
+//   "category": "int"       // 채팅방 카테고리
+// }
 // 새로운 채팅방 생성
 export const createChatApi = async (params) => {
   try {

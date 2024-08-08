@@ -22,11 +22,13 @@ function LoginPage() {
 
     try {
       const response = await loginApi({ userId: id, password }, setAccessToken);
-      console.log(response);
       if (response.code == 'su') {
+        console.log(response);
         setUserSeq(response.userSeq);
         setLoggedIn();
         navigate('/');
+      }else{
+        alert("로그인 실패");
       }
     } catch (error) {
       alert('로그인 중 오류가 발생했습니다.');

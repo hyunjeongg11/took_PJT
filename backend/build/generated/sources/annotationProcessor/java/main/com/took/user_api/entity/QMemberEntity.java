@@ -22,7 +22,7 @@ public class QMemberEntity extends EntityPathBase<MemberEntity> {
 
     public static final QMemberEntity memberEntity = new QMemberEntity("memberEntity");
 
-    public final NumberPath<Integer> cost = createNumber("cost", Integer.class);
+    public final NumberPath<Long> cost = createNumber("cost", Long.class);
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 

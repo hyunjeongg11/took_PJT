@@ -11,6 +11,9 @@ import { handleApiError } from '../errorHandling';
 // - 응답
 // 1
 export const saveUserPositionApi = async (params) => {
+  if (params.userSeq == null) {
+    return null;
+  }
   try {
     const response = await request.post('/api/position/save', params);
     return response.data;
@@ -51,9 +54,9 @@ export const getSavedUserPositionApi = async (userSeq) => {
 //   },
 //   ...
 // ]
-export const getNearByUserPositionApi = async () => {
+export const getNearByUserPositionApi = async (params) => {
   try {
-    const response = await request.post('/api/position/nearby');
+    const response = await request.post('/api/position/nearby', params);
     return response.data;
   } catch (error) {
     return handleApiError(error);

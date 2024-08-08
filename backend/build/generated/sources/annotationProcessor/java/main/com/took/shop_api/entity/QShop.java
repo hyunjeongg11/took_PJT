@@ -22,8 +22,6 @@ public class QShop extends EntityPathBase<Shop> {
 
     public static final QShop shop = new QShop("shop");
 
-    public final com.took.chat_api.entity.QChatRoom chatRoom;
-
     public final StringPath content = createString("content");
 
     public final NumberPath<Integer> count = createNumber("count", Integer.class);
@@ -42,11 +40,7 @@ public class QShop extends EntityPathBase<Shop> {
 
     public final StringPath place = createString("place");
 
-    public final ListPath<PurchaseInfo, QPurchaseInfo> purchaseInfos = this.<PurchaseInfo, QPurchaseInfo>createList("purchaseInfos", PurchaseInfo.class, QPurchaseInfo.class, PathInits.DIRECT2);
-
-    public final ListPath<ShipInfo, QShipInfo> shipInfos = this.<ShipInfo, QShipInfo>createList("shipInfos", ShipInfo.class, QShipInfo.class, PathInits.DIRECT2);
-
-    public final ListPath<ShopGuest, QShopGuest> shopGuests = this.<ShopGuest, QShopGuest>createList("shopGuests", ShopGuest.class, QShopGuest.class, PathInits.DIRECT2);
+    public final NumberPath<Long> roomSeq = createNumber("roomSeq", Long.class);
 
     public final NumberPath<Long> shopSeq = createNumber("shopSeq", Long.class);
 
@@ -76,7 +70,6 @@ public class QShop extends EntityPathBase<Shop> {
 
     public QShop(Class<? extends Shop> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.chatRoom = inits.isInitialized("chatRoom") ? new com.took.chat_api.entity.QChatRoom(forProperty("chatRoom"), inits.get("chatRoom")) : null;
         this.user = inits.isInitialized("user") ? new com.took.user_api.entity.QUserEntity(forProperty("user")) : null;
     }
 
