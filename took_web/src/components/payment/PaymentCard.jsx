@@ -10,14 +10,12 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
   useEffect(() => {
     const total = parseFloat(totalAmount.replace(/,/g, '')) || 0;
     const numOfPayments = payment.users.length;
-    const averageAmount = Math.floor(total / numOfPayments);
+    const averageAmount = Math.ceil(total / numOfPayments);
     const remainingAmount = total - averageAmount * (numOfPayments - 1);
 
     const updatedUsers = payment.users.map((user, index) => ({
       ...user,
-      amount: formatNumber(
-        index === numOfPayments - 1 ? remainingAmount : averageAmount
-      ),
+      amount: formatNumber(index === 0 ? remainingAmount : averageAmount),
     }));
 
     setPayment({
@@ -59,7 +57,7 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
             type="text"
             value={totalAmount}
             onChange={handleTotalAmountChange}
-            placeholder=""
+            placeholder="0"
             className="mx-1 text-right w-full max-w-xs"
           />
           <span>원</span>

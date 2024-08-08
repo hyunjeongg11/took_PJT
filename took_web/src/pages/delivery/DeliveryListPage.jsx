@@ -5,22 +5,25 @@ import { formatBeforeTime } from '../../utils/formatDate';
 import plusIcon from '../../assets/delivery/plus.png'; // '+' 아이콘 경로
 import mapIcon from '../../assets/delivery/map.png'; // 지도 아이콘 경로
 import BackButton from '../../components/common/BackButton';
-import { usePosition } from '../../store/position'; 
+import { usePosition } from '../../store/position';
+import { useUser } from '../../store/user';
 
 const DeliveryListPage = () => {
   const navigate = useNavigate();
-  const { latitude, longitude } = usePosition(); // usePosition 훅에서 위도와 경도 받아오기
   const [selectedOption, setSelectedOption] = useState('주소지');
   const [deliveryList, setDeliveryList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { lat, lon } = useUser(); // 주소지 선택되어 있을 때의 주소
+  const { latitude, longitude } = usePosition(); // 현위치 선택되어 있을 때의 주소
 
   useEffect(() => {
     const fetchDeliveryList = async () => {
       try {
-        const params = {
-          lat: latitude,
-          lon: longitude,
-        };
+        const params =
+          selectedOption === '주소지'
+            ? { lat, lon }
+            : { lat: latitude, lon: longitude };
+
         const response = await getDeliveryListApi(params);
         const openList = response.filter((item) => item.status === 'OPEN');
         const sortedList = openList.sort(
@@ -35,7 +38,7 @@ const DeliveryListPage = () => {
     };
 
     fetchDeliveryList();
-  }, [latitude, longitude]);
+  }, [selectedOption]);
 
   const handleCreateDelivery = () => {
     navigate('/delivery/create');

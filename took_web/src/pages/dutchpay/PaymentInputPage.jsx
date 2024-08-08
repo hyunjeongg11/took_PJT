@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -9,23 +9,56 @@ import 'swiper/css/scrollbar';
 import '../../css/dutchpay/PaymentInputPage.css';
 import PaymentCard from '../../components/payment/PaymentCard';
 import { useUser } from '../../store/user';
+import { makePartyApi } from '../../apis/payment/jungsan';
 
-const defaultUsers = [
-  { name: '정희수', img_no: 1 },
-  { name: '조현정', img_no: 1 },
-  { name: '차민주', img_no: 2 },
-  { name: '김태훈', img_no: 3 },
-  { name: '공지환', img_no: 4 },
-  { name: '이재찬', img_no: 5 },
-];
-
+// 알고리즘 추가 작성 필요!
 function PaymentInputPage() {
+  // 네비게이트 설정 (버튼 클릭시 이동을 위한 연동)
+  const navigate = useNavigate();
 
   const { seq: userSeq } = useUser();
+  const [partySeq, setPartySeq] = useState(null);
+
+  const location = useLocation();
+  const usersFromLocation = location.state?.users || [];
+
+  const defaultUsers = [
+    {
+      userSeq: 1,
+      name: '공지환',
+      userName: '나',
+      imageNo: 1,
+      img_no: 1,
+      selected: true,
+      distance: 1,
+    },
+    {
+      userSeq: 4,
+      name: '김태훈',
+      userName: '나',
+      imageNo: 1,
+      img_no: 1,
+      selected: true,
+      distance: 2,
+    },
+  ];
+
+  // 이거는 실제 유저가 들어갈 것여서 넣어두면 될 것 같습니다.
+  const currentUser = {
+    userSeq,
+    name: '나',
+    userName: '나',
+    imageNo: 1,
+    img_no: 1,
+    selected: true,
+    distance: 0,
+  };
+
+  const users = [currentUser, ...defaultUsers];
 
   const [payments, setPayments] = useState({
     1: {
-      users: defaultUsers.map((user) => ({
+      users: users.map((user) => ({
         ...user,
         amount: 0,
       })),
@@ -37,7 +70,7 @@ function PaymentInputPage() {
 
   const addNewPayment = () => {
     const newPayment = {
-      users: defaultUsers.map((user) => ({
+      users: users.map((user) => ({
         ...user,
         amount: 0,
       })),
@@ -48,6 +81,8 @@ function PaymentInputPage() {
       [Object.keys(payments).length + 1]: newPayment,
     };
     setPayments(newPayments);
+
+    console.log('차수를 추가합니다', newPayments);
 
     setTimeout(() => {
       if (swiperRef.current && swiperRef.current.swiper) {
@@ -77,23 +112,27 @@ function PaymentInputPage() {
     setPayments(newPayments);
   };
 
-
   const [totalMember, setTotalMember] = useState('');
 
   const handleClick = async () => {
     setLoading(true);
-    console.log("가격을 출력합니다"+setPayments);
+
     const params = {
       userSeq,
-      title: "",
+      title: 'Took 정산',
       category: 4,
-      cost: Number(setPayments),
+      cost: Number(payments),
       totalMember: Number(totalMember),
       reciever: false,
       deliveryTip: 0,
     };
-  }
-  
+  };
+
+  // 다음 차수를 표시해줄 페이지에 payments를 들고 갑니다.
+  const moveNextPage = () => {
+    navigate('/dutch/total', { state: { payments } });
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <h1 className="text-4xl font-bold my-3 text-main mt-5">
@@ -137,17 +176,12 @@ function PaymentInputPage() {
       >
         차수 추가하기
       </button>
-
-      <Link to="/dutch/total">
-        <button
-          onClick={() => {
-            console.log(payments);
-          }}
-          className="bg-main px-12 py-2 shadow font-bold text-white rounded-full"
-        >
-          정산 요청하기
-        </button>
-      </Link>
+      <button
+        onClick={moveNextPage}
+        className="bg-main px-12 py-2 shadow font-bold text-white rounded-full"
+      >
+        정산 요청하기
+      </button>
     </div>
   );
 }

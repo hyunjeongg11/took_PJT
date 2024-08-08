@@ -26,17 +26,16 @@ import ParticipantList from '../../components/chat/ParticipantList';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
-
 function TaxiChattingMainPage() {
   const { id } = useParams();
   const { seq } = useUser();
   const [messages, setMessages] = useState(tempMessages);
-  const [ users, setUsers ] = useState([]); 
+  const [users, setUsers] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
-  const [ isCollapsed, setIsCollapsed ] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [showActionIcons, setShowActionIcons] = useState(false);
-  const [ currentModal, setCurrentModal ] = useState(null);
+  const [currentModal, setCurrentModal] = useState(null);
   const [showParticipantList, setShowParticipantList] = useState(false);
 
   const scrollContainerRef = useRef(null);
@@ -50,9 +49,8 @@ function TaxiChattingMainPage() {
   const location = useLocation();
   const [taxiInfo, setTaxiInfo] = useState(null);
   const chatRoom = location.state?.chatRoom || null;
-  // todo : 채팅방 목록에서는 chatRoom에 roomTitle, 리더의 userSeq 담고, 
+  // todo : 채팅방 목록에서는 chatRoom에 roomTitle, 리더의 userSeq 담고,
   // id에 url 파라미터로 roomSeq 담아서 보내도록 했는데, 택시 상세 페이지에서 채팅방으로 넘어갈 때도 동일하게 넘어가도록 구현 필요 ( ChattingListPage 참고)
-
 
   // const [showMenu, setShowMenu] = useState(false); // 메뉴 보이기 상태 추가
   // const [showModal, setShowModal] = useState(false); // 모달창 보이기 상태 추가
@@ -82,7 +80,7 @@ function TaxiChattingMainPage() {
     // RoomSeq는 id에서 확인 가능
     // todo:  RoomSeq 가지고 택시 정보 api로 불러오기
     //
-  }
+  };
 
   const fetchRoomMessages = async () => {
     try {
@@ -105,8 +103,7 @@ function TaxiChattingMainPage() {
       console.error('Error fetching users:', error);
     }
   };
-  
-  
+
   const enterRoom = () => {
     if (currentSubscription.current) {
       currentSubscription.current.unsubscribe();
@@ -124,7 +121,6 @@ function TaxiChattingMainPage() {
       }
     );
   }
-
 
   const handleSendMessage = () => {
     if (inputMessage.trim() === '') return;
@@ -162,20 +158,20 @@ function TaxiChattingMainPage() {
       // todo 채팅방 나갈 때 로직 더 생각해보기! 일단은 채팅방만 나가도록 구현해둠
       navigate(-1);
     }
-  
+
     const toggleCollapse = () => {
       setIsCollapsed(!isCollapsed);
-    };}
-  
-
-    const handleScroll = () => {
-      const container = scrollContainerRef.current;
-      const isAtBottom =
-        container.scrollHeight - container.scrollTop <=
-        container.clientHeight + 1;
-      setShowScrollButton(!isAtBottom);
     };
-  
+  };
+
+  const handleScroll = () => {
+    const container = scrollContainerRef.current;
+    const isAtBottom =
+      container.scrollHeight - container.scrollTop <=
+      container.clientHeight + 1;
+    setShowScrollButton(!isAtBottom);
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     setShowScrollButton(false);
@@ -185,7 +181,6 @@ function TaxiChattingMainPage() {
     setShowActionIcons(!showActionIcons);
   };
 
-  
   const openModal = (modalType) => {
     setCurrentModal(modalType);
   };
@@ -282,7 +277,10 @@ function TaxiChattingMainPage() {
   useEffect(() => {
     const handleResize = () => {
       if (textareaRef.current) {
-        textareaRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        textareaRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
       }
     };
 
@@ -339,37 +337,45 @@ function TaxiChattingMainPage() {
           {chatRoom?.roomTitle || '채팅방'}
         </div>
         <FaBars className="mt-2.5" onClick={handleShowParticipantList} />
-      </div><div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
+      </div>
+      <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
-<div className="w-full px-2 py-1">
-  <div
-    className={`flex items-start p-2 m-1 rounded-lg shadow-md ${isCollapsed ? 'bg-opacity-80 bg-white shadow-none' : 'bg-white'}`}
-  >
-    <img src={speaker} alt="speaker" className="w-6 h-6 ml-1" />
-    <div className="ml-2 flex-grow">
-      <div className="text-sm mt-[2px]"></div>
-      {!isCollapsed && (
-        <div className="text-xs flex-col gap-2 justify-between flex py-2">
-          <div className="mb-1.5">수령 장소
-            <span className="ml-5">{deliveryInfo?.pickupPlace || ''}</span>
+      <div className="w-full px-2 py-1">
+        <div
+          className={`flex items-start p-2 m-1 rounded-lg shadow-md ${isCollapsed ? 'bg-opacity-80 bg-white shadow-none' : 'bg-white'}`}
+        >
+          <img src={speaker} alt="speaker" className="w-6 h-6 ml-1" />
+          <div className="ml-2 flex-grow">
+            <div className="text-sm mt-[2px]"></div>
+            {!isCollapsed && (
+              <div className="text-xs flex-col gap-2 justify-between flex py-2">
+                <div className="mb-1.5">
+                  수령 장소
+                  <span className="ml-5">
+                    {deliveryInfo?.pickupPlace || ''}
+                  </span>
+                </div>
+                <div className="mb-1.5">
+                  주문 링크
+                  <span className="ml-5">
+                    <a href={deliveryInfo?.notice || ''} className="underline">
+                      함께 주문하러 가기
+                    </a>
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="mb-1.5">주문 링크
-            <span className="ml-5"><a href={deliveryInfo?.notice || ''} className="underline">함께 주문하러 가기</a></span>
-          
-          </div>
+          <button onClick={toggleCollapse} className="focus:outline-none">
+            {isCollapsed ? (
+              <FaChevronDown className="h-4 w-4 text-gray-400" />
+            ) : (
+              <FaChevronUp className="h-4 w-4 text-gray-400" />
+            )}
+          </button>
         </div>
-      )}
-    </div>
-    <button onClick={toggleCollapse} className="focus:outline-none">
-      {isCollapsed ? (
-        <FaChevronDown className="h-4 w-4 text-gray-400" />
-      ) : (
-        <FaChevronUp className="h-4 w-4 text-gray-400" />
-      )}
-    </button>
-  </div>
-</div>
-{/* 
+      </div>
+      {/* 
       {/* {showMenu && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-50">
           <div className="w-4/5 h-full bg-white shadow-md p-4 relative">
@@ -494,15 +500,15 @@ function TaxiChattingMainPage() {
           </div>
         </div>
       )} */}
-{/* 
+      {/* 
       <div className="w-full px-2 py-1">
         <div className="flex items-center bg-white p-2 rounded-lg shadow-md">
           <img src={speaker} alt="speaker" className="w-6 h-6 mx-1" />
           <div className="text-sm text-gray-700">경로를 설정해주세요!</div>
         </div>
-      </div> */} */}
+      </div> */}
 
-    <div
+      <div
         className="flex-grow overflow-y-scroll px-4 py-2 space-y-4 relative"
         onScroll={handleScroll}
         ref={scrollContainerRef}
@@ -576,7 +582,6 @@ function TaxiChattingMainPage() {
         )}
         <div ref={messagesEndRef} />
       </div>
-
 
       {showScrollButton && (
         <button
@@ -669,6 +674,5 @@ function TaxiChattingMainPage() {
     </div>
   );
 }
-
 
 export default TaxiChattingMainPage;

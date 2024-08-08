@@ -161,7 +161,7 @@ function DeliveryDetailPage() {
       <div className="flex bg-main items-center px-4 py-3">
         <BackButton />
         <div className="mt-2.5 mb-2 flex-grow text-center text-lg font-bold text-white">
-          배달 <span className="font-dela">took</span>
+          배달 <span className="font-dela">took!</span>
         </div>
       </div>
 

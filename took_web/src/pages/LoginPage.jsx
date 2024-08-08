@@ -3,7 +3,7 @@ import kakaoImage from '../assets/login/kakao.svg';
 import googleImage from '../assets/login/google.png';
 import BackButton from '../components/common/BackButton.jsx';
 import Button from '../components/login/Button.jsx';
-import { loginApi } from '../apis/user.js';
+import { loginApi, getUserInfoApi } from '../apis/user.js';
 import { useToken } from '../store/token.js';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../store/user.js';
@@ -13,7 +13,7 @@ function LoginPage() {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const { setAccessToken } = useToken();
-  const { setUserSeq, setLoggedIn } = useUser();
+  const { setUserSeq, setLoggedIn, setUser } = useUser();
   const navigate = useNavigate();
   const handleLoginClick = async (e) => {
     e.preventDefault();
@@ -25,10 +25,13 @@ function LoginPage() {
       if (response.code == 'su') {
         console.log(response);
         setUserSeq(response.userSeq);
+        console.log(response.userSeq);
+        const userInfo = await getUserInfoApi({ userSeq: response.userSeq });
+        setUser(userInfo);
         setLoggedIn();
         navigate('/');
-      }else{
-        alert("로그인 실패");
+      } else {
+        alert('로그인 실패');
       }
     } catch (error) {
       alert('로그인 중 오류가 발생했습니다.');

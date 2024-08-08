@@ -44,7 +44,7 @@ const CalculatorModal = ({ onClose, tempMember, leader }) => {
             )}
             <li
               className="cursor-pointer"
-              onClick={() => navigate('/tookdetails')}
+              onClick={() => navigate('/tookDetails')}
             >
               정산 현황보기
             </li>
