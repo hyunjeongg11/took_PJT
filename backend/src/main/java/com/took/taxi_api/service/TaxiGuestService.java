@@ -87,7 +87,8 @@ public class TaxiGuestService {
      */
     @Transactional
     public List<DestinationListResponse> getDestinations(Long taxiSeq) {
-        List<TaxiGuest> guests = taxiGuestRepository.findDestinationsByTaxiSeqOrderedByRouteRank(taxiSeq);
+        Taxi taxi = taxiRepository.findById(taxiSeq).orElseThrow();
+        List<TaxiGuest> guests = taxiGuestRepository.findDestinationsByTaxiOrderedByRouteRank(taxi);
         return guests.stream()
                 .map(DestinationListResponse::new)
                 .collect(Collectors.toList());
