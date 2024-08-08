@@ -3,11 +3,14 @@ package com.took.delivery_api.controller;
 import com.took.delivery_api.dto.*;
 import com.took.delivery_api.service.DeliveryGuestService;
 import com.took.delivery_api.service.DeliveryService;
+import com.took.fcm_api.dto.MessageRequest;
+import com.took.fcm_api.service.FCMService;
+import com.took.user_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,8 @@ public class DeliveryController {
     // 서비스 클래스 주입
     private final DeliveryService deliveryService;
     private final DeliveryGuestService deliveryGuestService;
+    private final FCMService fcmservice;
+    private final UserService userService;
 
     @Operation(summary = "배달 생성 요청", description = "새로운 배달을 생성합니다.")
     @ApiResponses(value = {
@@ -34,6 +39,15 @@ public class DeliveryController {
     ResponseEntity<DeliveryCreateResponse> createDelivery(
             @RequestBody @Parameter(description = "배달 생성 요청 정보", required = true) DeliveryCreateRequest request) {
         DeliveryCreateResponse response = deliveryService.createDelivery(request);
+        // 알림 생성
+        List<Long> userSeqs = userService.searchNearUser(request.getUserSeq(), request.getPickupLat(), request.getPickupLon());
+        fcmservice.sendMessage(
+                MessageRequest.builder()
+                        .title("같이 배달 시켜먹을래요?")
+                        .body("근처에 배달 시킬 사람이 있어요!")
+                        .userSeqList(userSeqs)
+                        .build()
+        );
         return ResponseEntity.ok(response);
     }
 

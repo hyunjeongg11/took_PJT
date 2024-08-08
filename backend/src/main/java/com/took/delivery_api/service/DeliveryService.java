@@ -1,15 +1,11 @@
 package com.took.delivery_api.service;
 
-import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.delivery_api.dto.*;
 import com.took.delivery_api.entity.Delivery;
-
-import com.took.delivery_api.repository.DeliveryGuestRepository;
 import com.took.delivery_api.repository.DeliveryRepository;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,9 +21,7 @@ public class DeliveryService {
 
     // 리포지토리 주입
     private final DeliveryRepository deliveryRepository;
-    private final DeliveryGuestRepository deliveryGuestRepository;
     private final UserRepository userRepository;
-    private final ChatRoomRepository chatRoomRepository;
 
 
     // 배달 생성 메서드
@@ -50,6 +44,7 @@ public class DeliveryService {
                 .createdAt(LocalDateTime.now()) // 생성 시간 설정
                 .finishTime(LocalDateTime.now().plusHours(1)) // 종료 시간 설정
                 .build();
+
         // Delivery 객체를 저장하고 응답 객체 생성
         return new DeliveryCreateResponse(deliveryRepository.save(delivery));
     }

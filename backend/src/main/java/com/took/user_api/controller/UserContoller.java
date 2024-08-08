@@ -1,11 +1,18 @@
 package com.took.user_api.controller;
 
-import com.took.user_api.dto.request.user.*;
+import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
+import com.took.user_api.dto.request.user.PwdChangeRequestDto;
+import com.took.user_api.dto.request.user.UserAddressRequestDto;
+import com.took.user_api.dto.request.user.UserSeqRequestDto;
 import com.took.user_api.dto.response.VoidResponseDto;
-import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
 import com.took.user_api.dto.response.user.KakaoChangeResponseDto;
 import com.took.user_api.dto.response.user.UserInfoResponseDto;
 import com.took.user_api.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,12 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @RestController
 @RequestMapping("/api/user")
@@ -98,19 +99,6 @@ public class UserContoller {
             @RequestBody @Valid PwdChangeRequestDto requestBody
     ) {
         return userService.changePwd(requestBody);
-    }
-
-    @Operation(summary = "주변 배달 사용자 검색", description = "주변의 배달 사용자를 검색합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "주변 사용자 검색 성공",
-                    content = @Content(schema = @Schema(implementation = DeliNearUserResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청")
-    })
-    @PostMapping("/delivery-near-user")
-    public ResponseEntity<? super DeliNearUserResponseDto> deliveryNearUser(
-            @RequestBody @Valid NearUserRequestDto requestBody
-    ) {
-        return userService.searchNearUser(requestBody);
     }
 
     @Operation(summary = "알람 변경", description = "사용자의 알람 설정을 변경합니다.")

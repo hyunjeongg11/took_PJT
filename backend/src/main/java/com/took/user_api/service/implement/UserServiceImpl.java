@@ -1,11 +1,12 @@
 package com.took.user_api.service.implement;
 
 
-import com.querydsl.core.Tuple;
-import com.took.user_api.dto.request.user.*;
+import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
+import com.took.user_api.dto.request.user.PwdChangeRequestDto;
+import com.took.user_api.dto.request.user.UserAddressRequestDto;
+import com.took.user_api.dto.request.user.UserSeqRequestDto;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
-import com.took.user_api.dto.response.user.DeliNearUserResponseDto;
 import com.took.user_api.dto.response.user.KakaoChangeResponseDto;
 import com.took.user_api.dto.response.user.UserInfoResponseDto;
 import com.took.user_api.entity.UserEntity;
@@ -17,7 +18,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +26,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -96,35 +94,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<? super DeliNearUserResponseDto> searchNearUser(NearUserRequestDto requestBody) {
+    public List<Long> searchNearUser(Long userSeq, double lat, double lon) {
+        List<UserEntity> userList = userRepository.findAll();
+        List<Long> nearUserSeqList = new ArrayList<>();
 
-        List<Long> nearList = new ArrayList<>();
-        double myLon;
-        double myLat;
+        for (UserEntity user : userList) {
+            double distance = calculateDistance(lat, lon, user.getLat(), user.getLon());
 
-        try{
-            myLon = requestBody.getLon();
-            myLat = requestBody.getLat();
-
-//          위경도 정보 모두 불러와서 리턴
-            List<Tuple> userList = userCustomRepository.getAllLocation(requestBody.getUserSeq());
-
-            for(Tuple user : userList){
-                Double lat = user.get(0, Double.class); // 첫 번째 값 (lat)
-                Double lon = user.get(1, Double.class); // 두 번째 값 (lon)
-                Long userSeq = user.get(2, Long.class); // 세 번째 값 (userSeq)
-
-                double distance = calculateDistance(myLat, myLon, lat, lon);
-                if(distance<=distanceThreshold) nearList.add(userSeq);
+            if (distance <= 1000) {
+                nearUserSeqList.add(user.getUserSeq());
             }
-
-
-        }catch(Exception e){
-            e.printStackTrace();
-            return ResponseDto.databaseError();
         }
-
-        return DeliNearUserResponseDto.success(nearList);
+        return nearUserSeqList;
     }
 
     @Transactional
@@ -186,6 +167,7 @@ public class UserServiceImpl implements UserService {
         UserEntity user = userRepository.getReferenceById(requestBody.getUserSeq());
         user.setAddress(requestBody.getAddr(),requestBody.getLat(),requestBody.getLon());
     }
+
 
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         if ((lat1 == lat2) && (lon1 == lon2)) {

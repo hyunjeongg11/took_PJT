@@ -17,4 +17,5 @@ public class UserAddressRequestDto {
 
     @Schema(description = "주소", example = "서울특별시 종로구 세종로 1-68")
     private String addr;
+
 }
