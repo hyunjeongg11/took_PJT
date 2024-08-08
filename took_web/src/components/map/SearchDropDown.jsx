@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { searchPlaces } from '../../utils/map';
 
-const SearchDropdown = ({ label, name, value, onChange, placeholder, setLatitude, setLongitude }) => {
+const SearchDropdown = ({
+  label,
+  name,
+  value,
+  onChange,
+  placeholder,
+  setLatitude,
+  setLongitude,
+}) => {
   const [results, setResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 

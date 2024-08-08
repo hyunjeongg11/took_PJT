@@ -2,14 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { getDeliveryByRoom } from '../../apis/findByRoom.js';
-import {
-  getChatRoomMessageApi,
-  deleteRoomApi,
-  getUsersApi,
-} from '../../apis/chat/chat';
+import { getChatRoomMessageApi, getUsersApi } from '../../apis/chat/chat';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../../store/user';
-import { formatDateOnly, formatTime } from '../../utils/formatDate';
+import { formatTime } from '../../utils/formatDate';
 import speaker from '../../assets/common/speaker.png';
 import delivery from '../../assets/chat/delivery.png';
 import calculator from '../../assets/chat/calculator.png';
@@ -28,6 +24,7 @@ import DeliveryModal from '../../components/chat/DeliveryModal';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import ParticipantList from '../../components/chat/ParticipantList';
+import { Link } from 'react-router-dom';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -52,6 +49,7 @@ function ChattingMainPage() {
   const location = useLocation();
   const [deliveryInfo, setDeliveryInfo] = useState(null);
   const chatRoom = location.state?.chatRoom || null;
+  const isLeader = chatRoom.userSeq === seq;
 
   useEffect(() => {
     const socket = new SockJS(`${SERVER_URL}/ws`);
@@ -97,7 +95,7 @@ function ChattingMainPage() {
     try {
       const response = await getUsersApi(id);
       setUsers(response);
-      console.log(response);
+      console.log('users', response);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -221,7 +219,10 @@ function ChattingMainPage() {
   useEffect(() => {
     const handleResize = () => {
       if (textareaRef.current) {
-        textareaRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        textareaRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
       }
     };
 
@@ -251,35 +252,45 @@ function ChattingMainPage() {
           <div className="ml-2 flex-grow">
             <div className="text-sm mt-[2px]"></div>
             {!isCollapsed && (
-  <>
-    {deliveryInfo?.notice ? (
-      <div className="text-xs flex-col gap-2 justify-between flex py-2">
-        <div className="mb-1.5">
-          수령 장소
-          <span className="ml-5">{deliveryInfo?.pickupPlace || ''}</span>
-        </div>
-        <div className="mb-1.5">
-          주문 링크
-          <span className="ml-5">
-            <a href={deliveryInfo.notice} className="underline">
-              함께 주문하러 가기
-            </a>
-          </span>
-        </div>
-      </div>
-    ) : (
-      <div className="text-xs flex justify-center py-2">
-        <button
-          className="bg-gray-300 font-semibold px-6 py-2 text-white rounded-lg"
-          onClick={() => window.location.href = `/chat/delivery/${deliveryInfo.deliverySeq}/notice`}
-        >
-          주문 정보 등록하기
-        </button>
-      </div>
-    )}
-  </>
-)}
-
+              <>
+                {deliveryInfo?.notice ? (
+                  <div className="text-xs flex-col gap-2 justify-between flex py-2">
+                    <div className="mb-1.5">
+                      수령 장소
+                      <span className="ml-5">
+                        {deliveryInfo?.pickupPlace || ''}
+                      </span>
+                    </div>
+                    <div className="mb-1.5 ">
+                      주문 링크
+                      <span className="ml-5">
+                        <Link to={deliveryInfo.notice} className="underline">
+                          함께 주문하러 가기
+                        </Link>
+                      </span>
+                      <Link
+                        to={`/chat/delivery/${deliveryInfo.deliverySeq}/notice`}
+                      >
+                        <span className="py-1 px-2 ml-16 bg-gray-400 rounded-md  text-white">
+                          수정
+                        </span>
+                      </Link>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-xs flex justify-center py-2">
+                    <button
+                      className="bg-gray-300 font-semibold px-6 py-2 text-white rounded-lg"
+                      onClick={() =>
+                        (window.location.href = `/chat/delivery/${deliveryInfo.deliverySeq}/notice`)
+                      }
+                    >
+                      주문 정보 등록하기
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
           <button onClick={toggleCollapse} className="focus:outline-none">
             {isCollapsed ? (
@@ -403,15 +414,6 @@ function ChattingMainPage() {
           className="w-full px-4 py-12 bg-white flex justify-around"
           ref={actionIconsRef}
         >
-          <div className="flex flex-col items-center mb-4">
-            <div
-              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
-              onClick={() => openModal('calculator')}
-            >
-              <img src={calculator} alt="정산" className="w-6 h-6" />
-            </div>
-            <span className="mt-1 text-[11px] text-gray-500">정산</span>
-          </div>
           <div className="flex flex-col items-center">
             <div
               className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center"
@@ -420,6 +422,15 @@ function ChattingMainPage() {
               <img src={money} alt="주문금액" className="w-7 h-7" />
             </div>
             <span className="mt-1 text-[11px] text-gray-500">주문금액</span>
+          </div>
+          <div className="flex flex-col items-center mb-4">
+            <div
+              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
+              onClick={() => openModal('calculator')}
+            >
+              <img src={calculator} alt="정산" className="w-6 h-6" />
+            </div>
+            <span className="mt-1 text-[11px] text-gray-500">정산</span>
           </div>
           <div className="flex flex-col items-center">
             <div
@@ -432,16 +443,21 @@ function ChattingMainPage() {
           </div>
         </div>
       )}
-      {currentModal === 'calculator' && (
+      {currentModal === 'money' && isLeader && (
+        <MoneyModal
+          onClose={closeModal}
+          tempMember={users}
+          deliverySeq={deliveryInfo.deliverSeq}
+        />
+      )}
+      {currentModal === 'calculator' && isLeader && (
         <CalculatorModal
           onClose={closeModal}
           tempMember={users}
           leader={chatRoom.userSeq}
         />
       )}
-      {currentModal === 'money' && (
-        <MoneyModal onClose={closeModal} tempMember={users} />
-      )}
+
       {currentModal === 'delivery' && (
         <DeliveryModal onClose={closeModal} tempMember={users} />
       )}
