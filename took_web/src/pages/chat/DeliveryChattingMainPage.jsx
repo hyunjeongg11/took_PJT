@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
+import { getDeliveryByRoom } from '../../apis/findByRoom.js';
 import {
   getChatRoomMessageApi,
   deleteRoomApi,
@@ -50,6 +51,7 @@ function ChattingMainPage() {
   const currentSubscription = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [deliveryInfo, setDeliveryInfo] = useState(null);
   const chatRoom = location.state?.chatRoom || null;
 
   useEffect(() => {
@@ -60,6 +62,7 @@ function ChattingMainPage() {
       console.log('WebSocket connected');
       enterRoom();
       loadUsers();
+      loadDeliveryInfo();
     });
 
     return () => {
@@ -68,6 +71,16 @@ function ChattingMainPage() {
       }
     };
   }, []);
+
+  const loadDeliveryInfo = async () => {
+    try {
+      const response = await getDeliveryByRoom(id);
+      setDeliveryInfo(response);
+      console.log(deliveryInfo);
+    } catch (error) {
+      console.error('Error fetching delivery info:', error);
+    }
+  };
 
   const fetchRoomMessages = async () => {
     try {
@@ -95,12 +108,6 @@ function ChattingMainPage() {
     if (currentSubscription.current) {
       currentSubscription.current.unsubscribe();
     }
-    // const enterRequest = { roomSeq: id, userSeq: seq };
-    // stompClient.current.send(
-    //   '/pub/room/enter',
-    //   {},
-    //   JSON.stringify(enterRequest)
-    // );
     currentSubscription.current = subscribeToRoomMessages(id);
     fetchRoomMessages();
   };
@@ -149,6 +156,7 @@ function ChattingMainPage() {
         JSON.stringify(leaveRequest)
       );
     }
+    // T0DO: 채팅방 나가기 했을 때 자동으로 정산 파티, 배달 멤버에서도 제거되는지? 아니면 이어서 api 나가기 다 해야하는지.
     navigate(-1);
   };
 
@@ -211,6 +219,20 @@ function ChattingMainPage() {
     }
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (textareaRef.current) {
+        textareaRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-5 py-3">
@@ -230,12 +252,14 @@ function ChattingMainPage() {
           <div className="ml-2 flex-grow">
             <div className="text-sm mt-[2px]"></div>
             {!isCollapsed && (
-              <div className="text-sm text-gray-500">
-                함께 주문하기 :
-                <a href="https://s.baemin.com/bfp.lty8b" className="underline">
-                  {' '}
-                  https://s.baemin.com/bfp.lty8b
-                </a>
+              <div className="text-xs flex-col gap-2 justify-between flex py-2">
+                <div className="mb-1.5">수령 장소
+                  <span className="ml-5">{deliveryInfo?.pickupPlace || ''}</span>
+                </div>
+                <div className="mb-1.5">주문 링크
+                  <span className="ml-5"><a href={deliveryInfo?.notice || ''} className="underline">함께 주문하러 가기</a></span>
+                
+                </div>
               </div>
             )}
           </div>
