@@ -125,7 +125,7 @@ const renderMessage = (item, handlePayment) => (
             </div>
             <button
               onClick={() => handlePayment(item.amount, item.sender)}
-              className="mt-3 py-1.5 px-10 w-full bg-neutral-200 bg-opacity-80 text-neutral-800 text-sm font-bold rounded-xl mx-auto"
+              className="mt-3 py-1.5 px-10 w-full bg-neutral-100 bg-opacity-80 text-neutral-800 text-sm font-bold rounded-xl mx-auto"
             >
               송금하기
             </button>
@@ -174,7 +174,7 @@ function TookChattingPage() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [tempData]);
   useEffect(() => {
     const fetchData = async () => {
       try {
