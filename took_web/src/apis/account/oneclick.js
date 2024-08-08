@@ -49,3 +49,12 @@ export const checkEasyPasswordApi = async (params) => {
     return handleApiError(error);
   }
 };
+
+export const getMainAccount = async (userSeq) => {
+  try {
+    const response = await request.get(`/api/account/main-account/${userSeq}`);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
