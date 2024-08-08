@@ -9,6 +9,8 @@ import {
 } from '../../apis/delivery';
 import { useUser } from '../../store/user';
 import SearchDropdown from '../../components/map/SearchDropDown';
+import { usePosition } from '../../store/position'; 
+
 
 const InputField = ({
   label,
@@ -96,6 +98,8 @@ function CreateDeliveryPage() {
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const { latitude, longitude } = usePosition(); // usePosition 훅에서 위도와 경도 받아오기
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -149,8 +153,8 @@ function CreateDeliveryPage() {
         roomSeq: 31,
         storeName: form.storeName,
         pickupPlace: form.deliveryAddress,
-        pickupLat: 0.0,
-        pickupLon: 0.0,
+        pickupLat: 0.0, //todo
+        pickupLon: 0.0, //todo
         deliveryTip: form.deliveryTip,
         deliveryTime: form.orderTime,
         content: form.additionalInfo,
