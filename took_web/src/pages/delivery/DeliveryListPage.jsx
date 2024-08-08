@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDeliveryListApi } from '../../apis/delivery';
-import { formatBeforeTime, formatFinishTime } from '../../utils/formatDate';
+import { formatBeforeTime } from '../../utils/formatDate';
 import plusIcon from '../../assets/delivery/plus.png'; // '+' 아이콘 경로
 import mapIcon from '../../assets/delivery/map.png'; // 지도 아이콘 경로
 import BackButton from '../../components/common/BackButton';
+import { usePosition } from '../../store/position'; 
 
 const DeliveryListPage = () => {
   const navigate = useNavigate();
+  const { latitude, longitude } = usePosition(); // usePosition 훅에서 위도와 경도 받아오기
   const [selectedOption, setSelectedOption] = useState('주소지');
   const [deliveryList, setDeliveryList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,10 +17,9 @@ const DeliveryListPage = () => {
   useEffect(() => {
     const fetchDeliveryList = async () => {
       try {
-        // 임시로 위경도 0으로 설정
         const params = {
-          lat: 0.0,
-          lon: 0.0,
+          lat: latitude,
+          lon: longitude,
         };
         const response = await getDeliveryListApi(params);
         const openList = response.filter((item) => item.status === 'OPEN');
@@ -34,7 +35,7 @@ const DeliveryListPage = () => {
     };
 
     fetchDeliveryList();
-  }, []);
+  }, [latitude, longitude]);
 
   const handleCreateDelivery = () => {
     navigate('/delivery/create');
@@ -53,7 +54,7 @@ const DeliveryListPage = () => {
       <div className="flex items-center px-4 mt-4">
         <BackButton />
         <div className="flex-grow text-center">
-          <span className="mt-2.5 mb-1 text-3xl font-bold text-main">
+          <span className="mt-2.5 mb-1 text-2xl font-bold text-main">
             배달{' '}
             <span className="font-dela">
               took<span className="font-noto">!</span>
@@ -64,7 +65,7 @@ const DeliveryListPage = () => {
 
       <div className="px-6 mt-4">
         <div className="flex justify-between items-center mb-4">
-          <div className="text-xl text-black ml-2 font-bold mt-2">
+          <div className="text-xl text-black font-bold mt-2">
             주변 배달 목록
           </div>
         </div>
@@ -117,7 +118,6 @@ const DeliveryListPage = () => {
               <div className="text-neutral-500 font-bold text-xs">
                 배달팁 : {item.deliveryTip}원
               </div>
-              {/* <div className="text-neutral-500 font-bold text-xs">주문 종료 : {formatFinishTime(item.deliveryTime)}</div> */}
             </div>
             <div className="my-4 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
           </div>
