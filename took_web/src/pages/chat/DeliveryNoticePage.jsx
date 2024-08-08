@@ -4,13 +4,15 @@ import BackButton from '../../components/common/BackButton';
 import {
   getDeliveryDetailApi,
   writeNoticeApi,
-  modifyNoticeApi,
+  modifyDeliveryApi,
 } from '../../apis/delivery';
 import { useUser } from '../../store/user';
+import { searchPlaces } from '../../utils/map';
 
 function DeliveryNoticePage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [deliveryInfo, setDeliveryInfo] = useState({});
   const { seq: userSeq } = useUser();
   const [link, setLink] = useState('');
   const [linkValue, setLinkValue] = useState('');
@@ -18,18 +20,19 @@ function DeliveryNoticePage() {
   const [tempLocationValue, setTempLocationValue] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const [isNewNotice, setIsNewNotice] = useState(true);
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     const fetchDeliveryData = async () => {
       try {
         const response = await getDeliveryDetailApi(id);
+        setDeliveryInfo(response);
         setLocation(response.pickupPlace);
         setTempLocationValue(response.pickupPlace);
         if (response.notice) {
           setLink(response.notice);
           setLinkValue(response.notice);
-          setIsNewNotice(false);
+          
         }
       } catch (error) {
         console.error('배달 상세 정보를 가져오는 중 오류 발생:', error);
@@ -56,20 +59,27 @@ function DeliveryNoticePage() {
         notice: linkValue,
       };
 
-      if (isNewNotice) {
-        await writeNoticeApi(params);
-      } else {
-        await modifyNoticeApi(params);
-      }
-
-      setLink(linkValue);
-      setLocation(tempLocationValue);
+      await writeNoticeApi({
+        deliverySeq: id,
+        notice: linkValue,
+      });
+      await modifyDeliveryApi({
+        deliverySeq: id,
+        storeName: deliveryInfo.storeName,
+        pickUpPlace,
+        pickUpLat,
+        pickUpLon,
+        deliveryTip : deliveryInfo.deliveryTip,
+        content: deliveryInfo.content,
+        deliveryTime: deliveryInfo.deliveryTime,
+      })
 
       setModalMessage('수정이 완료되었습니다');
       setIsModalVisible(true);
       setTimeout(() => {
         setIsModalVisible(false);
       }, 2000);
+      navigate(-1);
     } catch (error) {
       console.error('공지사항을 저장하는 중 오류 발생:', error);
       setModalMessage('저장 중 오류가 발생했습니다');
@@ -136,16 +146,7 @@ function DeliveryNoticePage() {
               value={linkValue}
               onChange={handleLinkChange}
             />
-            {/* {linkValue && (
-              <a
-                href={linkValue}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline text-sm flex-grow"
-              >
-                {linkValue}
-              </a>
-            )} */}
+           
           </div>
         </div>
       </div>

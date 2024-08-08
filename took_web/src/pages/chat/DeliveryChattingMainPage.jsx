@@ -45,7 +45,6 @@ function ChattingMainPage() {
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const actionIconsRef = useRef(null);
-  const lastDateRef = useRef('');
   const textareaRef = useRef(null);
   const stompClient = useRef(null);
   const currentSubscription = useRef(null);
@@ -76,7 +75,7 @@ function ChattingMainPage() {
     try {
       const response = await getDeliveryByRoom(id);
       setDeliveryInfo(response);
-      console.log(deliveryInfo);
+      console.log(response);
     } catch (error) {
       console.error('Error fetching delivery info:', error);
     }
@@ -252,16 +251,35 @@ function ChattingMainPage() {
           <div className="ml-2 flex-grow">
             <div className="text-sm mt-[2px]"></div>
             {!isCollapsed && (
-              <div className="text-xs flex-col gap-2 justify-between flex py-2">
-                <div className="mb-1.5">수령 장소
-                  <span className="ml-5">{deliveryInfo?.pickupPlace || ''}</span>
-                </div>
-                <div className="mb-1.5">주문 링크
-                  <span className="ml-5"><a href={deliveryInfo?.notice || ''} className="underline">함께 주문하러 가기</a></span>
-                
-                </div>
-              </div>
-            )}
+  <>
+    {deliveryInfo?.notice ? (
+      <div className="text-xs flex-col gap-2 justify-between flex py-2">
+        <div className="mb-1.5">
+          수령 장소
+          <span className="ml-5">{deliveryInfo?.pickupPlace || ''}</span>
+        </div>
+        <div className="mb-1.5">
+          주문 링크
+          <span className="ml-5">
+            <a href={deliveryInfo.notice} className="underline">
+              함께 주문하러 가기
+            </a>
+          </span>
+        </div>
+      </div>
+    ) : (
+      <div className="text-xs flex justify-center py-2">
+        <button
+          className="bg-gray-300 font-semibold px-6 py-2 text-white rounded-lg"
+          onClick={() => window.location.href = `/chat/delivery/${deliveryInfo.deliverySeq}/notice`}
+        >
+          주문 정보 등록하기
+        </button>
+      </div>
+    )}
+  </>
+)}
+
           </div>
           <button onClick={toggleCollapse} className="focus:outline-none">
             {isCollapsed ? (
