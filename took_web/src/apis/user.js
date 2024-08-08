@@ -209,10 +209,11 @@ export const writeUserLocation = async ( {latitude, longitude} ) => {
   }
 }
 
-export const modifyUserLocation = async ( {latitude, longitude}) => {
+export const modifyUserLocation = async ( params) => {
   try {
-
+    const response = await request.put('/api/user/setAddress', params);
+    return response.data;
   } catch (error) {
-
+    return handleApiError(err);
   }
 }
