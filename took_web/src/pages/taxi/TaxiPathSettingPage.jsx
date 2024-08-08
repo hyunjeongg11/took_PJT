@@ -6,6 +6,8 @@ import SearchDropdown from '../../components/map/SearchDropDown';
 
 const TaxiPathSettingPage = () => {
   const [destination, setDestination] = useState('');
+  const [latitude, setLatitude] = useState();
+  const [longitude, setLongitude] = useState();
   const [filteredData, setFilteredData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState('');
@@ -53,11 +55,22 @@ const TaxiPathSettingPage = () => {
 
       <div className="flex flex-col px-6 py-4">
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">
+        <SearchDropdown
+                 placeholder="목적지를 입력하세요"
+                 label="목적지 검색"
+                 value={destination}
+                 name="destination"
+                 onChange={handleDestinationChange}
+                 setLatitude={setLatitude}
+                 setLongitude={setLongitude}
+              />
+               // 목적지 name: destination에 저장
+               // latitude, longitude 에 저장
+         {/* <label className="block text-sm font-bold text-gray-700 mb-2">
             목적지 검색
           </label>
           <div className="relative rounded-md">
-            <input
+             <input
               type="text"
               className="block w-full pr-10 py-4 px-3 shadow-md bg-neutral-100 border-gray-300 focus:outline-none focus:ring-main focus:border-main text-sm rounded-md"
               placeholder="목적지를 입력하세요"
@@ -72,9 +85,9 @@ const TaxiPathSettingPage = () => {
                 src={searchIcon}
                 alt="목적지 검색"
                 className="h-6 w-6 text-gray-400"
-              />
-            </button>
-          </div>
+              />  </button> 
+            
+          </div>*/}
         </div>
 
         <div className="relative mt-1">
