@@ -9,6 +9,7 @@ function PwdPage() {
   const navigate = useNavigate();
 
   const correctPassword = '123456'; // 지금은 기본 비밀번호 "123456"으로 설정
+  //todo 사용자 간편비밀번호 체크 로직 추가해야댐
 
   const handleButtonClick = (value) => {
     if (input.length < 6) {
@@ -38,6 +39,19 @@ function PwdPage() {
   };
 
   useEffect(() => {
+    window.onAuthenticate = (success) => {
+      if (success) {
+          alert('생체 인증 성공');
+          msgToAndroid('생체 인증 성공');
+          setInput('');
+          setIsError(false);
+          setAttemptCount(0); // 성공 시 시도 횟수 초기화
+        
+      } else {
+        alert('생체 인증 실패');
+      }
+    };
+
     if (window.Android) {
       window.Android.authenticate();
     }

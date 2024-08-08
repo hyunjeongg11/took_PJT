@@ -86,7 +86,7 @@ export const loginApi = async (params, setAccessToken) => {
       setAccessToken(accessToken);
       localStorage.setItem('accessToken', accessToken);
     }
-
+    
     return response.data;
   } catch (err) {
     return handleApiError(err);
@@ -183,7 +183,7 @@ export const logoutApi = async () => {
 //   ”lon” :  ,
 //   ”lat”  :
 //   }
-export const nerUserApi = async () => {
+export const getUserApi = async () => {
   try {
     const response = await request.post('/api/user/delivery-near-user');
     return response.data;
@@ -191,3 +191,29 @@ export const nerUserApi = async () => {
     return handleApiError(err);
   }
 };
+
+
+export const getUserLocation = async () => {
+  try {
+    
+  } catch (error) {
+
+  }
+}
+
+export const writeUserLocation = async ( {latitude, longitude} ) => {
+  try {
+    
+  } catch (error) {
+
+  }
+}
+
+export const modifyUserLocation = async ( params) => {
+  try {
+    const response = await request.put('/api/user/setAddress', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(err);
+  }
+}

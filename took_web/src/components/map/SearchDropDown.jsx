@@ -1,8 +1,7 @@
-// components/SearchDropdown.js
 import React, { useState } from 'react';
 import { searchPlaces } from '../../utils/map';
 
-const SearchDropdown = ({ label, name, value, onChange, placeholder }) => {
+const SearchDropdown = ({ label, name, value, onChange, placeholder, setLatitude, setLongitude }) => {
   const [results, setResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -17,6 +16,7 @@ const SearchDropdown = ({ label, name, value, onChange, placeholder }) => {
       }
     }
   };
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -26,6 +26,8 @@ const SearchDropdown = ({ label, name, value, onChange, placeholder }) => {
 
   const handleSelect = (place) => {
     onChange({ target: { name, value: place.place_name } });
+    setLatitude(place.y);
+    setLongitude(place.x);
     setShowDropdown(false);
   };
 

@@ -46,7 +46,7 @@ function MainPage() {
       <div className="flex gap-5 justify-between w-full items-center bg-white pt-10 px-7">
         <div className="flex flex-col justify-center ml-3 items-center">
           <Link to="/pwd">
-            <span className="font-dela text-main text-4xl">took</span>
+            <div className="font-dela text-main text-4xl">took</div>
             <span className="text-blaxk font-nanum text-[11px] mt-[1px]">
               올인원 정산 플랫폼
             </span>

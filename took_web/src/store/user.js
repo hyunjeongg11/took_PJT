@@ -25,6 +25,6 @@ export const useUser = create((set) => ({
   setPhone: (phone) => {
     set(() => ({ phone: phone }));
   },
-  setLoggedIn: () => set(() => ({ loggedIn: true })),
-  setLoggedOut: () => set(() => ({ loggedOut: false })),
+  setLoggedIn: () => set(() => ({ isLoggedIn: true })),
+  setLoggedOut: () => set(() => ({ isLoggedIn: false })),
 }));
