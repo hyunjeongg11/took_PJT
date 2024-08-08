@@ -5,13 +5,7 @@ import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { BsTruck } from 'react-icons/bs';
-import { TfiWorld } from 'react-icons/tfi';
-import { GoBell } from 'react-icons/go';
-import {
-  formatDateOnly,
-  formatTime,
-  formatDateWithYear,
-} from '../../utils/formatDate';
+import { formatTime } from '../../utils/formatDate';
 import { useUser } from '../../store/user';
 import speaker from '../../assets/common/speaker.png';
 import calculator from '../../assets/chat/calculator.png';
@@ -91,7 +85,8 @@ const tempMember = [
 ];
 
 const tempData = {
-  shopSeq: 8, // todo: 실제 shopSeq로 연결 필요 / 채팅방 연결 전까지는 임시로 8번으로 !!
+  shopSeq: 8, // 채팅방 연결 전까지는 임시로 8번으로 !!
+  id: 1,
   title: '마이프로틴 공동구매 모집합니다',
   site: '마이프로틴',
   item: '프로틴',
@@ -611,6 +606,7 @@ function GroupBuyChattingMainPage() {
         <ArrivalNotificationModal
           members={tempMember}
           onClose={handleCloseArrivalModal}
+          shopSeq={tempData.shopSeq}
         />
       )}
     </div>

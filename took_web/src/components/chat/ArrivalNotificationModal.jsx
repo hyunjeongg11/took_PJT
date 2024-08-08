@@ -1,8 +1,7 @@
-// components/chat/ArrivalNotificationModal.jsx
 import React, { useEffect, useRef } from 'react';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { MdAdd } from 'react-icons/md';
-import { pickUpCheckApi } from '../../apis/groupBuy/shop.js';
+import { pickUpCheckApi, getAllPickUpApi } from '../../apis/groupBuy/shop.js';
 import { useUser } from '../../store/user.js';
 
 const ArrivalNotificationModal = ({ members, onClose, shopSeq }) => {
@@ -19,6 +18,14 @@ const ArrivalNotificationModal = ({ members, onClose, shopSeq }) => {
     try {
       await pickUpCheckApi(shopSeq, currentUserSeq);
       alert('수령 상태가 업데이트되었습니다.');
+      
+      const allPickedUp = await getAllPickUpApi(shopSeq);
+      if (allPickedUp) {
+        alert('모든 멤버가 수령을 완료했습니다.');
+      } else {
+        alert('아직 수령을 완료하지 않은 멤버가 있습니다.');
+      }
+      
       onClose();
     } catch (error) {
       console.error('Error updating pick up status:', error);
