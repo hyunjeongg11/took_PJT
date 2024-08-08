@@ -1,10 +1,8 @@
 package com.took.user_api.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import com.took.user_api.dto.request.member.MemberSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -17,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity(name = "member")
 @Table(name="member")
+@Builder
 public class MemberEntity {
     
     @Id
@@ -32,8 +31,8 @@ public class MemberEntity {
     @Column(name = "receive")
     private boolean receive;
 
-    @Column(name="is_leader")
-    private boolean isLeader;
+    @Column(name="leader")
+    private boolean leader;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -48,17 +47,17 @@ public class MemberEntity {
     @Column(name = "created_at", nullable = true)
     private LocalDateTime createdAt;
 
-
+    @Column(name = "fake_cost")
+    private Long fakeCost;
 
     public MemberEntity(PartyEntity party,UserEntity user,Long cost,Boolean status,Boolean receive){
      this.party = party;
      this.status = status;
      this.cost = cost;
      this.receive = receive;
-     this.isLeader = true;
+     this.leader = true;
      this.createdAt = LocalDateTime.now();
      this.user = user;
-
     }
 
     public MemberEntity(PartyEntity party,UserEntity user){
@@ -66,7 +65,7 @@ public class MemberEntity {
         this.status = false;
         this.cost = 0L;
         this.receive = false;
-        this.isLeader = false;
+        this.leader = false;
         this.createdAt = LocalDateTime.now();
         this.user = user;
     }
@@ -76,11 +75,12 @@ public class MemberEntity {
         this.status = false;
         this.cost = cost;
         this.receive = false;
-        this.isLeader = false;
+        this.leader = false;
         this.createdAt = LocalDateTime.now();
         this.user = user;
     }
 
-
-
+    public void updateCost(Long cost) {
+        this.cost = cost;
+    }
 }
