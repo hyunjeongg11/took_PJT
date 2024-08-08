@@ -50,37 +50,15 @@ public class MemberEntity {
     @Column(name = "fake_cost")
     private Long fakeCost;
 
-    public MemberEntity(PartyEntity party,UserEntity user,Long cost,Boolean status,Boolean receive){
-     this.party = party;
-     this.status = status;
-     this.cost = cost;
-     this.receive = receive;
-     this.leader = true;
-     this.createdAt = LocalDateTime.now();
-     this.user = user;
-    }
-
-    public MemberEntity(PartyEntity party,UserEntity user){
-        this.party = party;
-        this.status = false;
-        this.cost = 0L;
-        this.receive = false;
-        this.leader = false;
-        this.createdAt = LocalDateTime.now();
-        this.user = user;
-    }
-
-    public MemberEntity(PartyEntity party,UserEntity user,Long cost){
-        this.party = party;
-        this.status = false;
-        this.cost = cost;
-        this.receive = false;
-        this.leader = false;
-        this.createdAt = LocalDateTime.now();
-        this.user = user;
-    }
-
     public void updateCost(Long cost) {
         this.cost = cost;
+    }
+
+    public void updateStatus(boolean b) {
+        this.status = b;
+    }
+
+    public void updateRecieve(boolean b) {
+        this.receive = b;
     }
 }

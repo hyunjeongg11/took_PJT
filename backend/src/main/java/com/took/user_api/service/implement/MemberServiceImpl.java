@@ -2,14 +2,10 @@ package com.took.user_api.service.implement;
 
 
 import com.took.user_api.dto.request.member.MemberSaveRequestDto;
-import com.took.user_api.dto.request.party.hostPayRequestDto;
-import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.member.MemberSaveResponseDto;
-import com.took.user_api.entity.BankEntity;
 import com.took.user_api.entity.MemberEntity;
 import com.took.user_api.entity.PartyEntity;
 import com.took.user_api.entity.UserEntity;
-import com.took.user_api.repository.BankRepository;
 import com.took.user_api.repository.MemberRepository;
 import com.took.user_api.repository.PartyRepository;
 import com.took.user_api.repository.UserRepository;
@@ -20,6 +16,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -32,46 +30,41 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepositoryCustom memberRepositoryCustom;
 
 
-
     @Override
     @Transactional
     public ResponseEntity<? super MemberSaveResponseDto> insertMember(MemberSaveRequestDto requestBody) {
 
-        MemberEntity newMember = null;
 
-        try{
-
-            PartyEntity party = partyRepository.getReferenceById(requestBody.getPartySeq());
-            UserEntity user = userRepository.getReferenceById(requestBody.getUserSeq());
+        PartyEntity party = partyRepository.findById(requestBody.getPartySeq()).orElseThrow();
+        UserEntity user = userRepository.findById(requestBody.getUserSeq()).orElseThrow();
 
 //          정산 시작 전이므로 당연히 cost는 0에 해당
 //          정산 시작 전으리므로 당연히 Status는 False
 //          받는 사람을 누구로 할지 아예 안정했기 때문에 당연히 False
-            MemberEntity member = new MemberEntity(party,user);
-            newMember = memberRepository.save(member);
+        MemberEntity member = MemberEntity.builder()
+                .party(party)
+                .user(user)
+                .cost(0L)
+                .status(false)
+                .receive(false)
+                .leader(false)
+                .createdAt(LocalDateTime.now())
+                .fakeCost(0L)
+                .build();
+        MemberEntity newMember = memberRepository.save(member);
+        party.updateTotalMember(1);
 
-        }catch (Exception e){
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
         return MemberSaveResponseDto.success(newMember.getMemberSeq());
     }
 
     @Override
     @Transactional
     public ResponseEntity<? super MemberSaveResponseDto> deleteMember(MemberSaveRequestDto requestBody) {
-        try{
 
-            memberRepositoryCustom.deleteMemberByPartySeq(requestBody.getPartySeq(),requestBody.getUserSeq());
-        }catch (Exception e){
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
+        memberRepositoryCustom.deleteMemberByPartySeq(requestBody.getPartySeq(), requestBody.getUserSeq());
+        PartyEntity party = partyRepository.findById(requestBody.getPartySeq()).orElseThrow();
+        party.updateTotalMember(-1);
 
         return MemberSaveResponseDto.success();
     }
-
-
-
-
 }

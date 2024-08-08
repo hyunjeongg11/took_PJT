@@ -54,18 +54,19 @@ public class PartyEntity {
         this.cost = cost;
     }
 
-    public PartyEntity(String title, int category, Long cost, int totalMember, Long deliveryTip) {
-        this.title = title;
-        this.category = category;
-        this.cost = cost;
-        this.status = false;
-        this.createdAt = LocalDateTime.now();
-        this.totalMember = totalMember;
-        this.receiveCost = 0L;
-        this.deliveryTip = deliveryTip;
-    }
-
     public void updateReceiveCost(Long recieveCost) {
         this.receiveCost = recieveCost;
+    }
+
+    public void updateStatus(boolean b) {
+        this.status = b;
+    }
+
+    public void updateCount(int i) {
+        this.count += i;
+    }
+
+    public void updateTotalMember(int i) {
+        this.totalMember += i;
     }
 }

@@ -37,38 +37,6 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
         jpaQueryFactory.delete(member).where(member.party.partySeq.eq(partySeq).and(member.user.userSeq.eq(userSeq))).execute();
     }
 
-    @Override
-    public Long findCostByMemberSeq(Long memberSeq) {
-
-        QMemberEntity member = QMemberEntity.memberEntity;
-        Long result = null;
-
-        result=jpaQueryFactory.select(member.cost).from(member).where(member.memberSeq.eq(memberSeq)).fetchOne();
-
-        return result;
-    }
-
-    @Override
-    public Long findPartySeqByMemberSeq(Long memberSeq) {
-
-        QMemberEntity member = QMemberEntity.memberEntity;
-        Long result = null;
-
-        result = jpaQueryFactory.select(member.party.partySeq).from(member).where(member.memberSeq.eq(memberSeq)).fetchOne();
-
-        return result;
-    }
-
-
-    public void changeStatusBySeq(Long memberSeq) {
-
-        QMemberEntity member = QMemberEntity.memberEntity;
-
-        jpaQueryFactory.update(member)
-                .where(member.memberSeq.eq(memberSeq))
-                .set(member.status,true)
-                .execute();
-    }
 
     @Override
     public Long findLeaderByPartySeq(Long partySeq) {

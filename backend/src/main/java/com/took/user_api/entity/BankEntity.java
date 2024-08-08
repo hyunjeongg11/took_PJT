@@ -36,15 +36,6 @@ public class BankEntity {
     @Column(name="is_bank")
     private boolean isBank;
 
-    public boolean minus(Long money){
-
-        if(this.balance >= money){
-            this.balance-=money;
-            return true;
-        }
-        return false;
-    }
-
     public void updateBalance(long balance) {
         this.balance = balance;
     }

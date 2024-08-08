@@ -5,7 +5,11 @@ import com.took.delivery_api.entity.Delivery;
 import com.took.delivery_api.entity.DeliveryGuest;
 import com.took.delivery_api.repository.DeliveryGuestRepository;
 import com.took.delivery_api.repository.DeliveryRepository;
+import com.took.user_api.entity.MemberEntity;
+import com.took.user_api.entity.PartyEntity;
 import com.took.user_api.entity.UserEntity;
+import com.took.user_api.repository.MemberRepository;
+import com.took.user_api.repository.PartyRepository;
 import com.took.user_api.repository.UserRepository;
 import com.took.user_api.service.PartyService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +30,8 @@ public class DeliveryGuestService {
     private final UserRepository userRepository;
     private final PartyService partyService;
     private final DeliveryService deliveryService;
+    private final MemberRepository memberRepository;
+    private final PartyRepository partyRepository;
 
 
     // 파티 참가
@@ -72,11 +78,17 @@ public class DeliveryGuestService {
     public void setPickUp(Long deliveryGuestSeq) {
         DeliveryGuest deliveryGuest = deliveryGuestRepository.findById(deliveryGuestSeq).orElseThrow();
         deliveryGuest.updatePickUp(true);
+
+        Delivery delivery = deliveryRepository.findById(deliveryGuest.getDelivery().getDeliverySeq()).orElseThrow();
+        PartyEntity party = partyRepository.findById(delivery.getPartySeq()).orElseThrow();
+        UserEntity user = userRepository.findByUserSeq(deliveryGuest.getUser().getUserSeq());
+        MemberEntity member = memberRepository.findByPartyAndUser(party, user);
+        member.updateRecieve(true);
         // 변경 사항을 강제로 데이터베이스에 반영
         deliveryGuestRepository.flush();
+        memberRepository.flush();
 
         if(deliveryGuestRepository.areAllGuestsPickedUp(deliveryGuest.getDelivery())) {
-            Delivery delivery = deliveryRepository.findById(deliveryGuest.getDelivery().getDeliverySeq()).orElseThrow();
             delivery.updateStatus(String.valueOf(Delivery.Status.DONE));
             partyService.deligonguHostRecieve(delivery.getPartySeq(), delivery.getUser().getUserSeq());
         }

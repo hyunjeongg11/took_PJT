@@ -1,23 +1,24 @@
 package com.took.user_api.controller;
 
 import com.took.user_api.dto.request.member.MemberSaveRequestDto;
-import com.took.user_api.dto.request.member.MemberPartySeqRequestDto;
 import com.took.user_api.dto.request.party.*;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.member.MemberSaveResponseDto;
-import com.took.user_api.dto.response.party.*;
+import com.took.user_api.dto.response.party.MakePartyResponseDto;
+import com.took.user_api.dto.response.party.PartyDetailResponseDto;
+import com.took.user_api.dto.response.party.ojResponseDto;
 import com.took.user_api.service.AccountService;
 import com.took.user_api.service.MemberService;
 import com.took.user_api.service.PartyService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @RestController
 @RequestMapping("/api/pay")
@@ -107,8 +108,6 @@ public class PartyController {
         return  response;
     }
 
-
-
     @Operation(summary = "[배달, 공구] 유저가 돈 보낼때", description = "참여 맴버가 확인 버튼을 누를 떄 호출됩니다. 완료시 done에 true 반환")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "맴버 결제 성공!",
@@ -118,18 +117,6 @@ public class PartyController {
     @PostMapping("/deli-gongu-pay")
     public ResponseEntity<? super ojResponseDto>deligonguPay(@RequestBody OnlyJungsanRequestDto requestBody){
         ResponseEntity<? super ojResponseDto> response = partyService.deligonguPay(requestBody.getPartySeq(),requestBody.getUserSeq());
-        return response;
-    }
-
-    @Operation(summary = "[배달, 공구] 가 수령 했을때", description = "참여 맴버들이 수령을 확인합니다. 모두 수령을 끝내면 done에 true를 반환합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "맴버 수령 성공!!",
-                    content = @Content(schema = @Schema(implementation = MemberSaveResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청")
-    })
-    @PostMapping("/deli-gongu-done")
-    public ResponseEntity<? super ojResponseDto>deligonguDone(@RequestBody MemberPartySeqRequestDto requestBody){
-        ResponseEntity<? super ojResponseDto> response = partyService.deligonguRecieve(requestBody.getPartySeq(),requestBody.getMemberSeq());
         return response;
     }
 

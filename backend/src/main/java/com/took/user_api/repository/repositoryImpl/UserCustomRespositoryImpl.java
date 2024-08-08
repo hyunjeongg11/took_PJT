@@ -1,8 +1,6 @@
 package com.took.user_api.repository.repositoryImpl;
 
 
-
-import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.config.QuerydslConfiguration;
 import com.took.user_api.dto.request.user.KakaoChangeRequestDto;
@@ -11,8 +9,6 @@ import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.custom.UserCustomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 
 @Repository
@@ -43,21 +39,6 @@ public class UserCustomRespositoryImpl implements UserCustomRepository {
         .execute();
     }
 
-    @Override
-    public List<Tuple> getAllLocation(Long userSeq) {
-
-        QUserEntity user = QUserEntity.userEntity;
-
-        List<Tuple> result = null;
-
-        result= queryFactory.select(user.lat, user.lon,user.userSeq)
-                .from(user)
-                .where(user.userSeq.ne(userSeq))
-                .fetch();
-
-        return result;
-
-    }
 
     @Override
     public void changePwd(String encryptedPwd, Long userSeq) {

@@ -14,7 +14,6 @@ import com.took.user_api.entity.*;
 import com.took.user_api.repository.*;
 import com.took.user_api.repository.custom.BankRepositoryCustom;
 import com.took.user_api.repository.custom.MemberRepositoryCustom;
-import com.took.user_api.repository.custom.PartyRepositoryCustom;
 import com.took.user_api.service.PartyService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -30,7 +28,6 @@ import java.util.List;
 public class PartyServiceImpl implements PartyService {
 
     private final PartyRepository partyRepository;
-    private final PartyRepositoryCustom partyRepositoryCustom;
     private final MemberRepositoryCustom memberRepositoryCustom;
     private final UserRepository userRepository;
     private final MemberRepository memberRepository;
@@ -40,124 +37,136 @@ public class PartyServiceImpl implements PartyService {
     private final AccountRepository accountRepository;
 
 
+    @Transactional
     @Override
     public ResponseEntity<? super MakePartyResponseDto> makeParty(MakePartyRequestDto dto) {
 
-        Long partySeq = null;
-        Long memberSeq = null;
+        PartyEntity party = PartyEntity.builder()
+                .title(dto.getTitle())
+                .category(dto.getCategory())
+                .cost(dto.getCost())
+                .status(false)
+                .createdAt(LocalDateTime.now())
+                .count(0)
+                .totalMember(dto.getTotalMember())
+                .deliveryTip(dto.getDeliveryTip())
+                .build();
 
-        try {
-
-            PartyEntity party = new PartyEntity(dto.getTitle(), dto.getCategory(), dto.getCost(), dto.getTotalMember(), dto.getDeliveryTip());
-            PartyEntity newparty = partyRepository.save(party);
-            partySeq = newparty.getPartySeq();
-            UserEntity user = userRepository.getReferenceById(dto.getUserSeq());
+        PartyEntity newParty = partyRepository.save(party);
+        UserEntity user = userRepository.findById(dto.getUserSeq()).orElseThrow();
 
 //          일단 정산 전이기에 자신의 cost로 0으로 설정 // status (정산 여부도 설정)
-            // 일단 맴버도 돈을 다 낸건 아니기 때문에!
-            MemberEntity member = new MemberEntity(party, user, 0L, false, false);
-            MemberEntity newMember = memberRepository.save(member);
-            memberSeq = newMember.getMemberSeq();
+        // 일단 맴버도 돈을 다 낸건 아니기 때문에!
+        MemberEntity member = MemberEntity
+                .builder()
+                .party(newParty)
+                .user(user)
+                .cost(0L)
+                .status(false)
+                .receive(false)
+                .leader(true)
+                .createdAt(LocalDateTime.now())
+                .fakeCost(0L)
+                .build();
+        MemberEntity newMember = memberRepository.save(member);
 
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-        return MakePartyResponseDto.success(partySeq, memberSeq);
+        return MakePartyResponseDto.success(newParty.getPartySeq(), newMember.getMemberSeq());
     }
 
 
+    @Transactional
     @Override
     public ResponseEntity<? super PartyDetailResponseDto> partyDetail(PartyDetailRequestDto dto) {
 
         Long userSeq = dto.getUserSeq();
         Long partySeq = dto.getPartySeq();
-
         // party리스트 넘기기
         // userSeq를 불러온 이유? 내꺼는 올라오면 안되기 때문
         List<MemberEntity> partyDetailList = memberRepositoryCustom.partyDetail(userSeq, partySeq);
-
         return PartyDetailResponseDto.success(partyDetailList);
     }
 
 
+    @Transactional
     @Override
     public ResponseEntity<?> partyDelete(Long partySeq) {
         partyRepository.deleteById(partySeq);
         return null;
     }
 
+
+    @Transactional
     @Override
     public ResponseEntity<? super VoidResponseDto> insertAllMember(InsertAllMemberRequestDto requestBody) {
-
         try {
-            Long partySeq = requestBody.getPartySeq();
-            PartyEntity party = partyRepository.getReferenceById(partySeq);
+            PartyEntity party = partyRepository.findById(requestBody.getPartySeq()).orElseThrow();
             int cate = party.getCategory();
 
 
-            Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(partySeq);
-            UserEntity leader = userRepository.getReferenceById(leaderSeq);
+            Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(party.getPartySeq());
+            UserEntity leader = userRepository.findById(leaderSeq).orElseThrow();
             String name = leader.getUserName();
 
+            long deliveryTip = 0L;
+            if (party.getDeliveryTip() != null) {
+                deliveryTip = party.getDeliveryTip() / party.getTotalMember();
+            }
 
             for (InsertAllMemberRequestDto.userCost userCost : requestBody.getUserCosts()) {
                 if (userCost.getUserSeq().equals(leaderSeq)) continue;
                 UserEntity user = userRepository.getReferenceById(userCost.getUserSeq());
-                MemberEntity member = memberRepository.save(new MemberEntity(party, user, userCost.getCost()));
+                MemberEntity member = MemberEntity.builder()
+                        .party(party)
+                        .user(user)
+                        .cost(userCost.getCost() + deliveryTip)
+                        .status(false)
+                        .receive(false)
+                        .leader(false)
+                        .createdAt(LocalDateTime.now())
+                        .fakeCost(0L)
+                        .build();
+                memberRepository.save(member);
 
                 AlarmRequest alarm = new AlarmRequest();
                 alarm.setBody(name.charAt(0) + "*" + name.charAt(2) + "님에게 " + userCost.getCost() + "원 TOOK!!");
                 alarm.setSender(leaderSeq);
                 alarm.setUserSeq(userCost.getUserSeq());
-                alarm.setPartySeq(partySeq);
+                alarm.setPartySeq(party.getPartySeq());
 
 
                 if (party.getDeliveryTip() != null) {
-                    alarm.setDeliveryCost(party.getDeliveryTip() / party.getTotalMember());
-                    alarm.setCost(party.getDeliveryTip() / party.getTotalMember() + member.getCost());
+                    alarm.setDeliveryCost(deliveryTip);
+                    alarm.setCost(deliveryTip + userCost.getCost());
                 }
-
 
 //              배달
                 if (cate == 1) {
-
                     alarm.setTitle("배달 took 정산 요청이 왔어요!");
                     alarm.setCategory(1);
 
-
 //              택시
                 } else if (cate == 2) {
-
                     alarm.setTitle("택시 took 정산 요청이 왔어요!");
                     alarm.setCategory(2);
 
 //               공동구매
                 } else if (cate == 3) {
-
                     alarm.setTitle("공동구매 took 정산 요청이 왔어요!");
                     alarm.setCategory(3);
 
-
 //               더치페이
                 } else if (cate == 4) {
-
                     alarm.setTitle("정산 took 정산 요청이 왔어요!");
                     alarm.setCategory(4);
 //                  정산이니까 엔빵
-                    alarm.setCost(member.getCost());
-
+                    alarm.setCost(userCost.getCost());
                 }
-
                 fcmService.sendNotification(alarm);
             }
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
-
-
         return VoidResponseDto.success();
     }
 
@@ -178,25 +187,22 @@ public class PartyServiceImpl implements PartyService {
 //          빼주기 전에 돈 있는 없는지 검사
             Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(userSeq);
             bank = bankRepository.getReferenceById(bankSeq);
+            long balance = bank.getBalance();
 
-            if (!bank.minus(membercost)) return ResponseDto.nomoney();
+            if (balance < membercost) return ResponseDto.nomoney();
 
 //          맴버 상태 업데이트
-            memberRepositoryCustom.changeStatusBySeq(member.getMemberSeq());
+            member.updateStatus(true);
+            party.updateCount(1);
 
 //          돈빼주고 저장
-            bankRepositoryCustom.updateBalanceByBankSeq(bank.getBalance(), bankSeq);
+            bank.updateBalance(balance - membercost);
 
-//          총 금액에서 빼주기
-            Long leftBalance = party.getCost() - membercost;
-            party.updateCost(leftBalance);
-
-
-//           빼주는 순간 리더에게 돈 들어가게
+//          빼주는 순간 리더에게 돈 들어가게
             Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(partySeq);
             Long leaderBankSeq = bankRepositoryCustom.findBankSeqByUserSeq(leaderSeq);
             BankEntity leaderBankEntity = bankRepository.getReferenceById(leaderBankSeq);
-            long balance = leaderBankEntity.getBalance() + membercost;
+            balance = leaderBankEntity.getBalance() + membercost;
             leaderBankEntity.updateBalance(balance);
 
             UserEntity sender = userRepository.findById(userSeq).orElseThrow();
@@ -211,123 +217,29 @@ public class PartyServiceImpl implements PartyService {
             );
 
 
-            if (leftBalance.equals(membercost)) {
-//              정산완료
-                done = true;
-                partyRepositoryCustom.changeStatusBySeq(partySeq);
+            partyRepository.flush();
 
-            } else if (leftBalance < membercost) {
-
+            if (party.getCount() == party.getTotalMember() - 1) {
                 done = true;
-                long change = membercost - party.getCost();
-                leaderBankEntity.updateBalance(balance + change);
+                party.updateStatus(true);
 
                 fcmService.sendMessage(
                         MessageRequest.builder()
-                                .title("송금 알림")
-                                .body("정산이 완료되어 차액이 납부 되었습니다!")
+                                .title("'" + party.getTitle() + "' 정산 알림")
+                                .body("정산이 완료되었습니다!")
                                 .userSeqList(List.of(leaderSeq))
                                 .build()
                 );
-
             }
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
-
         return ojResponseDto.success(done);
     }
 
 
-    @Override
-    public ResponseEntity<? super ojResponseDto> deligonguPay(Long memberSeq, Long userSeq) {
-
-        boolean done = false;
-        BankEntity bank = null;
-
-        try {
-
-            Long membercost = memberRepositoryCustom.findCostByMemberSeq(memberSeq);
-            Long partySeq = memberRepositoryCustom.findPartySeqByMemberSeq(memberSeq);
-
-            //해당하는 파티를 불러옴
-            PartyEntity party = partyRepository.getReferenceById(partySeq);
-
-            //빼주기 전에 돈 있는 없는지 검사
-            Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(userSeq);
-            bank = bankRepository.getReferenceById(bankSeq);
-
-            if (!bank.minus(membercost)) return ResponseDto.nomoney();
-
-            // 맴버 상태 업데이트
-            memberRepositoryCustom.changeStatusBySeq(memberSeq);
-
-            // 돈빼주고 저장
-            bankRepositoryCustom.updateBalanceByBankSeq(bank.getBalance(), bankSeq);
-
-            //해당 파티에 recieve를 채움
-            Long nowcost = party.getReceiveCost() + membercost;
-            partyRepositoryCustom.updateCostBypartyId(nowcost, partySeq);
-
-            //총 금액이 같아지면 이렇게 됨.
-            if (nowcost.equals(party.getCost())) {
-                partyRepositoryCustom.changeStatusBySeq(partySeq);
-                done = true;
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-
-        return ojResponseDto.success(done);
-    }
-
-    @Override
-    public ResponseEntity<? super ojResponseDto> deligonguRecieve(Long partySeq, Long memberSeq) {
-
-        boolean done = true;
-
-        try {
-
-            memberRepositoryCustom.changeStatusBySeq(memberSeq);
-
-            List<MemberEntity> members = memberRepository.findAllById(Collections.singleton(partySeq));
-
-            for (MemberEntity memberEntity : members) {
-                if (!memberEntity.isStatus()) done = false;
-            }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDto.nomoney();
-        }
-
-        return ojResponseDto.success(done);
-    }
-
-    @Override
-    public void deligonguHostRecieve(Long partySeq, Long userSeq) {
-
-        PartyEntity party = partyRepository.findById(partySeq).orElseThrow();
-        Long receiveCost = party.getReceiveCost();
-        Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(userSeq);
-        BankEntity bank = bankRepository.findById(bankSeq).orElseThrow();
-        Long balance = bank.getBalance();
-        bank.updateBalance(receiveCost + balance);
-
-        // 알림 생성
-        fcmService.sendMessage(
-                MessageRequest.builder()
-                        .title(party.getTitle() + " 정산 완료")
-                        .body(receiveCost + "원이 정산 되었습니다.")
-                        .userSeqList(List.of(userSeq))
-                        .build()
-        );
-    }
-
+    @Transactional
     @Override
     public ResponseEntity<? super ojResponseDto> onlyjungsanRecieve(Long partySeq, Long userSeq) {
 
@@ -352,6 +264,67 @@ public class PartyServiceImpl implements PartyService {
         }
 
         return ojResponseDto.success(true);
+    }
+
+
+    @Transactional
+    @Override
+    public ResponseEntity<? super ojResponseDto> deligonguPay(Long memberSeq, Long userSeq) {
+
+        MemberEntity member = memberRepository.findById(memberSeq).orElseThrow();
+        PartyEntity party = partyRepository.findById(member.getParty().getPartySeq()).orElseThrow();
+
+        //빼주기 전에 돈 있는 없는지 검사
+        UserEntity user = userRepository.findById(userSeq).orElseThrow();
+        AccountEntity account = accountRepository.findByUserAndMainTrue(user);
+        BankEntity bank = bankRepository.findById(account.getBank().getBankSeq()).orElseThrow();
+
+        Long balance = bank.getBalance();
+        Long membercost = member.getCost();
+
+        if (balance < membercost) return ResponseDto.nomoney();
+        bank.updateBalance(balance - membercost);
+        member.updateStatus(true);
+        party.updateReceiveCost(party.getReceiveCost() + membercost);
+        party.updateCount(party.getCount() + 1);
+        partyRepository.flush();
+
+        // 모든 사람이 결제 완료 (결제자제외)
+        if (party.getCount() == party.getTotalMember() - 1) {
+            Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(party.getPartySeq());
+            fcmService.sendMessage(
+                    MessageRequest.builder()
+                            .title("`" + party.getTitle() + "` 모든 사람 결제 완료!")
+                            .body("주문을 진행해 주세요")
+                            .userSeqList(List.of(leaderSeq))
+                            .build()
+            );
+            return ojResponseDto.success(true);
+        }
+        return ojResponseDto.success(false);
+    }
+
+
+    @Transactional
+    @Override
+    public void deligonguHostRecieve(Long partySeq, Long userSeq) {
+
+        PartyEntity party = partyRepository.findById(partySeq).orElseThrow();
+        Long receiveCost = party.getReceiveCost();
+        Long bankSeq = bankRepositoryCustom.findBankSeqByUserSeq(userSeq);
+        BankEntity bank = bankRepository.findById(bankSeq).orElseThrow();
+        Long balance = bank.getBalance();
+        bank.updateBalance(receiveCost + balance);
+        party.updateStatus(true);
+
+        // 알림 생성
+        fcmService.sendMessage(
+                MessageRequest.builder()
+                        .title(party.getTitle() + " 정산 완료")
+                        .body(receiveCost + "원이 정산 되었습니다.")
+                        .userSeqList(List.of(userSeq))
+                        .build()
+        );
     }
 
 
@@ -419,6 +392,7 @@ public class PartyServiceImpl implements PartyService {
         }
         return newParty.getPartySeq();
     }
+
 
     @Transactional
     @Override
