@@ -9,7 +9,6 @@ import com.took.taxi_api.repository.TaxiRepository;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +29,7 @@ public class TaxiService {
 
     /**
      * 새로운 Taxi 엔티티를 생성하고 데이터베이스에 저장합니다.
+     *
      * @param request TaxiCreateRequest 객체로, 택시 생성에 필요한 정보를 담고 있습니다.
      */
     @Transactional
@@ -54,6 +54,7 @@ public class TaxiService {
 
     /**
      * 특정 사용자들의 택시 목록을 조회합니다.
+     *
      * @param request TaxiListSelectRequest 객체로, 사용자 번호 리스트를 담고 있습니다.
      * @return 사용자들의 택시 목록
      */
@@ -68,6 +69,7 @@ public class TaxiService {
 
     /**
      * 특정 택시를 삭제합니다.
+     *
      * @param taxiSeq 삭제할 택시의 번호
      */
     @Transactional
@@ -77,6 +79,7 @@ public class TaxiService {
 
     /**
      * 특정 택시의 정보를 조회합니다.
+     *
      * @param taxiSeq 조회할 택시의 번호
      * @return 조회된 택시의 정보
      */
@@ -88,6 +91,7 @@ public class TaxiService {
 
     /**
      * 택시 정보를 업데이트합니다.
+     *
      * @param request TaxiSetRequest 객체로, 택시 정보 업데이트에 필요한 정보를 담고 있습니다.
      */
     @Transactional
@@ -98,6 +102,7 @@ public class TaxiService {
 
     /**
      * 택시의 상태를 업데이트합니다.
+     *
      * @param request TaxiStatusRequest 객체로, 택시 상태 업데이트에 필요한 정보를 담고 있습니다.
      */
     @Transactional
@@ -120,6 +125,7 @@ public class TaxiService {
 
     /**
      * 택시 출발 정보를 설정합니다.
+     *
      * @param request TaxiStartRequest 객체로, 택시 출발 정보 설정에 필요한 정보를 담고 있습니다.
      */
     @Transactional
@@ -141,6 +147,7 @@ public class TaxiService {
 
     /**
      * 최종 결제 비용을 계산하고 사용자별로 분배합니다.
+     *
      * @param request TaxiFinalCostRequest 객체로, 최종 결제 비용 계산에 필요한 정보를 담고 있습니다.
      * @return 사용자별 최종 결제 비용 응답 데이터
      */
@@ -167,7 +174,7 @@ public class TaxiService {
         response.setUsers(userList);
         return response;
     }
-    
+
     // 정산방 연결
     @Transactional
     public void setParty(TaxiSetPartyRequest request) {
