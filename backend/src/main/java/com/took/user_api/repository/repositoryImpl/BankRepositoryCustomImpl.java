@@ -3,6 +3,8 @@ package com.took.user_api.repository.repositoryImpl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.took.user_api.entity.BankEntity;
+import com.took.user_api.entity.QAccountEntity;
+import com.took.user_api.entity.QBankEntity;
 import com.took.user_api.repository.custom.BankRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

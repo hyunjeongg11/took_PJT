@@ -3,6 +3,7 @@ package com.took.user_api.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -14,6 +15,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @AllArgsConstructor
 @Entity(name = "account")
 @Table(name = "account")
+@Builder
 public class AccountEntity {
     
     @Id
