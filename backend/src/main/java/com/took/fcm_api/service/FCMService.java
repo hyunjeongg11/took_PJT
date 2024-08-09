@@ -76,6 +76,10 @@ public class FCMService {
                 .createAt(LocalDateTime.now())
                 .build();
 
+        String token = getToken(request.getUserSeq());
+        if(token == null || token.isEmpty()) {
+            return;
+        }
         alarmRepository.save(alarm);
         Notification notification = Notification.builder()
                 .setTitle(request.getTitle())
@@ -99,6 +103,10 @@ public class FCMService {
                 .build();
 
         // 각 토큰에 대해 메시지를 생성하고 멀티캐스트 메시지로 설정
+        List<String > tokens = getTokens(request.getUserSeqList());
+        if(tokens == null || tokens.isEmpty()) {
+            return;
+        }
         MulticastMessage message = MulticastMessage.builder()
                 .addAllTokens(getTokens(request.getUserSeqList()))
                 .setNotification(notification)
