@@ -5,8 +5,8 @@ import {
   getDeliveryDetailApi,
   deleteDeliveryApi,
   joinDeliveryApi,
-  getDeliveryMembersApi,
   changeDeliveryStatusApi,
+  isJoiningParty,
 } from '../../apis/delivery';
 import { getUserInfoApi } from '../../apis/user';
 import { useUser } from '../../store/user';
@@ -14,6 +14,8 @@ import getProfileImagePath from '../../utils/getProfileImagePath';
 import { TbPencil } from 'react-icons/tb';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { formatBeforeTime } from '../../utils/formatDate';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
 
 const BackButton = () => {
   const navigate = useNavigate();
@@ -52,54 +54,79 @@ function DeliveryDetailPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isLeader, setIsLeader] = useState(false);
   const [isParticipant, setIsParticipant] = useState(false);
+  const [stompClient, setStompClient] = useState(null);
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    const fetchDeliveryData = async () => {
-      try {
-        const deliveryResponse = await getDeliveryDetailApi(id);
-        if (deliveryResponse.status === 'DONE') {
-          navigate('/');
-          return;
-        }
+    const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
+    const stompClientInstance = Stomp.over(socket);
+    stompClientInstance.connect({}, () => {
+      console.log('WebSocket 연결 성공');
+      setConnected(true);
+    });
+    setStompClient(stompClientInstance);
+    if (id) {
+      fetchDeliveryInfo();
+    }
 
-        setData(deliveryResponse);
-
-        const deliveryUserSeq = deliveryResponse.userSeq;
-        if (deliveryUserSeq) {
-          const userResponse = await getUserInfoApi({
-            userSeq: deliveryUserSeq,
-          });
-          setUserInfo(userResponse);
-          setIsLeader(deliveryUserSeq === currentUserSeq);
-        }
-
-        const membersResponse = await getDeliveryMembersApi(id);
-        const isCurrentUserParticipant = membersResponse.some(
-          (member) => member.userSeq === currentUserSeq
-        );
-        setIsParticipant(isCurrentUserParticipant);
-
-        const deliveryTime = new Date(deliveryResponse.deliveryTime);
-        if (new Date() > deliveryTime) {
-          await changeDeliveryStatusApi({ deliverySeq: id, status: 'DONE' });
-          navigate('/');
-        }
-      } catch (error) {
-        console.error(
-          '배달 글 상세 조회 중 오류 발생:',
-          error.response?.data || error.message
-        );
+    return () => {
+      if (stompClientInstance && stompClientInstance.connected) {
+        stompClientInstance.disconnect(() => {
+          console.log('WebSocket 연결 해제');
+        });
       }
     };
+  }, []);
 
-    if (id) {
-      fetchDeliveryData();
+  const enterRoom = ({ roomSeq, userSeq }) => {
+    if (stompClient && connected) {
+      stompClient.send(
+        '/pub/room/enter',
+        {},
+        JSON.stringify({
+          roomSeq,
+          userSeq,
+        })
+      );
+    } else {
+      console.error('WebSocket 연결이 아직 준비되지 않았습니다');
     }
-  }, [id, currentUserSeq, navigate]);
+  };
+
+  const fetchDeliveryInfo = async () => {
+    try {
+      const deliveryResponse = await getDeliveryDetailApi(id);
+      setData(deliveryResponse);
+
+      const deliveryUserSeq = deliveryResponse.userSeq;
+      if (deliveryUserSeq) {
+        const userResponse = await getUserInfoApi({
+          userSeq: deliveryUserSeq,
+        });
+        setUserInfo(userResponse); // 방장 사용자 정보 조회 및 저장
+        setIsLeader(deliveryUserSeq === currentUserSeq);
+      }
+
+      const isJoin = await isJoiningParty({
+        deliverySeq: id,
+        userSeq: currentUserSeq,
+      });
+      setIsParticipant(isJoin);
+
+      const deliveryTime = new Date(deliveryResponse.deliveryTime);
+      if (new Date() > deliveryTime) {
+        await changeDeliveryStatusApi({ deliverySeq: id, status: 'DONE' });
+        navigate('/');
+      }
+    } catch (e) {
+      console.error('배달 상세 조회 중 오류 발생:');
+    }
+  };
 
   const handleParticipate = async () => {
     try {
       await joinDeliveryApi({ deliverySeq: id, userSeq: currentUserSeq });
+      await enterRoom({ userSeq: currentUserSeq, roomSeq: data.roomSeq });
       alert('배달 파티에 참여하였습니다!');
       setIsParticipant(true);
     } catch (error) {
@@ -151,10 +178,6 @@ function DeliveryDetailPage() {
       alert('모집 종료 중 오류가 발생했습니다.');
     }
   };
-
-  if (!data || !userInfo) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="flex flex-col max-w-[360px] mx-auto relative h-screen">
