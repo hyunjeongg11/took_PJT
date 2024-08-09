@@ -86,7 +86,7 @@ export const loginApi = async (params, setAccessToken) => {
       setAccessToken(accessToken);
       localStorage.setItem('accessToken', accessToken);
     }
-    
+
     return response.data;
   } catch (err) {
     return handleApiError(err);
@@ -193,28 +193,21 @@ export const getUserApi = async () => {
   }
 };
 
-
 export const getUserLocation = async () => {
   try {
-    
-  } catch (error) {
+  } catch (error) {}
+};
 
-  }
-}
-
-export const writeUserLocation = async ( {latitude, longitude} ) => {
+export const writeUserLocation = async ({ latitude, longitude }) => {
   try {
-    
-  } catch (error) {
+  } catch (error) {}
+};
 
-  }
-}
-
-export const modifyUserLocation = async ( params) => {
+export const modifyUserLocation = async (params) => {
   try {
     const response = await request.put('/api/user/setAddress', params);
     return response.data;
   } catch (error) {
     return handleApiError(err);
   }
-}
+};

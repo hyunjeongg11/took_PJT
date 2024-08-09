@@ -5,8 +5,8 @@ import {
   getDeliveryDetailApi,
   deleteDeliveryApi,
   joinDeliveryApi,
-  getDeliveryMembersApi,
   changeDeliveryStatusApi,
+  isJoiningParty,
 } from '../../apis/delivery';
 import { getUserInfoApi } from '../../apis/user';
 import { useUser } from '../../store/user';
@@ -14,6 +14,8 @@ import getProfileImagePath from '../../utils/getProfileImagePath';
 import { TbPencil } from 'react-icons/tb';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { formatBeforeTime } from '../../utils/formatDate';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
 
 const BackButton = () => {
   const navigate = useNavigate();
@@ -52,54 +54,80 @@ function DeliveryDetailPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isLeader, setIsLeader] = useState(false);
   const [isParticipant, setIsParticipant] = useState(false);
+  const [stompClient, setStompClient] = useState(null);
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    const fetchDeliveryData = async () => {
-      try {
-        const deliveryResponse = await getDeliveryDetailApi(id);
-        if (deliveryResponse.status === 'DONE') {
-          navigate('/');
-          return;
-        }
+    const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
+    const stompClientInstance = Stomp.over(socket);
+    stompClientInstance.connect({}, () => {
+      console.log('WebSocket 연결 성공');
+      setConnected(true);
+    });
+    setStompClient(stompClientInstance);
+    if (id) {
+      fetchDeliveryInfo();
+    }
 
-        setData(deliveryResponse);
-
-        const deliveryUserSeq = deliveryResponse.userSeq;
-        if (deliveryUserSeq) {
-          const userResponse = await getUserInfoApi({
-            userSeq: deliveryUserSeq,
-          });
-          setUserInfo(userResponse);
-          setIsLeader(deliveryUserSeq === currentUserSeq);
-        }
-
-        const membersResponse = await getDeliveryMembersApi(id);
-        const isCurrentUserParticipant = membersResponse.some(
-          (member) => member.userSeq === currentUserSeq
-        );
-        setIsParticipant(isCurrentUserParticipant);
-
-        const deliveryTime = new Date(deliveryResponse.deliveryTime);
-        if (new Date() > deliveryTime) {
-          await changeDeliveryStatusApi({ deliverySeq: id, status: 'DONE' });
-          navigate('/');
-        }
-      } catch (error) {
-        console.error(
-          '배달 글 상세 조회 중 오류 발생:',
-          error.response?.data || error.message
-        );
+    return () => {
+      if (stompClientInstance && stompClientInstance.connected) {
+        stompClientInstance.disconnect(() => {
+          console.log('WebSocket 연결 해제');
+        });
       }
     };
+  }, []);
 
-    if (id) {
-      fetchDeliveryData();
+  const enterRoom = ({ roomSeq, userSeq }) => {
+    if (stompClient && connected) {
+      stompClient.send(
+        '/pub/room/enter',
+        {},
+        JSON.stringify({
+          roomSeq,
+          userSeq,
+        })
+      );
+    } else {
+      console.error('WebSocket 연결이 아직 준비되지 않았습니다');
     }
-  }, [id, currentUserSeq, navigate]);
+  };
+
+  const fetchDeliveryInfo = async () => {
+    try {
+      const deliveryResponse = await getDeliveryDetailApi(id);
+      setData(deliveryResponse);
+      console.log(deliveryResponse.userSeq);
+      const deliveryUserSeq = deliveryResponse.userSeq;
+      if (deliveryUserSeq) {
+        const userResponse = await getUserInfoApi({
+          userSeq: deliveryUserSeq,
+        });
+        console.log(userResponse);
+        setUserInfo(userResponse); // 방장 사용자 정보 조회 및 저장
+        setIsLeader(deliveryUserSeq === currentUserSeq);
+      }
+
+      const isJoin = await isJoiningParty({
+        deliverySeq: id,
+        userSeq: currentUserSeq,
+      });
+      setIsParticipant(isJoin);
+
+      const deliveryTime = new Date(deliveryResponse.deliveryTime);
+      if (new Date() > deliveryTime) {
+        await changeDeliveryStatusApi({ deliverySeq: id, status: 'DONE' });
+        navigate('/');
+      }
+    } catch (e) {
+      console.error('배달 상세 조회 중 오류 발생:', e);
+    }
+  };
 
   const handleParticipate = async () => {
     try {
       await joinDeliveryApi({ deliverySeq: id, userSeq: currentUserSeq });
+      await enterRoom({ userSeq: currentUserSeq, roomSeq: data.roomSeq });
       alert('배달 파티에 참여하였습니다!');
       setIsParticipant(true);
     } catch (error) {
@@ -152,16 +180,12 @@ function DeliveryDetailPage() {
     }
   };
 
-  if (!data || !userInfo) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="flex flex-col max-w-[360px] mx-auto relative h-screen">
       <div className="flex bg-main items-center px-4 py-3">
         <BackButton />
         <div className="mt-2.5 mb-2 flex-grow text-center text-lg font-bold text-white">
-          배달 <span className="font-dela">took</span>
+          배달 <span className="font-dela">took!</span>
         </div>
       </div>
 
@@ -169,14 +193,14 @@ function DeliveryDetailPage() {
         <div className="flex items-center mb-4 justify-between">
           <div className="flex items-center">
             <img
-              src={getProfileImagePath(userInfo.imageNo)}
+              src={getProfileImagePath(userInfo?.imageNo)}
               alt="avatar"
               className="w-10 h-10 mr-4"
             />
             <div>
-              <div className="text-base font-bold">{userInfo.userName}</div>
+              <div className="text-base font-bold">{userInfo?.userName}</div>
               <div className="text-xs text-gray-500">
-                {formatBeforeTime(data.createdAt)}
+                {data ? formatBeforeTime(data.createdAt) : ''}
               </div>
             </div>
           </div>
@@ -197,60 +221,58 @@ function DeliveryDetailPage() {
         <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
 
         <div className="mb-10 px-2">
-          <div className="text-xl font-bold mb-1 mt-3">{data.storeName}</div>
-          <div className="text-gray-700 mb-3">{data.pickupPlace}</div>
+          <div className="text-xl font-bold mb-1 mt-3">{data?.storeName}</div>
+          <div className="text-gray-700 mb-3">{data?.pickupPlace}</div>
           <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
           <div className="text-gray-700 my-3">
-            배달팁 : {data.deliveryTip}원
+            배달팁 : {data?.deliveryTip}원
           </div>
-          <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
           <div className="text-gray-700 my-3">
-            배달 주문 시간 : {formatDeliveryTime(data.deliveryTime)}
+            {data ? formatDeliveryTime(data.deliveryTime) : ''}
           </div>
-          <div className="my-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
-          <div className="text-gray-700 whitespace-pre-line leading-7">
-            {data.content}
-          </div>
+          <div className="text-gray-700 my-3">{data?.content}</div>
         </div>
-
-        <div className="flex justify-center">
-          {isParticipant ? (
-            <button
-              onClick={handleChatRedirect}
-              className="bg-main text-white py-2 px-10 rounded-2xl text-lg font-bold"
-            >
-              채팅방 이동
-            </button>
-          ) : (
-            <button
-              onClick={isLeader ? handleEndRecruitment : handleParticipate}
-              className="bg-main text-white py-2 px-10 rounded-2xl text-lg font-bold"
-            >
-              {isLeader ? '모집 종료하기' : '참여하기'}
-            </button>
-          )}
-        </div>
+        <button
+          className="w-full p-2 bg-main text-white rounded-lg"
+          onClick={handleChatRedirect}
+        >
+          채팅방 입장
+        </button>
+        {!isLeader && (
+          <button
+            className="w-full p-2 mt-2 bg-gray-300 text-gray-700 rounded-lg"
+            onClick={handleParticipate}
+            disabled={isParticipant}
+          >
+            {isParticipant ? '이미 참여중' : '참여하기'}
+          </button>
+        )}
+        {isLeader && (
+          <button
+            className="w-full p-2 mt-2 bg-red-500 text-white rounded-lg"
+            onClick={handleEndRecruitment}
+          >
+            모집 종료하기
+          </button>
+        )}
       </div>
 
       {showDeleteModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white px-6 py-4 rounded-lg shadow-lg text-center">
-            <div className="text-base font-bold mb-2">
-              게시글을 삭제하시겠습니까?
-            </div>
-            <div className="mb-4 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
+          <div className="bg-white p-4 rounded-lg shadow-lg">
+            <div className="text-center mb-4">정말 삭제하시겠습니까?</div>
             <div className="flex justify-center">
               <button
-                className="bg-gray-200 font-bold text-[#3D3D3D] px-10 py-2 rounded-2xl mx-2"
-                onClick={() => setShowDeleteModal(false)}
-              >
-                취소
-              </button>
-              <button
-                className="bg-main font-bold text-white px-10 py-2 rounded-2xl mx-2"
+                className="bg-red-500 text-white px-4 py-2 rounded-lg mr-2"
                 onClick={handleDelete}
               >
                 삭제
+              </button>
+              <button
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                취소
               </button>
             </div>
           </div>
@@ -259,8 +281,8 @@ function DeliveryDetailPage() {
 
       {showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white px-6 py-4 rounded-lg shadow-lg text-center text-base font-bold">
-            배달 게시글이 삭제되었습니다
+          <div className="bg-white p-4 rounded-lg shadow-lg">
+            <div className="text-center mb-4">삭제가 완료되었습니다!</div>
           </div>
         </div>
       )}

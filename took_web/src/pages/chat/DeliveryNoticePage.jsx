@@ -4,33 +4,30 @@ import BackButton from '../../components/common/BackButton';
 import {
   getDeliveryDetailApi,
   writeNoticeApi,
-  modifyNoticeApi,
+  modifyDeliveryApi,
 } from '../../apis/delivery';
-import { useUser } from '../../store/user';
+import SearchNotice from '../../components/map/SearchNotice';
 
 function DeliveryNoticePage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { seq: userSeq } = useUser();
-  const [link, setLink] = useState('');
-  const [linkValue, setLinkValue] = useState('');
+  const [deliveryInfo, setDeliveryInfo] = useState({});
   const [location, setLocation] = useState('');
-  const [tempLocationValue, setTempLocationValue] = useState('');
+  const [tempLocation, setTempLocation] = useState('');
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const [isNewNotice, setIsNewNotice] = useState(true);
+  const [notice, setNotice] = useState('');
 
   useEffect(() => {
     const fetchDeliveryData = async () => {
       try {
         const response = await getDeliveryDetailApi(id);
+        setDeliveryInfo(response);
+        console.log('delivery info', response);
         setLocation(response.pickupPlace);
-        setTempLocationValue(response.pickupPlace);
-        if (response.notice) {
-          setLink(response.notice);
-          setLinkValue(response.notice);
-          setIsNewNotice(false);
-        }
+        console.log(response.pickupPlace);
       } catch (error) {
         console.error('배달 상세 정보를 가져오는 중 오류 발생:', error);
       }
@@ -41,35 +38,29 @@ function DeliveryNoticePage() {
     }
   }, [id]);
 
-  const handleLinkChange = (e) => {
-    setLinkValue(e.target.value);
-  };
-
-  const handleLocationChange = (e) => {
-    setTempLocationValue(e.target.value);
-  };
-
   const handleSave = async () => {
     try {
-      const params = {
+      await writeNoticeApi({
         deliverySeq: id,
-        notice: linkValue,
-      };
-
-      if (isNewNotice) {
-        await writeNoticeApi(params);
-      } else {
-        await modifyNoticeApi(params);
-      }
-
-      setLink(linkValue);
-      setLocation(tempLocationValue);
+        notice: notice,
+      });
+      await modifyDeliveryApi({
+        deliverySeq: id,
+        storeName: deliveryInfo.storeName,
+        pickupPlace: location,
+        pickUpLat: latitude,
+        pickUpLon: longitude,
+        deliveryTip: deliveryInfo.deliveryTip,
+        content: deliveryInfo.content,
+        deliveryTime: deliveryInfo.deliveryTime,
+      });
 
       setModalMessage('수정이 완료되었습니다');
       setIsModalVisible(true);
       setTimeout(() => {
         setIsModalVisible(false);
       }, 2000);
+      navigate(-1);
     } catch (error) {
       console.error('공지사항을 저장하는 중 오류 발생:', error);
       setModalMessage('저장 중 오류가 발생했습니다');
@@ -81,13 +72,9 @@ function DeliveryNoticePage() {
   };
 
   const handleComplete = () => {
+    console.log(location, latitude, longitude, notice);
     handleSave();
   };
-
-  useEffect(() => {
-    setLinkValue(link);
-    setTempLocationValue(location);
-  }, [link, location]);
 
   return (
     <div className="flex flex-col p-4 h-screen font-[Nanum_Gothic]">
@@ -107,24 +94,21 @@ function DeliveryNoticePage() {
 
       <div className="flex flex-col space-y-4 mt-4">
         <div className="mb-3">
-          <div className="text-base font-bold mb-2">현재 수령 장소</div>
-          <div className="flex items-center justify-between bg-gray-100 p-3 rounded-lg shadow">
-            <textarea
-              className="w-full bg-transparent outline-none text-sm resize-none p-1"
-              placeholder="수령 장소를 입력하세요"
-              value={tempLocationValue}
-              onChange={handleLocationChange}
-              rows={3}
-            />
-            {tempLocationValue !== location && (
-              <button
-                className="bg-gray-400 text-white px-3 py-1 rounded-xl whitespace-nowrap ml-2"
-                onClick={() => setLocation(tempLocationValue)}
-              >
-                수정
-              </button>
-            )}
+          <div className="text-base font-bold mb-2">현재 등록한 수령 장소</div>
+          <div className="w-full bg-gray-100 outline-none rounded-lg p-3 shadow">
+            {typeof location === 'object' ? JSON.stringify(location) : location}
           </div>
+
+          <SearchNotice
+            label="수령 주소 검색"
+            name="location"
+            value={tempLocation}
+            setTempLocation={(e) => setTempLocation(e.target.value)}
+            placeholder="수령 주소를 검색하세요"
+            setLatitude={setLatitude}
+            setLongitude={setLongitude}
+            setLocation={setLocation}
+          />
         </div>
         <div>
           <div className="text-base font-bold mb-2">함께 주문하기 링크</div>
@@ -133,19 +117,12 @@ function DeliveryNoticePage() {
               type="text"
               className="w-full bg-transparent outline-none text-sm p-1"
               placeholder="링크를 입력하세요"
-              value={linkValue}
-              onChange={handleLinkChange}
+              value={notice}
+              onClick={(e) => {
+                e.target.select();
+              }}
+              onChange={(e) => setNotice(e.target.value)}
             />
-            {/* {linkValue && (
-              <a
-                href={linkValue}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline text-sm flex-grow"
-              >
-                {linkValue}
-              </a>
-            )} */}
           </div>
         </div>
       </div>

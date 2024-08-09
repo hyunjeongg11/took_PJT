@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { searchPlaces } from '../../utils/map';
 
-const SearchDropdown = ({
+const SearchNotice = ({
   label,
   name,
   value,
-  onChange,
+  setTempLocation,
   placeholder,
   setLatitude,
   setLongitude,
+  setLocation,
 }) => {
   const [results, setResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -33,7 +34,8 @@ const SearchDropdown = ({
   };
 
   const handleSelect = (place) => {
-    onChange({ target: { name, value: place.place_name } });
+    setTempLocation({ target: { name, value: place.place_name } });
+    setLocation(place.place_name);
     setLatitude(place.y);
     setLongitude(place.x);
     setShowDropdown(false);
@@ -44,7 +46,7 @@ const SearchDropdown = ({
   };
 
   return (
-    <div>
+    <div className="p-2 mt-8">
       <div className="text-base font-bold leading-8 text-neutral-600">
         {label}
       </div>
@@ -53,7 +55,7 @@ const SearchDropdown = ({
           type="text"
           name={name}
           value={value}
-          onChange={onChange}
+          onChange={setTempLocation}
           placeholder={placeholder}
           onKeyDown={handleKeyDown}
           onClick={handleFocus}
@@ -83,4 +85,4 @@ const SearchDropdown = ({
   );
 };
 
-export default SearchDropdown;
+export default SearchNotice;

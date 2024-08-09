@@ -23,14 +23,13 @@ import { handleApiError } from '../errorHandling';
 */
 // 파티 생성
 export const makePartyApi = async (params) => {
-    try {
-      const response = await request.post('/api/pay/make-party', params);
-      return response.data;
-    } catch (error) {
-      return handleApiError(error);
-    }
-  };
-
+  try {
+    const response = await request.post('/api/pay/make-party', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
 
 /*
 요청
@@ -47,12 +46,12 @@ export const makePartyApi = async (params) => {
 */
 // 멤버추가
 export const insertMemberApi = async (params) => {
-    try {
-      const response = await request.post('/api/pay/insert-member', params);
-      return response.data;
-    } catch (error) {
-      return handleApiError(error);
-    }
+  try {
+    const response = await request.post('/api/pay/insert-member', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
 
 /*
@@ -70,25 +69,23 @@ export const insertMemberApi = async (params) => {
 */
 //멤버 삭제
 export const deleteMemberApi = async (params) => {
-    try {
-      const response = await request.post('/api/pay/delete-member', params);
-      return response.data;
-    } catch (error) {
-      return handleApiError(error);
-    }
+  try {
+    const response = await request.post('/api/pay/delete-member', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
-
 
 // 정산시 맴버들이 돈을 보낼 때
 export const onlyjungsanPayApi = async (params) => {
-    try {
-      const response = await request.post('/api/pay/only-jungsan-pay', params);
-      return response.data;
-    } catch (error) {
-      return handleApiError(error);
-    }
+  try {
+    const response = await request.post('/api/pay/only-jungsan-pay', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
-
 
 /*
 
@@ -108,14 +105,16 @@ export const onlyjungsanPayApi = async (params) => {
 */
 // 오직 정산 후 정산자가 돈 받을 때
 export const onlyjungsanhostRecievepi = async (params) => {
-    try {
-      const response = await request.post('/api/pay/only-jungsan-host-recieve', params);
-      return response.data;
-    } catch (error) {
-      return handleApiError(error);
-    }
+  try {
+    const response = await request.post(
+      '/api/pay/only-jungsan-host-recieve',
+      params
+    );
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
-
 
 // 요청
 // {
@@ -131,14 +130,13 @@ export const onlyjungsanhostRecievepi = async (params) => {
 // 멤버들이 수령 확인, 모든 수령이 끝내면 done에서 true 반환
 // [배달, 공구]가 수령했을 때
 export const deliveryGroupDoneApi = async (params) => {
-    try {
-      const response = await request.post('/api/pay/deli-gongu-done', params);
-      return response.data;
-    } catch (error) {
-      return handleApiError(error);
-    }
+  try {
+    const response = await request.post('/api/pay/deli-gongu-done', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
-
 
 // 요청
 // {
@@ -153,12 +151,15 @@ export const deliveryGroupDoneApi = async (params) => {
 //   }
 // [배달, 공구] 수령 후 입금
 export const deliveryGroupHostRecieveApi = async (params) => {
-    try {
-      const response = await request.post('/api/pay/deli-gongu-host-recieve', params);
-      return response.data;
-    } catch (error) {
-      return handleApiError(error);
-    }
+  try {
+    const response = await request.post(
+      '/api/pay/deli-gongu-host-recieve',
+      params
+    );
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
 
 // 요청
@@ -174,14 +175,13 @@ export const deliveryGroupHostRecieveApi = async (params) => {
 //   }
 // [배달, 공구] 유저가 돈 보낼 때
 export const deliveryGroupPayApi = async (params) => {
-    try {
-      const response = await request.post('/api/pay/deli-gongu-pay', params);
-      return response.data;
-    } catch (error) {
-      return handleApiError(error);
-    }
+  try {
+    const response = await request.post('/api/pay/deli-gongu-pay', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
-
 
 // 요청
 // {
@@ -200,15 +200,13 @@ export const deliveryGroupPayApi = async (params) => {
 //     "memberSeq": 12345
 //   }
 export const insertAllMemberApi = async (params) => {
-    try {
-      const response = await request.post('/api/pay/insert-all-member', params);
-      return response.data;
-    } catch (error) {
-      return handleApiError(error);
-    }
+  try {
+    const response = await request.post('/api/pay/insert-all-member', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
-
-
 
 // 응답
 // {
@@ -259,14 +257,16 @@ export const insertAllMemberApi = async (params) => {
 //   }
 // 파티 삭제
 export const partyDeleteApi = async (params) => {
-    try {
-      const response = await request.delete('/api/pay/party-delete/{partySeq}', params);
-      return response.data;
-    } catch (error) {
-      return handleApiError(error);
-    }
+  try {
+    const response = await request.delete(
+      '/api/pay/party-delete/{partySeq}',
+      params
+    );
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
-
 
 // 요청
 // {
@@ -322,10 +322,10 @@ export const partyDeleteApi = async (params) => {
 //   }
 // 파티 상세 조회
 export const partyDetailApi = async (params) => {
-    try {
-      const response = await request.delete('/api/pay/party-detail', params);
-      return response.data;
-    } catch (error) {
-      return handleApiError(error);
-    }
+  try {
+    const response = await request.delete('/api/pay/party-detail', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };

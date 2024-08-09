@@ -19,6 +19,7 @@ function DeliveryCompletePage() {
     const fetchMemberInfo = async () => {
       try {
         const membersResponse = await getDeliveryMembersApi(id);
+        console.log(membersResponse);
         const currentUserMemberInfo = membersResponse.find(
           (member) => member.userSeq === currentUserSeq
         );
@@ -53,10 +54,6 @@ function DeliveryCompletePage() {
       alert('수령 확인 중 오류가 발생했습니다.');
     }
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="flex flex-col items-center bg-white max-w-[360px] mx-auto relative h-screen">
