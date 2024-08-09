@@ -122,8 +122,10 @@ public class TaxiGuestService {
      */
     @Transactional
     public void setDestinationAndCost(GuestSetDestinationAndCostRequest request) {
+        System.out.println("택시 경로, 비용 설정 요청: " + request);
         TaxiGuest taxiGuest = taxiGuestRepository.findById(request.getGuestSeq()).orElseThrow();
         taxiGuest.updateDestiAndCost(request.getDestiName(), request.getDestiLat(), request.getDestiLon(), request.getCost(), request.getRouteRank());
+        System.out.println("택시 경로, 비용 설정 응답  " + taxiGuest);
     }
 
     /**

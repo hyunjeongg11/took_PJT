@@ -4,10 +4,7 @@ import com.took.user_api.dto.request.member.MemberSaveRequestDto;
 import com.took.user_api.dto.request.party.*;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.member.MemberSaveResponseDto;
-import com.took.user_api.dto.response.party.MakePartyResponseDto;
-import com.took.user_api.dto.response.party.MyPartyListResponseDto;
-import com.took.user_api.dto.response.party.PartyDetailResponseDto;
-import com.took.user_api.dto.response.party.ojResponseDto;
+import com.took.user_api.dto.response.party.*;
 import com.took.user_api.service.MemberService;
 import com.took.user_api.service.PartyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -186,5 +183,18 @@ public class PartyController {
             @RequestBody @Valid OnlyJungsanRequestDto requestBody
     ) {
         return partyService.restCostPay(requestBody.getPartySeq(), requestBody.getUserSeq());
+    }
+
+
+    // 개인 거래 내역 리스트 조회
+    @Operation(summary = "개인 거래 내역 리스트 조회", description = "개인 거래 내역 리스트 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "개인 거래 내역 리스트 조회 성공",
+                    content = @Content(schema = @Schema(implementation = PayHistoryResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @GetMapping("/pay-history/{userSeq}")
+    public ResponseEntity<List<PayHistoryResponseDto>> payHistory(@PathVariable("userSeq") Long userSeq) {
+        return ResponseEntity.ok(partyService.payHistory(userSeq));
     }
 }

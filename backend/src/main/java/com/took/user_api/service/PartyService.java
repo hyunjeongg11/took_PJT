@@ -26,4 +26,6 @@ public interface PartyService {
     List<MyPartyListResponseDto> myPartyList(Long userSeq);
 
     ResponseEntity<? super ojResponseDto> restCostPay(Long partySeq, Long userSeq);
+
+    List<PayHistoryResponseDto> payHistory(Long userSeq);
 }

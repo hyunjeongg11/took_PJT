@@ -10,10 +10,7 @@ import com.took.user_api.dto.request.party.MakePartyRequestDto;
 import com.took.user_api.dto.request.party.MakeTaxiPartyRequest;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
-import com.took.user_api.dto.response.party.MakePartyResponseDto;
-import com.took.user_api.dto.response.party.MyPartyListResponseDto;
-import com.took.user_api.dto.response.party.PartyDetailResponseDto;
-import com.took.user_api.dto.response.party.ojResponseDto;
+import com.took.user_api.dto.response.party.*;
 import com.took.user_api.entity.*;
 import com.took.user_api.repository.*;
 import com.took.user_api.repository.custom.BankRepositoryCustom;
@@ -25,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +38,7 @@ public class PartyServiceImpl implements PartyService {
     private final BankRepositoryCustom bankRepositoryCustom;
     private final FCMService fcmService;
     private final AccountRepository accountRepository;
+    private final PayRepository payRepository;
 
 
     @Transactional
@@ -247,6 +246,7 @@ public class PartyServiceImpl implements PartyService {
 
 //          돈빼주고 저장
         bank.updateBalance(balance - memberCost);
+
 
 //          빼주는 순간 리더에게 돈 들어가게
         Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(partySeq);
@@ -513,7 +513,7 @@ public class PartyServiceImpl implements PartyService {
             );
         }
     }
-    
+
     // 택시 잔돈 정산
     @Transactional
     @Override
@@ -568,5 +568,40 @@ public class PartyServiceImpl implements PartyService {
             );
         }
         return ojResponseDto.success(done);
+    }
+
+    // 개인 거래 내역 목록 조회
+    @Transactional
+    @Override
+    public List<PayHistoryResponseDto> payHistory(Long userSeq) {
+        UserEntity user = userRepository.findById(userSeq).orElseThrow();
+        List<PayEntity> payList = payRepository.findByUserOrderByCreatedAtDesc(user);
+        List<PayHistoryResponseDto> responseList = new ArrayList<>();
+        for (PayEntity pay : payList) {
+            String accountNum = pay.getAccount().getBank().getAccountNum();
+            String maskedAccountNum = accountNum.substring(accountNum.length() - 4);
+            String userName = pay.getUser().getUserName();
+            String maskedUserName;
+            if (userName.length() == 2) {
+                maskedUserName = userName.charAt(0) + "*";
+            } else if (userName.length() == 3) {
+                maskedUserName = userName.charAt(0) + "*" + userName.charAt(2);
+            } else if (userName.length() >= 4) {
+                maskedUserName = userName.charAt(0) + "**" + userName.charAt(userName.length() - 1);
+            } else {
+                maskedUserName = userName; // 1글자일 경우 그대로 사용
+            }
+            responseList.add(new PayHistoryResponseDto(
+                    pay.getPaySeq(),
+                    maskedUserName,
+                    pay.getUser().getImageNo(),
+                    pay.getCost(),
+                    pay.isReceive(),
+                    pay.getCreatedAt(),
+                    pay.getAccount().getBank().getBankNum(),
+                    maskedAccountNum
+            ));
+        }
+        return responseList;
     }
 }

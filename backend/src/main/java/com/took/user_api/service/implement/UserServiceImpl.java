@@ -61,6 +61,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    @Transactional
     @Override
     public void logout(String accessToken, String refreshToken, HttpServletResponse response) {
 
@@ -77,7 +78,7 @@ public class UserServiceImpl implements UserService {
         response.addCookie(cookie);
     }
 
-
+    @Transactional
     @Override
     public ResponseEntity<? super UserInfoResponseDto> userInfo(UserSeqRequestDto requestBody) {
         UserEntity user = null;
@@ -93,12 +94,17 @@ public class UserServiceImpl implements UserService {
         return UserInfoResponseDto.success(user);
     }
 
+    @Transactional
     @Override
     public List<Long> searchNearUser(Long userSeq, double lat, double lon) {
         List<UserEntity> userList = userRepository.findAll();
         List<Long> nearUserSeqList = new ArrayList<>();
 
         for (UserEntity user : userList) {
+            // user.getLat() 또는 user.getLon()이 null이면 루프를 건너뜁니다.
+            if (user.getLat() == null || user.getLon() == null) {
+                continue;
+            }
             double distance = calculateDistance(lat, lon, user.getLat(), user.getLon());
 
             if (distance <= 1000) {
@@ -141,11 +147,8 @@ public class UserServiceImpl implements UserService {
         try{
 
             UserEntity user = userRepository.getReferenceById(requestBody.getUserSeq());
-
             if(user.getAlarm()) userCustomRepository.changeAlramFalse(requestBody.getUserSeq());
             else userCustomRepository.changeAlramTrue(requestBody.getUserSeq());
-
-
 
         }catch (Exception e){
             e.printStackTrace();
