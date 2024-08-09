@@ -163,7 +163,7 @@ public class PartyServiceImpl implements PartyService {
                 maskedName = name.charAt(0) + "*";
             } else if (name.length() == 3) {
                 maskedName = name.charAt(0) + "*" + name.charAt(2);
-            } else if (name.length() >= 4) {
+            } else if (name.length() == 4) {
                 maskedName = name.charAt(0) + "**" + name.charAt(name.length() - 1);
             } else {
                 maskedName = name; // 이름이 1글자인 경우 그대로 사용
@@ -172,7 +172,6 @@ public class PartyServiceImpl implements PartyService {
             alarm.setSender(leaderSeq);
             alarm.setUserSeq(userCost.getUserSeq());
             alarm.setPartySeq(party.getPartySeq());
-
 
             if (party.getDeliveryTip() != null) {
                 alarm.setDeliveryCost(deliveryTip);
@@ -281,7 +280,7 @@ public class PartyServiceImpl implements PartyService {
             maskedName = maskedName.charAt(0) + "*";
         } else if (maskedName.length() == 3) {
             maskedName = maskedName.charAt(0) + "*" + maskedName.charAt(2);
-        } else if (maskedName.length() >= 4) {
+        } else if (maskedName.length() == 4) {
             maskedName = maskedName.charAt(0) + "**" + maskedName.charAt(maskedName.length() - 1);
         }
         fcmService.sendMessage(
@@ -293,7 +292,6 @@ public class PartyServiceImpl implements PartyService {
         );
 
         partyRepository.flush();
-
         if (party.getCount() == party.getTotalMember() - 1) {
             done = true;
             party.updateStatus(true);
@@ -711,7 +709,7 @@ public class PartyServiceImpl implements PartyService {
                     maskedUserName = userName.charAt(0) + "*";
                 } else if (userName.length() == 3) {
                     maskedUserName = userName.charAt(0) + "*" + userName.charAt(2);
-                } else if (userName.length() >= 4) {
+                } else if (userName.length() == 4) {
                     maskedUserName = userName.charAt(0) + "**" + userName.charAt(userName.length() - 1);
                 } else {
                     maskedUserName = userName; // 1글자일 경우 그대로 사용
@@ -749,7 +747,7 @@ public class PartyServiceImpl implements PartyService {
                 maskedName = maskedName.charAt(0) + "*";
             } else if (maskedName.length() == 3) {
                 maskedName = maskedName.charAt(0) + "*" + maskedName.charAt(2);
-            } else if (maskedName.length() >= 4) {
+            } else if (maskedName.length() == 4) {
                 maskedName = maskedName.charAt(0) + "**" + maskedName.charAt(maskedName.length() - 1);
             }
 
