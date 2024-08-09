@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../../components/common/BackButton';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../../store/user';
 import { getChatRoomMessageApi, getUsersApi } from '../../apis/chat/chat';
 import getProfileImagePath from '../../utils/getProfileImagePath';
@@ -13,161 +13,65 @@ import doneIcon from '../../assets/chat/doneTaxi.png';
 import { FaPaperPlane, FaArrowDown, FaBars } from 'react-icons/fa';
 import { FaCalculator } from 'react-icons/fa6';
 import { MdAdd } from 'react-icons/md';
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
-import ParticipantList from '../../components/chat/ParticipantList';
-import { updateTaxiPartyStatusApi } from '../../apis/taxi'; // Import the new API function
+import {
+  updateTaxiPartyStatusApi,
+  getAllTaxiPartyMembersApi,
+  getTaxiPartyApi,
+  // getTaxiPartyPathApi,
+} from '../../apis/taxi';
 import TaxiChattingMenu from '../../components/taxi/TaxiChattingMenu';
+import { getUserInfoApi } from '../../apis/user';  // API 경로 확인 필요
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
-// todo: 특정 채팅방에 속한 유저 조회 api 연동 -> userSeq, userName, imageNo 가져오기
-
-// todo: 택시 파티 모든 멤버 조회 api 연동
-const tempMember = [
-  {
-    member_seq: 1,
-    party_seq: 1,
-    user_seq: 1,
-    userName: '차민주',
-    imgNo: 19,
-    cost: 13000,
-    real_cost: 12000,
-    status: true,
-    receive: false,
-    is_leader: true,
-    gender: false,
-    created_at: '2024-07-06T00:23:00',
-    destination: '부산시 강서구 녹산산단335로 7 송정삼정그린코아더시티',
-  },
-  {
-    member_seq: 2,
-    party_seq: 1,
-    user_seq: 2,
-    userName: '조현정',
-    imgNo: 20,
-    cost: 8000,
-    real_cost: 7500,
-    status: true,
-    receive: false,
-    is_leader: false,
-    gender: false,
-    created_at: '2024-07-06T00:23:00',
-    destination: '부산시 강서구 명지국제5로 170-5 명일초등학교',
-  },
-  {
-    member_seq: 3,
-    party_seq: 1,
-    user_seq: 3,
-    userName: '정희수',
-    imgNo: 18,
-    cost: 16000,
-    real_cost: 14500,
-    status: true,
-    receive: false,
-    is_leader: false,
-    gender: false,
-    created_at: '2024-07-06T00:23:00',
-    destination: '부산시 서구 대영로73번길 39',
-  },
-];
-
-// todo: useUser로 현재 로그인한 사용자 데이터와 연동
-const tempUser = {
-  user_seq: 1,
-  userName: '차민주',
-  imgNo: 19,
-  gender: false,
-};
-
-// todo: 특정 택시 파티 조회 api 연동해서 데이터 가져오기
-const tempTaxi = {
-  taxi_seq: 1,
-  user_seq: 1,
-  room_seq: 1,
-  party_seq: 1,
-  room_title: '강서구 명지동',
-  gender: false,
-  count: 4,
-  max: 4,
-  status: 'OPEN',
-  created_at: '2024-07-06T00:23:00',
-  finishTime: '2024-07-06T18:30:00',
-  cost: 37000,
-  master: 1,
-  payer: 1,
-};
-
-// todo: 채팅방의 모든 메시지 조회 api 연동
-const tempMessages = [
-  {
-    id: 1,
-    user_seq: 1,
-    userName: '차민주',
-    message: '안녕하세요!목적지가 어디신가요?',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 2,
-    user_seq: 2,
-    userName: '조현정',
-    message: '안녕하세요~ 강서구 녹산동에 삼정그린코아더시티 가능한가요?',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 3,
-    user_seq: 1,
-    userName: '차민주',
-    message: '네 가능합니다! 경로에 추가해주세요',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 4,
-    user_seq: 3,
-    userName: '정희수',
-    message: '안녕하세요~ 서구 동대신동2가에 삼익아파트 가능한가요?',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 5,
-    user_seq: 1,
-    userName: '차민주',
-    message: '네 가능합니다! 경로에 추가해주세요',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 6,
-    user_seq: 3,
-    userName: '정희수',
-    message: '알겠습니다!',
-    timestamp: '2024-07-06T10:12:00',
-  },
-];
-
 function TaxiChattingMainPage() {
-  const [messages, setMessages] = useState(tempMessages);
+  const { taxiSeq } = useParams();
+  const { seq: userSeq, setName } = useUser();  // useUser에서 userSeq를 가져옴
+  const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [showActionIcons, setShowActionIcons] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const [taxiStatus, setTaxiStatus] = useState(tempTaxi.status);
+  const [taxiStatus, setTaxiStatus] = useState('');
   const [showSettlementButton, setShowSettlementButton] = useState(false);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [taxiParty, setTaxiParty] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [chatUsers, setChatUsers] = useState([]);
+  const [userName, setUserName] = useState('');
+
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const actionIconsRef = useRef(null);
   const lastDateRef = useRef('');
 
+  // 사용자 정보 불러오기
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userInfo = await getUserInfoApi({ userSeq });
+        setUserName(userInfo.userName);
+        setName(userInfo.userName); // zustand의 상태에도 사용자 이름을 저장
+      } catch (error) {
+        console.error('사용자 정보를 불러오는 중 오류 발생:', error);
+      }
+    };
+
+    if (userSeq) {
+      fetchUserInfo();
+    }
+  }, [userSeq, setName]);
+
   const handleSendMessage = () => {
     if (inputMessage.trim() === '') return;
 
     const newMessage = {
       id: messages.length + 1,
-      user_seq: 1,
-      userName: '차민주',
+      user_seq: userSeq, // useUser로 얻은 현재 로그인 유저의 seq 사용
+      userName: userName, // API에서 받아온 userName 사용
       message: inputMessage,
       timestamp: new Date().toISOString(),
     };
@@ -182,7 +86,7 @@ function TaxiChattingMainPage() {
   };
 
   const getUserProfileImgNo = (user_seq) => {
-    const user = tempMember.find((member) => member.user_seq === user_seq);
+    const user = members.find((member) => member.userSeq === user_seq);
     return user ? user.imgNo : 1;
   };
 
@@ -259,13 +163,13 @@ function TaxiChattingMainPage() {
   };
 
   const handleConfirmBoardTaxi = async () => {
-    await updateTaxiPartyStatusApi({ taxiSeq: tempTaxi.taxi_seq });
+    await updateTaxiPartyStatusApi({ taxiSeq: taxiParty.taxiSeq });
     setTaxiStatus('BOARD');
     closeModal();
   };
 
   const handleConfirmDoneTaxi = async () => {
-    await updateTaxiPartyStatusApi({ taxiSeq: tempTaxi.taxi_seq });
+    await updateTaxiPartyStatusApi({ taxiSeq: taxiParty.taxiSeq });
     setTaxiStatus('DONE');
     setShowSettlementButton(true);
     closeModal();
@@ -283,6 +187,32 @@ function TaxiChattingMainPage() {
   }, []);
 
   useEffect(() => {
+    const fetchTaxiPartyData = async () => {
+      try {
+        const [taxiPartyData, membersData, chatUsersData, messagesData] = await Promise.all([
+            getTaxiPartyApi(taxiSeq),
+            getAllTaxiPartyMembersApi(taxiSeq),
+            getUsersApi(taxiSeq), // 채팅방의 roomSeq를 taxiPartyData에서 가져와 사용
+            getChatRoomMessageApi({
+              roomSeq: taxiPartyData.roomSeq,
+              userSeq: userSeq,
+            }),
+          ]);
+
+        setTaxiParty(taxiPartyData);
+        setTaxiStatus(taxiPartyData.status);
+        setMembers(membersData);
+        setChatUsers(chatUsersData);
+        setMessages(messagesData);
+      } catch (error) {
+        console.error('데이터를 불러오는 중 오류 발생:', error);
+      }
+    };
+
+    fetchTaxiPartyData();
+  }, [taxiSeq, userSeq]);
+
+  useEffect(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop =
         scrollContainerRef.current.scrollHeight;
@@ -298,14 +228,14 @@ function TaxiChattingMainPage() {
   }, [messages]);
 
   useEffect(() => {
-    if (tempTaxi.count === tempTaxi.max) {
+    if (taxiParty && taxiParty.count === taxiParty.max) {
       const updateStatus = async () => {
-        await updateTaxiPartyStatusApi({ taxiSeq: tempTaxi.taxi_seq });
+        await updateTaxiPartyStatusApi({ taxiSeq: taxiParty.taxiSeq });
         setTaxiStatus('FILLED');
       };
       updateStatus();
     }
-  }, [tempTaxi.count]);
+  }, [taxiParty]);
 
   useEffect(() => {
     const handleKeyboardShow = () => {
@@ -329,15 +259,15 @@ function TaxiChattingMainPage() {
       <div className="flex items-center px-5 py-3">
         <BackButton />
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
-          {tempTaxi.room_title}
+          {taxiParty?.roomTitle}
         </div>
         <FaBars className="mt-2.5" onClick={handleMenuToggle} />
       </div>
 
       {showMenu && (
         <TaxiChattingMenu
-          tempMember={tempMember}
-          tempTaxi={tempTaxi}
+          members={members}
+          taxiParty={taxiParty}
           taxiStatus={taxiStatus}
           handleMenuToggle={handleMenuToggle}
           handleKickMember={handleKickMember}
@@ -419,10 +349,10 @@ function TaxiChattingMainPage() {
               )}
               <div
                 className={`flex ${
-                  msg.user_seq === 1 ? 'justify-end' : 'justify-start'
+                  msg.user_seq === userSeq ? 'justify-end' : 'justify-start'
                 }`}
               >
-                {msg.user_seq !== 1 && (
+                {msg.user_seq !== userSeq && (
                   <div className="flex flex-col items-center mr-2">
                     <img
                       src={getProfileImagePath(
@@ -437,35 +367,35 @@ function TaxiChattingMainPage() {
                   {!sameUserAndTime && (
                     <span
                       className={`text-[9px] mb-1 text-black ${
-                        msg.user_seq === 1 ? 'text-right' : 'text-left'
+                        msg.user_seq === userSeq ? 'text-right' : 'text-left'
                       }`}
                     >
                       {msg.userName}
                     </span>
                   )}
                   <div className="flex items-end">
-                    {msg.user_seq === 1 && !lastMessageFromSameUser && (
+                    {msg.user_seq === userSeq && !lastMessageFromSameUser && (
                       <div className="text-[9px] text-gray-400 mr-2 whitespace-nowrap">
                         {formatTime(msg.timestamp)}
                       </div>
                     )}
                     <div
                       className={`p-2 rounded-xl shadow-md ${
-                        msg.user_seq === 1
+                        msg.user_seq === userSeq
                           ? 'bg-main text-white'
                           : 'bg-white text-black'
                       }`}
                     >
                       <div className="text-sm">{msg.message}</div>
                     </div>
-                    {msg.user_seq !== 1 && !lastMessageFromSameUser && (
+                    {msg.user_seq !== userSeq && !lastMessageFromSameUser && (
                       <div className="text-[9px] text-gray-400 ml-2 whitespace-nowrap">
                         {formatTime(msg.timestamp)}
                       </div>
                     )}
                   </div>
                 </div>
-                {msg.user_seq === 1 && (
+                {msg.user_seq === userSeq && (
                   <div className="flex flex-col items-center ml-2">
                     <img
                       src={getProfileImagePath(
@@ -562,7 +492,7 @@ function TaxiChattingMainPage() {
         </div>
       )}
 
-      {tempTaxi.payer === tempUser.user_seq && (
+      {taxiParty?.payer === userSeq && (
         <>
           {taxiStatus === 'FILLED' && (
             <button
