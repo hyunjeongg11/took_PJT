@@ -136,7 +136,7 @@ public class ShopController {
     @Operation(summary = "상점 조회", description = "채팅 ID로 상점을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "상점 조회 성공")
     @GetMapping("/selectByRoom/{roomSeq}")
-    public ResponseEntity<?> selectByRoom(@PathVariable @Schema(description = "채팅 ID", example = "1") long roomSeq) {
+    public ResponseEntity<ShopResponse> selectByRoom(@PathVariable @Schema(description = "채팅 ID", example = "1") long roomSeq) {
         return ResponseEntity.ok()
                 .body(shopService.findShopByRoom(roomSeq));
     }
