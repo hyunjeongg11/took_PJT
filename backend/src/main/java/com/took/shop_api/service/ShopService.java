@@ -198,7 +198,7 @@ public class ShopService {
         return shops.stream()
                 .map(shop -> {
                     double distance = calculateDistance(user.getLat(), user.getLon(), shop.getLat(), shop.getLon());
-                    if (distance <= 1000) { // 거리 범위를 1000m로 설정
+                    if (distance <= 10000) { // 거리 범위를 1000m로 설정
                         return new ShopResponse(shop, user);
                     } else {
                         return null;

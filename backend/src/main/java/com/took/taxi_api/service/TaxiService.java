@@ -65,7 +65,7 @@ public class TaxiService {
         return taxis.stream()
                 .map(taxi -> {
                     double distance = calculateDistance(taxi.getWriteLat(), taxi.getWriteLon(), request.getLat(), request.getLon());
-                    if (distance <= 1000) { // 거리 범위를 1000m로 설정
+                    if (distance <= 10000) { // 거리 범위를 1000m로 설정
                         return new TaxiSelectResponse(taxi);
                     } else {
                         return null;

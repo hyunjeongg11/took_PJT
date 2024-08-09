@@ -87,7 +87,7 @@ public class PositionService {
                                 request.getLat(), request.getLon(),
                                 user.getLat(), user.getLon());
 
-                        if (distance <= 1000) { // 거리 범위를 1000m로 설정
+                        if (distance <= 10000) { // 거리 범위를 1000m로 설정
                             PositionUserListResponse response = new PositionUserListResponse();
                             // userSeq를 Long으로 변환
                             response.setUserSeq(Long.valueOf(user.getUserSeq()));
@@ -99,11 +99,9 @@ public class PositionService {
                                 response.setUserName(userDetails.getUserName());
                                 response.setImageNo(userDetails.getImageNo());
                             }
-                            System.out.println("userSeq is not null and distance is under 1000m" + user.getUserSeq());
                             return response;
                         }
                     }
-                    System.out.println("userSeq is null or distance is over 1000m" + user.getUserSeq());
                     return null; // userSeq가 null인 경우 또는 거리가 1000m를 초과하는 경우
                 })
                 .filter(Objects::nonNull) // null 값 필터링

@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
                         return null;
                     }
                     double distance = calculateDistance(lat, lon, user.getLat(), user.getLon());
-                    if(distance <= 1000) {
+                    if(distance <= 10000) {
                         return user.getUserSeq();
                     } else {
                         return null;
