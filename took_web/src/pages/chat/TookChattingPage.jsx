@@ -139,10 +139,6 @@ const renderMessage = (item, handlePayment) => (
   </div>
 );
 
-<<<<<<< HEAD
-=======
-
->>>>>>> f1f83f8a92375ffe27f80ab6c902b9223da4d13d
 
 function TookChattingPage() {
   const navigate = useNavigate();
@@ -152,13 +148,8 @@ function TookChattingPage() {
   const { seq } = useUser();
   const [tempData, setTempData] = useState([]);
 
-<<<<<<< HEAD
   const handlePayment = (amount, userSeq, numCategory, partySeq) => {
     navigate('/payment', { state: { amount, userSeq, numCategory, partySeq } });
-=======
-  const handlePayment = (amount, userSeq) => {
-    navigate('/payment', { state: { amount, userSeq } });
->>>>>>> f1f83f8a92375ffe27f80ab6c902b9223da4d13d
   };
 
   const scrollToBottom = () => {
@@ -202,13 +193,9 @@ function TookChattingPage() {
           orderAmount: alarm.orderCost,
           requestDate: alarm.createAt,
           chatTime: alarm.createAt,
-<<<<<<< HEAD
           sender: alarm.sender,
           numCategory: alarm.category,
           partySeq: alarm.partySeq,
-=======
-          sender: alarm.sender
->>>>>>> f1f83f8a92375ffe27f80ab6c902b9223da4d13d
         }));
         console.log(formattedData)
         setTempData(formattedData);
