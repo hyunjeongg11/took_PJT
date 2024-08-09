@@ -1,7 +1,6 @@
 package com.took.delivery_api.entity;
 
 
-import com.took.chat_api.entity.ChatRoom;
 import com.took.delivery_api.dto.DeliveryModifyRequest;
 import com.took.user_api.entity.UserEntity;
 import jakarta.persistence.*;
@@ -10,7 +9,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 // 엔티티 클래스 정의
 @Entity
