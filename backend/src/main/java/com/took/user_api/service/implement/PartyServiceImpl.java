@@ -276,11 +276,18 @@ public class PartyServiceImpl implements PartyService {
                 .build();
         payRepository.save(pay2);
 
-        String name = user.getUserName();
+        String maskedName = user.getUserName();
+        if (maskedName.length() == 2) {
+            maskedName = maskedName.charAt(0) + "*";
+        } else if (maskedName.length() == 3) {
+            maskedName = maskedName.charAt(0) + "*" + maskedName.charAt(2);
+        } else if (maskedName.length() >= 4) {
+            maskedName = maskedName.charAt(0) + "**" + maskedName.charAt(maskedName.length() - 1);
+        }
         fcmService.sendMessage(
                 MessageRequest.builder()
                         .title("송금 알림")
-                        .body(name.charAt(0) + "*" + name.charAt(2) + "님이 " + memberCost + "원을 송금하였습니다!")
+                        .body(maskedName + "님이 " + memberCost + "원을 송금하였습니다!")
                         .userSeqList(List.of(leaderSeq))
                         .build()
         );
