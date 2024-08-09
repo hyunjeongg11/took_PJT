@@ -124,6 +124,8 @@ public class PartyServiceImpl implements PartyService {
         Long TotalDeliveryTip = requestBody.getDeliveryTip();
         long deliveryTip = 0L;
         int totalMember = requestBody.getUserCosts().size();
+        System.out.println("userList: " + requestBody.getUserCosts());
+        System.out.println("totalMember = " + totalMember);
 
         if (TotalDeliveryTip != null) {
             party.updateDeliveryTip(TotalDeliveryTip);
