@@ -5,7 +5,7 @@ import BackButton from '../../components/common/BackButton';
 import { makePartyApi } from '../../apis/pay';
 import { useUser } from '../../store/user';
 import { getDeliveryByRoom } from '../../apis/findByRoom';
-import { connectDeliveryToPay } from '../../apis/delivery';
+import { connectDeliveryToPay, joinDeliveryApi } from '../../apis/delivery';
 import { insertAllMemberApi } from '../../apis/payment/jungsan';
 
 function DeliveryPayInputPage() {
@@ -68,6 +68,7 @@ function DeliveryPayInputPage() {
       const partySeq = await makeParty();
       await connectPartyToDelivery(id, partySeq);
       await requestPayment(partySeq, userCosts, deliveryTip);
+      await joinDelivery();
 
       // Show success modal
       setShowModal(true);
@@ -78,6 +79,16 @@ function DeliveryPayInputPage() {
       }, 2000);
     } catch (err) {
       console.error('Error processing payment', err);
+    }
+  };
+
+  const joinDelivery = async () => {
+    try {
+      await joinDeliveryApi({ deliverySeq: id, userSeq: seq });
+      console.log('User joined delivery successfully');
+    } catch (err) {
+      console.error('Error joining delivery', err);
+      throw err;
     }
   };
 
