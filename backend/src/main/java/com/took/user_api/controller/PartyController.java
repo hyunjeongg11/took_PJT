@@ -89,7 +89,7 @@ public class PartyController {
     })
     @PostMapping("/only-jungsan-pay")
     public ResponseEntity<? super ojResponseDto> onlyjungsan(@RequestBody OnlyJungsanRequestDto requestBody){
-        return partyService.onlyjungsanPay(requestBody.getPartySeq(),requestBody.getUserSeq());
+        return partyService.onlyjungsanPay(requestBody);
     }
 
     @Operation(summary = "[배달, 공구] 유저가 돈 보낼때", description = "참여 맴버가 확인 버튼을 누를 떄 호출됩니다. 완료시 done에 true 반환")
@@ -100,7 +100,7 @@ public class PartyController {
     })
     @PostMapping("/deli-gongu-pay")
     public ResponseEntity<? super ojResponseDto>deligonguPay(@RequestBody OnlyJungsanRequestDto requestBody){
-        return partyService.deligonguPay(requestBody.getPartySeq(),requestBody.getUserSeq());
+        return partyService.deligonguPay(requestBody);
     }
 
     @Operation(summary = "파티 상세 조회", description = "파티 상세 조회합니다.")
@@ -143,7 +143,7 @@ public class PartyController {
 
 
     // 택시 정산 파티 생성
-    @Operation(summary = "택시 정산 파티 생성(가결제시)", description = "택시 정산 파티 생성")
+    @Operation(summary = "택시 정산 파티 생성(가결제시) 가결제 실패시 -1 반환", description = "택시 정산 파티 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "택시 정산 파티 생성 성공",
                     content = @Content(schema = @Schema(implementation = Long.class))),
@@ -182,7 +182,7 @@ public class PartyController {
     public ResponseEntity<? super ojResponseDto> restCostPay(
             @RequestBody @Valid OnlyJungsanRequestDto requestBody
     ) {
-        return partyService.restCostPay(requestBody.getPartySeq(), requestBody.getUserSeq());
+        return partyService.restCostPay(requestBody);
     }
 
 

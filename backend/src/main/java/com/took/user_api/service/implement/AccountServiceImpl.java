@@ -2,12 +2,12 @@ package com.took.user_api.service.implement;
 
 
 import com.took.user_api.dto.request.account.*;
-import com.took.user_api.dto.request.party.PayRequestDto;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.account.*;
-import com.took.user_api.dto.response.party.PayResponseDto;
-import com.took.user_api.entity.*;
+import com.took.user_api.entity.AccountEntity;
+import com.took.user_api.entity.BankEntity;
+import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.*;
 import com.took.user_api.repository.custom.AccountRepositoryCustom;
 import com.took.user_api.repository.custom.BankRepositoryCustom;
@@ -236,35 +236,6 @@ public class AccountServiceImpl implements AccountService {
         return VoidResponseDto.success();
     }
 
-
-    @Override
-    @Transactional
-    public ResponseEntity<? super PayResponseDto> guestpay(PayRequestDto requestBody) {
-
-        try {
-
-            Long bankSeq = accountRepositoryCustom.findMainBank(requestBody.getUserSeq());
-            BankEntity bank = bankRepository.getReferenceById(bankSeq);
-            long balance = bank.getBalance();
-
-            if (balance < bank.getBalance()) return ResponseDto.nomoney();
-
-//         돈 빼주고
-            bank.updateBalance(balance - requestBody.getCost());
-//           빼진 만큼 돈 더 넣어주고
-            PartyEntity party = partyRepository.findById(requestBody.getPartySeq()).orElseThrow();
-            Long newCost = party.getReceiveCost() + requestBody.getCost();
-            party.updateReceiveCost(newCost);
-//          상태 업데이트 해주고
-            UserEntity user = userRepository.findById(requestBody.getUserSeq()).orElseThrow();
-            MemberEntity member = memberRepository.findByPartyAndUser(party, user);
-            member.updateStatus(true);
-        }catch (Exception e){
-            e.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-        return PayResponseDto.success(requestBody.getUserSeq());
-    }
 
     @Transactional
     @Override

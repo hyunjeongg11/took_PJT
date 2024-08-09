@@ -8,7 +8,6 @@ import java.util.List;
 public interface BankRepositoryCustom {
     
     BankEntity isMatched(String accountNum, int accountPwd);
-    Long findBankSeqByUserSeq(Long userSeq);
     Long findBalanceByBankSeq(Long bankSeq);
     List<BankEntity> findBanksByBankSeq(List<Long> bankSeq);
 }

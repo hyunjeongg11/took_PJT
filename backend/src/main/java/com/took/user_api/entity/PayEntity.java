@@ -29,6 +29,13 @@ public class PayEntity {
     @JoinColumn(name="account_seq")
     private AccountEntity account;
 
+    // 상대방
+    @Column
+    private Long targetUserSeq;
+
+    @Column(nullable = false)
+    private int category; // 1: 배달 , 2: 택시 , 3: 공구 , 4: 정산
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
     
