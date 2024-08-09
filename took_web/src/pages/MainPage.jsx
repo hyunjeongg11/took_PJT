@@ -67,7 +67,7 @@ function MainPage() {
                 img={delivery}
               />
             </Link>
-            <Link to="groupbuy/main">
+            <Link to="groupbuy/list">
               <TookButton
                 title="공구 툭"
                 content="<div>공동구매로<br/>알뜰하게 구매</div>"

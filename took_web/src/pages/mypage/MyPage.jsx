@@ -33,11 +33,11 @@ function MyPage() {
       try {
         const params = { userSeq: seq };
         const response = await getUserInfoApi(params);
-        console.log(response)
+        console.log(response);
         if (response) {
           setUserInfo({
             userName: response.userName,
-            imageNo: response.imageNo // 기본 이미지 사용
+            imageNo: response.imageNo, // 기본 이미지 사용
           });
         }
       } catch (error) {
@@ -72,7 +72,7 @@ function MyPage() {
   return (
     <div className="max-h-screen ">
       <div className="flex flex-col w-full text-2xl text-center text-white bg-main pt-10">
-      <BackButton />
+        <BackButton />
         <div className="self-center my-8 font-dela">My took !</div>
         <div className="flex z-10 flex-col  mt-0 w-full text-sm font-bold  text-neutral-700 bg-white rounded-t-3xl p-10">
           <img
@@ -111,7 +111,8 @@ function MyPage() {
                 className="shrink-0 aspect-square w-[25px]"
               />
               <div>
-                <span className="text-base  text-neutral-700">took</span> 히스토리
+                <span className="text-base  text-neutral-700">took</span>{' '}
+                히스토리
               </div>
             </div>
           </Link>

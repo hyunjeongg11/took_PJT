@@ -133,25 +133,23 @@ const BuyDetailPage = () => {
             dangerouslySetInnerHTML={{ __html: shopData.content }}
           ></div>
           <div className="flex gap-2 px-5 py-5 mt-8 bg-white text-black rounded-xl border border-collapse">
-            <div className="flex flex-col justify-between text-xs gap-3 font-bold">
+            <div className="flex flex-col justify-between text-xs gap-10 font-bold flex-none w-[70px]">
               <div>물품명</div>
               <div>구매링크</div>
               <div>수령장소</div>
             </div>
             <div className="self-stretch w-px border border-neutral-300 border-opacity-60" />
-            <div className="flex flex-col justify-between text-xs">
-              <div className="font-base">{shopData.item}</div>
+            <div className="flex flex-col justify-between text-xs overflow-x-hidden">
+              <div className="font-base break-words">{shopData.item}</div>
               <div>
-                <a
-                  href={shopData.site}
-                  className="font-normal text-black underline underline-offset-4"
-                  target="_blank"
-                  rel="noreferrer"
+                <Link
+                  to={shopData.site}
+                  className="font-normal text-black underline underline-offset-4 break-words overflow-hidden"
                 >
                   {shopData.site}
-                </a>
+                </Link>
               </div>
-              <div className="font-normal">{shopData.place}</div>
+              <div className="font-normal break-words">{shopData.place}</div>
             </div>
           </div>
           <Link to={shopData.site}>
