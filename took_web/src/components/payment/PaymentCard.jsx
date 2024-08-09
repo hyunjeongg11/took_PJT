@@ -46,12 +46,14 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
   return (
     <div className="px-12 pb-6 bg-white ">
       <div className="border-gray-300 border rounded-2xl shadow-md p-6 ">
-        <button
-          onClick={onCardDelete} // 클릭 시 카드 삭제
-          className="relative top-0 left-0 rounded-full p-1 text-main"
-        >
-          <span className="text-xl">×</span>
-        </button>
+        {onCardDelete && ( // onCardDelete가 있을 경우에만 버튼을 렌더링
+          <button
+            onClick={onCardDelete}
+            className="relative top-0 left-0 rounded-full p-1 text-main"
+          >
+            <span className="text-xl">×</span>
+          </button>
+        )}
         <div className="flex gap-x-2 mb-3 text-right text-main font-extrabold text-2xl">
           <input
             type="text"
@@ -87,16 +89,18 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
                   className="w-full max-w-xs px-2 py-1 border-b-[1px] border-main border-opacity-50 text-right font-semibold"
                   style={{ minWidth: '80px' }}
                 />
-                <img
-                  onClick={() => {
-                    onDelete(index);
-                    handleTotalAmountChange();
-                  }}
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/f3f9a2394cc2191cd008c8dab3edbceb90b6adf5025fc60fcb23c80910d0f59b?"
-                  className="shrink-0 aspect-[0.82] fill-orange-400 w-2 mt-2 opacity-80"
-                  alt="icon"
-                />
+                {index !== 0 && ( // 첫 번째 멤버가 아닌 경우에만 삭제 아이콘을 렌더링
+                  <img
+                    onClick={() => {
+                      onDelete(index);
+                      handleTotalAmountChange();
+                    }}
+                    loading="lazy"
+                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/f3f9a2394cc2191cd008c8dab3edbceb90b6adf5025fc60fcb23c80910d0f59b?"
+                    className="shrink-0 aspect-[0.82] fill-orange-400 w-2 mt-2 opacity-80"
+                    alt="icon"
+                  />
+                )}
               </div>
             </div>
           ))}

@@ -9,39 +9,15 @@ import 'swiper/css/scrollbar';
 import '../../css/dutchpay/PaymentInputPage.css';
 import PaymentCard from '../../components/payment/PaymentCard';
 import { useUser } from '../../store/user';
-import { makePartyApi } from '../../apis/payment/jungsan';
 
 // 알고리즘 추가 작성 필요!
 function PaymentInputPage() {
+  const { seq: userSeq } = useUser();
   // 네비게이트 설정 (버튼 클릭시 이동을 위한 연동)
   const navigate = useNavigate();
 
-  const { seq: userSeq } = useUser();
-  const [partySeq, setPartySeq] = useState(null);
-
   const location = useLocation();
   const usersFromLocation = location.state?.users || [];
-
-  const defaultUsers = [
-    {
-      userSeq: 1,
-      name: '공지환',
-      userName: '나',
-      imageNo: 1,
-      img_no: 1,
-      selected: true,
-      distance: 1,
-    },
-    {
-      userSeq: 4,
-      name: '김태훈',
-      userName: '나',
-      imageNo: 1,
-      img_no: 1,
-      selected: true,
-      distance: 2,
-    },
-  ];
 
   // 이거는 실제 유저가 들어갈 것여서 넣어두면 될 것 같습니다.
   const currentUser = {
@@ -54,7 +30,7 @@ function PaymentInputPage() {
     distance: 0,
   };
 
-  const users = [currentUser, ...defaultUsers];
+  const users = [currentUser, ...usersFromLocation];
 
   const [payments, setPayments] = useState({
     1: {
@@ -164,7 +140,9 @@ function PaymentInputPage() {
                 setPayments(updatedPayments);
               }}
               onDelete={(userIndex) => handleDeleteUser(index + 1, userIndex)}
-              onCardDelete={() => handleDeleteCard(index + 1)}
+              onCardDelete={
+                index === 0 ? null : () => handleDeleteCard(index + 1)
+              } // 첫 번째 카드에는 onCardDelete를 전달하지 않음
             />
           </SwiperSlide>
         ))}
