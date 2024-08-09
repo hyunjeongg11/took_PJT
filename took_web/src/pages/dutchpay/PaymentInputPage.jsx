@@ -9,6 +9,8 @@ import 'swiper/css/scrollbar';
 import '../../css/dutchpay/PaymentInputPage.css';
 import PaymentCard from '../../components/payment/PaymentCard';
 import { useUser } from '../../store/user';
+import BackButton from '../../components/common/BackButton';
+
 
 // 알고리즘 추가 작성 필요!
 function PaymentInputPage() {
@@ -111,6 +113,7 @@ function PaymentInputPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
+      <BackButton />
       <h1 className="text-4xl font-bold my-3 text-main mt-5">
         정산 <span className="font-dela">took!</span>
       </h1>

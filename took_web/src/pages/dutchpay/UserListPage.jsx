@@ -1,11 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { getUserStyle, getMyStyle } from '../../utils/getCharacterPostion';
 import questionIcon from '../../assets/payment/question.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { getNearByUserPositionApi } from '../../apis/position/userPosition';
 import { useUser } from '../../store/user';
 import { usePosition } from '../../store/position';
+import backIcon from '../../assets/delivery/whiteBack.svg';
+
+
+
+
+const BackButton = () => {
+  const navigate = useNavigate();
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+  return (
+    <img
+      src={backIcon}
+      alt="뒤로"
+      className="w-6 h-6 mx-6 mt-12 absolute top-0 left-0 opacity-80"
+      onClick={handleBackClick}
+    />
+  );
+};
+
+
 
 // const res_data = [
 //   { name: '정희수', img_no: 6 },
@@ -68,6 +89,7 @@ const UserListPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-main">
+      <BackButton />
       <h1 className="text-4xl font-bold my-8 text-white mt-12">
         정산 <span className="font-dela">took!</span>
       </h1>
