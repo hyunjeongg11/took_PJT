@@ -1,7 +1,6 @@
 package com.took.positionsave_api.service;
 
 import com.took.positionsave_api.dto.PositionCreateRequest;
-
 import com.took.positionsave_api.dto.PositionSelectResponse;
 import com.took.positionsave_api.dto.PositionUserListRequest;
 import com.took.positionsave_api.dto.PositionUserListResponse;
@@ -12,7 +11,6 @@ import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -101,9 +99,11 @@ public class PositionService {
                                 response.setUserName(userDetails.getUserName());
                                 response.setImageNo(userDetails.getImageNo());
                             }
+                            System.out.println("userSeq is not null and distance is under 1000m" + user.getUserSeq());
                             return response;
                         }
                     }
+                    System.out.println("userSeq is null or distance is over 1000m" + user.getUserSeq());
                     return null; // userSeq가 null인 경우 또는 거리가 1000m를 초과하는 경우
                 })
                 .filter(Objects::nonNull) // null 값 필터링

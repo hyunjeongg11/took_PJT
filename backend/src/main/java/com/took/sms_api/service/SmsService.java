@@ -95,7 +95,6 @@ public class SmsService {
      * @return 인증 코드가 일치하면 true, 일치하지 않으면 false
      */
     public boolean verifyCode(String phoneNumber, int code) {
-        System.out.println(phoneNumber + " : " + code);
         Optional<Identity> identityOpt = identityRepository.findById(phoneNumber); // 전화번호로 Identity 조회
         if (identityOpt.isPresent()) {
             Identity identity = identityOpt.get();
