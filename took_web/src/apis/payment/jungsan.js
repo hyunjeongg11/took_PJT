@@ -163,7 +163,7 @@ export const deliveryGroupHostRecieveApi = async (params) => {
 
 // 요청
 // {
-//     "userSeq": 0,
+//     "userSeq": 0, 로그인한 user
 //     "partySeq": 0
 //   }
 // 응답

@@ -4,6 +4,7 @@ import { MdBackspace } from 'react-icons/md';
 import { msgToAndroid } from '../../android/message';
 import { checkEasyPasswordApi } from '../../apis/account/oneclick';
 import { useUser } from '../../store/user';
+import { onlyjungsanPayApi, deliveryGroupPayApi } from '../../apis/payment/jungsan';
 
 function PwdPage() {
   const [input, setInput] = useState('');
@@ -11,7 +12,8 @@ function PwdPage() {
   const [attemptCount, setAttemptCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
-  const { accountSeq, amount, userSeq } = location.state || {};
+  const { seq: currentUserSeq } = useUser();
+  const { accountSeq, amount, userSeq, numCategory, partySeq } = location.state || {};
 
   useEffect(() => {
     if (!accountSeq || !amount || !userSeq) {
@@ -34,7 +36,7 @@ function PwdPage() {
     try {
       const response = await checkEasyPasswordApi({ accountSeq, easyPwd: input });
       if (response.checked) {
-        navigate('/complete', { state: { accountSeq, amount, userSeq } });
+        await processPayment();
       } else {
         setIsError(true);
         setAttemptCount((prev) => prev + 1);
@@ -48,9 +50,45 @@ function PwdPage() {
     }
   };
 
+  const processPayment = async () => {
+    const requestData = {
+      userSeq: currentUserSeq,
+      partySeq,
+    };
+
+    try {
+      if (numCategory === 4) {
+        await onlyjungsanPayApi(requestData);
+      } else if (numCategory === 1 || numCategory === 3) {
+        await deliveryGroupPayApi(requestData);
+      }
+      navigate('/complete', { state: { accountSeq, amount, userSeq, currentUserSeq } });
+    } catch (error) {
+      console.error('결제 처리 중 오류 발생:', error);
+      alert('결제 처리 중 오류가 발생했습니다.');
+    }
+  };
+
   useEffect(() => {
     if (input.length === 6) {
       checkPassword();
+    }
+
+    window.onAuthenticate = (success) => {
+      if (success) {
+        alert('생체 인증 성공');
+        msgToAndroid('생체 인증 성공');
+        setInput('');
+        setIsError(false);
+        setAttemptCount(0); // 성공 시 시도 횟수 초기화
+        processPayment();
+      } else {
+        alert('생체 인증 실패');
+      }
+    };
+
+    if (window.Android) {
+      window.Android.authenticate();
     }
   }, [input]);
 
