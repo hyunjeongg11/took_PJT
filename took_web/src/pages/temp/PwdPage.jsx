@@ -96,7 +96,7 @@ function PwdPage() {
     if (window.Android) {
       window.Android.authenticate();
     }
-  }, [input]});
+  } [input]});
   
   useEffect(() => {
     if (attemptCount >= 5) {
