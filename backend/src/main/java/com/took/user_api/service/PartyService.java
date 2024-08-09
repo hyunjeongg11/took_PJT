@@ -28,4 +28,6 @@ public interface PartyService {
     ResponseEntity<? super ojResponseDto> restCostPay(OnlyJungsanRequestDto requestBody);
 
     List<PayHistoryResponseDto> payHistory(Long userSeq);
+
+    List<NoPayResponseDto> noPayList(Long userSeq);
 }

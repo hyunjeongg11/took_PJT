@@ -197,4 +197,16 @@ public class PartyController {
     public ResponseEntity<List<PayHistoryResponseDto>> payHistory(@PathVariable("userSeq") Long userSeq) {
         return ResponseEntity.ok(partyService.payHistory(userSeq));
     }
+
+    // 미정산 내역 리스트 조회
+    @Operation(summary = "미정산 내역 리스트 조회", description = "미정산 내역 리스트 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "미정산 내역 리스트 조회 성공",
+                    content = @Content(schema = @Schema(implementation = NoPayResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @GetMapping("/no-pay-list/{userSeq}")
+    public ResponseEntity<List<NoPayResponseDto>> noPayList(@PathVariable("userSeq") Long userSeq) {
+        return ResponseEntity.ok(partyService.noPayList(userSeq));
+    }
 }

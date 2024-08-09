@@ -723,4 +723,41 @@ public class PartyServiceImpl implements PartyService {
         }
         return responseList;
     }
+
+    // 미정산 목록 반환
+    @Transactional
+    @Override
+    public List<NoPayResponseDto> noPayList(Long userSeq) {
+        UserEntity user = userRepository.findById(userSeq).orElseThrow();
+        List<MemberEntity> memberList = memberRepositoryCustom.findNoLeaderAndNoStatusByUser(user);
+        List<NoPayResponseDto> responseList = new ArrayList<>();
+
+        for (MemberEntity member : memberList) {
+            PartyEntity party = partyRepository.findById(member.getParty().getPartySeq()).orElseThrow();
+            MemberEntity leader = memberRepository.findByPartyAndLeaderTrue(party);
+            UserEntity leaderUser = userRepository.findById(leader.getUser().getUserSeq()).orElseThrow();
+
+            String maskedName = leaderUser.getUserName();
+            if (maskedName.length() == 2) {
+                maskedName = maskedName.charAt(0) + "*";
+            } else if (maskedName.length() == 3) {
+                maskedName = maskedName.charAt(0) + "*" + maskedName.charAt(2);
+            } else if (maskedName.length() >= 4) {
+                maskedName = maskedName.charAt(0) + "**" + maskedName.charAt(maskedName.length() - 1);
+            }
+
+            responseList.add(
+                    new NoPayResponseDto(
+                            party.getPartySeq(),
+                            leaderUser.getUserSeq(),
+                            maskedName,
+                            leaderUser.getImageNo(),
+                            member.getCost(),
+                            party.getCategory(),
+                            party.getCreatedAt()
+                    )
+            );
+        }
+        return responseList;
+    }
 }
