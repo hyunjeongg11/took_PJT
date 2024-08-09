@@ -84,11 +84,8 @@ public class DeliveryGuestService {
         UserEntity user = userRepository.findById(deliveryGuest.getUser().getUserSeq()).orElseThrow();
         MemberEntity member = memberRepository.findByPartyAndUser(party, user);
         member.updateRecieve(true);
-        // 변경 사항을 강제로 데이터베이스에 반영
-        deliveryGuestRepository.flush();
-        memberRepository.flush();
 
-        if(deliveryGuestRepository.areAllGuestsPickedUp(deliveryGuest.getDelivery())) {
+        if(!deliveryGuestRepository.existsByDeliveryAndPickUpFalse(delivery)) {
             delivery.updateStatus(String.valueOf(Delivery.Status.DONE));
             partyService.deligonguHostRecieve(delivery.getPartySeq(), delivery.getUser().getUserSeq());
         }

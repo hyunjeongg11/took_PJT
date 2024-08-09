@@ -54,9 +54,6 @@ public class AccountRepositoryCustomImpl implements AccountRepositoryCustom {
                 .set(accountEntity.main, true)
                 .where(accountEntity.accountSeq.eq(accountSeq))
                 .execute();
-
-        entityManager.flush();
-
     }
 
     @Override

@@ -235,7 +235,6 @@ public class PartyServiceImpl implements PartyService {
 
 //          맴버 상태 업데이트
         member.updateStatus(true);
-        System.out.println("party 송금전 인원" + party.getCount());
         party.updateCount(1);
 
 //          돈빼주고 저장
@@ -289,7 +288,6 @@ public class PartyServiceImpl implements PartyService {
                         .build()
         );
 
-        System.out.println("party 송금 후 인원: " + party.getCount());
         if (party.getCount() == party.getTotalMember() - 1) {
             done = true;
             party.updateStatus(true);
@@ -350,7 +348,6 @@ public class PartyServiceImpl implements PartyService {
         payRepository.save(pay);
 
         // 모든 사람이 결제 완료 (결제자제외)
-        partyRepository.flush();
         if (party.getCount() == party.getTotalMember() - 1) {
             Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(party.getPartySeq());
             fcmService.sendMessage(
@@ -476,7 +473,6 @@ public class PartyServiceImpl implements PartyService {
                     .build();
             payRepository.save(pay);
         }
-        partyRepository.flush();
         newParty.updateReceiveCost(receiveCost);
 
         // 여기다 알림 추가 ( ~~원 가결제 완료, 반복문(리더제외) )
@@ -669,7 +665,6 @@ public class PartyServiceImpl implements PartyService {
         payRepository.save(pay2);
 
         // 정산 완료 여부 확인
-        partyRepository.flush();
         if (party.getCount() == party.getTotalMember() - 1) {
             party.updateStatus(true);
             done = true;

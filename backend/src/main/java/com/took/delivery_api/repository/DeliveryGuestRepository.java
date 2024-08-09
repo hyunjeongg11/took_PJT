@@ -10,10 +10,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DeliveryGuestRepository extends JpaRepository<DeliveryGuest, Long>, DeliveryGuestCustomRepository {
+public interface DeliveryGuestRepository extends JpaRepository<DeliveryGuest, Long> {
     List<DeliveryGuest> findAllByDelivery(Delivery delivery);
 
     DeliveryGuest findByDeliveryAndUser(Delivery delivery, UserEntity user);
 
     List<DeliveryGuest> findAllByUser(UserEntity user);
+
+    boolean existsByDeliveryAndPickUpFalse(Delivery delivery);
 }
