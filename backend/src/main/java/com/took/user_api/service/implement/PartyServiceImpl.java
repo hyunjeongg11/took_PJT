@@ -10,7 +10,6 @@ import com.took.user_api.dto.response.VoidResponseDto;
 import com.took.user_api.dto.response.party.*;
 import com.took.user_api.entity.*;
 import com.took.user_api.repository.*;
-import com.took.user_api.repository.custom.BankRepositoryCustom;
 import com.took.user_api.repository.custom.MemberRepositoryCustom;
 import com.took.user_api.service.PartyService;
 import jakarta.transaction.Transactional;
@@ -32,7 +31,6 @@ public class PartyServiceImpl implements PartyService {
     private final UserRepository userRepository;
     private final MemberRepository memberRepository;
     private final BankRepository bankRepository;
-    private final BankRepositoryCustom bankRepositoryCustom;
     private final FCMService fcmService;
     private final AccountRepository accountRepository;
     private final PayRepository payRepository;
@@ -124,8 +122,6 @@ public class PartyServiceImpl implements PartyService {
         Long TotalDeliveryTip = requestBody.getDeliveryTip();
         long deliveryTip = 0L;
         int totalMember = requestBody.getUserCosts().size();
-        System.out.println("userList: " + requestBody.getUserCosts());
-        System.out.println("totalMember = " + totalMember);
 
         if (TotalDeliveryTip != null) {
             party.updateDeliveryTip(TotalDeliveryTip);
@@ -204,6 +200,8 @@ public class PartyServiceImpl implements PartyService {
             }
             fcmService.sendNotification(alarm);
         }
+        party.updateCost(totalCost);
+        party.updateTotalMember(totalMember);
         return VoidResponseDto.success();
     }
 
