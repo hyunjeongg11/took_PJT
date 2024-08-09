@@ -1,18 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../../components/common/BackButton';
-import { useNavigate } from 'react-router-dom';
-import { FaPaperPlane, FaArrowDown, FaBars } from 'react-icons/fa';
-import { MdAdd } from 'react-icons/md';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useUser } from '../../store/user';
+import { getChatRoomMessageApi, getUsersApi } from '../../apis/chat/chat';
+import getProfileImagePath from '../../utils/getProfileImagePath';
+import { formatDateOnly, formatTime } from '../../utils/formatDate';
 import speaker from '../../assets/common/speaker.png';
 import listIcon from '../../assets/chat/list.png';
 import locationIcon from '../../assets/chat/location.png';
 import boardIcon from '../../assets/chat/boardTaxi.png';
 import doneIcon from '../../assets/chat/doneTaxi.png';
+import { FaPaperPlane, FaArrowDown, FaBars } from 'react-icons/fa';
 import { FaCalculator } from 'react-icons/fa6';
+import { MdAdd } from 'react-icons/md';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import ParticipantList from '../../components/chat/ParticipantList';
+import { updateTaxiPartyStatusApi } from '../../apis/taxi'; // Import the new API function
 import TaxiChattingMenu from '../../components/taxi/TaxiChattingMenu';
-import getProfileImagePath from '../../utils/getProfileImagePath';
-import { formatDateOnly, formatTime } from '../../utils/formatDate';
 
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+// todo: 특정 채팅방에 속한 유저 조회 api 연동 -> userSeq, userName, imageNo 가져오기
+
+// todo: 택시 파티 모든 멤버 조회 api 연동
 const tempMember = [
   {
     member_seq: 1,
@@ -61,6 +72,7 @@ const tempMember = [
   },
 ];
 
+// todo: useUser로 현재 로그인한 사용자 데이터와 연동
 const tempUser = {
   user_seq: 1,
   userName: '차민주',
@@ -68,13 +80,14 @@ const tempUser = {
   gender: false,
 };
 
+// todo: 특정 택시 파티 조회 api 연동해서 데이터 가져오기
 const tempTaxi = {
   taxi_seq: 1,
   user_seq: 1,
   room_seq: 1,
   party_seq: 1,
   room_title: '강서구 명지동',
-  gender: false, 
+  gender: false,
   count: 4,
   max: 4,
   status: 'OPEN',
@@ -85,6 +98,7 @@ const tempTaxi = {
   payer: 1,
 };
 
+// todo: 채팅방의 모든 메시지 조회 api 연동
 const tempMessages = [
   {
     id: 1,
@@ -135,12 +149,12 @@ function TaxiChattingMainPage() {
   const [inputMessage, setInputMessage] = useState('');
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [showActionIcons, setShowActionIcons] = useState(false);
-  const [showMenu, setShowMenu] = useState(false); 
-  const [showModal, setShowModal] = useState(false); 
-  const [modalMessage, setModalMessage] = useState(''); 
-  const [taxiStatus, setTaxiStatus] = useState(tempTaxi.status); 
-  const [showSettlementButton, setShowSettlementButton] = useState(false); 
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false); 
+  const [showMenu, setShowMenu] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [taxiStatus, setTaxiStatus] = useState(tempTaxi.status);
+  const [showSettlementButton, setShowSettlementButton] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
@@ -245,11 +259,13 @@ function TaxiChattingMainPage() {
   };
 
   const handleConfirmBoardTaxi = async () => {
+    await updateTaxiPartyStatusApi({ taxiSeq: tempTaxi.taxi_seq });
     setTaxiStatus('BOARD');
     closeModal();
   };
 
   const handleConfirmDoneTaxi = async () => {
+    await updateTaxiPartyStatusApi({ taxiSeq: tempTaxi.taxi_seq });
     setTaxiStatus('DONE');
     setShowSettlementButton(true);
     closeModal();
@@ -283,7 +299,11 @@ function TaxiChattingMainPage() {
 
   useEffect(() => {
     if (tempTaxi.count === tempTaxi.max) {
-      setTaxiStatus('FILLED');
+      const updateStatus = async () => {
+        await updateTaxiPartyStatusApi({ taxiSeq: tempTaxi.taxi_seq });
+        setTaxiStatus('FILLED');
+      };
+      updateStatus();
     }
   }, [tempTaxi.count]);
 
