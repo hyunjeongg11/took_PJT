@@ -185,11 +185,6 @@ public class ShopService {
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + roomSeq));
         UserEntity user = userRepository.findById(shop.getUser().getUserSeq()).orElseThrow();
         shop.updateHit(1);
-        shopRepository.flush();
-
-        System.out.println("roomSeq = " + roomSeq);
-        System.out.println("shop = " + shop);
-        System.out.println("user = " + user);
         return new ShopResponse(shop, user);
     }
 
