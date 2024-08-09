@@ -12,6 +12,7 @@ import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.CertificationRepository;
 import com.took.user_api.repository.UserRepository;
 import com.took.user_api.service.AuthService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
     // 어떤걸 사용할지 직접 선택하기 위함.
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    @Transactional
     @Override
     public ResponseEntity<? super IdCheckResponseDto> idCheck(IdCheckRequestDto dto) {
 
@@ -52,6 +54,7 @@ public class AuthServiceImpl implements AuthService {
         return IdCheckResponseDto.success();
     }
 
+    @Transactional
     @Override
     public ResponseEntity<? super EmailCertificationResponseDto> emailCertification(EmailCertificaionRequestDto dto) {
 
@@ -83,6 +86,7 @@ public class AuthServiceImpl implements AuthService {
         return EmailCertificationResponseDto.success();
     }
 
+    @Transactional
     @Override
     public ResponseEntity<? super CheckCertificationResponseDto> checkCertification(CheckCertificationRequestDto dto) {
 
@@ -110,6 +114,7 @@ public class AuthServiceImpl implements AuthService {
         return CheckCertificationResponseDto.success();
     }
 
+    @Transactional
     @Override
     public ResponseEntity<? super SignUpResponseDto> signUp(SignUpRequestDto dto) {
 
@@ -151,6 +156,7 @@ public class AuthServiceImpl implements AuthService {
         return SignUpResponseDto.success();
     }
 
+    @Transactional
     @Override
     public ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto dto) {
 
@@ -194,6 +200,7 @@ public class AuthServiceImpl implements AuthService {
         return SignInResponseDto.success(accessToken, refreshToken,userSeq);
     }
 
+    @Transactional
     @Override
     public ResponseEntity<? super RefreshTokenResponseDto> refreshAccessToken(RefreshTokenRequestDto dto) {
 

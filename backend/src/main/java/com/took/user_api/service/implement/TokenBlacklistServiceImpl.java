@@ -6,6 +6,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -32,11 +33,13 @@ public class TokenBlacklistServiceImpl implements TokenBlacklistService {
         redisTemplate.opsForValue().set(BLACKLIST_PREFIX+token,"true",duration,unit);
     }
 
+    @Transactional
     @Override
     public boolean isTokenBlacklisted(String token) {
         return redisTemplate.hasKey(BLACKLIST_PREFIX+token);
     }
 
+    @Transactional
     @Override
     public long getExpiryFromToken(String Token) {
         

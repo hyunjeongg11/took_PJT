@@ -90,6 +90,7 @@ public class AccountServiceImpl implements AccountService {
 
 
 //   제작
+    @Transactional
     @Override
     public ResponseEntity<? super AccountListResponsetDto> accountList(AccountListRequestDto dto) {
 
@@ -131,7 +132,7 @@ public class AccountServiceImpl implements AccountService {
         return AccountListResponsetDto.success(result);
     }
 
-
+    @Transactional
     @Override
     public ResponseEntity<? super AccountBalanceResponseDto> balance(AccountSeqRequestDto dto) {
      
@@ -189,7 +190,7 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
-
+    @Transactional
     @Override
     public ResponseEntity<? super CheckEasyPwdResponseDto> checkEasyPwd(AccountEasyPwdRequestDto requestBody) {
         
