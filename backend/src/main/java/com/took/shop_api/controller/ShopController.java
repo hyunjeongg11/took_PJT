@@ -34,14 +34,15 @@ public class ShopController {
         Shop saveShop = shopService.save(request);
         // 알림 생성
         List<Long> userSeqs = userService.searchNearUser(request.getUserSeq(), request.getLat(), request.getLon());
-        fcmService.sendMessage(
-                MessageRequest.builder()
-                        .title("같이 주문해요!")
-                        .body("공동 구매 모집 글이 올라왔어요!")
-                        .userSeqList(userSeqs)
-                        .build()
-        );
-
+        if(userSeqs != null && !userSeqs.isEmpty()) {
+            fcmService.sendMessage(
+                    MessageRequest.builder()
+                            .title("같이 주문해요!")
+                            .body("공동 구매 모집 글이 올라왔어요!")
+                            .userSeqList(userSeqs)
+                            .build()
+            );
+        }
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(saveShop);
     }

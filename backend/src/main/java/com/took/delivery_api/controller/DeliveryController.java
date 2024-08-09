@@ -41,13 +41,15 @@ public class DeliveryController {
         DeliveryCreateResponse response = deliveryService.createDelivery(request);
         // 알림 생성
         List<Long> userSeqs = userService.searchNearUser(request.getUserSeq(), request.getPickupLat(), request.getPickupLon());
-        fcmservice.sendMessage(
-                MessageRequest.builder()
-                        .title("같이 배달 시켜먹을래요?")
-                        .body("근처에 배달 시킬 사람이 있어요!")
-                        .userSeqList(userSeqs)
-                        .build()
-        );
+        if(userSeqs != null && !userSeqs.isEmpty()) {
+            fcmservice.sendMessage(
+                    MessageRequest.builder()
+                            .title("같이 배달 시켜먹을래요?")
+                            .body("근처에 배달 시킬 사람이 있어요!")
+                            .userSeqList(userSeqs)
+                            .build()
+            );
+        }
         return ResponseEntity.ok(response);
     }
 

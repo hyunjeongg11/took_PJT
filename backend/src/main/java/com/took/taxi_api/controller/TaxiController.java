@@ -246,6 +246,7 @@ public class TaxiController {
     })
     public ResponseEntity<?> setDestinationAndCost(
             @RequestBody @Parameter(description = "게스트 목적지 및 비용 설정 요청 데이터", required = true) GuestSetDestinationAndCostRequest request) {
+        System.out.println("게스트 목적지 및 비용 설정 요청: " + request);
         taxiGuestService.setDestinationAndCost(request);
         return ResponseEntity.noContent().build();
     }
