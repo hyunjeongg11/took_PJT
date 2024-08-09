@@ -8,6 +8,9 @@ import {
 } from '../../apis/groupBuy/shop.js';
 import { useUser } from '../../store/user.js';
 import Search from '../../components/groupbuy/Search.jsx';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+
 
 function BuyFormPage() {
   const { id } = useParams(); // 수정 모드에서 사용할 shopSeq
@@ -62,6 +65,7 @@ function BuyFormPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData, latitude, longitude);
 
     if (userSeq === null) {
       alert('사용자 정보가 올바르지 않습니다.');
@@ -131,6 +135,27 @@ function BuyFormPage() {
             className="block resize-none mt-3 text-sm text-zinc-800 bg-neutral-50 "
           ></textarea>
         </div>
+        <div className="pl-5 pr-4 py-2 mt-5 bg-neutral-50 rounded-2xl border border-neutral-200 shadow-md">
+              {/* <input
+                id="place"
+                name="place"
+                type="text"
+                value={formData.place}
+                onChange={handleChange}
+                required
+                placeholder="수령 장소를 입력하세요"
+                className="text-black py-2 text-xs rounded-md border border-collapse placeholder-neutral-300 font-medium text-right pr-2 focus:border-b-main"
+              ></input> */}
+              <Search
+                label="수령 장소"
+                name="place"
+                value={formData.place}
+                onChange={handleChange}
+                placeholder="수령 장소를 입력하세요"
+                setLatitude={setLatitude}
+                setLongitude={setLongitude}
+              />
+            </div>
 
         <div className="pl-5 pr-4 py-5 mt-5 bg-neutral-50 rounded-2xl border border-neutral-200 shadow-md">
           <div className="flex flex-col gap-3">
@@ -160,27 +185,7 @@ function BuyFormPage() {
                 className="text-black py-2 text-xs rounded-md border border-collapse placeholder-neutral-300 font-medium text-right pr-2 focus:border-b-main"
               ></input>
             </div>
-            <div className="flex justify-between items-center text-sm font-normal  text-black">
-              {/* <input
-                id="place"
-                name="place"
-                type="text"
-                value={formData.place}
-                onChange={handleChange}
-                required
-                placeholder="수령 장소를 입력하세요"
-                className="text-black py-2 text-xs rounded-md border border-collapse placeholder-neutral-300 font-medium text-right pr-2 focus:border-b-main"
-              ></input> */}
-              <Search
-                label="수령 장소"
-                name="place"
-                value={formData.place}
-                onChange={handleChange}
-                placeholder="수령 장소를 입력하세요"
-                setLatitude={setLatitude}
-                setLongitude={setLongitude}
-              />
-            </div>
+            
             <div className="flex justify-between items-center text-sm font-normal  text-black">
               최대 모집 인원
               <input

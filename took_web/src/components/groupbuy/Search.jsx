@@ -45,10 +45,10 @@ const Search = ({
   };
 
   return (
-    <div className="my-2">
-      <div className="flex justify-end items-center text-sm font-normal text-black w-full">
-        <span className="mr-12">{label}</span>
-        <div className="flex items-center flex-grow justify-end">
+    <div className="my-2 relative w-full">
+      <div className="flex flex-col w-full">
+        <span className="mb-2 text-sm font-medium text-gray-700">{label}</span>
+        <div className="flex items-center justify-start w-full">
           <input
             type="text"
             name={name}
@@ -57,22 +57,22 @@ const Search = ({
             placeholder={placeholder}
             onKeyDown={handleKeyDown}
             onClick={handleFocus}
-            className="text-black py-2 text-xs rounded-md border border-collapse placeholder-neutral-300 font-medium text-right pr-2 focus:border-b-main"
+            className="w-full py-2 pl-3 text-sm text-gray-800 placeholder-gray-400 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-main focus:border-transparent h-10"
           />
           <button
-            className="ml-2 text-xs font-bold text-white rounded-md flex items-center justify-center"
+            className="flex items-center justify-center w-10 h-10 text-white bg-main rounded-r-md hover:bg-main-dark"
             onClick={handleSearch}
           >
-            <img src={searchIcon} alt="검색" className="w-7 opacity-70" />
+            검색
           </button>
         </div>
       </div>
       {showDropdown && (
-        <ul className="mt-2 border border-neutral-300 rounded-md bg-white max-h-60 overflow-y-auto shadow-md">
+        <ul className="absolute z-10 w-full mt-2 overflow-y-auto bg-white border border-gray-300 rounded-md shadow-lg max-h-60">
           {results.map((place) => (
             <li
               key={place.id}
-              className="px-4 py-2 hover:bg-neutral-100 cursor-pointer"
+              className="px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-100"
               onClick={() => handleSelect(place)}
             >
               {place.place_name}
