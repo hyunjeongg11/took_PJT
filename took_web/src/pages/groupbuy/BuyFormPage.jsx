@@ -7,11 +7,14 @@ import {
   modifyShopApi,
 } from '../../apis/groupBuy/shop.js';
 import { useUser } from '../../store/user.js';
+import Search from '../../components/groupbuy/Search.jsx';
 
 function BuyFormPage() {
   const { id } = useParams(); // 수정 모드에서 사용할 shopSeq
   const navigate = useNavigate();
   const { seq: userSeq } = useUser();
+  const [latitude, setLatitude] = useState();
+  const [longitude, setLongitude] = useState();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -20,8 +23,8 @@ function BuyFormPage() {
     content: '',
     place: '',
     max_person: '',
-    lat: 35.0894681, // 위도와 경도 추가
-    lon: 128.8535056,
+    lat: latitude, // 위도와 경도 추가
+    lon: longitude,
   });
 
   useEffect(() => {
@@ -158,8 +161,7 @@ function BuyFormPage() {
               ></input>
             </div>
             <div className="flex justify-between items-center text-sm font-normal  text-black">
-              수령장소
-              <input
+              {/* <input
                 id="place"
                 name="place"
                 type="text"
@@ -168,7 +170,16 @@ function BuyFormPage() {
                 required
                 placeholder="수령 장소를 입력하세요"
                 className="text-black py-2 text-xs rounded-md border border-collapse placeholder-neutral-300 font-medium text-right pr-2 focus:border-b-main"
-              ></input>
+              ></input> */}
+              <Search
+                label="수령 장소"
+                name="place"
+                value={formData.place}
+                onChange={handleChange}
+                placeholder="수령 장소를 입력하세요"
+                setLatitude={setLatitude}
+                setLongitude={setLongitude}
+              />
             </div>
             <div className="flex justify-between items-center text-sm font-normal  text-black">
               최대 모집 인원
