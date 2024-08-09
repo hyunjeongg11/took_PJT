@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MdBackspace } from 'react-icons/md';
 import { msgToAndroid } from '../../android/message';
 import { checkEasyPasswordApi } from '../../apis/account/oneclick';
-import { useUser } from '../../store/user'; // 로그인한 사용자 정보를 가져오는 훅
-
-
+import { useUser } from '../../store/user';
 
 function PwdPage() {
   const [input, setInput] = useState('');
   const [isError, setIsError] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { accountSeq, amount, userSeq } = location.state || {};
 
-  const correctPassword = '123456'; // 지금은 기본 비밀번호 "123456"으로 설정
-  //todo 사용자 간편비밀번호 체크 로직 추가해야댐
+  useEffect(() => {
+    if (!accountSeq || !amount || !userSeq) {
+      alert('필수 데이터가 없습니다.');
+      navigate(-1);
+    }
+  }, [accountSeq, amount, userSeq, navigate]);
 
   const handleButtonClick = (value) => {
     if (input.length < 6) {
@@ -26,53 +30,37 @@ function PwdPage() {
     setInput(input.slice(0, -1));
   };
 
-  const handleInputChange = () => {
-    if (input.length === 6) {
-      console.log(input); // 최종 입력된 비밀번호 콘솔에 출력
-      if (input === correctPassword) {
-        alert('비밀번호가 맞습니다!');
-        msgToAndroid('비밀번호가 맞습니다');
-        setInput('');
-        setIsError(false);
-        setAttemptCount(0); // 성공 시 시도 횟수 초기화
+  const checkPassword = async () => {
+    try {
+      const response = await checkEasyPasswordApi({ accountSeq, easyPwd: input });
+      if (response.checked) {
+        navigate('/complete', { state: { accountSeq, amount, userSeq } });
       } else {
         setIsError(true);
         setAttemptCount((prev) => prev + 1);
         setInput('');
       }
+    } catch (error) {
+      console.error('비밀번호 확인 중 오류 발생:', error);
+      setIsError(true);
+      setAttemptCount((prev) => prev + 1);
+      setInput('');
     }
   };
 
   useEffect(() => {
-    window.onAuthenticate = (success) => {
-      if (success) {
-          alert('생체 인증 성공');
-          msgToAndroid('생체 인증 성공');
-          setInput('');
-          setIsError(false);
-          setAttemptCount(0); // 성공 시 시도 횟수 초기화
-        
-      } else {
-        alert('생체 인증 실패');
-      }
-    };
-
-    if (window.Android) {
-      window.Android.authenticate();
+    if (input.length === 6) {
+      checkPassword();
     }
-  }, []);
-
-  useEffect(() => {
-    handleInputChange();
   }, [input]);
 
   useEffect(() => {
     if (attemptCount >= 5) {
-      alert('비밀번호 입력 횟수 초과!');
+      alert('비밀번호 입력 제한 횟수를 초과하였습니다.');
       msgToAndroid('비밀번호 입력 횟수 초과!');
-      // 추가적인 처리 (예: 화면 전환, 잠금 등)
+      navigate(-1);
     }
-  }, [attemptCount]);
+  }, [attemptCount, navigate]);
 
   const renderDots = () => {
     const dots = [];
