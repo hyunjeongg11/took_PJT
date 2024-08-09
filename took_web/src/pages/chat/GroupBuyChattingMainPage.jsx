@@ -1,21 +1,15 @@
+// GroupBuyChattingMainPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { BsTruck } from 'react-icons/bs';
-import { TfiWorld } from 'react-icons/tfi';
-import { GoBell } from 'react-icons/go';
-import {
-  formatDateOnly,
-  formatTime,
-  formatDateWithYear,
-} from '../../utils/formatDate';
+import { formatTime } from '../../utils/formatDate';
 import { useUser } from '../../store/user';
 import speaker from '../../assets/common/speaker.png';
-import delivery from '../../assets/chat/delivery.png';
 import calculator from '../../assets/chat/calculator.png';
-import money from '../../assets/chat/money.png';
+import { PiHandArrowDown } from 'react-icons/pi';
 import {
   FaChevronUp,
   FaChevronDown,
@@ -26,7 +20,6 @@ import {
 import { MdAdd } from 'react-icons/md';
 import CalculatorModal from '../../components/chat/CalculatorModal';
 import MoneyModal from '../../components/chat/MoneyModal';
-import DeliveryModal from '../../components/chat/DeliveryModal';
 import ParticipantList from '../../components/chat/ParticipantList';
 import ArrivalNotificationModal from '../../components/chat/ArrivalNotificationModal';
 import SockJS from 'sockjs-client';
@@ -35,6 +28,7 @@ import { getChatRoomMessageApi, getUsersApi } from '../../apis/chat/chat';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
+// todo: 실제 데이터와 연결 필요
 const tempMember = [
   {
     member_seq: 1,
@@ -565,20 +559,12 @@ function GroupBuyChattingMainPage() {
           </div>
           <div className="flex flex-col items-center mb-4">
             <div
-              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
+              className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center"
               onClick={() => navigate(`/groupbuy/order/${tempData.shopSeq}`)}
             >
               <BsTruck className="text-white w-7 h-7" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">배송 정보</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center">
-              <TfiWorld className="text-white w-6 h-6" />
-            </div>
-            <span className="mt-1 text-[11px] text-gray-500">
-              사이트 바로가기
-            </span>
+            <span className="mt-1 text-[11px] text-gray-500">배송</span>
           </div>
           <div className="flex flex-col items-center">
             <div
@@ -594,9 +580,9 @@ function GroupBuyChattingMainPage() {
             className="flex flex-col items-center"
           >
             <div className="w-11 h-11 rounded-full bg-[#C0E0A0] flex items-center justify-center">
-              <GoBell className="text-white w-6 h-6" />
+              <PiHandArrowDown className="text-white w-6 h-6" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">물품 도착</span>
+            <span className="mt-1 text-[11px] text-gray-500">수령 확인</span>
           </div>
         </div>
       )}
@@ -620,6 +606,7 @@ function GroupBuyChattingMainPage() {
         <ArrivalNotificationModal
           members={tempMember}
           onClose={handleCloseArrivalModal}
+          shopSeq={tempData.shopSeq}
         />
       )}
     </div>

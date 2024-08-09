@@ -419,7 +419,7 @@ export const setTotalCostApi = async (params) => {
   }
 };
 
-// 최종 비용 계산
+// 최종 비용 계산 ( 결제 금액 입력 시 )
 // 요청
 /* 
 {

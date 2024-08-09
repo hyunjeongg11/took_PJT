@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import backIcon from '../../assets/delivery/whiteBack.svg';
 import plusIcon from '../../assets/taxi/plus.png'; // '+' 아이콘 경로
 import enterIcon from '../../assets/taxi/enter.png'; // 입장 가능 아이콘
 import notEnterIcon from '../../assets/taxi/notEnter.png'; // 입장 불가능 아이콘
 import locationIcon from '../../assets/taxi/location.png';
 import getProfileImagePath from '../../utils/getProfileImagePath';
-import backIcon from '../../assets/delivery/whiteBack.svg';
 import { useUser } from '../../store/user.js';
 import { usePosition } from '../../store/position.js';
 import { getNearByUserPositionApi } from '../../apis/position/userPosition.js';
@@ -128,7 +128,7 @@ function TaxiMainPage() {
           <div className="flex-grow text-center text-2xl font-bold text-white">
             택시{' '}
             <span className="font-dela">
-              took<span className="font-noto">!</span>
+              took <span className="font-noto">!</span>
             </span>
           </div>
         </div>
@@ -179,19 +179,19 @@ function TaxiMainPage() {
                 <button
                   className="mb-2"
                   onClick={() => {
-                    if (item.count < item.max) {
-                      handleEnterChatRoom(item.chatRoomId);
+                    if (item.count < item.max + 1) {
+                      handleEnterChatRoom(item.roomSeq);
                     }
                   }}
                 >
                   <img
-                    src={item.count < item.max ? enterIcon : notEnterIcon}
+                    src={item.count < item.max + 1 ? enterIcon : notEnterIcon}
                     alt="enter status"
                     className="w-8 h-8"
                   />
                 </button>
                 <span className="text-xs font-semibold text-gray-700">
-                  {item.count} / {item.max}
+                  {item.count} / {item.max + 1}
                 </span>
               </div>
             </div>
