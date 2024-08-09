@@ -67,7 +67,7 @@ public class PartyEntity {
     }
 
     public void updateTotalMember(int i) {
-        this.totalMember += i;
+        this.totalMember = i;
     }
 
     public void updateDeliveryTip(long totalDeliveryTip) {

@@ -204,9 +204,6 @@ public class PartyServiceImpl implements PartyService {
             }
             fcmService.sendNotification(alarm);
         }
-        party.updateCost(totalCost);
-        party.updateTotalMember(totalMember);
-
         return VoidResponseDto.success();
     }
 
