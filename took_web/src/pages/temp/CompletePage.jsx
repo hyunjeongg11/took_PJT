@@ -1,27 +1,54 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import 송금완료 from '../../assets/payment/송금완료.png';
 import took1 from '../../assets/payment/took1.png';
 import { formatNumber } from '../../utils/format';
 import { maskName } from '../../utils/formatName';
+import { getUserInfoApi } from '../../apis/user';
+import { getAccountListApi } from '../../apis/account/info';
+import { bankNumToName } from '../../assets/payment/index.js';
 
 function CompletePage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { currentUserSeq, userSeq, amount, accountSeq } = location.state || {};
 
-  // 임시 데이터
-  const tempMember = {
-    userName: '조현정',
-    cost: 6500,
-    bank: '국민은행',
-    accountNumber: '12345678910',
-  };
+  const [userName, setUserName] = useState('');
+  const [accountInfo, setAccountInfo] = useState({ bankName: '', accountNum: '' });
 
-  const maskedName = maskName(tempMember.userName);
+  useEffect(() => {
+    // 사용자의 이름을 가져오기 위한 API 호출
+    const fetchUserName = async () => {
+      try {
+        const userInfo = await getUserInfoApi({ userSeq: userSeq });
+        setUserName(userInfo.userName);
+      } catch (error) {
+        console.error('Error fetching user name:', error);
+      }
+    };
+
+    // 계좌 정보를 가져오기 위한 API 호출
+    const fetchAccountInfo = async () => {
+      try {
+        const accountListResponse = await getAccountListApi({ userSeq: currentUserSeq });
+        const account = accountListResponse.list.find((acc) => acc.accountSeq === accountSeq);
+        if (account) {
+          const bankName = bankNumToName[account.bankNum];
+          setAccountInfo({ bankName, accountNum: account.accountNum });
+        }
+      } catch (error) {
+        console.error('Error fetching account info:', error);
+      }
+    };
+
+    fetchUserName();
+    fetchAccountInfo();
+  }, [currentUserSeq, accountSeq]);
+
+  const maskedName = maskName(userName);
 
   return (
     <div className="flex flex-col items-center justify-between h-[90vh] bg-white font-[Nanum_Gothic] pb-10 pt-20">
-      {' '}
-      {/* 상단에 padding-top 추가 */}
       <div className="text-4xl font-bold text-[#FF7F50] mb-16 text-center">
         <span className="font-dela">to</span>{' '}
         <span className="font-[Nanum_Gothic] font-bold text-black text-[1.8rem]">
@@ -30,19 +57,17 @@ function CompletePage() {
         ,&nbsp; <span className="font-dela">ok!</span>
       </div>
       <div className="flex flex-col items-center mb-20">
-        {' '}
-        {/* 하단에 margin-bottom 추가 */}
         <img
           src={took1}
           alt="송금 완료"
           className="w-[130px] h-[150px] mb-10 animate-jump"
         />
         <div className="text-sm text-center mb-1">
-          {maskName(tempMember.userName)} 님에게
+          {maskedName} 님에게
         </div>
         <div className="text-sm mb-5">
           <span className="font-extrabold">
-            {formatNumber(tempMember.cost)}
+            {formatNumber(amount)}
           </span>
           원을 보냈어요.
         </div>
@@ -50,7 +75,7 @@ function CompletePage() {
           <div className="flex justify-between w-full mt-1 mb-1 px-1">
             <div className="text-sm">출금 계좌</div>
             <div className="text-sm">
-              {tempMember.bank}({tempMember.accountNumber.slice(-4)})
+              {accountInfo.bankName} ({accountInfo.accountNum.slice(-4)})
             </div>
           </div>
         </div>

@@ -15,7 +15,7 @@ const PaymentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { seq: currentUserSeq } = useUser();
-  const { userSeq, amount } = location.state || { userSeq: 1, amount: 10000 }; // 임시 데이터
+  const { accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq } = location.state || {};
   const [userName, setUserName] = useState('');
   const [imageNo, setImageNo] = useState(null);
   const [mainAccount, setMainAccount] = useState(null);
@@ -68,8 +68,13 @@ const PaymentPage = () => {
   }, [userSeq, currentUserSeq]);
 
   const handleSendMoney = () => {
-    const accountSeq = selectedAccount ? selectedAccount.accountSeq : mainAccount.accountSeq;
-    navigate('/pwd', { state: { accountSeq, amount, userSeq } });
+    if (selectedAccount) {
+      const { accountSeq, accountNum, bankName } = selectedAccount;
+      navigate('/pwd', { state: { accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq } });
+    } else if (mainAccount) {
+      const { accountSeq, accountNum, bankName } = mainAccount;
+      navigate('/pwd', { state: { accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq } });
+    }
   };
 
   const handleAccountChange = (account) => {
