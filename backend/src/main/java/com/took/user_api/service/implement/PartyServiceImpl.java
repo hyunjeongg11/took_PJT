@@ -288,7 +288,7 @@ public class PartyServiceImpl implements PartyService {
                         .build()
         );
 
-        partyRepository.flush();
+        System.out.println("party: " + party.getCount());
         if (party.getCount() == party.getTotalMember() - 1) {
             done = true;
             party.updateStatus(true);
