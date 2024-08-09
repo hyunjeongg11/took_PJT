@@ -5,6 +5,8 @@ import HistoryCard from '../../components/mypage/tookHistory/historyCard';
 import SendMoneyCard from '../../components/payment/SendMoneyCard';
 import SlideCard from '../../components/payment/SlideCard';
 import { formatDate } from '../../utils/formatDate';
+import { useUser } from '../../store/user';
+import { getMyPartyListApi, partyDetailApi } from '../../apis/payment/jungsan'
 
 const tempParties = [
   {
@@ -268,29 +270,12 @@ const groupByMonth = (items, dateKey) => {
 };
 
 function MyTookPage() {
-  const [selectedTab, setSelectedTab] = useState('받을 돈');
   const [showSlide, setShowSlide] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
-  const myUserSeq = 1;
-
-  const filteredParties = tempParties.filter((party) => {
-    const members = tempMembers.filter(
-      (member) => member.party_seq === party.party_idx
-    );
-    const isLeader = members.some(
-      (member) => member.isLeader === (selectedTab === '받을 돈')
-    );
-    return isLeader;
-  });
-
-  const groupedParties = groupByMonth(filteredParties, 'createdAt');
-
-  const filteredMembers = tempMembers.filter((member) => {
-    const party = tempParties.find((p) => p.party_idx === member.party_seq);
-    return member.user_seq !== myUserSeq && member.isLeader && party;
-  });
-
-  const groupedMembers = groupByMonth(filteredMembers, 'createdAt');
+  const { seq } = useUser();
+  const myUserSeq = seq;
+  
+  const groupedMembers = groupByMonth(tempMembers, 'createdAt');
 
   const sendMoneyData = groupedMembers;
 
@@ -308,40 +293,10 @@ function MyTookPage() {
         </div>
       </div>
       <div className=" w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
-      <div className="flex justify-around mt-4 border-b-2 border-gray-200">
-        <button
-          className={`py-2 ${selectedTab === '받을 돈' ? 'border-b-2 border-black font-bold' : 'text-gray-500'}`}
-          onClick={() => setSelectedTab('받을 돈')}
-        >
-          받을 돈
-        </button>
-        <button
-          className={`py-2 ${selectedTab === '보낼 돈' ? 'border-b-2 border-black font-bold' : 'text-gray-500'}`}
-          onClick={() => setSelectedTab('보낼 돈')}
-        >
-          보낼 돈
-        </button>
-      </div>
       <div className="mt-2 w-full min-h-[0.5px]" />
 
       <div className="flex flex-col mt-4 px-4">
-        {selectedTab === '받을 돈'
-          ? Object.keys(groupedParties).map((month) => (
-              <div key={month}>
-                <div className="text-sm font-bold text-gray-700 mb-4">
-                  {month}
-                </div>
-                {groupedParties[month].map((party) => (
-                  <Link to={`/tookdetails`} key={party.party_idx}>
-                    <HistoryCard
-                      {...party}
-                      createdAt={formatDate(party.createdAt)}
-                    />
-                  </Link>
-                ))}
-              </div>
-            ))
-          : Object.keys(sendMoneyData).map((month) => (
+        {Object.keys(sendMoneyData).map((month) => (
               <div key={month}>
                 <div className="text-sm font-bold text-gray-700 mb-4">
                   {month}

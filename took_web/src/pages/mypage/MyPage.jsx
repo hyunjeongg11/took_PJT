@@ -5,6 +5,7 @@ import { useUser } from '../../store/user';
 import { useNavigate } from 'react-router-dom';
 import { logoutApi, getUserInfoApi } from '../../apis/user';
 import backIcon from '../../assets/delivery/whiteBack.svg';
+
 const BackButton = () => {
   const navigate = useNavigate();
   const handleBackClick = () => {
@@ -33,7 +34,6 @@ function MyPage() {
       try {
         const params = { userSeq: seq };
         const response = await getUserInfoApi(params);
-        console.log(response)
         if (response) {
           setUserInfo({
             userName: response.userName,
@@ -90,6 +90,7 @@ function MyPage() {
               />
             </Link>
           </div>
+          <Link to="/mytookmoney">
           <div className="flex gap-5 mt-5 w-full text-black">
             <div className="flex flex-1 gap-2.5 whitespace-nowrap leading-[150%]">
               <img
@@ -99,10 +100,8 @@ function MyPage() {
               />
               <div className="my-auto">툭머니</div>
             </div>
-            <div className="my-auto leading-5">
-              24,000<span className="">원</span>
-            </div>
           </div>
+          </Link>
           <Link to="/tookHistory">
             <div className="flex gap-3.5 mt-9 leading-5">
               <img

@@ -321,9 +321,60 @@ export const partyDeleteApi = async (params) => {
 //     ]
 //   }
 // 파티 상세 조회
-export const partyDetailApi = async (params) => {
+export const partyDetailApi = async (partySeq) => {
   try {
-    const response = await request.delete('/api/pay/party-detail', params);
+    const response = await request.get(`/api/pay/party-detail${partySeq}`);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// 내가 참가하고 있는 파티 목록
+export const getMyPartyListApi = async (userSeq) => {
+  try {
+    const response = await request.get(`/api/pay/my-party-list/${userSeq}`);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+// 택시 정산 실결제
+export const fianlTaxiParty = async (params) => {
+  try {
+    const response = await request.post('/api/pay/final-taxi-party', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// 택시 정산 파티 생성(가결제시)
+export const makeTaxiPartyApi = async (params) => {
+  try {
+    const response = await request.post('/api/pay/make-taxi-party', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+
+// 택시 잔돈 정산
+export const restCostPayApi = async (params) => {
+  try {
+    const response = await request.post('/api/pay/rest-cost-pay', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// 개인 거래 내역 리스트 조회
+export const payHistoryApi = async (userSeq) => {
+  try {
+    const response = await request.get(`/api/pay/pay-history/${userSeq}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);
