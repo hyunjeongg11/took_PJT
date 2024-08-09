@@ -7,10 +7,17 @@ import { handleApiError } from '../errorHandling';
   "userSeq": 1,
   "title": "친구들과의 모임",
   "category": 1,
+<<<<<<< HEAD
   "cost": 100000, // 0으로 설정해도 됨
   "totalMember": 10,
   "reciever": false, // null 가능
   "deliveryTip": 5000 // null 가능
+=======
+  "cost": 100000,
+  "totalMember": 10,
+  "reciever": false,
+  "deliveryTip": 5000
+>>>>>>> feature/taxi_Cho
 }
 응답
 {

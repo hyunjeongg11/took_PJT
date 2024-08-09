@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+import React from 'react';
+
+function SignupPage() {
+  return <div>Signup Page</div>;
+=======
 import React, { useState } from "react";
 import BackButton from "../components/common/BackButton";
 import { isValidEmail, isValidPassword } from "../utils/validation";
@@ -194,6 +200,7 @@ function SignupPage() {
       </div>
     </div>
   );
+>>>>>>> origin/dev-fe
 }
 
 export default SignupPage;

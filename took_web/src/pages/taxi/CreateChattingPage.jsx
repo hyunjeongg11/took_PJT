@@ -1,22 +1,83 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import searchIcon from '../../assets/taxi/search.png';
+import { useUser } from '../../store/user.js';
+import { usePosition } from '../../store/position.js';
+import { createChatApi } from '../../apis/chat/chat.js';
+import {
+  createTaxiPartyApi,
+  addTaxiPartyMemberApi,
+  calculateIndividualExpectedCostApi,
+  isUserJoinedTaxiPartyApi,
+} from '../../apis/taxi.js';
 
-const tempUser = {
-  gender: '여성',
-};
-
-function CreateChattingPage() {
+const CreateChattingPage = () => {
   const [destination, setDestination] = useState('');
   const [userCount, setUserCount] = useState(1);
   const [genderPreference, setGenderPreference] = useState('무관');
+  const { seq: userSeq } = useUser();
+  const { latitude, longitude } = usePosition();
+  const navigate = useNavigate();
 
-  const handleCreateChatRoom = () => {
-    // todo: 채팅방 생성 로직을 추가
-    console.log('목적지:', destination);
-    console.log('모집 인원:', userCount);
-    console.log('모집 성별:', genderPreference);
-    // 일단 이렇게
+  const handleCreateChatRoom = async () => {
+    try {
+      // 1. 파티 참가 여부 확인
+      const isJoined = await isUserJoinedTaxiPartyApi(userSeq);
+      if (isJoined) {
+        alert('이미 참여중입니다');
+        navigate('/taxi/main');
+        return;
+      }
+
+      // 2. 방생성
+      const chatParams = {
+        roomTitle: destination,
+        userSeq,
+        category: 2, // 택시 카테고리 : 2
+      };
+      const chatResponse = await createChatApi(chatParams);
+      const { roomSeq } = chatResponse;
+
+      // 3. 파티 생성
+      const genderValue = genderPreference === '동성';
+
+      const taxiParams = {
+        gender: genderValue,
+        max: parseInt(userCount, 10),
+        roomSeq,
+        userSeq,
+      };
+      const taxiResponse = await createTaxiPartyApi(taxiParams);
+      const { taxiSeq } = taxiResponse;
+
+      // 4. 비용 계산
+      const costParams = {
+        startLat: latitude,
+        startLon: longitude,
+        endLat: 35, // todo : 임시로 35로 설정
+        endLon: 128, // todo : 임시로 128로 설정
+      };
+      const costResponse = await calculateIndividualExpectedCostApi(costParams);
+      const { cost } = costResponse;
+
+      // 5. 방장 정보 추가
+      const memberParams = {
+        taxiSeq,
+        userSeq,
+        destiName: destination,
+        destiLat: 35, // 임시로 35로 설정
+        destiLon: 128, // 임시로 128로 설정
+        cost,
+        routeRank: 1,
+      };
+      await addTaxiPartyMemberApi(memberParams);
+
+      alert('채팅방과 택시 파티가 성공적으로 생성되었습니다.');
+    } catch (error) {
+      console.error('Error creating chat room or taxi party:', error);
+      alert('채팅방 또는 택시 파티 생성 중 오류가 발생했습니다.');
+    }
   };
 
   return (
@@ -93,6 +154,6 @@ function CreateChattingPage() {
       </button>
     </div>
   );
-}
+};
 
 export default CreateChattingPage;

@@ -1,45 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BackButton from '../../components/common/BackButton';
 import SelectArrow from '../../assets/payment/selectArrow.png';
-import ProfileImg from '../../assets/profile/img11.png';
 import { formatNumber } from '../../utils/format';
-import { banks, stocks } from '../../utils/bankdata';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AccountCard from '../../components/payment/AccountCard';
+import getProfileImagePath from '../../utils/getProfileImagePath';
+import { getUserInfoApi } from '../../apis/user';
+import { getMainAccount } from '../../apis/account/oneclick';
+import { getAccountListApi } from '../../apis/account/info';
+import { bankNumToName } from '../../assets/payment/index.js';
+import { useUser } from '../../store/user';
 
-const tempData = [
-  {
-    bankName: '국민은행',
-    accountNum: '1234568910',
-    accountName: '별명 미설정',
-    balance: 1620,
-  },
-  {
-    bankName: '신한은행',
-    accountNum: '0123451234',
-    accountName: 'Deep Dream',
-    balance: 5400,
-  },
-  {
-    bankName: '우리은행',
-    accountNum: '1597535678',
-    accountName: '우리 카드',
-    balance: 3200,
-  },
-];
-
-function PaymentPage({
-  userName = '사용자',
-  amount,
-  account = '국민은행 8910',
-  accountBalance = 1620, // 계좌 잔액 기본값 추가
-}) {
+const PaymentPage = () => {
   const navigate = useNavigate();
-  const [selectedAccount, setSelectedAccount] = useState(tempData[0]);
+  const location = useLocation();
+  const { seq: currentUserSeq } = useUser();
+  const { userSeq, amount } = location.state || { userSeq: 1, amount: 10000 }; // 임시 데이터
+  const [userName, setUserName] = useState('');
+  const [imageNo, setImageNo] = useState(null);
+  const [mainAccount, setMainAccount] = useState(null);
+  const [accountList, setAccountList] = useState([]);
+  const [selectedAccount, setSelectedAccount] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userInfo = await getUserInfoApi({ userSeq });
+        setUserName(userInfo.userName);
+        setImageNo(userInfo.imageNo);
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
+    };
+
+    const fetchMainAccount = async () => {
+      try {
+        const mainAccountResponse = await getMainAccount(currentUserSeq);
+        const bankName = bankNumToName[mainAccountResponse.bankNum];
+        const mainAccount = {
+          ...mainAccountResponse,
+          bankName: bankName ? (bankName.length === 2 ? `${bankName}은행` : bankName) : ''
+        };
+        setMainAccount(mainAccount);
+        setSelectedAccount(mainAccount);
+      } catch (error) {
+        console.error('Error fetching main account:', error);
+      }
+    };
+
+    const fetchAccountList = async () => {
+      try {
+        const accountListResponse = await getAccountListApi({ userSeq: currentUserSeq });
+        const accountList = accountListResponse.list.map((account) => ({
+          ...account,
+          bankName: bankNumToName[account.bankNum],
+        }));
+        setAccountList(accountList);
+      } catch (error) {
+        console.error('Error fetching account list:', error);
+      }
+    };
+
+    fetchUserInfo();
+    fetchMainAccount();
+    fetchAccountList();
+  }, [userSeq, currentUserSeq]);
+
   const handleSendMoney = () => {
-    console.log('송금');
+    const accountSeq = selectedAccount ? selectedAccount.accountSeq : mainAccount.accountSeq;
+    navigate('/pwd', { state: { accountSeq, amount, userSeq } });
   };
 
   const handleAccountChange = (account) => {
@@ -61,8 +91,8 @@ function PaymentPage({
 
         <div className="mt-10 text-center">
           <img
-            src={ProfileImg}
-            alt="Watermelon"
+            src={getProfileImagePath(imageNo)}
+            alt="User"
             className="w-20 h-20 mx-auto animate-shake"
           />
           <div className="mt-10 text-xl font-bold text-black">
@@ -81,17 +111,19 @@ function PaymentPage({
         <div className="flex items-center justify-between w-full px-8">
           <div className="text-gray-500 font-bold">출금계좌</div>
           <div className="relative">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="flex items-center space-x-1"
-            >
-              <span className="text-black font-bold mr-1">
-                {selectedAccount.bankName} (
-                {selectedAccount.accountNum.slice(-4)}) (
-                {formatNumber(selectedAccount.balance)}원)
-              </span>
-              <img src={SelectArrow} alt="selectArrow" />
-            </button>
+            {selectedAccount && selectedAccount.accountNum && (
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center space-x-1"
+              >
+                <span className="text-black font-bold mr-1">
+                  {selectedAccount.bankName} (
+                  {selectedAccount.accountNum.slice(-4)}) (
+                  {formatNumber(selectedAccount.balance)}원)
+                </span>
+                <img src={SelectArrow} alt="selectArrow" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -113,7 +145,7 @@ function PaymentPage({
 
       {isModalOpen && (
         <AccountCard
-          accounts={tempData}
+          accounts={accountList}
           onClose={() => setIsModalOpen(false)}
           onSelect={handleAccountChange}
         />

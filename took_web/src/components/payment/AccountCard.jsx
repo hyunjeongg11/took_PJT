@@ -1,6 +1,6 @@
 import React from 'react';
-// import { formatAccountNumber } from '../../utils/accountNumFormat'
 import { formatNumber } from '../../utils/format';
+import { bankIcons, bankNumToName } from '../../assets/payment/index.js';
 
 const bankImages = import.meta.glob('../../assets/payment/bank/*.png', {
   eager: true,
@@ -10,14 +10,13 @@ const stockImages = import.meta.glob('../../assets/payment/stock/*.png', {
 });
 
 function AccountCard({ accounts, onClose, onSelect }) {
-  const getImagePath = (bankName) => {
+  const getImagePath = (bankNum) => {
+    const bankName = bankNumToName[bankNum];
     if (bankName.endsWith('은행')) {
-      bankName = bankName.slice(0, -2);
-      return bankImages[`../../assets/payment/bank/${bankName}.png`].default;
+      return bankImages[`../../assets/payment/bank/${bankName.slice(0, -2)}.png`].default;
     }
     if (bankName.endsWith('증권')) {
-      bankName = bankName.slice(0, -2);
-      return stockImages[`../../assets/payment/stock/${bankName}.png`].default;
+      return stockImages[`../../assets/payment/stock/${bankName.slice(0, -2)}.png`].default;
     }
     return bankImages[`../../assets/payment/bank/${bankName}.png`].default;
   };
@@ -33,7 +32,7 @@ function AccountCard({ accounts, onClose, onSelect }) {
             className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
           >
             <img
-              src={getImagePath(account.bankName)}
+              src={getImagePath(account.bankNum)}
               alt={`${account.bankName} 로고`}
               className="w-10 h-10 mr-2"
             />
