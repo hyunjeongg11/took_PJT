@@ -108,19 +108,7 @@ public class TaxiService {
     @Transactional
     public void statusTaxi(TaxiStatusRequest request) {
         Taxi taxi = taxiRepository.findById(request.getTaxiSeq()).orElseThrow();
-        switch (taxi.getStatus()) {
-            case OPEN:
-                taxi.updateStatus(Taxi.Status.FILLED);
-                break;
-            case FILLED:
-                taxi.updateStatus(Taxi.Status.BOARD);
-                break;
-            case BOARD:
-                taxi.updateStatus(Taxi.Status.DONE);
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + taxi.getStatus());
-        }
+        taxi.updateStatus(Taxi.Status.valueOf(request.getStatus()));
     }
 
     /**

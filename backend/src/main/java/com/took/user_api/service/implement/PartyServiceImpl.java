@@ -385,7 +385,7 @@ public class PartyServiceImpl implements PartyService {
                     .party(newParty)
                     .user(userEntity)
                     .cost(0L)
-                    .status(true)
+                    .status(false)
                     .receive(false)
                     .leader(check)
                     .createdAt(LocalDateTime.now())
@@ -418,27 +418,45 @@ public class PartyServiceImpl implements PartyService {
 
         long receiveCost = party.getReceiveCost();
 
+        boolean check = true;
         for (FinalTaxiPartyRequest.User user : requestBody.getUsers()) {
             MemberEntity member = memberRepositoryCustom.findMemberByPartySeqAndUserSeq(party.getPartySeq(), user.getUserSeq());
             if (member.isLeader()) continue; // 결제자는 패스
 
             member.updateCost(user.getCost());
             long fakecost = member.getFakeCost();
-            long exchange = fakecost - user.getCost();
 
             UserEntity tmp = userRepository.findById(user.getUserSeq()).orElseThrow();
             AccountEntity account = accountRepository.findByUserAndMainTrue(tmp);
             BankEntity bank = bankRepository.findById(account.getBank().getBankSeq()).orElseThrow();
-            long balance = bank.getBalance() + exchange;
-            bank.updateBalance(balance);
+            long exchange = fakecost - user.getCost();
 
-            fcmService.sendMessage(
-                    MessageRequest.builder()
-                            .title("택시 결제 알림")
-                            .body(exchange + "원이 반환 되었습니다.")
-                            .userSeqList(List.of(user.getUserSeq()))
-                            .build()
-            );
+            if(exchange < 0) {
+                exchange = Math.abs(exchange);
+                member.updateRestCost(exchange);
+                check = false;
+
+                fcmService.sendMessage(
+                        MessageRequest.builder()
+                                .title("택시 결제 알림")
+                                .body(exchange + "원이 부족합니다. 추가 송금 해주세요!")
+                                .userSeqList(List.of(user.getUserSeq()))
+                                .build()
+                );
+            }
+            else {
+                long balance = bank.getBalance() + exchange;
+                bank.updateBalance(balance);
+                member.updateStatus(true);
+
+                fcmService.sendMessage(
+                        MessageRequest.builder()
+                                .title("택시 결제 알림")
+                                .body(exchange + "원이 반환 되었습니다.")
+                                .userSeqList(List.of(user.getUserSeq()))
+                                .build()
+                );
+            }
         }
 
         MemberEntity leaderMember = memberRepository.findByPartyAndLeaderTrue(party);
@@ -448,14 +466,16 @@ public class PartyServiceImpl implements PartyService {
         BankEntity bank = bankRepository.findById(account.getBank().getBankSeq()).orElseThrow();
         long balance = bank.getBalance() + receiveCost;
         bank.updateBalance(balance);
+        party.updateStatus(check);
 
         fcmService.sendMessage(
                 MessageRequest.builder()
                         .title("택시 결제 알림")
-                        .body(receiveCost + "원이 정산 되었습니다.")
+                        .body(receiveCost + "원이 입금 되었습니다.")
                         .userSeqList(List.of(leader.getUserSeq()))
                         .build()
         );
     }
+
 
 }

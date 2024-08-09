@@ -50,6 +50,9 @@ public class MemberEntity {
     @Column(name = "fake_cost")
     private Long fakeCost;
 
+    @Column(name = "rest_cost")
+    private Long restCost;
+
     public void updateCost(Long cost) {
         this.cost = cost;
     }
@@ -60,5 +63,9 @@ public class MemberEntity {
 
     public void updateRecieve(boolean b) {
         this.receive = b;
+    }
+
+    public void updateRestCost(Long restCost) {
+        this.restCost = restCost;
     }
 }

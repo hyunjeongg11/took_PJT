@@ -194,6 +194,7 @@ public class DeliveryController {
     ResponseEntity<List<DeliveryGuestSelectResponse>> getGuestList(
             @PathVariable @Parameter(description = "조회할 배달 글의 고유 번호", required = true) Long deliverySeq) {
         List<DeliveryGuestSelectResponse> response = deliveryGuestService.getGuestList(deliverySeq);
+        System.out.println("배달 파티 참가자 리스트: " + response);
         return ResponseEntity.ok(response);
     }
 
