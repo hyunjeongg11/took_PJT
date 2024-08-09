@@ -97,9 +97,7 @@ public class DeliveryService {
         System.out.println("request: " + request.getLat() + ", " + request.getLon());
         return deliveryList.stream()
                 .map(delivery -> {
-                    double deliveryLat = delivery.getPickupLat();
-                    double deliveryLon = delivery.getPickupLon();
-                    double distance = calculateDistance(request.getLat(), request.getLon(), deliveryLat, deliveryLon);
+                    double distance = calculateDistance(request.getLat(), request.getLon(), delivery.getPickupLat(), delivery.getPickupLon());
                     if (distance <= 1000) { // 거리 범위를 1000m로 설정
                         return new DeliverySelectResponse(delivery);
                     } else {

@@ -18,4 +18,10 @@ public class TaxiCreateRequest {
 
     @Schema(description = "사용자 식별 번호", example = "456")
     private Long userSeq;
+
+    @Schema(description = "위도", example = "37.123456")
+    private double lat;
+
+    @Schema(description = "경도", example = "127.123456")
+    private double lon;
 }

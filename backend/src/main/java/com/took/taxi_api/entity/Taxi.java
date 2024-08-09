@@ -67,6 +67,12 @@ public class Taxi {
     @Column(nullable = false)
     private Long master;  // 결제자 번호
 
+    @Column(nullable = false) 
+    private double writeLat; // 작성한 위치
+
+    @Column(nullable = false)
+    private double writeLon; // 작성한 위치
+
     public void updateTaxi(Long master, int max, boolean gender) {
         this.master = master;
         this.max = max;

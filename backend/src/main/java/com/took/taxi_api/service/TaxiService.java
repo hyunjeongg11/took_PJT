@@ -1,6 +1,5 @@
 package com.took.taxi_api.service;
 
-import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.taxi_api.dto.*;
 import com.took.taxi_api.entity.Taxi;
 import com.took.taxi_api.entity.TaxiGuest;
@@ -15,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service  // 이 클래스가 서비스 레이어의 빈으로 등록됨을 나타냅니다.
@@ -24,7 +24,6 @@ public class TaxiService {
     private final TaxiRepository taxiRepository;  // TaxiRepository를 통해 데이터베이스 작업을 처리합니다.
     private final TaxiGuestRepository taxiGuestRepository;
     private final UserRepository userRepository;
-    private final ChatRoomRepository chatRoomRepository;
 
 
     /**
@@ -46,6 +45,8 @@ public class TaxiService {
                 .master(request.getUserSeq())  // 결제자 설정
                 .roomSeq(request.getRoomSeq())  // 채팅방 참조 설정
                 .user(user)  // 작성자 설정
+                .writeLat(request.getLat())  // 작성한 위도 설정
+                .writeLon(request.getLon())  // 작성한 경도 설정
                 .build();
         // 생성된 Taxi 엔티티를 데이터베이스에 저장합니다.
         Taxi response = taxiRepository.save(taxi);
@@ -55,16 +56,39 @@ public class TaxiService {
     /**
      * 특정 사용자들의 택시 목록을 조회합니다.
      *
-     * @param request TaxiListSelectRequest 객체로, 사용자 번호 리스트를 담고 있습니다.
+     * @param request TaxiListSelectRequest 객체로, 택시 목록 조회에 필요한 정보를 담고 있습니다.
      * @return 사용자들의 택시 목록
      */
     @Transactional
     public List<TaxiSelectResponse> listTaxi(TaxiListSelectRequest request) {
-        List<UserEntity> users = userRepository.findByUserSeqIn(request.getUserSeqs());
-        List<Taxi> taxis = taxiRepository.findTaxisByUsers(users);
+        List<Taxi> taxis = taxiRepository.findAll();
         return taxis.stream()
-                .map(TaxiSelectResponse::new)
+                .map(taxi -> {
+                    double distance = calculateDistance(taxi.getWriteLat(), taxi.getWriteLon(), request.getLat(), request.getLon());
+                    if (distance <= 1000) { // 거리 범위를 1000m로 설정
+                        return new TaxiSelectResponse(taxi);
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull) // null 값 필터링
                 .collect(Collectors.toList());
+    }
+
+    // 두 지점 간의 거리 계산 (단위: m)
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        } else {
+            double theta = lon1 - lon2;
+            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2))
+                    + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                    * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 60 * 1.1515 * 1.609344;  // km 단위로 변환
+            return (dist * 1000);  // m 단위로 변환
+        }
     }
 
     /**

@@ -25,9 +25,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -98,20 +99,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Long> searchNearUser(Long userSeq, double lat, double lon) {
         List<UserEntity> userList = userRepository.findAll();
-        List<Long> nearUserSeqList = new ArrayList<>();
-
-        for (UserEntity user : userList) {
-            // user.getLat() 또는 user.getLon()이 null이면 루프를 건너뜁니다.
-            if (user.getLat() == null || user.getLon() == null) {
-                continue;
-            }
-            double distance = calculateDistance(lat, lon, user.getLat(), user.getLon());
-
-            if (distance <= 1000) {
-                nearUserSeqList.add(user.getUserSeq());
-            }
-        }
-        return nearUserSeqList;
+        return userList.stream()
+                .map(user -> {
+                    if(user.getLat() == null || user.getLon() == null) {
+                        return null;
+                    }
+                    double distance = calculateDistance(lat, lon, user.getLat(), user.getLon());
+                    if(distance <= 1000) {
+                        return user.getUserSeq();
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull) // null 값 필터링
+                .collect(Collectors.toList());
     }
 
     @Transactional
