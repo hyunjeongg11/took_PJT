@@ -239,14 +239,13 @@ public class TaxiController {
     }
 
     @Operation(summary = "게스트의 목적지 및 비용 설정", description = "게스트의 목적지 및 비용을 설정합니다.")
-    @PutMapping("/guest/set/destinataionAndCost")
+    @PutMapping("/guest/set/destinationAndCost")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "게스트의 목적지 및 비용 설정 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
     public ResponseEntity<?> setDestinationAndCost(
             @RequestBody @Parameter(description = "게스트 목적지 및 비용 설정 요청 데이터", required = true) GuestSetDestinationAndCostRequest request) {
-        System.out.println("게스트 목적지 및 비용 설정 요청: " + request);
         taxiGuestService.setDestinationAndCost(request);
         return ResponseEntity.noContent().build();
     }
