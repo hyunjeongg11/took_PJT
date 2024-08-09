@@ -151,11 +151,12 @@ public class ShopService {
         PartyEntity party = partyRepository.findById(shop.getPartySeq()).orElseThrow();
         MemberEntity member = memberRepository.findByPartyAndUser(party, user);
         member.updateRecieve(true);
-        shopGuestRepository.flush();
-        if(shopGuestRepository.areAllGuestsPickedUp(shopGuest.getShop())) {
+
+        if (!shopGuestRepository.existsByShopAndPickUpFalse(shop)) {
             shop.updateStatus(Shop.statusType.COMPLETED);
             partyService.deligonguHostRecieve(shop.getPartySeq(), shop.getUser().getUserSeq());
         }
+
     }
 
     @Transactional

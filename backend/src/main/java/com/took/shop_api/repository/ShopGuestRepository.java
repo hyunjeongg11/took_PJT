@@ -10,9 +10,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ShopGuestRepository extends JpaRepository<ShopGuest, Long>, ShopGuestCustomRepository {
+public interface ShopGuestRepository extends JpaRepository<ShopGuest, Long> {
     ShopGuest findByShopAndUser(Shop shop, UserEntity user);
     @Transactional
     void deleteByShopAndUser(Shop shop, UserEntity user);
     List<ShopGuest> findAllByShop(Shop shop);
+
+    boolean existsByShopAndPickUpFalse(Shop shop);
 }
