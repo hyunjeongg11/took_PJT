@@ -91,7 +91,8 @@ const renderMessage = (item, handlePayment) => (
                   <>
                     <hr className="my-2 border-neutral-300 border-dashed" />
                     <strong>
-                      - 요청 금액: {item.amount ? item.amount.toLocaleString() : '0'}원
+                      - 요청 금액:{' '}
+                      {item.amount ? item.amount.toLocaleString() : '0'}원
                     </strong>
                   </>
                 )}
@@ -99,14 +100,23 @@ const renderMessage = (item, handlePayment) => (
                   <>
                     <hr className="my-2 border-neutral-300 border-dashed" />
                     <div>
-                      - 선결제 금액: {item.prePaymentAmount ? item.prePaymentAmount.toLocaleString() : '0'}원
+                      - 선결제 금액:{' '}
+                      {item.prePaymentAmount
+                        ? item.prePaymentAmount.toLocaleString()
+                        : '0'}
+                      원
                     </div>
                     <div>
-                      - 실결제 금액: {item.actualPaymentAmount ? item.actualPaymentAmount.toLocaleString() : '0'}
+                      - 실결제 금액:{' '}
+                      {item.actualPaymentAmount
+                        ? item.actualPaymentAmount.toLocaleString()
+                        : '0'}
                       원
                     </div>
                     <div className="font-bold">
-                      - 차액: {item.difference ? item.difference.toLocaleString() : '0'}원
+                      - 차액:{' '}
+                      {item.difference ? item.difference.toLocaleString() : '0'}
+                      원
                     </div>
                   </>
                 )}
@@ -114,10 +124,23 @@ const renderMessage = (item, handlePayment) => (
                   item.category === 'groupby') && (
                   <>
                     <hr className="my-2 border-neutral-300 border-dashed" />
-                    <div>- 주문금액: {item.orderAmount ? item.orderAmount.toLocaleString() : '0'}원</div>
-                    <div>- 배달팁: {item.deliveryTip ? item.deliveryTip.toLocaleString() : '0'}원</div>
+                    <div>
+                      - 주문금액:{' '}
+                      {item.orderAmount
+                        ? item.orderAmount.toLocaleString()
+                        : '0'}
+                      원
+                    </div>
+                    <div>
+                      - 배달팁:{' '}
+                      {item.deliveryTip
+                        ? item.deliveryTip.toLocaleString()
+                        : '0'}
+                      원
+                    </div>
                     <div className="font-bold">
-                      - 합계: {item.amount ? item.amount.toLocaleString() : '0'}원
+                      - 합계: {item.amount ? item.amount.toLocaleString() : '0'}
+                      원
                     </div>
                   </>
                 )}
@@ -138,7 +161,6 @@ const renderMessage = (item, handlePayment) => (
     </div>
   </div>
 );
-
 
 function TookChattingPage() {
   const navigate = useNavigate();
@@ -177,13 +199,17 @@ function TookChattingPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getAlarmListApi( seq );
-        
-        const formattedData = response.map(alarm => ({
-          category: alarm.category === 4 ? 'dutchpay' :
-                    alarm.category === 2 ? 'taxi' :
-                    alarm.category === 1 ? 'delivery' :
-                    'groupby',
+        const response = await getAlarmListApi(seq);
+
+        const formattedData = response.map((alarm) => ({
+          category:
+            alarm.category === 4
+              ? 'dutchpay'
+              : alarm.category === 2
+                ? 'taxi'
+                : alarm.category === 1
+                  ? 'delivery'
+                  : 'groupby',
           requestDate: alarm.createAt,
           amount: alarm.cost,
           prePaymentAmount: alarm.preCost,
@@ -196,18 +222,18 @@ function TookChattingPage() {
           numCategory: alarm.category,
           partySeq: alarm.partySeq,
         }));
-        console.log(formattedData)
+        console.log(formattedData);
         setTempData(formattedData);
       } catch (error) {
         console.error('데이터를 가져오는 중 에러 발생', error);
       }
     };
-  
+
     fetchData();
   }, []);
   const sortedTempData = [...tempData]
-  .sort((a, b) => new Date(b.chatTime) - new Date(a.chatTime))
-  .reverse();
+    .sort((a, b) => new Date(b.chatTime) - new Date(a.chatTime))
+    .reverse();
   return (
     <div className="flex flex-col bg-[#FFF7ED]  w-full h-full mx-auto relative">
       <div className="fixed w-full bg-[#FFF7ED] ">

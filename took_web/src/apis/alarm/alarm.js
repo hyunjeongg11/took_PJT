@@ -9,4 +9,4 @@ export const getAlarmListApi = async (userSeq) => {
   } catch (error) {
     return handleApiError(error);
   }
-}
+};
