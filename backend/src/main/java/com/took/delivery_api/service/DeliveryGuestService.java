@@ -61,7 +61,6 @@ public class DeliveryGuestService {
     public List<DeliveryGuestSelectResponse> getGuestList(Long deliverySeq) {
         Delivery delivery = deliveryRepository.findById(deliverySeq).orElseThrow();
         List<DeliveryGuest> deliveryGuests = deliveryGuestRepository.findAllByDelivery(delivery);
-        System.out.println("파티 참가자 리스트 entity: " + deliveryGuests);
         return deliveryGuests.stream()
                 .map(DeliveryGuestSelectResponse::new)
                 .toList();
