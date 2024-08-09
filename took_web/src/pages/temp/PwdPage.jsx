@@ -78,7 +78,7 @@ function PwdPage() {
     window.onAuthenticate = (success) => {
       if (success) {
           alert('생체 인증 성공');
-          msgToAndroid('생체 인증 성공');
+          msgToAndroid('생체 인증 성공');}
           setInput('');
           setIsError(false);
           setAttemptCount(0); // 성공 시 시도 횟수 초기화
