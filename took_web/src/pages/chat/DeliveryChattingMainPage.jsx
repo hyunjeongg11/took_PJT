@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
-import {
-  getChatRoomMessageApi,
-  deleteRoomApi,
-  getUsersApi,
-} from '../../apis/chat/chat';
+import { getDeliveryByRoom } from '../../apis/findByRoom.js';
+import { getChatRoomMessageApi, getUsersApi } from '../../apis/chat/chat';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../../store/user';
-import { formatDateOnly, formatTime } from '../../utils/formatDate';
+import { formatTime } from '../../utils/formatDate';
 import speaker from '../../assets/common/speaker.png';
 import delivery from '../../assets/chat/delivery.png';
 import calculator from '../../assets/chat/calculator.png';
@@ -27,6 +24,7 @@ import DeliveryModal from '../../components/chat/DeliveryModal';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import ParticipantList from '../../components/chat/ParticipantList';
+import { Link } from 'react-router-dom';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -44,13 +42,14 @@ function ChattingMainPage() {
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const actionIconsRef = useRef(null);
-  const lastDateRef = useRef('');
   const textareaRef = useRef(null);
   const stompClient = useRef(null);
   const currentSubscription = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [deliveryInfo, setDeliveryInfo] = useState(null);
   const chatRoom = location.state?.chatRoom || null;
+  const isLeader = chatRoom.userSeq === seq;
 
   useEffect(() => {
     const socket = new SockJS(`${SERVER_URL}/ws`);
@@ -60,6 +59,7 @@ function ChattingMainPage() {
       console.log('WebSocket connected');
       enterRoom();
       loadUsers();
+      loadDeliveryInfo();
     });
 
     return () => {
@@ -68,6 +68,16 @@ function ChattingMainPage() {
       }
     };
   }, []);
+
+  const loadDeliveryInfo = async () => {
+    try {
+      const response = await getDeliveryByRoom(id);
+      setDeliveryInfo(response);
+      console.log(response);
+    } catch (error) {
+      console.error('Error fetching delivery info:', error);
+    }
+  };
 
   const fetchRoomMessages = async () => {
     try {
@@ -85,7 +95,7 @@ function ChattingMainPage() {
     try {
       const response = await getUsersApi(id);
       setUsers(response);
-      console.log(response);
+      console.log('users', response);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -95,12 +105,6 @@ function ChattingMainPage() {
     if (currentSubscription.current) {
       currentSubscription.current.unsubscribe();
     }
-    // const enterRequest = { roomSeq: id, userSeq: seq };
-    // stompClient.current.send(
-    //   '/pub/room/enter',
-    //   {},
-    //   JSON.stringify(enterRequest)
-    // );
     currentSubscription.current = subscribeToRoomMessages(id);
     fetchRoomMessages();
   };
@@ -149,6 +153,7 @@ function ChattingMainPage() {
         JSON.stringify(leaveRequest)
       );
     }
+    // T0DO: 채팅방 나가기 했을 때 자동으로 정산 파티, 배달 멤버에서도 제거되는지? 아니면 이어서 api 나가기 다 해야하는지.
     navigate(-1);
   };
 
@@ -211,6 +216,23 @@ function ChattingMainPage() {
     }
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (textareaRef.current) {
+        textareaRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-5 py-3">
@@ -230,13 +252,44 @@ function ChattingMainPage() {
           <div className="ml-2 flex-grow">
             <div className="text-sm mt-[2px]"></div>
             {!isCollapsed && (
-              <div className="text-sm text-gray-500">
-                함께 주문하기 :
-                <a href="https://s.baemin.com/bfp.lty8b" className="underline">
-                  {' '}
-                  https://s.baemin.com/bfp.lty8b
-                </a>
-              </div>
+              <>
+                {deliveryInfo?.notice ? (
+                  <div className="text-xs flex-col gap-2 justify-between flex py-2">
+                    <div className="mb-1.5">
+                      수령 장소
+                      <span className="ml-5">
+                        {deliveryInfo?.pickupPlace || ''}
+                      </span>
+                    </div>
+                    <div className="mb-1.5 ">
+                      주문 링크
+                      <span className="ml-5">
+                        <Link to={deliveryInfo.notice} className="underline">
+                          함께 주문하러 가기
+                        </Link>
+                      </span>
+                      <Link
+                        to={`/chat/delivery/${deliveryInfo.deliverySeq}/notice`}
+                      >
+                        <span className="py-1 px-2 ml-16 bg-gray-400 rounded-md  text-white">
+                          수정
+                        </span>
+                      </Link>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-xs flex justify-center py-2">
+                    <button
+                      className="bg-gray-300 font-semibold px-6 py-2 text-white rounded-lg"
+                      onClick={() =>
+                        (window.location.href = `/chat/delivery/${deliveryInfo.deliverySeq}/notice`)
+                      }
+                    >
+                      주문 정보 등록하기
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
           <button onClick={toggleCollapse} className="focus:outline-none">
@@ -361,15 +414,6 @@ function ChattingMainPage() {
           className="w-full px-4 py-12 bg-white flex justify-around"
           ref={actionIconsRef}
         >
-          <div className="flex flex-col items-center mb-4">
-            <div
-              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
-              onClick={() => openModal('calculator')}
-            >
-              <img src={calculator} alt="정산" className="w-6 h-6" />
-            </div>
-            <span className="mt-1 text-[11px] text-gray-500">정산</span>
-          </div>
           <div className="flex flex-col items-center">
             <div
               className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center"
@@ -388,20 +432,38 @@ function ChattingMainPage() {
             </div>
             <span className="mt-1 text-[11px] text-gray-500">배달</span>
           </div>
+          <div className="flex flex-col items-center mb-4">
+            <div
+              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
+              onClick={() => openModal('calculator')}
+            >
+              <img src={calculator} alt="정산" className="w-6 h-6" />
+            </div>
+            <span className="mt-1 text-[11px] text-gray-500">정산</span>
+          </div>
         </div>
       )}
-      {currentModal === 'calculator' && (
+      {currentModal === 'money' && isLeader && (
+        <MoneyModal
+          onClose={closeModal}
+          tempMember={users}
+          deliverySeq={deliveryInfo.deliverySeq}
+        />
+      )}
+      {currentModal === 'calculator' && isLeader && (
         <CalculatorModal
           onClose={closeModal}
           tempMember={users}
           leader={chatRoom.userSeq}
         />
       )}
-      {currentModal === 'money' && (
-        <MoneyModal onClose={closeModal} tempMember={users} />
-      )}
+
       {currentModal === 'delivery' && (
-        <DeliveryModal onClose={closeModal} tempMember={users} />
+        <DeliveryModal
+          onClose={closeModal}
+          tempMember={users}
+          deliverySeq={deliveryInfo.deliverySeq}
+        />
       )}
 
       {showParticipantList && (

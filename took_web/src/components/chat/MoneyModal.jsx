@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const MoneyModal = ({ onClose, tempMember }) => {
+const MoneyModal = ({ onClose, tempMember, deliverySeq }) => {
   const modalRef = useRef(null);
   const navigate = useNavigate();
 
@@ -18,8 +18,6 @@ const MoneyModal = ({ onClose, tempMember }) => {
     };
   }, []);
 
-  const tempUser = tempMember.find((member) => member.user_seq === 2); // 현재 사용자의 user_seq를 1로 설정
-
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div
@@ -30,12 +28,14 @@ const MoneyModal = ({ onClose, tempMember }) => {
         <ul className="text-sm ml-2 mb-3">
           <li
             className="mb-5"
-            onClick={() => navigate('/delivery/input')}
-            tempUser={tempUser}
+            onClick={() =>
+              navigate(`/delivery/input/${deliverySeq}`, {
+                state: { users: [tempMember] },
+              })
+            }
           >
             주문금액 입력하기
           </li>
-          {/* <li>입력 현황보기</li> */}
         </ul>
       </div>
     </div>

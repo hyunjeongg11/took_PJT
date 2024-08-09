@@ -22,6 +22,7 @@ function PwdPage() {
     }
   }, [accountSeq, amount, userSeq, navigate]);
 
+
   const handleButtonClick = (value) => {
     if (input.length < 6) {
       setInput(input + value);
@@ -47,6 +48,7 @@ function PwdPage() {
       setIsError(true);
       setAttemptCount((prev) => prev + 1);
       setInput('');
+
     }
   };
 
@@ -72,6 +74,23 @@ function PwdPage() {
   useEffect(() => {
     if (input.length === 6) {
       checkPassword();
+
+    window.onAuthenticate = (success) => {
+      if (success) {
+          alert('생체 인증 성공');
+          msgToAndroid('생체 인증 성공');
+          setInput('');
+          setIsError(false);
+          setAttemptCount(0); // 성공 시 시도 횟수 초기화
+          navigate('/complete');
+      } else {
+        alert('생체 인증 실패');
+      }
+    };
+
+    if (window.Android) {
+      window.Android.authenticate();
+
     }
 
     window.onAuthenticate = (success) => {
