@@ -235,6 +235,7 @@ public class PartyServiceImpl implements PartyService {
 
 //          맴버 상태 업데이트
         member.updateStatus(true);
+        System.out.println("party 송금전 인원" + party.getCount());
         party.updateCount(1);
 
 //          돈빼주고 저장
@@ -288,7 +289,7 @@ public class PartyServiceImpl implements PartyService {
                         .build()
         );
 
-        System.out.println("party: " + party.getCount());
+        System.out.println("party 송금 후 인원: " + party.getCount());
         if (party.getCount() == party.getTotalMember() - 1) {
             done = true;
             party.updateStatus(true);
