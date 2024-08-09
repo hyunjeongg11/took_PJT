@@ -1,35 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../../components/common/BackButton';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { useUser } from '../../store/user';
-import { getChatRoomMessageApi, getUsersApi } from '../../apis/chat/chat';
-import getProfileImagePath from '../../utils/getProfileImagePath';
-import { formatDateOnly, formatTime } from '../../utils/formatDate';
+import { useNavigate } from 'react-router-dom';
+import { FaPaperPlane, FaArrowDown, FaBars } from 'react-icons/fa';
+import { MdAdd } from 'react-icons/md';
 import speaker from '../../assets/common/speaker.png';
 import listIcon from '../../assets/chat/list.png';
 import locationIcon from '../../assets/chat/location.png';
 import boardIcon from '../../assets/chat/boardTaxi.png';
 import doneIcon from '../../assets/chat/doneTaxi.png';
-import {
-  FaPaperPlane,
-  FaArrowDown,
-  FaTimes,
-  FaBars,
-  FaSignOutAlt,
-} from 'react-icons/fa';
-import { IoIosSettings } from 'react-icons/io';
-import { FaLocationDot, FaCrown, FaCalculator } from 'react-icons/fa6';
-import { MdAdd } from 'react-icons/md';
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
-import ParticipantList from '../../components/chat/ParticipantList';
-import { updateTaxiPartyStatusApi } from '../../apis/taxi'; // Import the new API function
+import { FaCalculator } from 'react-icons/fa6';
+import TaxiChattingMenu from '../../components/taxi/TaxiChattingMenu';
+import getProfileImagePath from '../../utils/getProfileImagePath';
+import { formatDateOnly, formatTime } from '../../utils/formatDate';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-
-// todo: 실제 데이터와 연동해야 함
-
-// todo: 택시 파티 모든 멤버 조회 api 연동
 const tempMember = [
   {
     member_seq: 1,
@@ -78,7 +61,6 @@ const tempMember = [
   },
 ];
 
-// todo: useUser로 현재 로그인한 사용자 데이터와 연동
 const tempUser = {
   user_seq: 1,
   userName: '차민주',
@@ -92,15 +74,15 @@ const tempTaxi = {
   room_seq: 1,
   party_seq: 1,
   room_title: '강서구 명지동',
-  gender: false, // 여성
+  gender: false, 
   count: 4,
   max: 4,
   status: 'OPEN',
   created_at: '2024-07-06T00:23:00',
   finishTime: '2024-07-06T18:30:00',
-  cost: 37000, // 현재 위치에서 목적지까지 예상 비용
-  master: 1, // 방장
-  payer: 1, // 결제자
+  cost: 37000,
+  master: 1,
+  payer: 1,
 };
 
 const tempMessages = [
@@ -153,12 +135,12 @@ function TaxiChattingMainPage() {
   const [inputMessage, setInputMessage] = useState('');
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [showActionIcons, setShowActionIcons] = useState(false);
-  const [showMenu, setShowMenu] = useState(false); // 메뉴 보이기 상태 추가
-  const [showModal, setShowModal] = useState(false); // 모달창 보이기 상태 추가
-  const [modalMessage, setModalMessage] = useState(''); // 모달 메시지 상태 추가
-  const [taxiStatus, setTaxiStatus] = useState(tempTaxi.status); // 택시 상태 추가
-  const [showSettlementButton, setShowSettlementButton] = useState(false); // 정산 버튼 상태 추가
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false); // 키보드 보이기 상태 추가
+  const [showMenu, setShowMenu] = useState(false); 
+  const [showModal, setShowModal] = useState(false); 
+  const [modalMessage, setModalMessage] = useState(''); 
+  const [taxiStatus, setTaxiStatus] = useState(tempTaxi.status); 
+  const [showSettlementButton, setShowSettlementButton] = useState(false); 
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false); 
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
@@ -187,7 +169,7 @@ function TaxiChattingMainPage() {
 
   const getUserProfileImgNo = (user_seq) => {
     const user = tempMember.find((member) => member.user_seq === user_seq);
-    return user ? user.imgNo : 1; // imgNo 기본값을 1로 설정
+    return user ? user.imgNo : 1;
   };
 
   const handleScroll = () => {
@@ -263,13 +245,11 @@ function TaxiChattingMainPage() {
   };
 
   const handleConfirmBoardTaxi = async () => {
-    await updateTaxiPartyStatusApi({ taxiSeq: tempTaxi.taxi_seq });
     setTaxiStatus('BOARD');
     closeModal();
   };
 
   const handleConfirmDoneTaxi = async () => {
-    await updateTaxiPartyStatusApi({ taxiSeq: tempTaxi.taxi_seq });
     setTaxiStatus('DONE');
     setShowSettlementButton(true);
     closeModal();
@@ -303,11 +283,7 @@ function TaxiChattingMainPage() {
 
   useEffect(() => {
     if (tempTaxi.count === tempTaxi.max) {
-      const updateStatus = async () => {
-        await updateTaxiPartyStatusApi({ taxiSeq: tempTaxi.taxi_seq });
-        setTaxiStatus('FILLED');
-      };
-      updateStatus();
+      setTaxiStatus('FILLED');
     }
   }, [tempTaxi.count]);
 
@@ -339,90 +315,15 @@ function TaxiChattingMainPage() {
       </div>
 
       {showMenu && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-50">
-          <div className="w-4/5 h-full bg-white shadow-md p-4 relative">
-            <button
-              onClick={handleMenuToggle}
-              className="text-gray-400 focus:outline-none absolute top-5 right-4"
-            >
-              <FaTimes className="w-5 h-5" />
-            </button>
-            <div className="text-base font-bold mt-6 ml-1 mb-4">경로</div>
-            <ul>
-              {tempMember.map((member) => (
-                <li
-                  key={member.user_seq}
-                  className="flex items-center justify-between mb-2 py-1"
-                >
-                  <div className="items-center flex flex-row text-sm text-black">
-                    <FaLocationDot className="mr-1 w-4 h-4 text-neutral-300" />
-                    <span className="px-2">{member.destination}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-6 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
-
-            <h2 className="text-base font-bold mt-6 mb-4 ml-1">참여자</h2>
-            <ul>
-              {tempMember.map((member) => (
-                <li
-                  key={member.user_seq}
-                  className="flex items-center justify-between mb-2 ml-1"
-                >
-                  <div className="flex items-center py-2">
-                    <img
-                      src={getProfileImagePath(member.imgNo)}
-                      alt={member.userName}
-                      className="w-8 h-8 mr-2"
-                    />
-                    <span className="text-sm">{member.userName}</span>
-                    {tempTaxi.user_seq === member.user_seq && (
-                      <div className="ml-1 text-xs bg-neutral-400 px-1.5 py-1 rounded-full text-white">
-                        나
-                      </div>
-                    )}
-                    {tempTaxi.master === member.user_seq && (
-                      <FaCrown className="text-yellow-500 ml-1 w-5" />
-                    )}
-                  </div>
-                  {tempTaxi.user_seq === tempTaxi.payer &&
-                    member.user_seq === tempTaxi.payer && (
-                      <div className="ml-1 text-xs bg-main px-2 py-1 rounded-lg shadow-sm text-white">
-                        결제자
-                      </div>
-                    )}
-                  {tempTaxi.user_seq === tempTaxi.master &&
-                    member.user_seq !== tempTaxi.master && (
-                      <button
-                        className="text-red-600 border-2 border-red-600 rounded-lg py-1 px-2 text-xs"
-                        onClick={() => handleKickMember(member.userName)}
-                      >
-                        내보내기
-                      </button>
-                    )}
-                </li>
-              ))}
-            </ul>
-            {taxiStatus !== 'BOARD' && taxiStatus !== 'DONE' && (
-              <button
-                className="absolute bottom-4 left-4 text-gray-400"
-                onClick={handleLeaveChatting}
-              >
-                <FaSignOutAlt className="w-6 h-6" />
-              </button>
-            )}
-            {tempTaxi.master === tempTaxi.user_seq && (
-              <button
-                className="absolute bottom-4 right-4 text-gray-400"
-                onClick={handleChatSetting}
-              >
-                <IoIosSettings className="w-7 h-7" />
-              </button>
-            )}
-          </div>
-        </div>
+        <TaxiChattingMenu
+          tempMember={tempMember}
+          tempTaxi={tempTaxi}
+          taxiStatus={taxiStatus}
+          handleMenuToggle={handleMenuToggle}
+          handleKickMember={handleKickMember}
+          handleLeaveChatting={handleLeaveChatting}
+          handleChatSetting={handleChatSetting}
+        />
       )}
 
       {showModal && (
@@ -497,7 +398,9 @@ function TaxiChattingMainPage() {
                 </div>
               )}
               <div
-                className={`flex ${msg.user_seq === 1 ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${
+                  msg.user_seq === 1 ? 'justify-end' : 'justify-start'
+                }`}
               >
                 {msg.user_seq !== 1 && (
                   <div className="flex flex-col items-center mr-2">
@@ -513,7 +416,9 @@ function TaxiChattingMainPage() {
                 <div className="flex flex-col max-w-[88%]">
                   {!sameUserAndTime && (
                     <span
-                      className={`text-[9px] mb-1 text-black ${msg.user_seq === 1 ? 'text-right' : 'text-left'}`}
+                      className={`text-[9px] mb-1 text-black ${
+                        msg.user_seq === 1 ? 'text-right' : 'text-left'
+                      }`}
                     >
                       {msg.userName}
                     </span>
@@ -525,7 +430,11 @@ function TaxiChattingMainPage() {
                       </div>
                     )}
                     <div
-                      className={`p-2 rounded-xl shadow-md ${msg.user_seq === 1 ? 'bg-main text-white' : 'bg-white text-black'}`}
+                      className={`p-2 rounded-xl shadow-md ${
+                        msg.user_seq === 1
+                          ? 'bg-main text-white'
+                          : 'bg-white text-black'
+                      }`}
                     >
                       <div className="text-sm">{msg.message}</div>
                     </div>
@@ -555,7 +464,9 @@ function TaxiChattingMainPage() {
       </div>
 
       <div
-        className={`absolute bottom-0 left-0 w-full ${isKeyboardVisible ? 'hidden' : ''}`}
+        className={`absolute bottom-0 left-0 w-full ${
+          isKeyboardVisible ? 'hidden' : ''
+        }`}
       >
         {showSettlementButton && (
           <button
@@ -569,7 +480,9 @@ function TaxiChattingMainPage() {
         <div className="w-full px-2 py-2 bg-white flex items-center relative">
           <button onClick={toggleActionIcons} className="focus:outline-none">
             <MdAdd
-              className={`text-gray-400 cursor-pointer mr-2 w-6 h-6 transform transition-transform ${showActionIcons ? 'rotate-45' : ''}`}
+              className={`text-gray-400 cursor-pointer mr-2 w-6 h-6 transform transition-transform ${
+                showActionIcons ? 'rotate-45' : ''
+              }`}
             />
           </button>
           <div className="relative flex-grow">
@@ -581,7 +494,9 @@ function TaxiChattingMainPage() {
               onChange={(e) => setInputMessage(e.target.value)}
             />
             <button
-              className={`absolute inset-y-1 right-0 px-3 py-2 ${inputMessage.trim() === '' ? 'bg-gray-300' : 'bg-main'} text-white rounded-2xl mr-2 flex items-center justify-center focus:outline-none`}
+              className={`absolute inset-y-1 right-0 px-3 py-2 ${
+                inputMessage.trim() === '' ? 'bg-gray-300' : 'bg-main'
+              } text-white rounded-2xl mr-2 flex items-center justify-center focus:outline-none`}
               onClick={handleSendMessage}
               disabled={inputMessage.trim() === ''}
             >

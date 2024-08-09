@@ -24,6 +24,7 @@ const CreateChattingPage = () => {
     try {
       // 1. 파티 참가 여부 확인
       const isJoined = await isUserJoinedTaxiPartyApi(userSeq);
+      navigate('/taxi/main');
       if (isJoined) {
         alert('이미 참여중입니다');
         navigate('/taxi/main');

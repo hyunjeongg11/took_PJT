@@ -6,7 +6,6 @@ import enterIcon from '../../assets/taxi/enter.png'; // 입장 가능 아이콘
 import notEnterIcon from '../../assets/taxi/notEnter.png'; // 입장 불가능 아이콘
 import locationIcon from '../../assets/taxi/location.png';
 import getProfileImagePath from '../../utils/getProfileImagePath';
-import backIcon from '../../assets/delivery/whiteBack.svg';
 import { useUser } from '../../store/user.js';
 import { usePosition } from '../../store/position.js';
 import { getNearByUserPositionApi } from '../../apis/position/userPosition.js';
@@ -23,22 +22,10 @@ const BackButton = () => {
     <img
       src={backIcon}
       alt="뒤로"
-<<<<<<< HEAD
-      className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0"
-      onClick={handleBackClick}
-    />
-  );
-};
-
-const tempUser = {
-  gender: '여성',
-  location: '부산광역시 부산진구 부전동 169-1',
-=======
       className="w-6 h-6 mx-6 mt-1.5 absolute top-0 left-0"
       onClick={handleBackClick}
     />
   );
->>>>>>> feature/taxi_Cho
 };
 
 function TaxiMainPage() {
@@ -136,15 +123,9 @@ function TaxiMainPage() {
   return (
     <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main">
       <div className="bg-main py-4">
-<<<<<<< HEAD
-        <div className="flex flex-row px-4">
-        <BackButton />
-          <div className="ml-10 mt-0.5 items-center flex-grow text-2xl font-bold text-white">
-=======
         <div className="flex items-center px-4 relative mb-4 mt-3">
           <BackButton />
           <div className="flex-grow text-center text-2xl font-bold text-white">
->>>>>>> feature/taxi_Cho
             택시{' '}
             <span className="font-dela">
               took <span className="font-noto">!</span>
@@ -160,11 +141,7 @@ function TaxiMainPage() {
           <div className="text-sm font-semibold text-gray-700">{location}</div>
         </div>
       </div>
-<<<<<<< HEAD
-      <div className="px-2 py-4 bg-white h-screen rounded-t-3xl">
-=======
       <div className="px-2 py-4 bg-white h-screen rounded-t-3xl overflow-y-auto">
->>>>>>> feature/taxi_Cho
         {filteredData.map((item, index) => (
           <div key={index} className="px-4 py-2 rounded-lg">
             <div className="flex items-center">
@@ -202,19 +179,19 @@ function TaxiMainPage() {
                 <button
                   className="mb-2"
                   onClick={() => {
-                    if (item.count < item.max) {
-                      handleEnterChatRoom(item.chatRoomId);
+                    if (item.count < item.max + 1) {
+                      handleEnterChatRoom(item.roomSeq);
                     }
                   }}
                 >
                   <img
-                    src={item.count < item.max ? enterIcon : notEnterIcon}
+                    src={item.count < item.max + 1 ? enterIcon : notEnterIcon}
                     alt="enter status"
                     className="w-8 h-8"
                   />
                 </button>
                 <span className="text-xs font-semibold text-gray-700">
-                  {item.count} / {item.max}
+                  {item.count} / {item.max + 1}
                 </span>
               </div>
             </div>
