@@ -116,7 +116,8 @@ export const loginApi = async (params, setAccessToken) => {
 //   "lng": 128.855274,
 //   "imageNo": 7,
 //   "role": "ROLE_USER",
-//   "nickname": null
+//   "nickname": null,
+//   "gender" : "F" / "M"
 //   }
 export const getUserInfoApi = async (params) => {
   try {
