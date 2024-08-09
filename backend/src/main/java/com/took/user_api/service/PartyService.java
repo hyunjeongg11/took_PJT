@@ -24,4 +24,6 @@ public interface PartyService {
     void finalTaxiParty(FinalTaxiPartyRequest requestBody);
 
     List<MyPartyListResponseDto> myPartyList(Long userSeq);
+
+    ResponseEntity<? super ojResponseDto> restCostPay(Long partySeq, Long userSeq);
 }

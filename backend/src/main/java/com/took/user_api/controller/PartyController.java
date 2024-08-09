@@ -103,8 +103,7 @@ public class PartyController {
     })
     @PostMapping("/deli-gongu-pay")
     public ResponseEntity<? super ojResponseDto>deligonguPay(@RequestBody OnlyJungsanRequestDto requestBody){
-        ResponseEntity<? super ojResponseDto> response = partyService.deligonguPay(requestBody.getPartySeq(),requestBody.getUserSeq());
-        return response;
+        return partyService.deligonguPay(requestBody.getPartySeq(),requestBody.getUserSeq());
     }
 
     @Operation(summary = "파티 상세 조회", description = "파티 상세 조회합니다.")
@@ -175,5 +174,17 @@ public class PartyController {
         return ResponseEntity.noContent().build();
     }
 
-
+    // 택시 잔돈 정산
+    @Operation(summary = "택시 잔돈 정산", description = "택시 잔돈 정산")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "택시 잔돈 정산 성공",
+                    content = @Content(schema = @Schema(implementation = VoidResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PostMapping("rest-cost-pay")
+    public ResponseEntity<? super ojResponseDto> restCostPay(
+            @RequestBody @Valid OnlyJungsanRequestDto requestBody
+    ) {
+        return partyService.restCostPay(requestBody.getPartySeq(), requestBody.getUserSeq());
+    }
 }
