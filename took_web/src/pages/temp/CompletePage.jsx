@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { FaTimes } from 'react-icons/fa';
 import 송금완료 from '../../assets/payment/송금완료.png';
 import took1 from '../../assets/payment/took1.png';
 import { formatNumber } from '../../utils/format';
@@ -21,6 +22,7 @@ function CompletePage() {
     const fetchUserName = async () => {
       try {
         const userInfo = await getUserInfoApi({ userSeq: userSeq });
+        console.log()
         setUserName(userInfo.userName);
       } catch (error) {
         console.error('Error fetching user name:', error);
@@ -48,7 +50,9 @@ function CompletePage() {
   const maskedName = maskName(userName);
 
   return (
-    <div className="flex flex-col items-center justify-between h-[90vh] bg-white font-[Nanum_Gothic] pb-10 pt-20">
+    <div className="flex flex-col items-center justify-between h-[90vh] bg-white font-[Nanum_Gothic] pb-10 pt-20 relative">
+      <FaTimes className="absolute top-4 right-4 text-2xl cursor-pointer mt-6 text-neutral-500" 
+              onClick={() => navigate('/')}/>
       <div className="text-4xl font-bold text-[#FF7F50] mb-16 text-center">
         <span className="font-dela">to</span>{' '}
         <span className="font-[Nanum_Gothic] font-bold text-black text-[1.8rem]">

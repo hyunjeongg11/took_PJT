@@ -70,6 +70,7 @@ const PaymentPage = () => {
   const handleSendMoney = () => {
     if (selectedAccount) {
       const { accountSeq, accountNum, bankName } = selectedAccount;
+      console.log(accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq)
       navigate('/pwd', { state: { accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq } });
     } else if (mainAccount) {
       const { accountSeq, accountNum, bankName } = mainAccount;
