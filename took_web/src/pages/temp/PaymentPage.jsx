@@ -146,6 +146,11 @@ const PaymentPage = () => {
         alert('생체 인증 실패');
       }
     };
+
+    if (window.Android) {
+      window.Android.authenticate();
+    }
+  };
   const handleSendMoney = () => {
     if (selectedAccount) {
       const { accountSeq, accountNum, bankName } = selectedAccount;
