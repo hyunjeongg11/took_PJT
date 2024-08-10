@@ -10,7 +10,11 @@ import { getMainAccount } from '../../apis/account/oneclick';
 import { getAccountListApi } from '../../apis/account/info';
 import { bankNumToName } from '../../assets/payment/index.js';
 import { useUser } from '../../store/user';
-
+import { msgToAndroid } from '../../android/message';
+import {
+  onlyjungsanPayApi,
+  deliveryGroupPayApi,
+} from '../../apis/payment/jungsan';
 const PaymentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -80,7 +84,49 @@ const PaymentPage = () => {
     fetchMainAccount();
     fetchAccountList();
   }, [userSeq, currentUserSeq]);
+  // 생체 인증 및 결과 처리 함수
+  const handleAuthentication = ({
+    accountSeq,
+    amount,
+    userSeq,
+    currentUserSeq,
+    accountNum,
+    bankName,
+    numCategory,
+    partySeq,
+  }) => {
+    if (window.Android) {
+      window.Android.authenticate();
+    }
 
+    window.onAuthenticate = (success) => {
+      if (success) {
+        alert('생체 인증 성공');
+        msgToAndroid('생체 인증 성공');
+        processPayment();
+        navigate('/complete', {
+          state: { accountSeq, amount, userSeq, currentUserSeq },
+        });
+      } else {
+        alert('생체 인증 실패');
+        navigate('/pwd', {
+          state: {
+            accountSeq,
+            accountNum,
+            bankName,
+            amount,
+            userSeq,
+            numCategory,
+            partySeq,
+          },
+        });
+      }
+    };
+
+    if (window.Android) {
+      window.Android.authenticate();
+    }
+  };
   const handleSendMoney = () => {
     if (selectedAccount) {
       const { accountSeq, accountNum, bankName } = selectedAccount;
@@ -93,33 +139,59 @@ const PaymentPage = () => {
         numCategory,
         partySeq
       );
-      navigate('/pwd', {
-        state: {
-          accountSeq,
-          accountNum,
-          bankName,
-          amount,
-          userSeq,
-          numCategory,
-          partySeq,
-        },
+      handleAuthentication({
+        accountSeq,
+        amount,
+        userSeq,
+        currentUserSeq,
+        accountNum,
+        bankName,
+        numCategory,
+        partySeq,
       });
     } else if (mainAccount) {
       const { accountSeq, accountNum, bankName } = mainAccount;
-      navigate('/pwd', {
-        state: {
-          accountSeq,
-          accountNum,
-          bankName,
-          amount,
-          userSeq,
-          numCategory,
-          partySeq,
-        },
+      handleAuthentication({
+        accountSeq,
+        amount,
+        userSeq,
+        currentUserSeq,
+        accountNum,
+        bankName,
+        numCategory,
+        partySeq,
       });
     }
   };
+  const processPayment = async () => {
+    const requestData = {
+      userSeq: currentUserSeq,
+      partySeq,
+      accountSeq,
+    };
 
+    console.log('데이터를 출력합니다.', requestData);
+
+    try {
+      console.log('processPayment 호출됨:', requestData); // 로그 추가
+      console.log('카테고리,', numCategory);
+      if (numCategory === 4) {
+        console.log('정산합수 출력');
+        const response = await onlyjungsanPayApi(requestData);
+        console.log('onlyjungsanPayApi 응답:', response); // 로그 추가
+      } else if (numCategory === 1 || numCategory === 3) {
+        const response = await deliveryGroupPayApi(requestData);
+        console.log('deliveryGroupPayApi 응답:', response); // 로그 추가
+      }
+      navigate('/complete', {
+        state: { accountSeq, amount, userSeq, currentUserSeq },
+      });
+    } catch (error) {
+      console.log('응답:', requestData);
+      console.error('결제 처리 중 오류 발생:', error);
+      alert('결제 처리 중 오류가 발생했습니다.');
+    }
+  };
   const handleAccountChange = (account) => {
     setSelectedAccount(account);
     setIsModalOpen(false);
