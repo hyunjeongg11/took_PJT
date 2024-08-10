@@ -1,11 +1,17 @@
 package com.took.user_api.service.implement;
 
 
+import com.took.delivery_api.entity.Delivery;
+import com.took.delivery_api.repository.DeliveryRepository;
 import com.took.fcm_api.dto.AlarmRequest;
 import com.took.fcm_api.dto.MessageRequest;
 import com.took.fcm_api.entity.Alarm;
 import com.took.fcm_api.repository.AlarmRepository;
 import com.took.fcm_api.service.FCMService;
+import com.took.shop_api.entity.Shop;
+import com.took.shop_api.repository.ShopRepository;
+import com.took.taxi_api.entity.Taxi;
+import com.took.taxi_api.repository.TaxiRepository;
 import com.took.user_api.dto.request.party.*;
 import com.took.user_api.dto.response.ResponseDto;
 import com.took.user_api.dto.response.VoidResponseDto;
@@ -37,6 +43,9 @@ public class PartyServiceImpl implements PartyService {
     private final AccountRepository accountRepository;
     private final PayRepository payRepository;
     private final AlarmRepository alarmRepository;
+    private final DeliveryRepository deliveryRepository;
+    private final ShopRepository shopRepository;
+    private final TaxiRepository taxiRepository;
 
 
     @Transactional
@@ -421,6 +430,16 @@ public class PartyServiceImpl implements PartyService {
                         .userSeqList(List.of(userSeq))
                         .build()
         );
+
+        // 배달or 공구 상태 DONE으로 변경
+        if(party.getCategory() == 1) {
+            Delivery delivery = deliveryRepository.findByPartySeq(partySeq);
+            delivery.updateStatus(String.valueOf(Delivery.Status.DONE));
+        }
+        else if(party.getCategory() ==3) {
+            Shop shop = shopRepository.findByPartySeq(partySeq);
+            shop.updateStatus(Shop.statusType.COMPLETED);
+        }
     }
 
     // 택시 정산 생성 및 가결제
@@ -607,6 +626,9 @@ public class PartyServiceImpl implements PartyService {
         payRepository.save(pay);
 
         if (count == party.getTotalMember() - 1) {
+            Taxi taxi = taxiRepository.findByPartySeq(requestBody.getPartySeq());
+            taxi.updateStatus(Taxi.Status.DONE);
+
             fcmService.sendMessage(
                     MessageRequest.builder()
                             .title("택시 결제 알림")
@@ -711,6 +733,9 @@ public class PartyServiceImpl implements PartyService {
         if (party.getCount() == party.getTotalMember() - 1) {
             party.updateStatus(true);
             done = true;
+
+            Taxi taxi = taxiRepository.findByPartySeq(requestBody.getPartySeq());
+            taxi.updateStatus(Taxi.Status.DONE);
 
             fcmService.sendMessage(
                     MessageRequest.builder()

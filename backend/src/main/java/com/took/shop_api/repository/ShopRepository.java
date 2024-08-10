@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface ShopRepository extends JpaRepository<Shop, Long> {
     List<Shop> findByUserInAndStatus(List<UserEntity> users, Shop.statusType status);
     Optional<Shop> findByRoomSeq(long roomSeq);
+
+    Shop findByPartySeq(Long partySeq);
 }

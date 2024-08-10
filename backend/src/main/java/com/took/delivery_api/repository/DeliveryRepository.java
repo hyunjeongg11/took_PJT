@@ -13,4 +13,6 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
     List<Delivery> findByDeliverySeqIn(List<Long> deliverySeqs);
 
     Delivery findByRoomSeq(Long roomSeq);
+
+    Delivery findByPartySeq(Long partySeq);
 }

@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TaxiRepository extends JpaRepository<Taxi, Long>, TaxiRepositoryCustom {
     Taxi findByRoomSeq(Long roomSeq);
+
+    Taxi findByPartySeq(Long partySeq);
 }
