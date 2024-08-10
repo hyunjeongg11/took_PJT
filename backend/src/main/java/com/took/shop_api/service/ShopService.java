@@ -118,6 +118,10 @@ public class ShopService {
                         pickUp(false).
                         build();
                 shopGuestRepository.save(shopGuest);
+
+                if(shop.getCount() == shop.getMaxCount()) {
+                    shop.updateStatus(Shop.statusType.IN_PROGRESS);
+                }
                 return true;
             }
             else {
@@ -137,6 +141,7 @@ public class ShopService {
         shopGuestRepository.deleteByShopAndUser(shop, user);
 
         shop.updateCount(-1);
+        shop.updateStatus(Shop.statusType.OPEN);
     }
 
     @Transactional
