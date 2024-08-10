@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getUserStyle, getMyStyle } from '../../utils/getCharacterPostion';
 import questionIcon from '../../assets/payment/question.svg';
-import { Link,useNavigate  } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { getNearByUserPositionApi } from '../../apis/position/userPosition';
 import { useUser } from '../../store/user';
@@ -10,7 +10,7 @@ import { usePosition } from '../../store/position';
 
 
 const UserListPage = () => {
-  const { seq } = useUser();
+  const { seq, img_no } = useUser();
   const { latitude, longitude } = usePosition();
   const [users, setUsers] = useState([]);
   const [showHelp, setShowHelp] = useState(false);
@@ -109,7 +109,7 @@ const UserListPage = () => {
           style={getMyStyle(imageSize - 6)}
         >
           <img
-            src={getProfileImagePath(10)}
+            src={getProfileImagePath(img_no)}
             alt="나"
             style={{
               width: `${imageSize - 6}px`,
