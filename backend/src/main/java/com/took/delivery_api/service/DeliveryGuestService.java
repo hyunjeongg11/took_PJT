@@ -29,7 +29,6 @@ public class DeliveryGuestService {
     private final DeliveryGuestRepository deliveryGuestRepository;
     private final UserRepository userRepository;
     private final PartyService partyService;
-    private final DeliveryService deliveryService;
     private final MemberRepository memberRepository;
     private final PartyRepository partyRepository;
 
