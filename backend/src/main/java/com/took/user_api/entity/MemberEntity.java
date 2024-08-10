@@ -1,5 +1,6 @@
 package com.took.user_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,6 +43,7 @@ public class MemberEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name="user_seq")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private UserEntity user;
 
     @Column(name = "created_at", nullable = true)
