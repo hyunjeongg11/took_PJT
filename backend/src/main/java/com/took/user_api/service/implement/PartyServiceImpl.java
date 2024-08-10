@@ -3,6 +3,8 @@ package com.took.user_api.service.implement;
 
 import com.took.fcm_api.dto.AlarmRequest;
 import com.took.fcm_api.dto.MessageRequest;
+import com.took.fcm_api.entity.Alarm;
+import com.took.fcm_api.repository.AlarmRepository;
 import com.took.fcm_api.service.FCMService;
 import com.took.user_api.dto.request.party.*;
 import com.took.user_api.dto.response.ResponseDto;
@@ -34,6 +36,7 @@ public class PartyServiceImpl implements PartyService {
     private final FCMService fcmService;
     private final AccountRepository accountRepository;
     private final PayRepository payRepository;
+    private final AlarmRepository alarmRepository;
 
 
     @Transactional
@@ -216,6 +219,12 @@ public class PartyServiceImpl implements PartyService {
         UserEntity user = userRepository.findById(requestBody.getUserSeq()).orElseThrow();
         AccountEntity account = accountRepository.findById(requestBody.getAccountSeq()).orElseThrow();
         MemberEntity member = memberRepository.findByPartyAndUser(party, user);
+
+//      파티가 끝나고 해버리면 안됨
+//      나는 돈을 보냈는데 파티가 끝나지 않아도 난 그 알림에서 돈보내기 버튼을 누룰 수 있으면 안됨.
+        Alarm alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(),requestBody.getPartySeq());
+
+
         Long memberCost = member.getCost();
 
 //          빼주기 전에 돈 있는 없는지 검사
@@ -237,8 +246,13 @@ public class PartyServiceImpl implements PartyService {
         member.updateStatus(true);
         party.updateCount(1);
 
+
 //          돈빼주고 저장
         bank.updateBalance(balance - memberCost);
+
+
+//        돈이 빠져나갔으니 해당 알림의 상태는 true
+        alarm.updateStatus(true);
 
 
 //          빼주는 순간 리더에게 돈 들어가게
@@ -287,6 +301,8 @@ public class PartyServiceImpl implements PartyService {
                         .userSeqList(List.of(leaderSeq))
                         .build()
         );
+
+//       정산이 끝낫을 경우
 
         if (party.getCount() == party.getTotalMember() - 1) {
             done = true;

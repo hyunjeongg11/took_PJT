@@ -67,6 +67,11 @@ public class Alarm {
 
     @Column
     private long cost; // 요청 금액
-    
 
+    @Column
+    private Boolean status;
+
+    public void updateStatus(boolean b) {
+        this.status = b;
+    }
 }
