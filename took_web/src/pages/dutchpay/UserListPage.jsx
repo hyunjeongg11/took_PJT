@@ -24,7 +24,7 @@ const BackButton = () => {
 };
 
 const UserListPage = () => {
-  const { seq } = useUser();
+  const { seq, img_no } = useUser();
   const { latitude, longitude } = usePosition();
   const [users, setUsers] = useState([]);
   const [showHelp, setShowHelp] = useState(false);
@@ -123,7 +123,7 @@ const UserListPage = () => {
           style={getMyStyle(imageSize - 6)}
         >
           <img
-            src={getProfileImagePath(10)}
+            src={getProfileImagePath(img_no)}
             alt="나"
             style={{
               width: `${imageSize - 6}px`,
