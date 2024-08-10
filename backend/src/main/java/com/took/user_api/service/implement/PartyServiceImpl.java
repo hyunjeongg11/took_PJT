@@ -285,7 +285,6 @@ public class PartyServiceImpl implements PartyService {
                 .category(4)
                 .build();
         payRepository.save(pay2);
-
         String maskedName = user.getUserName();
         if (maskedName.length() == 2) {
             maskedName = maskedName.charAt(0) + "*";
@@ -301,6 +300,7 @@ public class PartyServiceImpl implements PartyService {
                         .userSeqList(List.of(leaderSeq))
                         .build()
         );
+
 
 //       정산이 끝낫을 경우
 
@@ -546,7 +546,7 @@ public class PartyServiceImpl implements PartyService {
                 fcmService.sendNotification(
                         AlarmRequest.builder()
                                 .title("택시 결제 알림")
-                                .body(exchange + "원이 부족합니다. 잔액을 확인해주세요!")
+                                .body(exchange + "원을 추가 송금 해주세요!")
                                 .sender(leader.getUserSeq())
                                 .userSeq(user.getUserSeq())
                                 .partySeq(requestBody.getPartySeq())
@@ -656,6 +656,9 @@ public class PartyServiceImpl implements PartyService {
         bank.updateBalance(balance - restCost);
         party.updateCount(1);
 
+        Alarm alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(),requestBody.getPartySeq());
+        alarm.updateStatus(true);
+
         // 리더에게 송금
         MemberEntity leaderMember = memberRepository.findByPartyAndLeaderTrue(party);
         UserEntity leader = userRepository.findById(leaderMember.getUser().getUserSeq()).orElseThrow();
@@ -663,6 +666,22 @@ public class PartyServiceImpl implements PartyService {
         BankEntity leaderBank = bankRepository.findById(leaderAccount.getBank().getBankSeq()).orElseThrow();
         long leaderBalance = leaderBank.getBalance() + restCost;
         leaderBank.updateBalance(leaderBalance);
+        // 입금 알림
+        String maskedName = user.getUserName();
+        if (maskedName.length() == 2) {
+            maskedName = maskedName.charAt(0) + "*";
+        } else if (maskedName.length() == 3) {
+            maskedName = maskedName.charAt(0) + "*" + maskedName.charAt(2);
+        } else if (maskedName.length() == 4) {
+            maskedName = maskedName.charAt(0) + "**" + maskedName.charAt(maskedName.length() - 1);
+        }
+        fcmService.sendMessage(
+                MessageRequest.builder()
+                        .title("송금 알림")
+                        .body(maskedName + "님이 " + restCost + "원을 송금하였습니다!")
+                        .userSeqList(List.of(leader.getUserSeq()))
+                        .build()
+        );
 
         // 거래 내역 저장 (송금 )
         PayEntity pay1 = PayEntity.builder()
