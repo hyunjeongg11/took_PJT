@@ -11,7 +11,6 @@ import PaymentCard from '../../components/payment/PaymentCard';
 import { useUser } from '../../store/user';
 import BackButton from '../../components/common/BackButton';
 
-
 // 알고리즘 추가 작성 필요!
 function PaymentInputPage() {
   const { seq: userSeq } = useUser();

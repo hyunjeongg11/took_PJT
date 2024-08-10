@@ -85,7 +85,7 @@ const ROUTER = createBrowserRouter([
   { path: '/mypage', element: <MyPage /> },
   { path: '/notification', element: <NotificationSetting /> },
   { path: '/location', element: <LocationSettingPage /> },
-  { path: '/tookDetails', element: <TookDetailsPage /> },
+  { path: '/tookDetails/:id', element: <TookDetailsPage /> },
   { path: '/tookHistory', element: <TookHistoryPage /> },
   { path: '/complete', element: <CompletePage /> },
   { path: '/payment-methods', element: <PaymentMethods /> },

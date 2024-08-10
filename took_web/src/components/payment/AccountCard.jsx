@@ -13,10 +13,14 @@ function AccountCard({ accounts, onClose, onSelect }) {
   const getImagePath = (bankNum) => {
     const bankName = bankNumToName[bankNum];
     if (bankName.endsWith('은행')) {
-      return bankImages[`../../assets/payment/bank/${bankName.slice(0, -2)}.png`].default;
+      return bankImages[
+        `../../assets/payment/bank/${bankName.slice(0, -2)}.png`
+      ].default;
     }
     if (bankName.endsWith('증권')) {
-      return stockImages[`../../assets/payment/stock/${bankName.slice(0, -2)}.png`].default;
+      return stockImages[
+        `../../assets/payment/stock/${bankName.slice(0, -2)}.png`
+      ].default;
     }
     return bankImages[`../../assets/payment/bank/${bankName}.png`].default;
   };

@@ -15,7 +15,15 @@ const PaymentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { seq: currentUserSeq } = useUser();
-  const { accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq } = location.state || {};
+  const {
+    accountSeq,
+    accountNum,
+    bankName,
+    amount,
+    userSeq,
+    numCategory,
+    partySeq,
+  } = location.state || {};
   const [userName, setUserName] = useState('');
   const [imageNo, setImageNo] = useState(null);
   const [mainAccount, setMainAccount] = useState(null);
@@ -40,7 +48,11 @@ const PaymentPage = () => {
         const bankName = bankNumToName[mainAccountResponse.bankNum];
         const mainAccount = {
           ...mainAccountResponse,
-          bankName: bankName ? (bankName.length === 2 ? `${bankName}은행` : bankName) : ''
+          bankName: bankName
+            ? bankName.length === 2
+              ? `${bankName}은행`
+              : bankName
+            : '',
         };
         setMainAccount(mainAccount);
         setSelectedAccount(mainAccount);
@@ -51,7 +63,9 @@ const PaymentPage = () => {
 
     const fetchAccountList = async () => {
       try {
-        const accountListResponse = await getAccountListApi({ userSeq: currentUserSeq });
+        const accountListResponse = await getAccountListApi({
+          userSeq: currentUserSeq,
+        });
         const accountList = accountListResponse.list.map((account) => ({
           ...account,
           bankName: bankNumToName[account.bankNum],
@@ -70,11 +84,39 @@ const PaymentPage = () => {
   const handleSendMoney = () => {
     if (selectedAccount) {
       const { accountSeq, accountNum, bankName } = selectedAccount;
-      console.log(accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq)
-      navigate('/pwd', { state: { accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq } });
+      console.log(
+        accountSeq,
+        accountNum,
+        bankName,
+        amount,
+        userSeq,
+        numCategory,
+        partySeq
+      );
+      navigate('/pwd', {
+        state: {
+          accountSeq,
+          accountNum,
+          bankName,
+          amount,
+          userSeq,
+          numCategory,
+          partySeq,
+        },
+      });
     } else if (mainAccount) {
       const { accountSeq, accountNum, bankName } = mainAccount;
-      navigate('/pwd', { state: { accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq } });
+      navigate('/pwd', {
+        state: {
+          accountSeq,
+          accountNum,
+          bankName,
+          amount,
+          userSeq,
+          numCategory,
+          partySeq,
+        },
+      });
     }
   };
 
@@ -158,6 +200,6 @@ const PaymentPage = () => {
       )}
     </div>
   );
-}
+};
 
 export default PaymentPage;
