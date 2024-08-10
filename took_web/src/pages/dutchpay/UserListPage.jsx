@@ -23,9 +23,8 @@ const BackButton = () => {
   );
 };
 
-
 const UserListPage = () => {
-  const { seq } = useUser();
+  const { seq, img_no } = useUser();
   const { latitude, longitude } = usePosition();
   const [users, setUsers] = useState([]);
   const [showHelp, setShowHelp] = useState(false);
@@ -35,7 +34,6 @@ const UserListPage = () => {
   const fontSize = Math.max(imageSize / 3, 12);
 
   useEffect(() => {
-
     loadNearUsers();
   }, []);
 
@@ -46,13 +44,13 @@ const UserListPage = () => {
       lon: longitude,
     });
     const updatedUsers = res
-    .filter((user) => user.userSeq !== seq)  //나와 같은 거는 안불러오게
-    .map((user) => ({
-      ...user,
-      seleced: false,
-      name: user.userName,
-      img_no: user.imageNo,
-    }));
+      .filter((user) => user.userSeq !== seq) //나와 같은 거는 안불러오게
+      .map((user) => ({
+        ...user,
+        seleced: false,
+        name: user.userName,
+        img_no: user.imageNo,
+      }));
     setUsers(updatedUsers);
   };
 
@@ -69,7 +67,7 @@ const UserListPage = () => {
   };
 
   const handleNavigate = () => {
-    console.log("넘어갈 유저를 출력합니다",users);
+    console.log('넘어갈 유저를 출력합니다', users);
     navigate('/dutch/input', { state: { users } });
   };
 
@@ -125,7 +123,7 @@ const UserListPage = () => {
           style={getMyStyle(imageSize - 6)}
         >
           <img
-            src={getProfileImagePath(10)}
+            src={getProfileImagePath(img_no)}
             alt="나"
             style={{
               width: `${imageSize - 6}px`,
@@ -136,13 +134,13 @@ const UserListPage = () => {
           <span className="text-xs mt-1 text-white">나</span>
         </div>
       </div>
-      
-        <button 
-         onClick={handleNavigate}
-        className="bg-white px-12 py-2 shadow font-bold text-main rounded-full">
-          정산하러 가기
-        </button>
-      
+
+      <button
+        onClick={handleNavigate}
+        className="bg-white px-12 py-2 shadow font-bold text-main rounded-full"
+      >
+        정산하러 가기
+      </button>
     </div>
   );
 };

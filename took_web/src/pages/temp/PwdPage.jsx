@@ -53,23 +53,34 @@ function PwdPage() {
   };
 
   const processPayment = async () => {
+
     const requestData = {
       userSeq: currentUserSeq,
       partySeq,
+      accountSeq,
     };
 
+    console.log("데이터를 출력합니다.", requestData);
+  
     try {
+      console.log('processPayment 호출됨:', requestData); // 로그 추가
+      console.log('카테고리,',numCategory);
       if (numCategory === 4) {
-        await onlyjungsanPayApi(requestData);
+        console.log("정산합수 출력");
+        const response = await onlyjungsanPayApi(requestData);
+        console.log('onlyjungsanPayApi 응답:', response); // 로그 추가
       } else if (numCategory === 1 || numCategory === 3) {
-        await deliveryGroupPayApi(requestData);
+        const response = await deliveryGroupPayApi(requestData);
+        console.log('deliveryGroupPayApi 응답:', response); // 로그 추가
       }
       navigate('/complete', { state: { accountSeq, amount, userSeq, currentUserSeq } });
     } catch (error) {
+      console.log('응답:' , requestData)
       console.error('결제 처리 중 오류 발생:', error);
       alert('결제 처리 중 오류가 발생했습니다.');
     }
   };
+  
 
   useEffect(() => {
     if (input.length === 6) {
@@ -84,7 +95,7 @@ function PwdPage() {
       if (success) {
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
-        setInput('');
+        setInput(''); 
         setIsError(false);
         setAttemptCount(0); // 성공 시 시도 횟수 초기화
         processPayment();

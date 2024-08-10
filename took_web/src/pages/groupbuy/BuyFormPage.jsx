@@ -7,11 +7,20 @@ import {
   modifyShopApi,
 } from '../../apis/groupBuy/shop.js';
 import { useUser } from '../../store/user.js';
+import Search from '../../components/groupbuy/Search.jsx';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import { createChatApi } from '../../apis/chat/chat.js';
 
 function BuyFormPage() {
   const { id } = useParams(); // 수정 모드에서 사용할 shopSeq
   const navigate = useNavigate();
   const { seq: userSeq } = useUser();
+  const [latitude, setLatitude] = useState();
+  const [longitude, setLongitude] = useState();
+  const [stompClient, setStompClient] = useState(null);
+  const [connected, setConnected] = useState(false);
+  const [room, setRoom] = useState();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -20,9 +29,42 @@ function BuyFormPage() {
     content: '',
     place: '',
     max_person: '',
-    lat: 35.0894681, // 위도와 경도 추가
-    lon: 128.8535056,
+    lat: latitude, // 위도와 경도 추가
+    lon: longitude,
   });
+
+  useEffect(() => {
+    const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
+    const stompClientInstance = Stomp.over(socket);
+    stompClientInstance.connect({}, () => {
+      console.log('WebSocket 연결 성공');
+      setConnected(true);
+    });
+    setStompClient(stompClientInstance);
+
+    return () => {
+      if (stompClientInstance && stompClientInstance.connected) {
+        stompClientInstance.disconnect(() => {
+          console.log('WebSocket 연결 해제');
+        });
+      }
+    };
+  }, []);
+
+  const enterRoom = ({ roomSeq, userSeq }) => {
+    if (stompClient && connected) {
+      stompClient.send(
+        '/pub/room/enter',
+        {},
+        JSON.stringify({
+          roomSeq,
+          userSeq,
+        })
+      );
+    } else {
+      console.error('WebSocket 연결이 아직 준비되지 않았습니다');
+    }
+  };
 
   useEffect(() => {
     if (id) {
@@ -40,6 +82,7 @@ function BuyFormPage() {
             lat: data.lat,
             lon: data.lon,
           });
+          setRoom(data.roomSeq);
         } catch (error) {
           console.error('API call error:', error);
         }
@@ -48,6 +91,34 @@ function BuyFormPage() {
       fetchShopData();
     }
   }, [id]);
+
+  const createRoom = async () => {
+    const response = await createChatApi({
+      roomTitle: formData.title,
+      category: 3,
+      userSeq,
+    });
+    console.log(response);
+    return response;
+  };
+
+  const createShop = async (roomSeq) => {
+    const response = await writeShopApi({
+      roomSeq,
+      userSeq,
+      title: formData.title,
+      content: formData.content,
+      item: formData.item,
+      site: formData.site,
+      place: formData.place,
+      lat: formData.lat,
+      lon: formData.lon,
+      maxCount: parseInt(formData.max_person),
+    });
+    console.log('공동 구매 등록 완료');
+    const shopSeq = response.shopSeq;
+    navigate(`/groupbuy/${shopSeq}`);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,37 +130,50 @@ function BuyFormPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData, latitude, longitude);
 
     if (userSeq === null) {
       alert('사용자 정보가 올바르지 않습니다.');
       return;
     }
 
-    const params = {
-      roomSeq: 28, // todo: 실제 채팅방 시퀀스로 교체
-      userSeq: userSeq,
-      title: formData.title,
-      content: formData.content,
-      item: formData.item,
-      site: formData.site,
-      place: formData.place,
-      lat: formData.lat,
-      lon: formData.lon,
-      maxCount: parseInt(formData.max_person),
-    };
+    // const params = {
+    //   roomSeq: 28, // todo: 실제 채팅방 시퀀스로 교체
+    //   userSeq: userSeq,
+    //   title: formData.title,
+    //   content: formData.content,
+    //   item: formData.item,
+    //   site: formData.site,
+    //   place: formData.place,
+    //   lat: formData.lat,
+    //   lon: formData.lon,
+    //   maxCount: parseInt(formData.max_person),
+    // };
 
     try {
       if (id) {
         // 수정 모드
-        await modifyShopApi(id, params);
+        await modifyShopApi(id, {
+          roomSeq: room,
+          userSeq,
+          title: formData.title,
+          content: formData.content,
+          item: formData.item,
+          site: formData.site,
+          place: formData.place,
+          lat: formData.lat,
+          lon: formData.lon,
+          maxCount: parseInt(formData.max_person),
+        });
         console.log('수정 완료');
         navigate(`/groupbuy/${id}`); // 수정된 게시물로 이동
       } else {
         // 새 글 작성 모드
-        const response = await writeShopApi(params);
-        console.log('등록 완료');
-        const shopSeq = response.shopSeq; // 응답에서 shopSeq를 가져옴
-        navigate(`/groupbuy/${shopSeq}`); // 생성된 게시물로 이동
+        const newRoom = await createRoom();
+        const newShop = await createShop(newRoom.roomSeq);
+        await enterRoom({ roomSeq: newRoom.roomSeq, userSeq });
+
+        navigate(`/groupbuy/${newShop.shopSeq}`); // 생성된 게시물로 이동
       }
     } catch (error) {
       console.error('API call error:', error);
@@ -128,6 +212,27 @@ function BuyFormPage() {
             className="block resize-none mt-3 text-sm text-zinc-800 bg-neutral-50 "
           ></textarea>
         </div>
+        <div className="pl-5 pr-4 py-2 mt-5 bg-neutral-50 rounded-2xl border border-neutral-200 shadow-md">
+          {/* <input
+                id="place"
+                name="place"
+                type="text"
+                value={formData.place}
+                onChange={handleChange}
+                required
+                placeholder="수령 장소를 입력하세요"
+                className="text-black py-2 text-xs rounded-md border border-collapse placeholder-neutral-300 font-medium text-right pr-2 focus:border-b-main"
+              ></input> */}
+          <Search
+            label="수령 장소"
+            name="place"
+            value={formData.place}
+            onChange={handleChange}
+            placeholder="수령 장소를 입력하세요"
+            setLatitude={setLatitude}
+            setLongitude={setLongitude}
+          />
+        </div>
 
         <div className="pl-5 pr-4 py-5 mt-5 bg-neutral-50 rounded-2xl border border-neutral-200 shadow-md">
           <div className="flex flex-col gap-3">
@@ -157,19 +262,7 @@ function BuyFormPage() {
                 className="text-black py-2 text-xs rounded-md border border-collapse placeholder-neutral-300 font-medium text-right pr-2 focus:border-b-main"
               ></input>
             </div>
-            <div className="flex justify-between items-center text-sm font-normal  text-black">
-              수령장소
-              <input
-                id="place"
-                name="place"
-                type="text"
-                value={formData.place}
-                onChange={handleChange}
-                required
-                placeholder="수령 장소를 입력하세요"
-                className="text-black py-2 text-xs rounded-md border border-collapse placeholder-neutral-300 font-medium text-right pr-2 focus:border-b-main"
-              ></input>
-            </div>
+
             <div className="flex justify-between items-center text-sm font-normal  text-black">
               최대 모집 인원
               <input

@@ -56,6 +56,7 @@ function DeliveryDetailPage() {
   const [isParticipant, setIsParticipant] = useState(false);
   const [stompClient, setStompClient] = useState(null);
   const [connected, setConnected] = useState(false);
+  const [chatRoom, setChatRoom] = useState({});
 
   useEffect(() => {
     const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
@@ -103,6 +104,11 @@ function DeliveryDetailPage() {
         const userResponse = await getUserInfoApi({
           userSeq: deliveryUserSeq,
         });
+        setChatRoom((prevState) => ({
+          ...prevState,
+          userSeq: deliveryUserSeq,
+          roomTitle: deliveryResponse.storeName,
+        }));
         console.log(userResponse);
         setUserInfo(userResponse); // 방장 사용자 정보 조회 및 저장
         setIsLeader(deliveryUserSeq === currentUserSeq);
@@ -163,7 +169,7 @@ function DeliveryDetailPage() {
 
   const handleChatRedirect = () => {
     if (data && data.roomSeq) {
-      navigate(`/chat/delivery/${data.roomSeq}`);
+      navigate(`/chat/delivery/${data.roomSeq}`, {state: {chatRoom }});
     }
   };
 
@@ -232,21 +238,26 @@ function DeliveryDetailPage() {
           </div>
           <div className="text-gray-700 my-3">{data?.content}</div>
         </div>
-        <button
-          className="w-full p-2 bg-main text-white rounded-lg"
-          onClick={handleChatRedirect}
-        >
-          채팅방 입장
-        </button>
-        {!isLeader && (
-          <button
-            className="w-full p-2 mt-2 bg-gray-300 text-gray-700 rounded-lg"
-            onClick={handleParticipate}
-            disabled={isParticipant}
-          >
-            {isParticipant ? '이미 참여중' : '참여하기'}
-          </button>
-        )}
+       
+        {(
+  (isParticipant || isLeader) ? (
+    <button
+      className="w-full p-2 bg-main text-white rounded-lg"
+      onClick={handleChatRedirect}
+    >
+      채팅방 입장
+    </button>
+  ) : (
+    <button
+      className="w-full p-2 mt-2 bg-gray-300 text-gray-700 rounded-lg"
+      onClick={handleParticipate}
+      disabled={isParticipant}
+    >
+      {isParticipant ? '이미 참여중' : '참여하기'}
+    </button>
+  )
+)}
+
         {isLeader && (
           <button
             className="w-full p-2 mt-2 bg-red-500 text-white rounded-lg"

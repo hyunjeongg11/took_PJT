@@ -125,12 +125,12 @@ function CreateDeliveryPage() {
 
   const createDelivery = async (roomSeq) => {
     const response = await writeDeliveryApi({
-      userSeq,
-      roomSeq,
+      userSeq: parseInt(userSeq),
+      roomSeq: parseInt(roomSeq),
       storeName: form.storeName,
       pickupPlace: form.deliveryAddress,
-      pickupLat: pickLat,
-      pickupLon: pickLng,
+      pickupLat: parseFloat(pickLat),
+      pickupLon: parseFloat(pickLng),
       deliveryTip: form.deliveryTip,
       deliveryTime: form.orderTime,
       content: form.additionalInfo,
