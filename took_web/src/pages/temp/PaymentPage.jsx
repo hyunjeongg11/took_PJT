@@ -123,7 +123,7 @@ const PaymentPage = () => {
         navigate('/complete', {
           state: { accountSeq, amount, userSeq, currentUserSeq },
         });
-      } else if (result === 'fingerprint_mismatch') {
+      } else {
         alert('지문이 일치하지 않습니다');
         setAttemptCount((prevCount) => {
           const newCount = prevCount + 1;
@@ -142,8 +142,6 @@ const PaymentPage = () => {
           }
           return newCount;
         });
-      } else {
-        alert('생체 인증 실패');
       }
     };
 
