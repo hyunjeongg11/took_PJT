@@ -116,8 +116,7 @@ const PaymentPage = () => {
     }
 
     window.onAuthenticate = (result) => {
-      alert(result);
-      if (result === 'success') {
+      if (result) {
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
         processPayment();
