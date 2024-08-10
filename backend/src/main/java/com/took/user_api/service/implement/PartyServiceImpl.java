@@ -329,6 +329,11 @@ public class PartyServiceImpl implements PartyService {
         UserEntity user = userRepository.findById(requestBody.getUserSeq()).orElseThrow();
         MemberEntity member = memberRepository.findByPartyAndUser(party, user);
 
+
+//      나는 돈을 보냈는데 파티가 끝나지 않아도 난 그 알림에서 돈보내기 버튼을 누룰 수 있으면 안됨.
+        Alarm alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(),requestBody.getPartySeq());
+
+
         //빼주기 전에 돈 있는 없는지 검사
         AccountEntity account = accountRepository.findById(requestBody.getAccountSeq()).orElseThrow();
         BankEntity bank = bankRepository.findById(account.getBank().getBankSeq()).orElseThrow();
@@ -348,6 +353,9 @@ public class PartyServiceImpl implements PartyService {
         }
         bank.updateBalance(balance - membercost);
         member.updateStatus(true);
+        //        돈이 빠져나갔으니 해당 알림의 상태는 true
+        alarm.updateStatus(true);
+
         party.updateReceiveCost(party.getReceiveCost() + membercost);
         party.updateCount(party.getCount() + 1);
 
