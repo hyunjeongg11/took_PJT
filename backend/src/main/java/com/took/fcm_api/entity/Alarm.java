@@ -1,10 +1,13 @@
 package com.took.fcm_api.entity;
 
+import com.took.user_api.entity.PartyEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -64,5 +67,14 @@ public class Alarm {
 
     @Column
     private long cost; // 요청 금액
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "party_seq")
+    private PartyEntity party;
+
+    public Boolean getPartyStatus(){
+        return party.getStatus();
+    }
 
 }
