@@ -115,38 +115,37 @@ const PaymentPage = () => {
       window.Android.authenticate();
     }
 
-    window.onAuthenticate = (success) => {
-      if (success) {
+    window.onAuthenticate = (result) => {
+      if (result === 'success') {
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
         processPayment();
         navigate('/complete', {
           state: { accountSeq, amount, userSeq, currentUserSeq },
         });
+      } else if (result === 'fingerprint_mismatch') {
+        alert('지문이 일치하지 않습니다');
+        setAttemptCount((prevCount) => {
+          const newCount = prevCount + 1;
+          if (newCount >= 3) {
+            navigate('/pwd', {
+              state: {
+                accountSeq,
+                accountNum,
+                bankName,
+                amount,
+                userSeq,
+                numCategory,
+                partySeq,
+              },
+            });
+          }
+          return newCount;
+        });
       } else {
         alert('생체 인증 실패');
-        setAttemptCount((prevCount) => prevCount + 1); // 실패 시 시도 횟수 증가
-        if (attemptCount + 1 >= 3) {
-          // 3번 실패하면 비밀번호 입력 페이지로 이동
-          navigate('/pwd', {
-            state: {
-              accountSeq,
-              accountNum,
-              bankName,
-              amount,
-              userSeq,
-              numCategory,
-              partySeq,
-            },
-          });
-        }
       }
     };
-
-    if (window.Android) {
-      window.Android.authenticate();
-    }
-  };
   const handleSendMoney = () => {
     if (selectedAccount) {
       const { accountSeq, accountNum, bankName } = selectedAccount;
