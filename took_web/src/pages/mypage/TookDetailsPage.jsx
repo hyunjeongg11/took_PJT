@@ -1,62 +1,115 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import BackButton from '../../components/common/BackButton';
-import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import completeIcon from '../../assets/payment/complete.png'; // 정산 완료 아이콘 경로
 import incompleteIcon from '../../assets/payment/incomplete.png'; // 정산 미완료 아이콘 경로
 import deliveryIcon from '../../assets/payment/deliveryTook.png'; // 배달 took 아이콘 경로
 import taxiIcon from '../../assets/payment/taxiTook.png'; // 택시 took 아이콘 경로
-import userProfile1 from '../../assets/profile/img1.png'; // 사용자 프로필 아이콘 경로
-import userProfile2 from '../../assets/profile/img2.png'; // 사용자 프로필 아이콘 경로
-import userProfile3 from '../../assets/profile/img3.png'; // 사용자 프로필 아이콘 경로
-import userProfile4 from '../../assets/profile/img4.png'; // 사용자 프로필 아이콘 경로
 import isMeIcon from '../../assets/payment/isMe.png'; // 본인 아이콘 경로
+import { partyDetailApi } from '../../apis/payment/jungsan';
+import { useUser } from '../../store/user';
+import payIcon from '../../assets/payment/payTook.png';
+import buyIcon from '../../assets/payment/buyTook.png';
 
-const users = [
-  {
-    name: '차민주',
-    icon: userProfile1,
-    amount: 14150,
-    status: '완료',
-    orderAmount: 12900,
-    deliveryTip: 1250,
-    isMe: true,
-  },
-  {
-    name: '공지환',
-    icon: userProfile2,
-    amount: 18550,
-    status: '완료',
-    orderAmount: 17300,
-    deliveryTip: 1250,
-    isMe: false,
-  },
-  {
-    name: '조현정',
-    icon: userProfile3,
-    amount: 15650,
-    status: '미완료',
-    orderAmount: 14400,
-    deliveryTip: 1250,
-    isMe: false,
-  },
-  {
-    name: '이재찬',
-    icon: userProfile4,
-    amount: 23250,
-    status: '완료',
-    orderAmount: 22000,
-    deliveryTip: 1250,
-    isMe: false,
-  },
-];
+const categoryMap = {
+  1: '배달',
+  2: '택시',
+  3: '공구',
+  4: '정산',
+};
+const iconMap = {
+  1: deliveryIcon, // 배달 아이콘
+  2: taxiIcon, // 택시 아이콘
+  3: buyIcon, // 공구 아이콘
+  4: payIcon, // 정산 아이콘
+};
 
-function TookDetailsPage({ type = '배달', date = '6.24 (월) 18:55' }) {
+const getProfileImagePath = (imgNo) => {
+  const profileImages = import.meta.glob('../../assets/profile/*.png', {
+    eager: true,
+  });
+  return profileImages[`../../assets/profile/img${imgNo}.png`]?.default || '';
+};
+const formatDateTime = (dateString) => {
+  const date = new Date(dateString);
+
+  const formattedDate = date.toLocaleDateString('ko-KR', {
+    month: 'numeric',
+    day: 'numeric',
+    weekday: 'short',
+  });
+
+  const formattedTime = date.toLocaleTimeString('ko-KR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+
+  return `${formattedDate} ${formattedTime}`;
+};
+function TookDetailsPage() {
+  const { id } = useParams();
+  const { seq } = useUser();
+  const [users, setUser] = useState([]);
+  const [party, setParty] = useState(null);
+  useEffect(() => {
+    const fetchPartys = async () => {
+      try {
+        const response = await partyDetailApi(id);
+        if (response) {
+          const party = {
+            partySeq: response.partyDetailList[0].party.partySeq,
+            title: response.partyDetailList[0].party.title,
+            category: response.partyDetailList[0].party.category,
+            cost: response.partyDetailList[0].party.cost,
+            status: response.partyDetailList[0].party.status
+              ? '완료'
+              : '미완료',
+            createdAt: response.partyDetailList[0].party.createdAt,
+            count: response.partyDetailList[0].party.count,
+            totalMember: response.partyDetailList[0].party.totalMember,
+            receiveCost: response.partyDetailList[0].party.receiveCost,
+            deliveryTip: response.partyDetailList[0].party.deliveryTip,
+          };
+          setParty(party);
+          const partyList = response.partyDetailList.map((member) => ({
+            memberSeq: member.memberSeq,
+            name: member.user.userName,
+            imageNo: member.user.imageNo,
+            orderAmount: member.cost,
+            amount: member.cost + party.deliveryTip / party.totalMember,
+            status: member.leader || member.status ? '완료' : '미완료', // status 매핑
+            createdAt: member.createdAt,
+            fakeCost: member.fakeCost,
+            restCost: member.restCost,
+            deliveryTip: party.deliveryTip / party.totalMember,
+            isMe: member.user.userSeq == seq ? true : false,
+          }));
+          setUser(partyList);
+        }
+      } catch (error) {
+        console.error('계좌 정보를 불러오는데 실패했습니다:', error);
+      }
+    };
+    fetchPartys();
+  }, []);
+
+  if (!party) {
+    return <div>Loading...</div>; // 파티 정보가 로드되기 전까지 로딩 화면 표시
+  }
+  const type = categoryMap[party.category];
+  const date = formatDateTime(party.createdAt);
+
   const renderUserDetails = (user, index) => {
     const isCompleted = user.status === '완료';
     return (
       <div key={user.name} className="mb-4">
         <div className="flex items-center mb-3">
-          <img src={user.icon} alt={user.name} className="w-9 h-9 mr-4" />
+          <img
+            src={getProfileImagePath(user.imageNo)}
+            alt={user.name}
+            className="w-9 h-9 mr-4"
+          />
           <div className="flex-grow flex justify-between items-center">
             <div className="flex items-center">
               <span>{user.name}</span>
@@ -113,7 +166,7 @@ function TookDetailsPage({ type = '배달', date = '6.24 (월) 18:55' }) {
           <div className="text-gray-500 mb-4 text-sm">{date}</div>
           <div className="flex items-center mb-4">
             <img
-              src={type === '배달' ? deliveryIcon : taxiIcon}
+              src={iconMap[party.category]}
               alt="Took"
               className="w-14 h-14"
             />
@@ -128,11 +181,7 @@ function TookDetailsPage({ type = '배달', date = '6.24 (월) 18:55' }) {
             </div>
             <div className="ml-auto">
               <img
-                src={
-                  users.some((user) => user.status === '미완료')
-                    ? incompleteIcon
-                    : completeIcon
-                }
+                src={party.status == '미완료' ? incompleteIcon : completeIcon}
                 alt="정산 상태"
                 className="w-17 h-16"
               />

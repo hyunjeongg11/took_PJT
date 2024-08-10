@@ -1,6 +1,6 @@
 // GroupBuyChattingMainPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams, useLocation, Link } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
@@ -25,9 +25,11 @@ import ArrivalNotificationModal from '../../components/chat/ArrivalNotificationM
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import { getChatRoomMessageApi, getUsersApi } from '../../apis/chat/chat';
+import { getShopByRoom } from '../../apis/findByRoom';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
+<<<<<<< HEAD
 // todo: 실제 데이터와 연결 필요
 const tempMember = [
   {
@@ -83,91 +85,17 @@ const tempMember = [
     created_at: '2024-07-06T00:23:00',
   },
 ];
+=======
+>>>>>>> dev-fe
 
-const tempData = {
-  shopSeq: 8, // 채팅방 연결 전까지는 임시로 8번으로 !!
-  id: 1,
-  title: '마이프로틴 공동구매 모집합니다',
-  site: '마이프로틴',
-  item: '프로틴',
-  content: `마프대란 프로틴 같이 공동구매 하실 분 구해요
-              <br />
-              <br />
-              8만원 이상 채워서 주문하고 싶어요! 같이 쿠폰 적용해서 주문해요!!!`,
-  place: '송정삼정그린코아더시티 1층',
-  current_person: 4,
-  max_person: 6,
-  img_no: 1,
-  visit: 1,
-  created_at: new Date(),
-};
-
-const tempMessages = [
-  {
-    id: 1,
-    user_seq: 1,
-    userName: '조현정',
-    message:
-      '여러분, 구매 사이트 확인하시고 각자 구매 정보 등록 부탁드립니다 :)',
-    timestamp: '2024-07-06T10:12:00',
-  },
-  {
-    id: 2,
-    user_seq: 3,
-    userName: '차민주',
-    message: '네엡',
-    timestamp: '2024-07-06T10:14:00',
-  },
-  {
-    id: 3,
-    user_seq: 2,
-    userName: '정희수',
-    message: '저 3천원치만 함께 주문해도 괜찮을까요?',
-    timestamp: '2024-07-06T10:15:00',
-  },
-  {
-    id: 4,
-    user_seq: 4,
-    userName: '이재찬',
-    message: '넵! 상관 없을 것 같아요~!',
-    timestamp: '2024-07-06T11:09:00',
-  },
-  {
-    id: 5,
-    user_seq: 2,
-    userName: '정희수',
-    message: '저도요~',
-    timestamp: '2024-07-06T11:24:00',
-  },
-  {
-    id: 6,
-    user_seq: 1,
-    userName: '조현정',
-    message: '6시까지 다른분들 기다렸다가 주문하겠습니다 :-)',
-    timestamp: '2024-07-06T12:26:00',
-  },
-  {
-    id: 7,
-    user_seq: 3,
-    userName: '차민주',
-    message: '넵! 감사합니다!',
-    timestamp: '2024-07-06T13:45:00',
-  },
-  {
-    id: 8,
-    user_seq: 4,
-    userName: '이재찬',
-    message: '좋은아침입니다!',
-    timestamp: '2024-07-07T08:18:00',
-  },
-];
 
 function GroupBuyChattingMainPage() {
   const { id } = useParams();
+  const location = useLocation();
   const { seq } = useUser();
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
-  const [messages, setMessages] = useState(tempMessages);
+  const [messages, setMessages] = useState();
   const [inputMessage, setInputMessage] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -178,7 +106,8 @@ function GroupBuyChattingMainPage() {
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const actionIconsRef = useRef(null);
-  const lastDateRef = useRef('');
+  const [shopInfo, setShopInfo] = useState({});
+  const [isLeader, setIsLeader] = useState(false);
   const textareaRef = useRef(null);
   const stompClient = useRef(null);
   const currentSubscription = useRef(null);
@@ -192,6 +121,7 @@ function GroupBuyChattingMainPage() {
     stompClient.current.connect({}, () => {
       console.log('WebSocket connected');
       enterRoom();
+      loadShopInfo();
       loadUsers();
     });
     return () => {
@@ -200,6 +130,19 @@ function GroupBuyChattingMainPage() {
       }
     };
   }, []);
+
+  const loadShopInfo = async () => {
+    try {
+      const response = await getShopByRoom(id);
+      console.log("shopInfo", response);
+      setShopInfo(response);
+      if (seq === response.userSeq) {
+        setIsLeader(true);
+      }
+    } catch (err) {
+      console.log("Error fetching shop info", err);
+    }
+  };
 
   const enterRoom = () => {
     if (currentSubscription.current) {
@@ -356,60 +299,42 @@ function GroupBuyChattingMainPage() {
       </div>
       <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
-      <div className="w-full px-2 py-1">
-        <div
-          className={`flex items-start p-2 m-1 rounded-lg shadow-md ${isCollapsed ? 'bg-opacity-80 bg-white shadow-none' : 'bg-white'}`}
-        >
-          <img src={speaker} alt="speaker" className="w-6 h-6 ml-1" />
-          <div className="ml-2 flex-grow">
-            <div className="text-sm mt-[2px]"></div>
-            {!isCollapsed && (
-              <div className="text-xs flex-col gap-2 justify-between flex py-2">
-                <div className="mb-1.5">
-                  물품명 <span className="ml-5">{tempData.item}</span>
-                </div>
-                <div className="mb-1.5">
-                  구매링크
-                  <a
-                    href="https://www.myprotein.co.kr"
-                    className="underline ml-3 overflow-hidden "
-                  >
-                    https://www.myprotein.co.kr
-                  </a>
-                </div>
-                <div>
-                  수령장소 <span className="ml-2">{tempData.place}</span>
-                </div>
-              </div>
-            )}
-            {/* <div className="mt-1 w-full border-1 border-solid bg-black min-h-[0.5px]" /> */}
-            {/* <div className="text-xs mt-2 mb-1 mr-3 ml-1 flex justify-between">
-              <span onClick={() => navigate('/groupbuy/order')}>
-                상품 주문 정보 등록
-              </span>{' '}
-              |
-              <button
-                onClick={handleShowArrivalModal}
-                className="focus:outline-none"
-              >
-                물품 도착 !
-              </button>{' '}
-              |
-              <span onClick={() => navigate('/groupbuy/order')}>
-                전체 구매 정보
-              </span>
-            </div> */}
-          </div>
-          <button onClick={toggleCollapse} className="focus:outline-none">
-            {isCollapsed ? (
-              <FaChevronDown className="h-4 w-4 text-gray-400" />
-            ) : (
-              <FaChevronUp className="h-4 w-4 text-gray-400" />
-            )}
-          </button>
+     
+      <div
+  className={`flex items-start p-2 m-1 rounded-lg shadow-md mx-3 ${isCollapsed ? 'bg-opacity-80 bg-white shadow-none' : 'bg-white w-[90%]'}`}
+>
+  <img src={speaker} alt="speaker" className="w-6 h-6 ml-1" />
+  <div className="ml-2 flex-grow max-w-64">
+    <div className="text-sm mt-[2px]"></div>
+    {!isCollapsed && (
+      <div className="text-xs flex-col gap-2 justify-between flex py-2">
+        <div className="mb-1.5 flex flex-between w-[95%]">
+          <div className="w-16">물품명</div>
+          <span className="">{shopInfo.item}</span>
+        </div>
+        <div className="mb-1.5 flex flex-between w-[95%]">
+          <div className="w-16">구매링크</div>
+          <Link to={shopInfo.site} className="underline overflow-hidden ">
+            {shopInfo.site}
+          </Link>
+        </div>
+        <div className="flex flex-between w-[95%]">
+          <div className="w-16">수령장소</div>
+          <span className="">{shopInfo.place}</span>
         </div>
       </div>
-
+    )}
+  </div>
+  <div className="flex-shrink-0">
+    <button onClick={toggleCollapse} className="focus:outline-none">
+      {isCollapsed ? (
+        <FaChevronDown className="h-4 w-4 text-gray-400" />
+      ) : (
+        <FaChevronUp className="h-4 w-4 text-gray-400" />
+      )}
+    </button>
+  </div>
+</div>
       <div
         className="flex-grow overflow-y-scroll px-4 py-2 space-y-4 relative"
         onScroll={handleScroll}
@@ -493,32 +418,7 @@ function GroupBuyChattingMainPage() {
         </button>
       )}
 
-      {/* <div className="w-full px-2 py-2 bg-white flex items-center relative">
-        <button onClick={toggleActionIcons} className="focus:outline-none">
-          <MdAdd
-            className={`text-gray-400 cursor-pointer mr-2 w-6 h-6 transform transition-transform ${showActionIcons ? 'rotate-45' : ''}`}
-          />
-        </button>
-        <div className="relative flex-grow">
-          <textarea
-            ref={textareaRef}
-            className="flex-grow w-full pl-4 pr-10 py-2 rounded-2xl bg-gray-100 focus:outline-none resize-none max-h-24"
-            placeholder="채팅 메시지 보내기"
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            rows={1}
-            style={{ overflow: 'hidden' }}
-          />
-          <button
-            className={`absolute right-2 bottom-3.5 px-3 py-1.5 ${inputMessage.trim() === '' ? 'bg-gray-300' : 'bg-main'} text-white rounded-2xl flex items-center justify-center focus:outline-none`}
-            onClick={handleSendMessage}
-            disabled={inputMessage.trim() === ''}
-          >
-            <FaPaperPlane className="w-5 h-4" />
-          </button>
-        </div>
-        
-      </div> */}
+     
       <div className="flex flex-col">
         <div className="relative bottom-0 left-0 right-0 bg-white p-2 shadow-md flex items-center">
           <textarea
@@ -548,6 +448,27 @@ function GroupBuyChattingMainPage() {
           className="w-full px-4 py-12 bg-white flex justify-around"
           ref={actionIconsRef}
         >
+
+           
+<div className="flex flex-col items-center">
+            <div
+              className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center"
+              onClick={() => navigate(`/groupbuy/total/${tempData.shopSeq}`)}
+            >
+              <AiOutlineInfoCircle className="text-white w-6 h-6" />
+            </div>
+            <span className="mt-1 text-[11px] text-gray-500">주문 정보</span>
+          </div>
+
+          { isLeader && (<div className="flex flex-col items-center mb-4">
+            <div
+              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
+              onClick={() => navigate(`/groupbuy/order/${tempData.shopSeq}`)}
+            >
+              <BsTruck className="text-white w-7 h-7" />
+            </div>
+            <span className="mt-1 text-[11px] text-gray-500">배송 정보</span>
+          </div>)}
           <div className="flex flex-col items-center mb-4">
             <div
               className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
@@ -557,6 +478,7 @@ function GroupBuyChattingMainPage() {
             </div>
             <span className="mt-1 text-[11px] text-gray-500">정산</span>
           </div>
+<<<<<<< HEAD
           <div className="flex flex-col items-center mb-4">
             <div
               className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center"
@@ -575,6 +497,10 @@ function GroupBuyChattingMainPage() {
             </div>
             <span className="mt-1 text-[11px] text-gray-500">주문 정보</span>
           </div>
+=======
+     
+         
+>>>>>>> dev-fe
           <div
             onClick={handleShowArrivalModal}
             className="flex flex-col items-center"

@@ -26,49 +26,37 @@ import { getUserInfoApi } from '../../apis/user';
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 function TaxiChattingMainPage() {
-  const { id: roomSeq } = useParams();
-  const location = useLocation();
-  const { taxiSeq } = location.state || {};
-  const { seq: userSeq, setName } = useUser();
-  const [messages, setMessages] = useState([]);
+  const { id } = useParams();
+  const { seq } = useUser();
+  const [messages, setMessages] = useState(tempMessages);
+  const [users, setUsers] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [showActionIcons, setShowActionIcons] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
-  const [taxiStatus, setTaxiStatus] = useState('');
-  const [showSettlementButton, setShowSettlementButton] = useState(false);
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const [taxiParty, setTaxiParty] = useState(null);
-  const [members, setMembers] = useState([]);
-  const [chatUsers, setChatUsers] = useState([]);
-  const [userName, setUserName] = useState('');
+  const [currentModal, setCurrentModal] = useState(null);
+  const [showParticipantList, setShowParticipantList] = useState(false);
 
-  const navigate = useNavigate();
-  const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const actionIconsRef = useRef(null);
+  const messagesEndRef = useRef(null);
   const lastDateRef = useRef('');
+  const textareaRef = useRef(null);
   const stompClient = useRef(null);
   const currentSubscription = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [taxiInfo, setTaxiInfo] = useState(null);
+  const chatRoom = location.state?.chatRoom || null;
+  // todo : 채팅방 목록에서는 chatRoom에 roomTitle, 리더의 userSeq 담고,
+  // id에 url 파라미터로 roomSeq 담아서 보내도록 했는데, 택시 상세 페이지에서 채팅방으로 넘어갈 때도 동일하게 넘어가도록 구현 필요 ( ChattingListPage 참고)
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const userInfo = await getUserInfoApi({ userSeq });
-        setUserName(userInfo.userName);
-        setName(userInfo.userName);
-      } catch (error) {
-        console.error('사용자 정보를 불러오는 중 오류 발생:', error);
-      }
-    };
-
-    if (userSeq) {
-      fetchUserInfo();
-    }
-  }, [userSeq, setName]);
-
+  // const [showMenu, setShowMenu] = useState(false); // 메뉴 보이기 상태 추가
+  // const [showModal, setShowModal] = useState(false); // 모달창 보이기 상태 추가
+  // const [modalMessage, setModalMessage] = useState(''); // 모달 메시지 상태 추가
+  const [taxiStatus, setTaxiStatus] = useState(tempTaxi.status); // 택시 상태 추가
+  const [showSettlementButton, setShowSettlementButton] = useState(false); // 정산 버튼 상태 추가
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false); // 키보드 보이기 상태 추가
   useEffect(() => {
     const socket = new SockJS(`${SERVER_URL}/ws`);
     stompClient.current = Stomp.over(socket);
@@ -77,6 +65,7 @@ function TaxiChattingMainPage() {
       console.log('WebSocket connected');
       enterRoom();
       loadUsers();
+      // loadTaxiInfo(); // todo: 이 함수 구현 후 주석 해제하기
     });
 
     return () => {
@@ -84,13 +73,41 @@ function TaxiChattingMainPage() {
         stompClient.current.disconnect();
       }
     };
-  }, []);
+  });
+
+  const loadTaxiInfo = async () => {
+    // RoomSeq는 id에서 확인 가능
+    // todo:  RoomSeq 가지고 택시 정보 api로 불러오기
+    //
+  };
+
+  const fetchRoomMessages = async () => {
+    try {
+      const response = await getChatRoomMessageApi({
+        roomSeq: id,
+        userSeq: seq,
+      });
+      setMessages(response);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
+
+  const loadUsers = async () => {
+    try {
+      const response = await getUsersApi(id);
+      setUsers(response);
+      console.log(response);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
 
   const enterRoom = () => {
     if (currentSubscription.current) {
       currentSubscription.current.unsubscribe();
     }
-    currentSubscription.current = subscribeToRoomMessages(roomSeq);
+    currentSubscription.current = subscribeToRoomMessages(id);
     fetchRoomMessages();
   };
 
@@ -104,34 +121,13 @@ function TaxiChattingMainPage() {
     );
   }
 
-  const fetchRoomMessages = async () => {
-    try {
-      const response = await getChatRoomMessageApi({
-        roomSeq: roomSeq,
-        userSeq: userSeq,
-      });
-      setMessages(response);
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-    }
-  };
-
-  const loadUsers = async () => {
-    try {
-      const response = await getUsersApi(roomSeq);
-      setChatUsers(response);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  };
-
   const handleSendMessage = () => {
     if (inputMessage.trim() === '') return;
 
     const messageRequest = {
       type: 'TALK',
-      roomSeq: roomSeq,
-      userSeq: userSeq,
+      roomSeq: id,
+      userSeq: seq,
       message: inputMessage,
     };
 
@@ -150,9 +146,21 @@ function TaxiChattingMainPage() {
     }
   };
 
-  const getUserProfileImgNo = (userSeq) => {
-    const user = chatUsers.find((user) => user.userSeq === userSeq);
-    return user ? user.imgNo : 1;  // 기본 프로필 이미지를 1로 설정
+  const leaveRoom = ({ roomSeq, userSeq }) => {
+    if (stompClient.current && stompClient.current.connected) {
+      const leaveRequest = { roomSeq, userSeq };
+      stompClient.current.send(
+        '/pub/room/leave',
+        {},
+        JSON.stringify(leaveRequest)
+      );
+      // todo 채팅방 나갈 때 로직 더 생각해보기! 일단은 채팅방만 나가도록 구현해둠
+      navigate(-1);
+    }
+
+    const toggleCollapse = () => {
+      setIsCollapsed(!isCollapsed);
+    };
   };
   
 
@@ -160,7 +168,7 @@ function TaxiChattingMainPage() {
     const container = scrollContainerRef.current;
     const isAtBottom =
       container.scrollHeight - container.scrollTop <=
-      container.clientHeight + 100;
+      container.clientHeight + 1;
     setShowScrollButton(!isAtBottom);
   };
 
@@ -173,47 +181,63 @@ function TaxiChattingMainPage() {
     setShowActionIcons(!showActionIcons);
   };
 
-  const handleClickOutside = (event) => {
-    if (
-      actionIconsRef.current &&
-      !actionIconsRef.current.contains(event.target)
-    ) {
-      setShowActionIcons(false);
-    }
-  };
-
-  const handleSettingDestination = () => {
-    navigate('/taxi/path');
-  };
-
-  const handleCheckDestinationList = () => {
-    navigate('/taxi/path-list');
-  };
-
-  const handleChatSetting = () => {
-    navigate('/taxi/setting');
-  };
-
-  const openModal = (message) => {
-    setModalMessage(message);
-    setShowModal(true);
+  const openModal = (modalType) => {
+    setCurrentModal(modalType);
   };
 
   const closeModal = () => {
-    setShowModal(false);
+    setCurrentModal(null);
   };
 
-  const handleMenuToggle = () => {
-    setShowMenu(!showMenu);
+  const handleShowParticipantList = () => {
+    setShowParticipantList(true);
   };
 
-  const handleKickMember = (userName) => {
-    openModal(`${userName}님을 채팅방에서\n내보내시겠습니까?`);
+  const handleCloseParticipantList = () => {
+    setShowParticipantList(false);
   };
 
-  const handleLeaveChatting = () => {
-    openModal('채팅방을 나가시겠습니까?');
-  };
+  // const handleClickOutside = (event) => {
+  //   if (
+  //     actionIconsRef.current &&
+  //     !actionIconsRef.current.contains(event.target)
+  //   ) {
+  //     setShowActionIcons(false);
+  //   }
+  // };
+
+  // const handleSettingDestination = () => {
+  //   navigate('/taxi/path');
+  // };
+
+  // const handleCheckDestinationList = () => {
+  //   navigate('/taxi/path-list');
+  // };
+
+  // const handleChatSetting = () => {
+  //   navigate('/taxi/setting');
+  // };
+
+  // const openModal = (message) => {
+  //   setModalMessage(message);
+  //   setShowModal(true);
+  // };
+
+  // const closeModal = () => {
+  //   setShowModal(false);
+  // };
+
+  // const handleMenuToggle = () => {
+  //   setShowMenu(!showMenu);
+  // };
+
+  // const handleKickMember = (userName) => {
+  //   openModal(`${userName}님을 채팅방에서 내보내시겠습니까?`);
+  // };
+
+  // const handleLeaveChatting = () => {
+  //   openModal('채팅방을 나가시겠습니까?');
+  // };
 
   const handleConfirmLeaveChatting = () => {
     navigate('/chat/list');
@@ -245,47 +269,28 @@ function TaxiChattingMainPage() {
     navigate('/taxi/input');
   };
 
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
 
   useEffect(() => {
-    if (!taxiSeq || !userSeq || !roomSeq) return;
-
-    const fetchTaxiPartyData = async () => {
-      try {
-        const [taxiPartyData, membersData, chatUsersData, messagesData] =
-          await Promise.all([
-            getTaxiPartyApi(taxiSeq),
-            getAllTaxiPartyMembersApi(taxiSeq),
-            getUsersApi(taxiSeq),
-            getChatRoomMessageApi({
-              roomSeq: roomSeq,
-              userSeq: userSeq,
-            }),
-          ]);
-
-        setTaxiParty(taxiPartyData);
-        setTaxiStatus(taxiPartyData.status);
-        setMembers(membersData);
-        setChatUsers(chatUsersData);
-        setMessages(messagesData);
-      } catch (error) {
-        console.error('데이터를 불러오는 중 오류 발생:', error);
+    const handleResize = () => {
+      if (textareaRef.current) {
+        textareaRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
       }
     };
 
-    fetchTaxiPartyData();
-  }, [taxiSeq, userSeq, roomSeq]);
+    window.addEventListener('resize', handleResize);
 
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop =
-        scrollContainerRef.current.scrollHeight;
-    }
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -306,54 +311,165 @@ function TaxiChattingMainPage() {
     }
   }, [taxiParty]);
 
+  // useEffect(() => {
+  //   const handleKeyboardShow = () => {
+  //     setIsKeyboardVisible(true);
+  //   };
+  //   const handleKeyboardHide = () => {
+  //     setIsKeyboardVisible(false);
+  //   };
+
+  //   window.addEventListener('keyboardDidShow', handleKeyboardShow);
+  //   window.addEventListener('keyboardDidHide', handleKeyboardHide);
+
+  //   return () => {
+  //     window.removeEventListener('keyboardDidShow', handleKeyboardShow);
+  //     window.removeEventListener('keyboardDidHide', handleKeyboardHide);
+  //   };
+  // }, []);
+
   useEffect(() => {
-    const handleKeyboardShow = () => {
-      setIsKeyboardVisible(true);
-    };
-    const handleKeyboardHide = () => {
-      setIsKeyboardVisible(false);
-    };
-
-    window.addEventListener('keyboardDidShow', handleKeyboardShow);
-    window.addEventListener('keyboardDidHide', handleKeyboardHide);
-
-    return () => {
-      window.removeEventListener('keyboardDidShow', handleKeyboardShow);
-      window.removeEventListener('keyboardDidHide', handleKeyboardHide);
-    };
-  }, []);
-
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      handleSendMessage();
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 72)}px`;
     }
-  };
+  }, [inputMessage]);
 
   return (
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-5 py-3">
         <BackButton />
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
-          {members.length > 0 ? members[0].destiName : 'Loading...'}
+          {chatRoom?.roomTitle || '채팅방'}
         </div>
-
-        <FaBars className="mt-2.5" onClick={handleMenuToggle} />
+        <FaBars className="mt-2.5" onClick={handleShowParticipantList} />
       </div>
+      <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
-      {showMenu && (
-        <TaxiChattingMenu
-          members={members}
-          taxiParty={taxiParty}
-          taxiStatus={taxiStatus}
-          handleMenuToggle={handleMenuToggle}
-          handleKickMember={handleKickMember}
-          handleLeaveChatting={handleLeaveChatting}
-          handleChatSetting={handleChatSetting}
-        />
-      )}
+      <div className="w-full px-2 py-1">
+        <div
+          className={`flex items-start p-2 m-1 rounded-lg shadow-md ${isCollapsed ? 'bg-opacity-80 bg-white shadow-none' : 'bg-white'}`}
+        >
+          <img src={speaker} alt="speaker" className="w-6 h-6 ml-1" />
+          <div className="ml-2 flex-grow">
+            <div className="text-sm mt-[2px]"></div>
+            {!isCollapsed && (
+              <div className="text-xs flex-col gap-2 justify-between flex py-2">
+                <div className="mb-1.5">
+                  수령 장소
+                  <span className="ml-5">
+                    {deliveryInfo?.pickupPlace || ''}
+                  </span>
+                </div>
+                <div className="mb-1.5">
+                  주문 링크
+                  <span className="ml-5">
+                    <a href={deliveryInfo?.notice || ''} className="underline">
+                      함께 주문하러 가기
+                    </a>
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+          <button onClick={toggleCollapse} className="focus:outline-none">
+            {isCollapsed ? (
+              <FaChevronDown className="h-4 w-4 text-gray-400" />
+            ) : (
+              <FaChevronUp className="h-4 w-4 text-gray-400" />
+            )}
+          </button>
+        </div>
+      </div>
+      {/* 
+      {/* {showMenu && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-50">
+          <div className="w-4/5 h-full bg-white shadow-md p-4 relative">
+            <button
+              onClick={handleMenuToggle}
+              className="text-gray-400 focus:outline-none absolute top-5 right-4"
+            >
+              <FaTimes className="w-5 h-5" />
+            </button>
+            <div className="text-base font-bold mt-6 ml-1 mb-4">경로</div>
+            <ul>
+              {tempMember.map((member) => (
+                <li
+                  key={member.user_seq}
+                  className="flex items-center justify-between mb-2 py-1"
+                >
+                  <div className="items-center flex flex-row text-sm text-black">
+                    <FaLocationDot className="mr-1 w-4 h-4 text-neutral-300" />
+                    <span className="px-2">{member.destination}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
 
-      {showModal && (
+            <div className="mt-6 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
+
+            <h2 className="text-base font-bold mt-6 mb-4 ml-1">참여자</h2>
+            <ul>
+              {tempMember.map((member) => (
+                <li
+                  key={member.user_seq}
+                  className="flex items-center justify-between mb-2 ml-1"
+                >
+                  <div className="flex items-center py-2">
+                    <img
+                      src={getProfileImagePath(member.imgNo)}
+                      alt={member.userName}
+                      className="w-8 h-8 mr-2"
+                    />
+                    <span className="text-sm">{member.userName}</span>
+                    {tempTaxi.user_seq === member.user_seq && (
+                      <div className="ml-1 text-xs bg-neutral-400 px-1.5 py-1 rounded-full text-white">
+                        나
+                      </div>
+                    )}
+                    {tempTaxi.master === member.user_seq && (
+                      <FaCrown className="text-yellow-500 ml-1 w-5" />
+                    )}
+                  </div>
+                  {tempTaxi.user_seq === tempTaxi.payer &&
+                    member.user_seq === tempTaxi.payer && (
+                      <div className="ml-1 text-xs bg-main px-2 py-1 rounded-lg shadow-sm text-white">
+                        결제자
+                      </div>
+                    )}
+                  {tempTaxi.user_seq === tempTaxi.master &&
+                    member.user_seq !== tempTaxi.master && (
+                      <button
+                        className="text-red-600 border-2 border-red-600 rounded-lg py-1 px-2 text-xs"
+                        onClick={() => handleKickMember(member.userName)}
+                      >
+                        내보내기
+                      </button>
+                    )}
+                </li>
+              ))}
+            </ul>
+            {taxiStatus !== 'BOARD' && taxiStatus !== 'DONE' && (
+              <button
+                className="absolute bottom-4 left-4 text-gray-400"
+                onClick={handleLeaveChatting}
+              >
+                <FaSignOutAlt className="w-6 h-6" />
+              </button>
+            )}
+            {tempTaxi.master === tempTaxi.user_seq && (
+              <button
+                className="absolute bottom-4 right-4 text-gray-400"
+                onClick={handleChatSetting}
+              >
+                <IoIosSettings className="w-7 h-7" />
+              </button>
+            )}
+          </div>
+        </div>
+      )} */}
+
+      {/* {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center text-base items-center z-50">
           <div className="bg-white rounded-2xl p-6 w-64">
             <p className="whitespace-pre-line mb-4">{modalMessage}</p>
@@ -389,208 +505,177 @@ function TaxiChattingMainPage() {
             </div>
           </div>
         </div>
-      )}
-
+      )} */}
+      {/* 
       <div className="w-full px-2 py-1">
         <div className="flex items-center bg-white p-2 rounded-lg shadow-md">
           <img src={speaker} alt="speaker" className="w-6 h-6 mx-1" />
           <div className="text-sm text-gray-700">경로를 설정해주세요!</div>
         </div>
-      </div>
+      </div> */}
 
       <div
         className="flex-grow overflow-y-scroll px-4 py-2 space-y-4 relative"
         onScroll={handleScroll}
         ref={scrollContainerRef}
-        style={{ paddingBottom: '100px' }}
       >
-        {messages.map((msg, index, array) => {
-          const sameUserAndTime =
-            index > 0 &&
-            msg.userSeq === array[index - 1].userSeq &&
-            formatTime(new Date(msg.createdAt)) ===
-              formatTime(new Date(array[index - 1].createdAt));
-          const lastMessageFromSameUser =
-            index < array.length - 1 &&
-            msg.userSeq === array[index + 1].userSeq &&
-            formatTime(new Date(msg.createdAt)) ===
-              formatTime(new Date(array[index + 1].createdAt));
-          const showDate =
-            lastDateRef.current !== formatDateOnly(msg.createdAt);
-          lastDateRef.current = formatDateOnly(msg.createdAt);
+        {Array.isArray(messages) && messages.length > 0 ? (
+          messages.map((message, index) => {
+            const { userSeq, message: text, createdAt } = message;
+            const isCurrentUser = userSeq === seq;
+            const messageDate = new Date(createdAt);
+            const formattedTime = formatTime(messageDate);
 
-          return (
-            <div key={msg.id}>
-              {showDate && (
-                <div className="w-1/2 text-center text-xs mx-auto py-1 bg-neutral-200 bg-opacity-70 rounded-full text-black mt-2 mb-5">
-                  {formatDateOnly(msg.createdAt)}
-                </div>
-              )}
+            const user = users.find((user) => user.userSeq === userSeq);
+            const userProfileImage = user
+              ? getProfileImagePath(user.imageNo)
+              : '';
+            const userName = user ? user.userName : '';
+
+            return (
               <div
-                className={`flex ${
-                  msg.userSeq === userSeq ? 'justify-end' : 'justify-start'
-                }`}
+                key={index}
+                className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-2`}
               >
-                {msg.userSeq !== userSeq && (
-                  <div className="flex flex-col items-center mr-2">
-                    <img
-                      src={getProfileImagePath(
-                        getUserProfileImgNo(msg.userSeq)
-                      )}
-                      alt={msg.userName}
-                      className="w-9 h-9 rounded-full self-start"
-                    />
-                  </div>
-                )}
-                <div className="flex flex-col max-w-[88%]">
-                  {!sameUserAndTime && (
-                    <span
-                      className={`text-[9px] mb-1 text-black ${
-                        msg.userSeq === userSeq ? 'text-right' : 'text-left'
-                      }`}
-                    >
-                      {msg.userName}
-                    </span>
-                  )}
-                  <div className="flex items-end">
-                    {msg.userSeq === userSeq && !lastMessageFromSameUser && (
-                      <div className="text-[9px] text-gray-400 mr-2 whitespace-nowrap">
-                        {formatTime(new Date(msg.createdAt))}
+                {isCurrentUser ? (
+                  <>
+                    <div className="flex items-end flex-col mr-2">
+                      {/* <span className="text-xs text-gray-500 text-right mb-1">{userName}</span> */}
+                      <div className="flex items-end ">
+                        <div className="text-[10px] text-gray-500 top-full mr-2 left-0 mt-1">
+                          {formattedTime}
+                        </div>
+                        <div className="px-4 py-2 rounded-xl max-w-xs shadow-md bg-main text-white relative">
+                          {text}
+                        </div>
                       </div>
-                    )}
-                    <div
-                      className={`p-2 rounded-xl shadow-md ${
-                        msg.userSeq === userSeq
-                          ? 'bg-main text-white'
-                          : 'bg-white text-black'
-                      }`}
-                    >
-                      <div className="text-sm">{msg.message}</div>
                     </div>
-                    {msg.userSeq !== userSeq && !lastMessageFromSameUser && (
-                      <div className="text-[9px] text-gray-400 ml-2 whitespace-nowrap">
-                        {formatTime(new Date(msg.createdAt))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                {msg.userSeq === userSeq && (
-                  <div className="flex flex-col items-center ml-2">
                     <img
-                      src={getProfileImagePath(
-                        getUserProfileImgNo(msg.userSeq)
-                      )}
-                      alt={msg.userName}
-                      className="w-9 h-9 rounded-full self-start"
+                      src={userProfileImage}
+                      alt={userName}
+                      className="w-8 h-8 ml-2"
                     />
-                  </div>
+                  </>
+                ) : (
+                  <>
+                    <img
+                      src={userProfileImage}
+                      alt={userName}
+                      className="w-8 h-8 mr-2 mt-2"
+                    />
+                    <div className="flex items-start flex-col ml-2">
+                      <span className="text-xs text-gray-500 text-left mb-1">
+                        {userName}
+                      </span>
+                      <div className="flex items-end">
+                        <div className="px-4 py-2 rounded-xl max-w-xs shadow-md bg-white relative">
+                          {text}
+                        </div>
+                        <div className="text-[10px] text-gray-500  mt-1 ml-2">
+                          {formattedTime}
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <div className="text-center rounded-xl m-2 text-sm py-1 shadow bg-gray-500 bg-opacity-10">
+            메시지가 없습니다.
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
-      <div
-        className={`absolute bottom-0 left-0 w-full ${
-          isKeyboardVisible ? 'hidden' : ''
-        }`}
-      >
-        {showSettlementButton && (
+      {showScrollButton && (
+        <button
+          onClick={scrollToBottom}
+          className="absolute bottom-4 right-4 p-2 bg-main text-white rounded-full"
+        >
+          <FaArrowDown />
+        </button>
+      )}
+
+      <div className="flex flex-col">
+        <div className="relative bottom-0 left-0 right-0 bg-white p-2 shadow-md flex items-center">
+          <textarea
+            ref={textareaRef}
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            rows="1"
+            onKeyDown={handleKeyPress}
+            className="flex-grow p-2 border rounded-lg resize-none overflow-hidden"
+            placeholder="메시지를 입력하세요"
+          />
           <button
-            onClick={handleSettlement}
-            className="w-full py-4 bg-neutral-400 text-white text-lg font-bold flex items-center justify-center"
+            onClick={handleSendMessage}
+            className="ml-2 p-2 bg-main text-white rounded-full"
           >
-            <FaCalculator className="mr-2" />
-            정산하기
+            <FaPaperPlane />
           </button>
-        )}
-        <div className="w-full px-2 py-2 bg-white flex items-center relative">
-          <button onClick={toggleActionIcons} className="focus:outline-none">
-            <MdAdd
-              className={`text-gray-400 cursor-pointer mr-2 w-6 h-6 transform transition-transform ${
-                showActionIcons ? 'rotate-45' : ''
-              }`}
-            />
-          </button>
-          <div className="relative flex-grow">
-            <input
-              type="text"
-              className="flex-grow w-full pl-4 pr-10 py-2 rounded-2xl bg-gray-100 focus:outline-none"
-              placeholder="채팅 메시지 보내기 "
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyDown={handleKeyPress} // 엔터 키 이벤트 추가
-            />
-            <button
-              className={`absolute inset-y-1 right-0 px-3 py-2 ${
-                inputMessage.trim() === '' ? 'bg-gray-300' : 'bg-main'
-              } text-white rounded-2xl mr-2 flex items-center justify-center focus:outline-none`}
-              onClick={handleSendMessage}
-              disabled={inputMessage.trim() === ''}
-            >
-              <FaPaperPlane className="w-5 h-4" />
-            </button>
-          </div>
-          {showScrollButton && (
-            <button
-              onClick={scrollToBottom}
-              className="absolute bottom-16 right-4 p-2 bg-white text-gray-500 rounded-full shadow-md"
-            >
-              <FaArrowDown className="w-3 h-3" />
-            </button>
-          )}
+          <MdAdd
+            onClick={toggleActionIcons}
+            className="ml-2 text-2xl text-main cursor-pointer"
+          />
         </div>
       </div>
-
       {showActionIcons && (
         <div
-          className="w-full px-4 py-2 bg-white flex justify-around absolute bottom-14 left-0 z-50"
+          className="w-full px-4 py-12 bg-white flex justify-around"
           ref={actionIconsRef}
         >
           <div className="flex flex-col items-center mb-4">
             <div
               className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
-              onClick={handleSettingDestination}
+              onClick={() => openModal('calculator')}
             >
-              <img src={locationIcon} alt="경로 설정" className="w-5 h-6" />
+              <img src={calculator} alt="정산" className="w-6 h-6" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">경로 설정</span>
+            <span className="mt-1 text-[11px] text-gray-500">정산</span>
           </div>
           <div className="flex flex-col items-center">
             <div
               className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center"
-              onClick={handleCheckDestinationList}
+              onClick={() => openModal('money')}
             >
-              <img src={listIcon} alt="현재 경로 목록" className="w-5 h-6" />
+              <img src={money} alt="주문금액" className="w-7 h-7" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">
-              현재 경로 목록
-            </span>
+            <span className="mt-1 text-[11px] text-gray-500">주문금액</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <div
+              className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center"
+              onClick={() => openModal('delivery')}
+            >
+              <img src={delivery} alt="배달" className="w-6 h-5" />
+            </div>
+            <span className="mt-1 text-[11px] text-gray-500">배달</span>
           </div>
         </div>
       )}
+      {currentModal === 'calculator' && (
+        <CalculatorModal
+          onClose={closeModal}
+          tempMember={users}
+          leader={chatRoom.userSeq}
+        />
+      )}
+      {currentModal === 'money' && (
+        <MoneyModal onClose={closeModal} tempMember={users} />
+      )}
+      {currentModal === 'delivery' && (
+        <DeliveryModal onClose={closeModal} tempMember={users} />
+      )}
 
-      {taxiParty?.master === userSeq && (
-        <>
-          {taxiStatus === 'FILLED' && (
-            <button
-              onClick={handleBoardTaxi}
-              className="absolute bottom-16 left-4"
-            >
-              <img src={boardIcon} alt="탑승하기" className="w-14 h-14" />
-            </button>
-          )}
-          {taxiStatus === 'BOARD' && (
-            <button
-              onClick={handleDoneTaxi}
-              className="absolute bottom-16 left-4"
-            >
-              <img src={doneIcon} alt="하차하기" className="w-14 h-14" />
-            </button>
-          )}
-        </>
+      {showParticipantList && (
+        <ParticipantList
+          participants={users}
+          onClose={handleCloseParticipantList}
+          onSignOut={leaveRoom}
+          leaderSeq={chatRoom.userSeq}
+        />
       )}
     </div>
   );

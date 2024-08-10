@@ -1,41 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { getUserStyle, getMyStyle } from '../../utils/getCharacterPostion';
 import questionIcon from '../../assets/payment/question.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { getNearByUserPositionApi } from '../../apis/position/userPosition';
 import { useUser } from '../../store/user';
 import { usePosition } from '../../store/position';
+import backIcon from '../../assets/delivery/whiteBack.svg';
 
-// const res_data = [
-//   { name: '정희수', img_no: 6 },
-//   { name: '조현정', img_no: 1 },
-
-//   { name: '이재찬', img_no: 5 },
-//   { name: '정희수', img_no: 6 },
-//   { name: '조현정', img_no: 1 },
-
-//   { name: '이재찬', img_no: 5 },
-// ];
+const BackButton = () => {
+  const navigate = useNavigate();
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+  return (
+    <img
+      src={backIcon}
+      alt="뒤로"
+      className="w-6 h-6 mx-6 mt-8 absolute top-0 left-0 opacity-80"
+      onClick={handleBackClick}
+    />
+  );
+};
 
 const UserListPage = () => {
-  const { seq } = useUser();
+  const { seq, img_no } = useUser();
   const { latitude, longitude } = usePosition();
   const [users, setUsers] = useState([]);
   const [showHelp, setShowHelp] = useState(false);
+  const navigate = useNavigate();
 
   const imageSize = Math.max(5, 40 - (users.length - 8) * 1.6);
   const fontSize = Math.max(imageSize / 3, 12);
 
   useEffect(() => {
-    // const fetchUsers = () => {
-    //   const updatedUsers = res_data.map((user) => ({
-    //     ...user,
-    //     selected: false,
-    //   }));
-    //   setUsers(updatedUsers);
-    // };
-    // fetchUsers();
     loadNearUsers();
   }, []);
 
@@ -45,12 +43,14 @@ const UserListPage = () => {
       lat: latitude,
       lon: longitude,
     });
-    const updatedUsers = res.map((user) => ({
-      ...user,
-      seleced: false,
-      name: user.userName,
-      img_no: user.imageNo,
-    }));
+    const updatedUsers = res
+      .filter((user) => user.userSeq !== seq) //나와 같은 거는 안불러오게
+      .map((user) => ({
+        ...user,
+        seleced: false,
+        name: user.userName,
+        img_no: user.imageNo,
+      }));
     setUsers(updatedUsers);
   };
 
@@ -66,10 +66,16 @@ const UserListPage = () => {
     setTimeout(() => setShowHelp(false), 5000);
   };
 
+  const handleNavigate = () => {
+    console.log('넘어갈 유저를 출력합니다', users);
+    navigate('/dutch/input', { state: { users } });
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-main">
+      <BackButton />
       <h1 className="text-4xl font-bold my-8 text-white mt-12">
-        정산 <span className="font-dela">took!</span>
+        정산 <span className="font-dela">took !</span>
       </h1>
       <div className="relative flex items-center mb-4 text-white">
         <p className="mb-0">함께 정산할 유저를 선택해주세요!</p>
@@ -117,7 +123,7 @@ const UserListPage = () => {
           style={getMyStyle(imageSize - 6)}
         >
           <img
-            src={getProfileImagePath(10)}
+            src={getProfileImagePath(img_no)}
             alt="나"
             style={{
               width: `${imageSize - 6}px`,
@@ -128,11 +134,13 @@ const UserListPage = () => {
           <span className="text-xs mt-1 text-white">나</span>
         </div>
       </div>
-      <Link to={{ pathname: '/dutch/input', state: { users } }}>
-        <button className="bg-white px-12 py-2 shadow font-bold text-main rounded-full">
-          정산하러 가기
-        </button>
-      </Link>
+
+      <button
+        onClick={handleNavigate}
+        className="bg-white px-12 py-2 shadow font-bold text-main rounded-full"
+      >
+        정산하러 가기
+      </button>
     </div>
   );
 };

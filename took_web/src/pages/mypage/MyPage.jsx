@@ -5,6 +5,7 @@ import { useUser } from '../../store/user';
 import { useNavigate } from 'react-router-dom';
 import { logoutApi, getUserInfoApi } from '../../apis/user';
 import backIcon from '../../assets/delivery/whiteBack.svg';
+
 const BackButton = () => {
   const navigate = useNavigate();
   const handleBackClick = () => {
@@ -33,11 +34,10 @@ function MyPage() {
       try {
         const params = { userSeq: seq };
         const response = await getUserInfoApi(params);
-        console.log(response)
         if (response) {
           setUserInfo({
             userName: response.userName,
-            imageNo: response.imageNo // 기본 이미지 사용
+            imageNo: response.imageNo, // 기본 이미지 사용
           });
         }
       } catch (error) {
@@ -72,7 +72,7 @@ function MyPage() {
   return (
     <div className="max-h-screen ">
       <div className="flex flex-col w-full text-2xl text-center text-white bg-main pt-10">
-      <BackButton />
+        <BackButton />
         <div className="self-center my-8 font-dela">My took !</div>
         <div className="flex z-10 flex-col  mt-0 w-full text-sm font-bold  text-neutral-700 bg-white rounded-t-3xl p-10">
           <img
@@ -90,19 +90,18 @@ function MyPage() {
               />
             </Link>
           </div>
-          <div className="flex gap-5 mt-5 w-full text-black">
-            <div className="flex flex-1 gap-2.5 whitespace-nowrap leading-[150%]">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/f90b495eb82ceb581a24dc4a5b5263e7352644b6cffba2991d8205fd74d1ca25?"
-                className="shrink-0 aspect-square w-[25px]"
-              />
-              <div className="my-auto">툭머니</div>
+          <Link to="/mytookmoney">
+            <div className="flex gap-5 mt-5 w-full text-black">
+              <div className="flex flex-1 gap-2.5 whitespace-nowrap leading-[150%]">
+                <img
+                  loading="lazy"
+                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/f90b495eb82ceb581a24dc4a5b5263e7352644b6cffba2991d8205fd74d1ca25?"
+                  className="shrink-0 aspect-square w-[25px]"
+                />
+                <div className="my-auto">툭머니</div>
+              </div>
             </div>
-            <div className="my-auto leading-5">
-              24,000<span className="">원</span>
-            </div>
-          </div>
+          </Link>
           <Link to="/tookHistory">
             <div className="flex gap-3.5 mt-9 leading-5">
               <img
@@ -111,7 +110,8 @@ function MyPage() {
                 className="shrink-0 aspect-square w-[25px]"
               />
               <div>
-                <span className="text-base  text-neutral-700">took</span> 히스토리
+                <span className="text-base  text-neutral-700">took</span>{' '}
+                히스토리
               </div>
             </div>
           </Link>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { searchPlaces } from '../../utils/map';
+import searchIcon from '../../assets/taxi/search.png';
 
-const SearchDropdown = ({
+const Search = ({
   label,
   name,
   value,
@@ -44,34 +45,34 @@ const SearchDropdown = ({
   };
 
   return (
-    <div>
-      <div className="text-base font-bold leading-8 text-neutral-600">
-        {label}
-      </div>
-      <div className="flex items-center mb-4 border-b border-gray-300">
-        <input
-          type="text"
-          name={name}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          onKeyDown={handleKeyDown}
-          onClick={handleFocus}
-          className="flex-grow bg-transparent py-2 placeholder-gray-300 focus:outline-none focus:border-[#FF7F50]"
-        />
-        <button
-          className="text-white bg-neutral-400/75 mb-1 px-3 py-1.5 rounded-full text-sm font-bold ml-2"
-          onClick={handleSearch}
-        >
-          검색
-        </button>
+    <div className="my-2 relative w-full">
+      <div className="flex flex-col w-full">
+        <span className="mb-2 text-sm font-medium text-gray-700">{label}</span>
+        <div className="flex items-center justify-start w-full">
+          <input
+            type="text"
+            name={name}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            onKeyDown={handleKeyDown}
+            onClick={handleFocus}
+            className="w-full py-2 pl-3 text-sm text-gray-800 placeholder-gray-400 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-main focus:border-transparent h-10"
+          />
+          <button
+            className="flex items-center justify-center w-10 h-10 text-white bg-main rounded-r-md hover:bg-main-dark"
+            onClick={handleSearch}
+          >
+            검색
+          </button>
+        </div>
       </div>
       {showDropdown && (
-        <ul className="border border-gray-300 rounded-lg max-h-60 overflow-y-auto">
+        <ul className="absolute z-10 w-full mt-2 overflow-y-auto bg-white border border-gray-300 rounded-md shadow-lg max-h-60">
           {results.map((place) => (
             <li
               key={place.id}
-              className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+              className="px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-100"
               onClick={() => handleSelect(place)}
             >
               {place.place_name}
@@ -83,4 +84,4 @@ const SearchDropdown = ({
   );
 };
 
-export default SearchDropdown;
+export default Search;

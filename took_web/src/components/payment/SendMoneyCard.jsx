@@ -32,9 +32,7 @@ const SendMoneyCard = ({
         </div>
       </div>
       {status ? (
-        <div className="text-xs text-gray-500 font-[Nanum_Gothic] text-right text-end font-nanum">
-          송금완료
-        </div>
+        <div></div>
       ) : (
         <button
           className="text-s text-white font-[Nanum_Gothic] font-semibold bg-main py-2 px-12 rounded-2xl self-center"
