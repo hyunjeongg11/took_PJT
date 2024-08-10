@@ -74,6 +74,7 @@ public class FCMService {
                 .orderCost(request.getOrderCost())
                 .cost(request.getCost())
                 .createAt(LocalDateTime.now())
+                .status(false)
                 .build();
 
         String token = getToken(request.getUserSeq());
