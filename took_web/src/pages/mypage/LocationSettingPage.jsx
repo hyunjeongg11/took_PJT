@@ -11,17 +11,15 @@ import { useLocation } from 'react-router-dom';
 
 function LocationSettingPage() {
   const { state } = useLocation();
-  console.log(state)
+  console.log(state);
   const navigate = useNavigate();
-  
+
   const [searchInput, setSearchInput] = useState('');
   const [location, setLocation] = useState(state?.addr || '');
   const [lat, setLatitude] = useState(null);
   const [lon, setLongitude] = useState(null);
   const seq = getUserSeq();
-  
 
-  
   const handleChangeLocation = async () => {
     try {
       const params = {
@@ -84,7 +82,6 @@ function LocationSettingPage() {
           변경하기
         </button>
       </div>
-
     </div>
   );
 }

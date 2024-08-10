@@ -6,7 +6,7 @@ import {
   changePickUpStatusApi,
 } from '../../apis/delivery';
 import { useUser } from '../../store/user';
-import BackButton from '../../components/common/BackButton'
+import BackButton from '../../components/common/BackButton';
 
 function DeliveryCompletePage() {
   const navigate = useNavigate();
