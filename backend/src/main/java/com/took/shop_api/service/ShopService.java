@@ -1,7 +1,5 @@
 package com.took.shop_api.service;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.shop_api.dto.*;
 import com.took.shop_api.entity.Shop;
 import com.took.shop_api.entity.ShopGuest;

@@ -41,6 +41,9 @@ public class TaxiGuestService {
         taxiGuestRepository.save(taxiGuest);
 
         taxi.updateCount(1);
+        if(taxi.getCount() == taxi.getMax()) {
+            taxi.updateStatus(Taxi.Status.FILLED);
+        }
     }
 
     /**
@@ -54,6 +57,7 @@ public class TaxiGuestService {
         TaxiGuest guest = taxiGuestRepository.findByUserAndTaxi(user, taxi);
         taxiGuestRepository.delete(guest);
         taxi.updateCount(-1);
+        taxi.updateStatus(Taxi.Status.OPEN);
     }
 
     /**
