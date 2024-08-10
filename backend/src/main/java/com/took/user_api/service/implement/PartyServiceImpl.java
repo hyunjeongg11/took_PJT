@@ -376,7 +376,7 @@ public class PartyServiceImpl implements PartyService {
             Long leaderSeq = memberRepositoryCustom.findLeaderByPartySeq(party.getPartySeq());
             fcmService.sendMessage(
                     MessageRequest.builder()
-                            .title("`" + party.getTitle() + "` 모든 사람 결제 완료!")
+                            .title("'" + party.getTitle() + "' 모든 사람이 입금 완료!")
                             .body("주문을 진행해 주세요")
                             .userSeqList(List.of(leaderSeq))
                             .build()
@@ -416,7 +416,7 @@ public class PartyServiceImpl implements PartyService {
         // 알림 생성
         fcmService.sendMessage(
                 MessageRequest.builder()
-                        .title(party.getTitle() + " 정산 완료")
+                        .title("'" + party.getTitle() + "' 정산 완료")
                         .body(receiveCost + "원이 정산 되었습니다.")
                         .userSeqList(List.of(userSeq))
                         .build()
