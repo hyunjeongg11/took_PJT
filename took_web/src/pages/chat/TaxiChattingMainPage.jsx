@@ -26,10 +26,10 @@ import { getUserInfoApi } from '../../apis/user';
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 function TaxiChattingMainPage() {
-  const { id: roomSeq } = useParams(); // URL에서 chatRoomId를 가져옴
+  const { id: roomSeq } = useParams();
   const location = useLocation();
-  const { taxiSeq } = location.state || {}; // state에서 taxiSeq와 roomSeq를 가져옴
-  const { seq: userSeq, setName } = useUser(); // useUser에서 userSeq를 가져옴
+  const { taxiSeq } = location.state || {};
+  const { seq: userSeq, setName } = useUser();
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -44,18 +44,15 @@ function TaxiChattingMainPage() {
   const [members, setMembers] = useState([]);
   const [chatUsers, setChatUsers] = useState([]);
   const [userName, setUserName] = useState('');
-  // console.log('taxiSeq:', taxiSeq);
-  // console.log('roomSeq:', roomSeq);
 
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const actionIconsRef = useRef(null);
   const lastDateRef = useRef('');
-  console.log('taxiParty 정보: ', taxiParty);
-  console.log('members 정보: ', members);
+  const stompClient = useRef(null);
+  const currentSubscription = useRef(null);
 
-  // 사용자 정보 불러오기
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -72,30 +69,92 @@ function TaxiChattingMainPage() {
     }
   }, [userSeq, setName]);
 
+  useEffect(() => {
+    const socket = new SockJS(`${SERVER_URL}/ws`);
+    stompClient.current = Stomp.over(socket);
+
+    stompClient.current.connect({}, () => {
+      console.log('WebSocket connected');
+      enterRoom();
+      loadUsers();
+    });
+
+    return () => {
+      if (stompClient.current && stompClient.current.connected) {
+        stompClient.current.disconnect();
+      }
+    };
+  }, []);
+
+  const enterRoom = () => {
+    if (currentSubscription.current) {
+      currentSubscription.current.unsubscribe();
+    }
+    currentSubscription.current = subscribeToRoomMessages(roomSeq);
+    fetchRoomMessages();
+  };
+
+  function subscribeToRoomMessages(roomSeq) {
+    return stompClient.current.subscribe(
+      `/sub/chat/room/${roomSeq}`,
+      (messageOutput) => {
+        const newMessage = JSON.parse(messageOutput.body);
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      }
+    );
+  }
+
+  const fetchRoomMessages = async () => {
+    try {
+      const response = await getChatRoomMessageApi({
+        roomSeq: roomSeq,
+        userSeq: userSeq,
+      });
+      setMessages(response);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
+
+  const loadUsers = async () => {
+    try {
+      const response = await getUsersApi(roomSeq);
+      setChatUsers(response);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
   const handleSendMessage = () => {
     if (inputMessage.trim() === '') return;
 
-    const newMessage = {
-      id: messages.length + 1,
-      user_seq: userSeq,
-      userName: userName,
+    const messageRequest = {
+      type: 'TALK',
+      roomSeq: roomSeq,
+      userSeq: userSeq,
       message: inputMessage,
-      timestamp: new Date().toISOString(),
     };
 
-    setMessages([...messages, newMessage]);
-    setInputMessage('');
-
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      setShowScrollButton(false);
-    }, 100);
+    if (stompClient.current && stompClient.current.connected) {
+      stompClient.current.send(
+        '/pub/message/send',
+        {},
+        JSON.stringify(messageRequest)
+      );
+      setInputMessage('');
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      console.error('WebSocket is not connected.');
+    }
   };
 
-  const getUserProfileImgNo = (user_seq) => {
-    const user = members.find((member) => member.userSeq === user_seq);
-    return user ? user.imgNo : 1;
+  const getUserProfileImgNo = (userSeq) => {
+    const user = chatUsers.find((user) => user.userSeq === userSeq);
+    return user ? user.imgNo : 1;  // 기본 프로필 이미지를 1로 설정
   };
+  
 
   const handleScroll = () => {
     const container = scrollContainerRef.current;
@@ -194,11 +253,12 @@ function TaxiChattingMainPage() {
   }, []);
 
   useEffect(() => {
-    if (!taxiSeq || !userSeq || !roomSeq) return; // 필요한 값이 없는 경우 종료
-  
+    if (!taxiSeq || !userSeq || !roomSeq) return;
+
     const fetchTaxiPartyData = async () => {
       try {
-        const [taxiPartyData, membersData, chatUsersData, messagesData] = await Promise.all([
+        const [taxiPartyData, membersData, chatUsersData, messagesData] =
+          await Promise.all([
             getTaxiPartyApi(taxiSeq),
             getAllTaxiPartyMembersApi(taxiSeq),
             getUsersApi(taxiSeq),
@@ -207,7 +267,7 @@ function TaxiChattingMainPage() {
               userSeq: userSeq,
             }),
           ]);
-  
+
         setTaxiParty(taxiPartyData);
         setTaxiStatus(taxiPartyData.status);
         setMembers(membersData);
@@ -217,10 +277,9 @@ function TaxiChattingMainPage() {
         console.error('데이터를 불러오는 중 오류 발생:', error);
       }
     };
-  
+
     fetchTaxiPartyData();
-  }, [taxiSeq, userSeq, roomSeq]); // 필요한 의존성만 지정
-  
+  }, [taxiSeq, userSeq, roomSeq]);
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -263,6 +322,13 @@ function TaxiChattingMainPage() {
       window.removeEventListener('keyboardDidHide', handleKeyboardHide);
     };
   }, []);
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
 
   return (
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
@@ -341,33 +407,35 @@ function TaxiChattingMainPage() {
         {messages.map((msg, index, array) => {
           const sameUserAndTime =
             index > 0 &&
-            msg.user_seq === array[index - 1].user_seq &&
-            msg.timestamp === array[index - 1].timestamp;
+            msg.userSeq === array[index - 1].userSeq &&
+            formatTime(new Date(msg.createdAt)) ===
+              formatTime(new Date(array[index - 1].createdAt));
           const lastMessageFromSameUser =
             index < array.length - 1 &&
-            msg.user_seq === array[index + 1].user_seq &&
-            msg.timestamp === array[index + 1].timestamp;
+            msg.userSeq === array[index + 1].userSeq &&
+            formatTime(new Date(msg.createdAt)) ===
+              formatTime(new Date(array[index + 1].createdAt));
           const showDate =
-            lastDateRef.current !== formatDateOnly(msg.timestamp);
-          lastDateRef.current = formatDateOnly(msg.timestamp);
+            lastDateRef.current !== formatDateOnly(msg.createdAt);
+          lastDateRef.current = formatDateOnly(msg.createdAt);
 
           return (
             <div key={msg.id}>
               {showDate && (
                 <div className="w-1/2 text-center text-xs mx-auto py-1 bg-neutral-200 bg-opacity-70 rounded-full text-black mt-2 mb-5">
-                  {formatDateOnly(msg.timestamp)}
+                  {formatDateOnly(msg.createdAt)}
                 </div>
               )}
               <div
                 className={`flex ${
-                  msg.user_seq === userSeq ? 'justify-end' : 'justify-start'
+                  msg.userSeq === userSeq ? 'justify-end' : 'justify-start'
                 }`}
               >
-                {msg.user_seq !== userSeq && (
+                {msg.userSeq !== userSeq && (
                   <div className="flex flex-col items-center mr-2">
                     <img
                       src={getProfileImagePath(
-                        getUserProfileImgNo(msg.user_seq)
+                        getUserProfileImgNo(msg.userSeq)
                       )}
                       alt={msg.userName}
                       className="w-9 h-9 rounded-full self-start"
@@ -378,39 +446,39 @@ function TaxiChattingMainPage() {
                   {!sameUserAndTime && (
                     <span
                       className={`text-[9px] mb-1 text-black ${
-                        msg.user_seq === userSeq ? 'text-right' : 'text-left'
+                        msg.userSeq === userSeq ? 'text-right' : 'text-left'
                       }`}
                     >
                       {msg.userName}
                     </span>
                   )}
                   <div className="flex items-end">
-                    {msg.user_seq === userSeq && !lastMessageFromSameUser && (
+                    {msg.userSeq === userSeq && !lastMessageFromSameUser && (
                       <div className="text-[9px] text-gray-400 mr-2 whitespace-nowrap">
-                        {formatTime(msg.timestamp)}
+                        {formatTime(new Date(msg.createdAt))}
                       </div>
                     )}
                     <div
                       className={`p-2 rounded-xl shadow-md ${
-                        msg.user_seq === userSeq
+                        msg.userSeq === userSeq
                           ? 'bg-main text-white'
                           : 'bg-white text-black'
                       }`}
                     >
                       <div className="text-sm">{msg.message}</div>
                     </div>
-                    {msg.user_seq !== userSeq && !lastMessageFromSameUser && (
+                    {msg.userSeq !== userSeq && !lastMessageFromSameUser && (
                       <div className="text-[9px] text-gray-400 ml-2 whitespace-nowrap">
-                        {formatTime(msg.timestamp)}
+                        {formatTime(new Date(msg.createdAt))}
                       </div>
                     )}
                   </div>
                 </div>
-                {msg.user_seq === userSeq && (
+                {msg.userSeq === userSeq && (
                   <div className="flex flex-col items-center ml-2">
                     <img
                       src={getProfileImagePath(
-                        getUserProfileImgNo(msg.user_seq)
+                        getUserProfileImgNo(msg.userSeq)
                       )}
                       alt={msg.userName}
                       className="w-9 h-9 rounded-full self-start"
@@ -453,6 +521,7 @@ function TaxiChattingMainPage() {
               placeholder="채팅 메시지 보내기 "
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
+              onKeyDown={handleKeyPress} // 엔터 키 이벤트 추가
             />
             <button
               className={`absolute inset-y-1 right-0 px-3 py-2 ${
