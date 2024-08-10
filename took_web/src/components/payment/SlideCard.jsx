@@ -4,30 +4,55 @@ import { useNavigate } from 'react-router-dom';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { formatNumber } from '../../utils/format';
 import { AiOutlineClose } from 'react-icons/ai';
+import {
+  onlyjungsanPayApi,
+  deliveryGroupPayApi,
+} from '../../apis/payment/jungsan';
+import { useUser } from '../../store/user';
+import { getMainAccount } from '../../apis/account/oneclick';
 
 const SlideCard = ({ member, onClose }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [slid, setSlid] = useState(false);
   const [backgroundWidth, setBackgroundWidth] = useState(0);
   const navigate = useNavigate();
-
+  const { seq } = useUser();
   useEffect(() => {
     setBackgroundWidth(position.x + 32); // 배경이 좀 더 빠르게 업데이트되도록 설정
   }, [position]);
 
   const handleStop = (e, data) => {
-    if (data.x >= 200) {
+    if (data.x >= 100) {
       // 동그라미가 충분히 오른쪽으로 이동했는지 확인
       setSlid(true);
       setTimeout(() => {
         // 실제 송금 기능을 여기에 추가하면 됩니다.
-        onClose();
+        processPayment();
       }, 1000);
     } else {
       setPosition({ x: 0, y: 0 }); // 동그라미를 원래 위치로 되돌림
     }
   };
-
+  const processPayment = async () => {
+    const response = await getMainAccount(seq);
+    const requestData = {
+      userSeq: seq, // 지금 로그인한 userSeq 사용해야 함 (useUser 사용해도 됨)
+      partySeq: member.partySeq,
+      accountSeq: response.accountSeq,
+    };
+    console.log(requestData);
+    try {
+      if (member.category === 4) {
+        await onlyjungsanPayApi(requestData);
+      } else if (member.category === 1 || member.category === 3) {
+        await deliveryGroupPayApi(requestData);
+      }
+      onClose();
+    } catch (error) {
+      console.error('결제 처리 중 오류 발생:', error);
+      alert('결제 처리 중 오류가 발생했습니다.');
+    }
+  };
   const handleDrag = (e, data) => {
     setPosition({ x: data.x, y: 0 });
   };

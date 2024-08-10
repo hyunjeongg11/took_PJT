@@ -338,7 +338,7 @@ export const getMyPartyListApi = async (userSeq) => {
   } catch (error) {
     return handleApiError(error);
   }
-}
+};
 
 // 택시 정산 실결제
 export const fianlTaxiParty = async (params) => {
@@ -360,7 +360,6 @@ export const makeTaxiPartyApi = async (params) => {
   }
 };
 
-
 // 택시 잔돈 정산
 export const restCostPayApi = async (params) => {
   try {
@@ -375,6 +374,16 @@ export const restCostPayApi = async (params) => {
 export const payHistoryApi = async (userSeq) => {
   try {
     const response = await request.get(`/api/pay/pay-history/${userSeq}`);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// 미정산 내역 리스트 조회
+export const noPayList = async (userSeq) => {
+  try {
+    const response = await request.get(`/api/pay/no-pay-list/${userSeq}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);

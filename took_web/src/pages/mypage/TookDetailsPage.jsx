@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import BackButton from '../../components/common/BackButton';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import completeIcon from '../../assets/payment/complete.png'; // 정산 완료 아이콘 경로
 import incompleteIcon from '../../assets/payment/incomplete.png'; // 정산 미완료 아이콘 경로
 import deliveryIcon from '../../assets/payment/deliveryTook.png'; // 배달 took 아이콘 경로
@@ -10,7 +10,7 @@ import userProfile2 from '../../assets/profile/img2.png'; // 사용자 프로필
 import userProfile3 from '../../assets/profile/img3.png'; // 사용자 프로필 아이콘 경로
 import userProfile4 from '../../assets/profile/img4.png'; // 사용자 프로필 아이콘 경로
 import isMeIcon from '../../assets/payment/isMe.png'; // 본인 아이콘 경로
-import { partyDetailApi } from '../../apis/payment/jungsan'
+import { partyDetailApi } from '../../apis/payment/jungsan';
 const users = [
   {
     name: '차민주',
@@ -52,14 +52,14 @@ const users = [
 
 function TookDetailsPage({ type = '배달', date = '6.24 (월) 18:55' }) {
   const { partySeq } = useParams();
-  const [ party, setParty ] = useState([]);
+  const [party, setParty] = useState([]);
   useEffect(() => {
     const fetchPartys = async () => {
       try {
         const response = await partyDetailApi(partySeq);
         console.log(response);
         if (response) {
-          const partyList = response.partyDetailList.map(party => ({
+          const partyList = response.partyDetailList.map((party) => ({
             name: party.user.userName,
             icon: party.user.imageNo,
             category: categoryMap[party.category] || '기타', // category 매핑
@@ -72,13 +72,11 @@ function TookDetailsPage({ type = '배달', date = '6.24 (월) 18:55' }) {
             deliveryTip: party.deliveryTip,
           }));
           setParty(partyList);
-          console.log(party)
+          console.log(party);
         }
       } catch (error) {
         console.error('계좌 정보를 불러오는데 실패했습니다:', error);
       }
-
-      
     };
     fetchPartys();
   }, []);

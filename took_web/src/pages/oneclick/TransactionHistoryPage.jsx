@@ -1,9 +1,12 @@
 // src/pages/TransactionHistoryPage.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AiOutlineRight } from 'react-icons/ai';
 import { formatNumber } from '../../utils/format';
 import BackButton from '../../components/common/BackButton';
-
+import { useUser } from '../../store/user';
+import { Link } from 'react-router-dom';
+import { payHistoryApi } from '../../apis/payment/jungsan';
+import { bankIcons, bankNumToName } from '../../assets/payment/index.js';
 const tempTransactions = [
   {
     userName: '조*정',
@@ -127,11 +130,35 @@ const TransactionHistoryPage = () => {
   };
 
   const startDateString = getStartDate(selectedPeriod);
-
+  const [history, sethistory] = useState([]);
+  const { seq } = useUser();
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const response = await payHistoryApi(seq);
+        if (response) {
+          const historyList = response.map((history) => ({
+            userName: history.userName,
+            imgNo: history.imageNo,
+            createdAt: history.createdAt,
+            cost: history.cost,
+            type: history.receive ? '받기' : '송금',
+            bankName: bankNumToName[history.bankNum],
+            accountNum: history.accountNum,
+          }));
+          sethistory(historyList);
+          console.log(history);
+        }
+      } catch (error) {
+        console.error('거래 내역 정보를 불러오는데 실패했습니다:', error);
+      }
+    };
+    fetchHistory();
+  }, []);
   const filteredTransactions =
     selectedPeriod === '전체'
-      ? tempTransactions
-      : tempTransactions.filter(
+      ? history
+      : history.filter(
           (transaction) =>
             transaction.createdAt.split(' ')[0] >= startDateString
         );
@@ -230,7 +257,14 @@ const TransactionHistoryPage = () => {
                         {transaction.userName}
                       </div>
                       <div className="text-xs text-gray-500">
-                        {transaction.createdAt.split(' ')[1]}
+                        {new Date(transaction.createdAt).toLocaleTimeString(
+                          'ko-KR',
+                          {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false,
+                          }
+                        )}
                       </div>
                     </div>
                   </div>
