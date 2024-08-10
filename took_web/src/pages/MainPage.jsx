@@ -7,7 +7,7 @@ import delivery from '../assets/main/delivery.png';
 import shop from '../assets/main/shop.png';
 import took from '../assets/took.png';
 import { useUser } from '../store/user';
-import tookImage from '../assets/payment/took1.png'
+import tookImage from '../assets/payment/took1.png';
 
 function MainPage() {
   const { isLoggedIn, seq } = useUser();
@@ -50,12 +50,10 @@ function MainPage() {
             />
           </Link>
           <Link to={isLoggedIn ? '/chat/took' : '#'}>
-            <img
-              loading="lazy"
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/0f0ec4c383e210e79fc72139b11f1158345010bba96d1495c2b7636af6b5e5d8?apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
-              className="object-contain shrink-0 my-auto w-6 aspect-square"
-              onClick={() => handleButtonClick('/chat/took')}
-            />
+          <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets/TEMP/2fa2a9fc8ce9754513ab432bdb5a90489c27cbfa14306819517cd655141328fe?placeholderIfAbsent=true&apiKey=6a63372050fb46b6bb21a2ca3b7359ed" alt="" className="object-contain shrink-0 my-auto aspect-[0.95] w-[21px]"  className="object-contain shrink-0 my-auto w-6 aspect-square mt-[1px]"
+              onClick={() => handleButtonClick('/chat/took')}/>
+
+            
           </Link>
         </div>
       </div>
@@ -117,7 +115,10 @@ function MainPage() {
             </div>
           </div>
         </div>
-        <div onClick={() => handleButtonClick('/tookHistory')} className="relative font-nanum">
+        <div
+          onClick={() => handleButtonClick('/tookHistory')}
+          className="relative font-nanum"
+        >
           <img
             src={took}
             alt="took"
@@ -130,15 +131,18 @@ function MainPage() {
         </div>
       </div>
 
-    {showModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div className="bg-white p-7 rounded-lg shadow-lg flex flex-col items-center">
-      <img src={tookImage} alt="took" className="w-12 h-16 m-5 animate-jump" />
-      <p>로그인이 필요합니다</p>
-    </div>
-  </div>
-)}
-
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-7 rounded-lg shadow-lg flex flex-col items-center">
+            <img
+              src={tookImage}
+              alt="took"
+              className="w-12 h-16 m-5 animate-jump"
+            />
+            <p>로그인이 필요합니다</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
