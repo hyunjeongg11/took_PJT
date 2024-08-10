@@ -146,19 +146,14 @@ const renderMessage = (item, handlePayment) => (
                 )}
               </div>
             </div>
-            <button
-              onClick={() =>
-                handlePayment(
-                  item.amount,
-                  item.sender,
-                  item.numCategory,
-                  item.partySeq
-                )
-              }
-              className="mt-3 py-1.5 px-10 w-full bg-neutral-100 bg-opacity-80 text-neutral-800 text-sm font-bold rounded-xl mx-auto"
-            >
-              송금하기
-            </button>
+            {item.status === false && (
+              <button
+                onClick={() => handlePayment(item.amount, item.sender)}
+                className="mt-3 py-1.5 px-10 w-full bg-neutral-100 bg-opacity-80 text-neutral-800 text-sm font-bold rounded-xl mx-auto"
+              >
+                송금하기
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -168,6 +163,7 @@ const renderMessage = (item, handlePayment) => (
     </div>
   </div>
 );
+
 
 function TookChattingPage() {
   const navigate = useNavigate();
@@ -208,6 +204,7 @@ function TookChattingPage() {
       try {
         const response = await getAlarmListApi(seq);
 
+        console.log("리스트 출력 ",response);
         const formattedData = response.map((alarm) => ({
           category:
             alarm.category === 4
@@ -228,6 +225,7 @@ function TookChattingPage() {
           sender: alarm.sender,
           numCategory: alarm.category,
           partySeq: alarm.partySeq,
+          status : alarm.status
         }));
         console.log(formattedData);
         setTempData(formattedData);

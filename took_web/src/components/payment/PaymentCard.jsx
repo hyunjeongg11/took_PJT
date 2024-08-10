@@ -3,11 +3,12 @@ import { formatNumber } from '../../utils/format';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 
 const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
-  const [totalAmount, setTotalAmount] = useState(
-    formatNumber(payment.totalAmount)
-  );
+  const [totalAmount, setTotalAmount] = useState('0'); // 초기값을 '0'으로 설정
+  const [isFocused, setIsFocused] = useState(false); // input이 포커스 상태인지 여부
 
   useEffect(() => {
+    if (totalAmount === '' || totalAmount === '0') return; // 빈 문자열이나 '0'이면 계산을 건너뜀
+
     const total = parseFloat(totalAmount.replace(/,/g, '')) || 0;
     const numOfPayments = payment.users.length;
     const averageAmount = Math.ceil(total / numOfPayments);
@@ -36,9 +37,21 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
 
   const handleTotalAmountChange = (e) => {
     const value = e.target.value.replace(/,/g, '');
-    if (!isNaN(value) && value !== '') {
-      setTotalAmount(formatNumber(value));
-    } else if (value === '') {
+    if (!isNaN(value)) {
+      setTotalAmount(value === '' ? '' : formatNumber(value)); // 빈 값 처리 추가
+    }
+  };
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    if (totalAmount === '0') {
+      setTotalAmount('');
+    }
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    if (totalAmount === '') {
       setTotalAmount('0');
     }
   };
@@ -46,7 +59,7 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
   return (
     <div className="px-12 pb-6 bg-white ">
       <div className="border-gray-300 border rounded-2xl shadow-md p-6 ">
-        {onCardDelete && ( // onCardDelete가 있을 경우에만 버튼을 렌더링
+        {onCardDelete && (
           <button
             onClick={onCardDelete}
             className="relative top-0 left-0 rounded-full p-1 text-main"
@@ -59,6 +72,8 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
             type="text"
             value={totalAmount}
             onChange={handleTotalAmountChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             placeholder="0"
             className="mx-1 text-right w-full max-w-xs"
           />
@@ -89,7 +104,7 @@ const PaymentCard = ({ payment, setPayment, onDelete, onCardDelete }) => {
                   className="w-full max-w-xs px-2 py-1 border-b-[1px] border-main border-opacity-50 text-right font-semibold"
                   style={{ minWidth: '80px' }}
                 />
-                {index !== 0 && ( // 첫 번째 멤버가 아닌 경우에만 삭제 아이콘을 렌더링
+                {index !== 0 && (
                   <img
                     onClick={() => {
                       onDelete(index);
