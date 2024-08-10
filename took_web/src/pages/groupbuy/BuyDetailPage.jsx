@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import backIcon from '../../assets/common/back.svg';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { TbPencil } from 'react-icons/tb';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
 import {
   getShopApi,
   deleteShopApi,
   joinGroupBuyApi,
+  isJoinApi,
 } from '../../apis/groupBuy/shop';
 import { useUser } from '../../store/user';
 
@@ -31,19 +35,66 @@ const BuyDetailPage = () => {
   const [shopData, setShopData] = useState(null);
   const { seq: userSeq } = useUser();
   const [showModal, setShowModal] = useState(false);
+  const [stompClient, setStompClient] = useState(null);
+  const [connected, setConnected] = useState(false);
+  const [isLeader, setIsLeader] = useState(false);
+  const [isParticipant, setIsParticipant] = useState(false);
+  const [chatRoom, setChatRoom] = useState();
+
+  const fetchShopData = async () => {
+    try {
+      const data = await getShopApi(id);
+      setShopData(data);
+      setIsLeader(data.userSeq === userSeq);
+      setChatRoom((prev) => ({
+        ...prev,
+        userSeq: data.userSeq,
+        roomTitle: data.title,
+      }));
+
+      const isJoin = await isJoinApi(data.shopSeq, userSeq);
+      setIsParticipant(isJoin);
+      
+    } catch (error) {
+      console.log('fetching shop data error', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchShopData = async () => {
-      try {
-        const data = await getShopApi(id);
-        setShopData(data);
-      } catch (error) {
-        console.error('API call error:', error);
+    const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
+    const stompClientInstance = Stomp.over(socket);
+    stompClientInstance.connect({}, () => {
+      console.log('WebSocket 연결 성공');
+      setConnected(true);
+    });
+    setStompClient(stompClientInstance);
+    fetchShopData();
+
+    return () => {
+      if (stompClientInstance && stompClientInstance.connected) {
+        stompClientInstance.disconnect(() => {
+          console.log('WebSocket 연결 해제');
+        });
       }
     };
+  }, []);
 
-    fetchShopData();
-  }, [id]);
+  const enterRoom = ({roomSeq, userSeq}) => {
+    if (stompClient && connected) {
+      stompClient.send(
+        '/pub/room/enter',
+        {},
+        JSON.stringify({
+          roomSeq,
+          userSeq,
+        })
+      );
+    } else {
+      console.error('WebSocket 연결이 아직 준비되지 않았습니다');
+    }
+  }
+
+
 
   if (!shopData) {
     return <div>Loading...</div>;
@@ -54,8 +105,10 @@ const BuyDetailPage = () => {
       const params = { shopSeq: shopData.shopSeq, userSeq: userSeq };
       const success = await joinGroupBuyApi(params);
       if (success) {
-        // navigate(`/chatroom/${shopData.shopSeq}`); // todo: 실제 채팅방으로 연결
-        navigate('/chat/groupbuy/main'); // 일단 여기로 이동되도록
+        await enterRoom({ roomSeq: shopData.roomSeq, userSeq });
+        setIsParticipant(true);
+        // // navigate(`/chatroom/${shopData.shopSeq}`); // todo: 실제 채팅방으로 연결
+        // navigate('/chat/groupbuy/main'); // 일단 여기로 이동되도록
       } else {
         console.error('Failed to join the group buy');
       }
@@ -82,7 +135,12 @@ const BuyDetailPage = () => {
     <div className="flex flex-col pt-5 bg-white max-w-screen min-h-screen">
       <div className="flex flex-col px-5 w-full ">
         <div className="flex flex-col px-5 w-full ">
-          <BackButton />
+          <img
+            src={backIcon}
+            alt="뒤로"
+            className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
+            onClick={() => navigate('/groupbuy/list')}
+          />
           <div
             onClick={handleNavigateToList}
             className="mx-6 text-2xl text-main font-extrabold"
@@ -95,7 +153,7 @@ const BuyDetailPage = () => {
             <div className="text-md font-bold text-neutral-800 py-2 p-1">
               {shopData.title}
             </div>
-            {shopData.userSeq === userSeq && (
+            {isLeader && (
               <div className="flex flex-row gap-2">
                 <button
                   onClick={() => navigate(`/groupbuy/form/${shopData.shopSeq}`)}
