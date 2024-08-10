@@ -323,7 +323,7 @@ export const partyDeleteApi = async (params) => {
 // 파티 상세 조회
 export const partyDetailApi = async (partySeq) => {
   try {
-    const response = await request.get(`/api/pay/party-detail${partySeq}`);
+    const response = await request.get(`/api/pay/party-detail/${partySeq}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);
