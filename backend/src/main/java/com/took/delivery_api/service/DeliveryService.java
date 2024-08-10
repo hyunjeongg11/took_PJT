@@ -6,6 +6,7 @@ import com.took.delivery_api.repository.DeliveryRepository;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,9 @@ public class DeliveryService {
     // 리포지토리 주입
     private final DeliveryRepository deliveryRepository;
     private final UserRepository userRepository;
+
+    @Value("${distance.threshold}")
+    private double distanceThreshold;
 
 
     // 배달 생성 메서드
@@ -97,7 +101,7 @@ public class DeliveryService {
         return deliveryList.stream()
                 .map(delivery -> {
                     double distance = calculateDistance(request.getLat(), request.getLon(), delivery.getPickupLat(), delivery.getPickupLon());
-                    if (distance <= 10000) { // 거리 범위를 1000m로 설정
+                    if (distance <= distanceThreshold) { // 거리 범위를 1000m로 설정
                         return new DeliverySelectResponse(delivery);
                     } else {
                         return null;

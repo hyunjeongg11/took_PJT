@@ -8,6 +8,7 @@ import com.took.taxi_api.repository.TaxiRepository;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,9 @@ public class TaxiService {
     private final TaxiRepository taxiRepository;  // TaxiRepository를 통해 데이터베이스 작업을 처리합니다.
     private final TaxiGuestRepository taxiGuestRepository;
     private final UserRepository userRepository;
+
+    @Value("${distance.threshold}")
+    private double distanceThreshold;
 
 
     /**
@@ -65,7 +69,7 @@ public class TaxiService {
         return taxis.stream()
                 .map(taxi -> {
                     double distance = calculateDistance(taxi.getWriteLat(), taxi.getWriteLon(), request.getLat(), request.getLon());
-                    if (distance <= 10000) { // 거리 범위를 1000m로 설정
+                    if (distance <= distanceThreshold) { // 거리 범위를 1000m로 설정
                         return new TaxiSelectResponse(taxi);
                     } else {
                         return null;

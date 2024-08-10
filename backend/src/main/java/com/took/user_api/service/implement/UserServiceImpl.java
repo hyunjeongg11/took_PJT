@@ -104,8 +104,11 @@ public class UserServiceImpl implements UserService {
                     if(user.getLat() == null || user.getLon() == null) {
                         return null;
                     }
+                    if(!user.getAlarm()) {
+                        return null;
+                    }
                     double distance = calculateDistance(lat, lon, user.getLat(), user.getLon());
-                    if(distance <= 10000) {
+                    if(distance <= distanceThreshold) {
                         return user.getUserSeq();
                     } else {
                         return null;

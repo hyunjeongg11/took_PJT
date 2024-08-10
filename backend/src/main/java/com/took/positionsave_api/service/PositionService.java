@@ -9,6 +9,7 @@ import com.took.positionsave_api.repository.PositionRepository;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +22,9 @@ public class PositionService {
 
     private final PositionRepository positionRepository;
     private final UserRepository userRepository;
+
+    @Value("${distance.threshold}")
+    private double distanceThreshold;
 
     // 두 지점 간의 거리 계산 (단위: m)
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -87,7 +91,7 @@ public class PositionService {
                                 request.getLat(), request.getLon(),
                                 user.getLat(), user.getLon());
 
-                        if (distance <= 10000) { // 거리 범위를 1000m로 설정
+                        if (distance <= distanceThreshold) { // 거리 범위를 1000m로 설정
                             PositionUserListResponse response = new PositionUserListResponse();
                             // userSeq를 Long으로 변환
                             response.setUserSeq(Long.valueOf(user.getUserSeq()));
