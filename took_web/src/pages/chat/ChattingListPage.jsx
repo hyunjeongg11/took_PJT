@@ -64,7 +64,6 @@ function ChattingListPage() {
       default:
         route = `/chat/${chatRoom.roomSeq}`;
     }
-
     navigate(route, { state: { chatRoom } });
   };
 

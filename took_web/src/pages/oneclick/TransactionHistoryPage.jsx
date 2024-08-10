@@ -1,93 +1,11 @@
 // src/pages/TransactionHistoryPage.jsx
-import React, { useState } from 'react';
-import { AiOutlineRight } from 'react-icons/ai';
+import React, { useEffect, useState } from 'react';
 import { formatNumber } from '../../utils/format';
 import BackButton from '../../components/common/BackButton';
-
-const tempTransactions = [
-  {
-    userName: '조*정',
-    imgNo: 1,
-    createdAt: '2024-07-17 17:55',
-    cost: 6600,
-    type: '받기',
-    bankName: '국민은행',
-    accountNum: '12345678910',
-  },
-  {
-    userName: '차*주',
-    imgNo: 2,
-    createdAt: '2024-07-13 16:32',
-    cost: 20000,
-    type: '송금',
-    bankName: '국민은행',
-    accountNum: '12345678910',
-  },
-  {
-    userName: '이*찬',
-    imgNo: 12,
-    createdAt: '2024-07-13 10:12',
-    cost: 5400,
-    type: '송금',
-    bankName: '신한은행',
-    accountNum: '85236952354',
-  },
-  {
-    userName: '공*환',
-    imgNo: 4,
-    createdAt: '2024-07-09 17:55',
-    cost: 6600,
-    type: '받기',
-    bankName: '국민은행',
-    accountNum: '12345678910',
-  },
-  {
-    userName: '김*훈',
-    imgNo: 5,
-    createdAt: '2024-07-09 10:12',
-    cost: 5400,
-    type: '송금',
-    bankName: '신한은행',
-    accountNum: '85236952354',
-  },
-  {
-    userName: '조*정',
-    imgNo: 7,
-    createdAt: '2024-06-25 11:08',
-    cost: 6800,
-    type: '받기',
-    bankName: '신한은행',
-    accountNum: '85236952354',
-  },
-  {
-    userName: '이*찬',
-    imgNo: 8,
-    createdAt: '2024-06-29 18:46',
-    cost: 22500,
-    type: '받기',
-    bankName: '신한은행',
-    accountNum: '85236952354',
-  },
-  {
-    userName: '차*주',
-    imgNo: 16,
-    createdAt: '2024-01-15 9:34',
-    cost: 13600,
-    type: '송금',
-    bankName: '신한은행',
-    accountNum: '85236952354',
-  },
-  {
-    userName: '조*정',
-    imgNo: 19,
-    createdAt: '2023-06-28 2:52',
-    cost: 9600,
-    type: '송금',
-    bankName: '신한은행',
-    accountNum: '85236952354',
-  },
-];
-
+import { useUser } from '../../store/user';
+import { payHistoryApi } from '../../apis/payment/jungsan';
+import { bankNumToName } from '../../assets/payment/index.js';
+import { useNavigate } from 'react-router-dom';
 const getProfileImagePath = (imgNo) => {
   const profileImages = import.meta.glob('../../assets/profile/*.png', {
     eager: true,
@@ -101,6 +19,11 @@ const TransactionHistoryPage = () => {
 
   const today = new Date();
   const todayString = today.toISOString().split('T')[0];
+  const navigate = useNavigate();
+
+  const handleTransactionClick = (transaction) => {
+    navigate('/transaction-detail', { state: { transaction } });
+  };
 
   const getStartDate = (period) => {
     const startDate = new Date();
@@ -127,11 +50,34 @@ const TransactionHistoryPage = () => {
   };
 
   const startDateString = getStartDate(selectedPeriod);
-
+  const [history, sethistory] = useState([]);
+  const { seq } = useUser();
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const response = await payHistoryApi(seq);
+        if (response) {
+          const historyList = response.map((history) => ({
+            userName: history.userName,
+            imgNo: history.imageNo,
+            createdAt: history.createdAt,
+            cost: history.cost,
+            type: history.receive ? '받기' : '송금',
+            bankName: bankNumToName[history.bankNum],
+            accountNum: history.accountNum,
+          }));
+          sethistory(historyList);
+        }
+      } catch (error) {
+        console.error('거래 내역 정보를 불러오는데 실패했습니다:', error);
+      }
+    };
+    fetchHistory();
+  }, []);
   const filteredTransactions =
     selectedPeriod === '전체'
-      ? tempTransactions
-      : tempTransactions.filter(
+      ? history
+      : history.filter(
           (transaction) =>
             transaction.createdAt.split(' ')[0] >= startDateString
         );
@@ -218,6 +164,7 @@ const TransactionHistoryPage = () => {
                 <div
                   key={index}
                   className="flex justify-between items-center py-3 border-b border-gray-300 mt-2 mb-2"
+                  onClick={() => handleTransactionClick(transaction)}
                 >
                   <div className="flex items-center">
                     <img
@@ -230,7 +177,14 @@ const TransactionHistoryPage = () => {
                         {transaction.userName}
                       </div>
                       <div className="text-xs text-gray-500">
-                        {transaction.createdAt.split(' ')[1]}
+                        {new Date(transaction.createdAt).toLocaleTimeString(
+                          'ko-KR',
+                          {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false,
+                          }
+                        )}
                       </div>
                     </div>
                   </div>

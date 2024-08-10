@@ -73,7 +73,7 @@ const DeliveryListPage = () => {
           </div>
         </div>
 
-        <div className="flex justify-between mb-7">
+        <div className="flex justify-between">
           <div className="flex w-1/2 rounded-full border">
             <button
               type="button"
@@ -90,15 +90,10 @@ const DeliveryListPage = () => {
               현위치
             </button>
           </div>
-          <button className="bg-white border flex border-neutral-400 text-gray-900 py-2 px-4 rounded-full text-sm font-bold">
-            <img
-              src={mapIcon}
-              alt="지도보기"
-              className="w-4.5 h-3.5 mr-2 mt-1"
-            />
-            <span>지도 보기</span>
-          </button>
-        </div>
+          
+        </div><div className='text-[10px] text-gray-300 p-2'>
+          {selectedOption === '주소지' ? "사용자가 설정한 기본 주소지 주변의 배달 글을 불러옵니다" : "현재 위치 주변의 배달 글을 불러옵니다"}</div>
+          
 
         {deliveryList.map((item, index) => (
           <div

@@ -4,7 +4,10 @@ import { MdBackspace } from 'react-icons/md';
 import { msgToAndroid } from '../../android/message';
 import { checkEasyPasswordApi } from '../../apis/account/oneclick';
 import { useUser } from '../../store/user';
-import { onlyjungsanPayApi, deliveryGroupPayApi } from '../../apis/payment/jungsan';
+import {
+  onlyjungsanPayApi,
+  deliveryGroupPayApi,
+} from '../../apis/payment/jungsan';
 
 function PwdPage() {
   const [input, setInput] = useState('');
@@ -13,7 +16,8 @@ function PwdPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { seq: currentUserSeq } = useUser();
-  const { accountSeq, amount, userSeq, numCategory, partySeq } = location.state || {};
+  const { accountSeq, amount, userSeq, numCategory, partySeq } =
+    location.state || {};
 
   useEffect(() => {
     if (!accountSeq || !amount || !userSeq) {
@@ -21,7 +25,6 @@ function PwdPage() {
       navigate(-1);
     }
   }, [accountSeq, amount, userSeq, navigate]);
-
 
   const handleButtonClick = (value) => {
     if (input.length < 6) {
@@ -35,7 +38,10 @@ function PwdPage() {
 
   const checkPassword = async () => {
     try {
-      const response = await checkEasyPasswordApi({ accountSeq, easyPwd: input });
+      const response = await checkEasyPasswordApi({
+        accountSeq,
+        easyPwd: input,
+      });
       if (response.checked) {
         await processPayment();
       } else {
@@ -48,7 +54,6 @@ function PwdPage() {
       setIsError(true);
       setAttemptCount((prev) => prev + 1);
       setInput('');
-
     }
   };
 
@@ -56,16 +61,27 @@ function PwdPage() {
     const requestData = {
       userSeq: currentUserSeq,
       partySeq,
+      accountSeq,
     };
 
+    console.log('데이터를 출력합니다.', requestData);
+
     try {
+      console.log('processPayment 호출됨:', requestData); // 로그 추가
+      console.log('카테고리,', numCategory);
       if (numCategory === 4) {
-        await onlyjungsanPayApi(requestData);
+        console.log('정산합수 출력');
+        const response = await onlyjungsanPayApi(requestData);
+        console.log('onlyjungsanPayApi 응답:', response); // 로그 추가
       } else if (numCategory === 1 || numCategory === 3) {
-        await deliveryGroupPayApi(requestData);
+        const response = await deliveryGroupPayApi(requestData);
+        console.log('deliveryGroupPayApi 응답:', response); // 로그 추가
       }
-      navigate('/complete', { state: { accountSeq, amount, userSeq, currentUserSeq } });
+      navigate('/complete', {
+        state: { accountSeq, amount, userSeq, currentUserSeq },
+      });
     } catch (error) {
+      console.log('응답:', requestData);
       console.error('결제 처리 중 오류 발생:', error);
       alert('결제 처리 중 오류가 발생했습니다.');
     }
@@ -74,30 +90,10 @@ function PwdPage() {
   useEffect(() => {
     if (input.length === 6) {
       checkPassword();
-
-    if (window.Android) {
-      window.Android.authenticate();
-
     }
+    [input];
+  });
 
-    window.onAuthenticate = (success) => {
-      if (success) {
-        alert('생체 인증 성공');
-        msgToAndroid('생체 인증 성공');
-        setInput('');
-        setIsError(false);
-        setAttemptCount(0); // 성공 시 시도 횟수 초기화
-        processPayment();
-      } else {
-        alert('생체 인증 실패');
-      }
-    };
-
-    if (window.Android) {
-      window.Android.authenticate();
-    }
-  } [input]});
-  
   useEffect(() => {
     if (attemptCount >= 5) {
       alert('비밀번호 입력 제한 횟수를 초과하였습니다.');

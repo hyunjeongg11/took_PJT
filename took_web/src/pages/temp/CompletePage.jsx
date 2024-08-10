@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { FaTimes } from 'react-icons/fa';
 import 송금완료 from '../../assets/payment/송금완료.png';
 import took1 from '../../assets/payment/took1.png';
 import { formatNumber } from '../../utils/format';
@@ -14,13 +15,17 @@ function CompletePage() {
   const { currentUserSeq, userSeq, amount, accountSeq } = location.state || {};
 
   const [userName, setUserName] = useState('');
-  const [accountInfo, setAccountInfo] = useState({ bankName: '', accountNum: '' });
+  const [accountInfo, setAccountInfo] = useState({
+    bankName: '',
+    accountNum: '',
+  });
 
   useEffect(() => {
     // 사용자의 이름을 가져오기 위한 API 호출
     const fetchUserName = async () => {
       try {
         const userInfo = await getUserInfoApi({ userSeq: userSeq });
+        console.log();
         setUserName(userInfo.userName);
       } catch (error) {
         console.error('Error fetching user name:', error);
@@ -30,8 +35,12 @@ function CompletePage() {
     // 계좌 정보를 가져오기 위한 API 호출
     const fetchAccountInfo = async () => {
       try {
-        const accountListResponse = await getAccountListApi({ userSeq: currentUserSeq });
-        const account = accountListResponse.list.find((acc) => acc.accountSeq === accountSeq);
+        const accountListResponse = await getAccountListApi({
+          userSeq: currentUserSeq,
+        });
+        const account = accountListResponse.list.find(
+          (acc) => acc.accountSeq === accountSeq
+        );
         if (account) {
           const bankName = bankNumToName[account.bankNum];
           setAccountInfo({ bankName, accountNum: account.accountNum });
@@ -48,7 +57,11 @@ function CompletePage() {
   const maskedName = maskName(userName);
 
   return (
-    <div className="flex flex-col items-center justify-between h-[90vh] bg-white font-[Nanum_Gothic] pb-10 pt-20">
+    <div className="flex flex-col items-center justify-between h-[90vh] bg-white font-[Nanum_Gothic] pb-10 pt-20 relative">
+      <FaTimes
+        className="absolute top-4 right-4 text-2xl cursor-pointer mt-6 text-neutral-500"
+        onClick={() => navigate('/')}
+      />
       <div className="text-4xl font-bold text-[#FF7F50] mb-16 text-center">
         <span className="font-dela">to</span>{' '}
         <span className="font-[Nanum_Gothic] font-bold text-black text-[1.8rem]">
@@ -62,13 +75,9 @@ function CompletePage() {
           alt="송금 완료"
           className="w-[130px] h-[150px] mb-10 animate-jump"
         />
-        <div className="text-sm text-center mb-1">
-          {maskedName} 님에게
-        </div>
+        <div className="text-sm text-center mb-1">{maskedName} 님에게</div>
         <div className="text-sm mb-5">
-          <span className="font-extrabold">
-            {formatNumber(amount)}
-          </span>
+          <span className="font-extrabold">{formatNumber(amount)}</span>
           원을 보냈어요.
         </div>
         <div className="w-64 border-t border-b border-gray-300 py-2 mt-5">
