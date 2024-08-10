@@ -34,7 +34,7 @@ const PaymentPage = () => {
   const [accountList, setAccountList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [attemptCount, setAttemptCount] = useState(0);
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -95,6 +95,22 @@ const PaymentPage = () => {
     numCategory,
     partySeq,
   }) => {
+    if (attemptCount >= 3) {
+      // 생체 인증을 3번 실패했을 경우
+      navigate('/pwd', {
+        state: {
+          accountSeq,
+          accountNum,
+          bankName,
+          amount,
+          userSeq,
+          numCategory,
+          partySeq,
+        },
+      });
+      return;
+    }
+
     if (window.Android) {
       window.Android.authenticate();
     }
@@ -109,17 +125,20 @@ const PaymentPage = () => {
         });
       } else {
         alert('생체 인증 실패');
-        navigate('/pwd', {
-          state: {
-            accountSeq,
-            accountNum,
-            bankName,
-            amount,
-            userSeq,
-            numCategory,
-            partySeq,
-          },
-        });
+        setAttemptCount((prevCount) => prevCount + 1); // 실패 시 시도 횟수 증가
+        if (attemptCount + 1 >= 3) {
+          // 3번 실패하면 비밀번호 입력 페이지로 이동
+          navigate('/pwd', {
+            state: {
+              accountSeq,
+              accountNum,
+              bankName,
+              amount,
+              userSeq,
+              numCategory,
+              partySeq,
+            },
+          });
       }
     };
 
