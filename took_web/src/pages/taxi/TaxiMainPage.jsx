@@ -9,7 +9,12 @@ import getProfileImagePath from '../../utils/getProfileImagePath';
 import { useUser } from '../../store/user.js';
 import { usePosition } from '../../store/position.js';
 import { getNearByUserPositionApi } from '../../apis/position/userPosition.js';
-import { getTaxiPartyListApi, getTaxiPartyPathApi } from '../../apis/taxi.js';
+import {
+  getTaxiPartyListApi,
+  getTaxiPartyPathApi,
+  addTaxiPartyMemberApi,
+  isUserJoinedTaxiPartyApi,
+} from '../../apis/taxi.js';
 import { getUserInfoApi } from '../../apis/user.js';
 import { getAddr } from '../../utils/map.js';
 
@@ -37,6 +42,7 @@ function TaxiMainPage() {
   const [location, setLocation] = useState('');
   const [taxiParties, setTaxiParties] = useState([]);
   const [userGender, setUserGender] = useState('');
+  const [modalMessage, setModalMessage] = useState(''); // 모달 메시지 상태
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -80,13 +86,16 @@ function TaxiMainPage() {
             const taxiPath = Array.isArray(taxiPathResponse)
               ? taxiPathResponse
               : [];
-            const destinations = taxiPath.map((path) => path.destiName);
+              
+            // 중복 제거
+            const destinations = [...new Set(taxiPath.map((path) => path.destiName))];
 
             return {
               ...party,
               imgNo: userInfo.imageNo,
               userGender: userInfo.gender, // 작성자의 성별 추가
               destinations,
+              taxiPath, // 경로 정보도 포함
             };
           })
         );
@@ -104,12 +113,59 @@ function TaxiMainPage() {
     }
   }, [userSeq, latitude, longitude]);
 
+  const handleAddMemberOrEnterChat = async (item) => {
+    try {
+      // 사용자가 이미 다른 파티에 참가 중인지 확인
+      const userStatus = await isUserJoinedTaxiPartyApi(userSeq);
+
+      if (userStatus.isJoined) {
+        // 이미 다른 파티에 참가 중이라면 모달을 띄움
+        setModalMessage('이미 다른 택시 took에 참여중입니다.');
+        return;
+      }
+
+      // 아직 다른 파티에 참여하지 않은 경우
+      const isUserInPath = item.taxiPath.some(
+        (path) => path.userSeq === userSeq
+      );
+
+      if (isUserInPath) {
+        handleEnterChatRoom(item.roomSeq, item.taxiSeq, item.roomSeq);
+      } else if (item.count < item.max + 1) {
+        const memberData = {
+          taxiSeq: item.taxiSeq,
+          userSeq: userSeq,
+          destiName: item.taxiPath[0].destiName,
+          destiLat: item.taxiPath[0].destiLat,
+          destiLon: item.taxiPath[0].destiLon,
+          cost: item.taxiPath[0].cost,
+          routeRank: item.taxiPath[0].routeRank,
+        };
+
+        const response = await addTaxiPartyMemberApi(memberData);
+        if (response) {
+          console.log('Member added successfully:', response);
+          // 멤버 추가 후 바로 채팅방으로 이동
+          handleEnterChatRoom(item.roomSeq, item.taxiSeq, item.roomSeq);
+        }
+      }
+    } catch (error) {
+      console.error('Error checking user taxi party status:', error);
+    }
+  };
+
+  const handleEnterChatRoom = (chatRoomId, taxiSeq, roomSeq) => {
+    navigate(`/chat/taxi/${chatRoomId}`, {
+      state: { taxiSeq, roomSeq },
+    });
+  };
+
   const handleCreateTaxi = () => {
     navigate('/taxi/create');
   };
 
-  const handleEnterChatRoom = (chatRoomId) => {
-    navigate(`/chat/taxi/${chatRoomId}`);
+  const closeModal = () => {
+    setModalMessage(''); // 모달 닫기
   };
 
   // 필터링 로직 수정
@@ -157,11 +213,17 @@ function TaxiMainPage() {
                       item.gender === false
                         ? 'bg-white border border-neutral-300 text-gray-700'
                         : item.gender
-                        ? 'bg-pink-200 text-pink-600'
-                        : 'bg-blue-200 text-blue-600'
+                          ? userGender === 'M'
+                            ? 'bg-blue-200 text-blue-600'
+                            : 'bg-pink-200 text-pink-600'
+                          : 'bg-blue-200 text-blue-600'
                     }`}
                   >
-                    {item.gender ? '여성' : '무관'}
+                    {item.gender
+                      ? userGender === 'M'
+                        ? '남성'
+                        : '여성'
+                      : '무관'}
                   </div>
                 </div>
                 <div className="flex flex-wrap mb-2 overflow-x-auto space-x-1">
@@ -179,9 +241,7 @@ function TaxiMainPage() {
                 <button
                   className="mb-2"
                   onClick={() => {
-                    if (item.count < item.max + 1) {
-                      handleEnterChatRoom(item.roomSeq);
-                    }
+                    handleAddMemberOrEnterChat(item);
                   }}
                 >
                   <img
@@ -205,6 +265,20 @@ function TaxiMainPage() {
       >
         <img src={plusIcon} alt="+" className="w-8 h-8" />
       </button>
+
+      {modalMessage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <p className="text-center text-lg font-semibold">{modalMessage}</p>
+            <button
+              className="mt-4 px-4 py-2 bg-main text-white rounded-lg"
+              onClick={closeModal}
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
