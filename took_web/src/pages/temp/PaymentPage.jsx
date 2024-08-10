@@ -139,6 +139,7 @@ const PaymentPage = () => {
               partySeq,
             },
           });
+        }
       }
     };
 
