@@ -1,18 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaLocationDot, FaCrown } from 'react-icons/fa6';
 import { FaSignOutAlt, FaTimes } from 'react-icons/fa';
 import { IoIosSettings } from 'react-icons/io';
 import getProfileImagePath from '../../utils/getProfileImagePath';
+import { getUserInfoApi } from '../../apis/user';
+import { useUser } from '../../store/user';
 
 const TaxiChattingMenu = ({
-  tempMember,
-  tempTaxi,
+  members,
+  taxiParty,
   taxiStatus,
   handleMenuToggle,
   handleKickMember,
   handleLeaveChatting,
   handleChatSetting,
 }) => {
+  const { seq: currentUserSeq } = useUser(); // 현재 로그인한 유저의 seq 가져오기
+  const [userInfos, setUserInfos] = useState({});
+
+  useEffect(() => {
+    const fetchUserInfos = async () => {
+      const userInfoPromises = members.map(async (member) => {
+        const userInfo = await getUserInfoApi({ userSeq: member.userSeq });
+        return { userSeq: member.userSeq, userName: userInfo.userName };
+      });
+
+      const resolvedUserInfos = await Promise.all(userInfoPromises);
+      const userInfoMap = resolvedUserInfos.reduce((acc, userInfo) => {
+        acc[userInfo.userSeq] = userInfo.userName;
+        return acc;
+      }, {});
+
+      setUserInfos(userInfoMap);
+    };
+
+    fetchUserInfos();
+  }, [members]);
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-50">
       <div className="w-4/5 h-full bg-white shadow-md p-4 relative">
@@ -24,14 +48,14 @@ const TaxiChattingMenu = ({
         </button>
         <div className="text-base font-bold mt-6 ml-1 mb-4">경로</div>
         <ul>
-          {tempMember.map((member) => (
+          {members.map((member) => (
             <li
-              key={member.user_seq}
+              key={member.userSeq}
               className="flex items-center justify-between mb-2 py-1"
             >
               <div className="items-center flex flex-row text-sm text-black">
                 <FaLocationDot className="mr-1 w-4 h-4 text-neutral-300" />
-                <span className="px-2">{member.destination}</span>
+                <span className="px-2">{member.destiName}</span>
               </div>
             </li>
           ))}
@@ -41,38 +65,40 @@ const TaxiChattingMenu = ({
 
         <h2 className="text-base font-bold mt-6 mb-4 ml-1">참여자</h2>
         <ul>
-          {tempMember.map((member) => (
+          {members.map((member) => (
             <li
-              key={member.user_seq}
+              key={member.userSeq}
               className="flex items-center justify-between mb-2 ml-1"
             >
               <div className="flex items-center py-2">
                 <img
-                  src={getProfileImagePath(member.imgNo)}
-                  alt={member.userName}
+                  src={getProfileImagePath(member.userSeq)}
+                  alt={userInfos[member.userSeq] || 'Loading...'}
                   className="w-8 h-8 mr-2"
                 />
-                <span className="text-sm">{member.userName}</span>
-                {tempTaxi.user_seq === member.user_seq && (
+                <span className="text-sm">
+                  {userInfos[member.userSeq] || 'Loading...'}
+                </span>
+                {currentUserSeq === member.userSeq && ( // 현재 로그인한 유저와 멤버의 userSeq 비교
                   <div className="ml-1 text-xs bg-neutral-400 px-1.5 py-1 rounded-full text-white">
                     나
                   </div>
                 )}
-                {tempTaxi.master === member.user_seq && (
+                {taxiParty.master === member.userSeq && (
                   <FaCrown className="text-yellow-500 ml-1 w-5" />
                 )}
               </div>
-              {tempTaxi.user_seq === tempTaxi.payer &&
-                member.user_seq === tempTaxi.payer && (
+              {taxiParty.userSeq === taxiParty.master &&
+                member.userSeq === taxiParty.master && (
                   <div className="ml-1 text-xs bg-main px-2 py-1 rounded-lg shadow-sm text-white">
                     결제자
                   </div>
                 )}
-              {tempTaxi.user_seq === tempTaxi.master &&
-                member.user_seq !== tempTaxi.master && (
+              {taxiParty.userSeq === taxiParty.master &&
+                member.userSeq !== taxiParty.master && (
                   <button
                     className="text-red-600 border-2 border-red-600 rounded-lg py-1 px-2 text-xs"
-                    onClick={() => handleKickMember(member.userName)}
+                    onClick={() => handleKickMember(userInfos[member.userSeq])}
                   >
                     내보내기
                   </button>
@@ -88,7 +114,7 @@ const TaxiChattingMenu = ({
             <FaSignOutAlt className="w-6 h-6" />
           </button>
         )}
-        {tempTaxi.master === tempTaxi.user_seq && (
+        {taxiParty.master === taxiParty.userSeq && (
           <button
             className="absolute bottom-4 right-4 text-gray-400"
             onClick={handleChatSetting}

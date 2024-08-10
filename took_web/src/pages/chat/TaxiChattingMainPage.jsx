@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../../components/common/BackButton';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useUser } from '../../store/user';
 import { getChatRoomMessageApi, getUsersApi } from '../../apis/chat/chat';
 import getProfileImagePath from '../../utils/getProfileImagePath';
@@ -17,16 +17,19 @@ import {
   updateTaxiPartyStatusApi,
   getAllTaxiPartyMembersApi,
   getTaxiPartyApi,
-  // getTaxiPartyPathApi,
 } from '../../apis/taxi';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
 import TaxiChattingMenu from '../../components/taxi/TaxiChattingMenu';
-import { getUserInfoApi } from '../../apis/user';  // API 경로 확인 필요
+import { getUserInfoApi } from '../../apis/user';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 function TaxiChattingMainPage() {
-  const { taxiSeq } = useParams();
-  const { seq: userSeq, setName } = useUser();  // useUser에서 userSeq를 가져옴
+  const { id: roomSeq } = useParams(); // URL에서 chatRoomId를 가져옴
+  const location = useLocation();
+  const { taxiSeq } = location.state || {}; // state에서 taxiSeq와 roomSeq를 가져옴
+  const { seq: userSeq, setName } = useUser(); // useUser에서 userSeq를 가져옴
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -42,12 +45,16 @@ function TaxiChattingMainPage() {
   const [members, setMembers] = useState([]);
   const [chatUsers, setChatUsers] = useState([]);
   const [userName, setUserName] = useState('');
+  // console.log('taxiSeq:', taxiSeq);
+  // console.log('roomSeq:', roomSeq);
 
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const actionIconsRef = useRef(null);
   const lastDateRef = useRef('');
+  console.log('taxiParty 정보: ', taxiParty);
+  console.log('members 정보: ', members);
 
   // 사용자 정보 불러오기
   useEffect(() => {
@@ -55,7 +62,7 @@ function TaxiChattingMainPage() {
       try {
         const userInfo = await getUserInfoApi({ userSeq });
         setUserName(userInfo.userName);
-        setName(userInfo.userName); // zustand의 상태에도 사용자 이름을 저장
+        setName(userInfo.userName);
       } catch (error) {
         console.error('사용자 정보를 불러오는 중 오류 발생:', error);
       }
@@ -71,8 +78,8 @@ function TaxiChattingMainPage() {
 
     const newMessage = {
       id: messages.length + 1,
-      user_seq: userSeq, // useUser로 얻은 현재 로그인 유저의 seq 사용
-      userName: userName, // API에서 받아온 userName 사용
+      user_seq: userSeq,
+      userName: userName,
       message: inputMessage,
     };
 
@@ -209,18 +216,20 @@ function TaxiChattingMainPage() {
   };
 
   useEffect(() => {
+    if (!taxiSeq || !userSeq || !roomSeq) return; // 필요한 값이 없는 경우 종료
+  
     const fetchTaxiPartyData = async () => {
       try {
         const [taxiPartyData, membersData, chatUsersData, messagesData] = await Promise.all([
             getTaxiPartyApi(taxiSeq),
             getAllTaxiPartyMembersApi(taxiSeq),
-            getUsersApi(taxiSeq), // 채팅방의 roomSeq를 taxiPartyData에서 가져와 사용
+            getUsersApi(taxiSeq),
             getChatRoomMessageApi({
-              roomSeq: taxiPartyData.roomSeq,
+              roomSeq: roomSeq,
               userSeq: userSeq,
             }),
           ]);
-
+  
         setTaxiParty(taxiPartyData);
         setTaxiStatus(taxiPartyData.status);
         setMembers(membersData);
@@ -230,9 +239,10 @@ function TaxiChattingMainPage() {
         console.error('데이터를 불러오는 중 오류 발생:', error);
       }
     };
-
+  
     fetchTaxiPartyData();
-  }, [taxiSeq, userSeq]);
+  }, [taxiSeq, userSeq, roomSeq]); // 필요한 의존성만 지정
+  
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -288,9 +298,10 @@ function TaxiChattingMainPage() {
       <div className="flex items-center px-5 py-3">
         <BackButton />
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
-          {taxiParty?.roomTitle}
+          {members.length > 0 ? members[0].destiName : 'Loading...'}
         </div>
-        <FaBars className="mt-2.5" onClick={handleShowParticipantList} />
+
+        <FaBars className="mt-2.5" onClick={handleMenuToggle} />
       </div>
       <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
@@ -556,7 +567,7 @@ function TaxiChattingMainPage() {
         <DeliveryModal onClose={closeModal} tempMember={users} />
       )}
 
-      {taxiParty?.payer === userSeq && (
+      {taxiParty?.master === userSeq && (
         <>
           {taxiStatus === 'FILLED' && (
             <button
