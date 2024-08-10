@@ -67,14 +67,6 @@ public class Alarm {
 
     @Column
     private long cost; // 요청 금액
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "party_seq")
-    private PartyEntity party;
-
-    public Boolean getPartyStatus(){
-        return party.getStatus();
-    }
+    
 
 }

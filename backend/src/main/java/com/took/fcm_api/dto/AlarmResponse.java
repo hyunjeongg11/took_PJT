@@ -39,7 +39,7 @@ public class AlarmResponse {
 
     private final long cost; // 요청 금액
 
-    private final boolean status;
+
 
     public AlarmResponse(Alarm alarm) {
         this.alarmSeq = alarm.getAlarmSeq();
@@ -58,6 +58,5 @@ public class AlarmResponse {
         this.deliveryCost = alarm.getDeliveryCost();
         this.orderCost = alarm.getOrderCost();
         this.cost = alarm.getCost();
-        this.status = alarm.getPartyStatus();
     }
 }
