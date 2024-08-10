@@ -20,7 +20,7 @@ import {
   // getTaxiPartyPathApi,
 } from '../../apis/taxi';
 import TaxiChattingMenu from '../../components/taxi/TaxiChattingMenu';
-import { getUserInfoApi } from '../../apis/user';  // API 경로 확인 필요
+import { getUserInfoApi } from '../../apis/user'; // API 경로 확인 필요
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
