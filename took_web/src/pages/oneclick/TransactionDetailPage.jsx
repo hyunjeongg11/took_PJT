@@ -5,22 +5,12 @@ import BackButton from '../../components/common/BackButton';
 import { formatNumber } from '../../utils/format';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 
-const tempTransaction = {
-  userName: '조현정',
-  imgNo: 1,
-  createdAt: '2024-07-17 17:55',
-  cost: 6600,
-  type: '받기',
-  bankName: '국민은행',
-  accountNum: '12345678910',
-};
-
 const TransactionDetailPage = () => {
   const location = useLocation();
-  const transaction = location.state || tempTransaction;
+  const transaction = location.state.transaction;
+  console.log(transaction);
   const { userName, imgNo, cost, type, bankName, accountNum, createdAt } =
     transaction;
-
   const accountLabel = type === '받기' ? '입금 계좌' : '출금 계좌';
 
   return (
@@ -46,7 +36,7 @@ const TransactionDetailPage = () => {
           <div className="flex justify-between py-2">
             <span className="text-gray-500">{accountLabel}</span>
             <span className="font-bold">
-              {bankName}({accountNum.slice(-4)})
+              {bankName}({accountNum})
             </span>
           </div>
           <div className="flex justify-between py-2">
