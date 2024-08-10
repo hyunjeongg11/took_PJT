@@ -6,6 +6,7 @@ import {
   changePickUpStatusApi,
 } from '../../apis/delivery';
 import { useUser } from '../../store/user';
+import BackButton from '../../components/common/BackButton'
 
 function DeliveryCompletePage() {
   const navigate = useNavigate();
@@ -57,6 +58,7 @@ function DeliveryCompletePage() {
 
   return (
     <div className="flex flex-col items-center bg-white max-w-[360px] mx-auto relative h-screen">
+      <BackButton />
       <div className="flex items-center px-4 mt-20 mb-14">
         <div className="mt-2.5 mb-1 flex-grow text-center text-4xl font-bold text-main">
           배달{' '}

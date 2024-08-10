@@ -121,7 +121,7 @@ function MainPage() {
           <img
             src={took}
             alt="took"
-            className="absolute right-2 -top-6 w-7 opacity-90 h-6 z-20"
+            className="absolute right-2 -top-6 w-7 opacity-90 h-6"
           />
           <div className="relative flex justify-between px-5 text-sm py-5 mt-8 bg-white bg-opacity-80 rounded-2xl ">
             <div>툭 히스토리 보러가기</div>

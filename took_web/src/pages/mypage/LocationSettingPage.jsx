@@ -1,56 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BackButton from '../../components/common/BackButton';
 import NotificationIcon from '../../assets/mypage/notification.png';
 import LocationIcon from '../../assets/mypage/location.png';
-import SearchDropdown from '../../components/map/SearchDropDown';
 import { searchPlaces } from '../../utils/map';
 import { modifyUserLocation } from '../../apis/user';
 import { getUserSeq } from '../../utils/getUserSeq';
 import { useNavigate } from 'react-router-dom';
-function LocationSettingPage({
-  location: initialLocation = '부산 강서구 녹산산업중로333 (송정동)',
-}) {
-  const [searchInput, setSearchInput] = useState('');
-  const [location, setLocation] = useState(initialLocation);
-  const [searchResults, setSearchResults] = useState([]);
-  const [lat, setLatitude] = useState();
-  const [lng, setLongitude] = useState();
-  const seq = getUserSeq();
+import SearchNotice from '../../components/map/SearchNotice';
+import { useLocation } from 'react-router-dom';
+
+function LocationSettingPage() {
+  const { state } = useLocation();
+  console.log(state)
   const navigate = useNavigate();
-  // 검색어 입력 시 상태 업데이트 함수
-  const handleInputChange = (e) => {
-    setSearchInput(e.target.value);
-    setLocation(e.target.value);
-  };
+  
+  const [searchInput, setSearchInput] = useState('');
+  const [location, setLocation] = useState(state?.addr || '');
+  const [lat, setLatitude] = useState(null);
+  const [lon, setLongitude] = useState(null);
+  const seq = getUserSeq();
+  
 
-  // 검색 실행 함수
-  const handleSearch = async () => {
-    if (searchInput.trim()) {
-      try {
-        const results = await searchPlaces(searchInput);
-        setSearchResults(results);
-      } catch (error) {
-        console.error('검색 오류:', error);
-      }
-    }
-  };
-
+  
   const handleChangeLocation = async () => {
-    // todo: 위치 변경 로직 추가
     try {
-      console.log(location);
       const params = {
         userSeq: seq,
         lat: parseFloat(lat),
-        lon: parseFloat(lng),
+        lon: parseFloat(lon),
         addr: location,
       };
-      console.log(params);
       const response = await modifyUserLocation(params);
-      console.log('위치 변경api', response);
+      console.log('Location change API response:', response);
       navigate(-1);
     } catch (error) {
-      console.log('에러 발생', error);
+      console.log('Error changing location:', error);
     }
   };
 
@@ -65,7 +49,7 @@ function LocationSettingPage({
 
       <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
 
-      <div className="flex flex-col items-center mt-4 px-4">
+      <div className="flex flex-col items-center mt-4 px-2">
         <div className="flex items-center text-sm text-gray-500 mb-4">
           <img
             src={NotificationIcon}
@@ -74,30 +58,33 @@ function LocationSettingPage({
           />
           배달 took 알림을 받을 위치를 설정해주세요
         </div>
-
-        <div className="bg-[#F3F3F3] px-4 py-5 rounded-3xl w-full flex flex-col items-center shadow-lg">
-          <div className="flex items-center text-gray-800 mb-3">
-            <img src={LocationIcon} alt="Location" className="w-5.5 h-7 mr-2" />
-            <div className="font-bold">
-              <SearchDropdown
-                name="locationSearch"
-                value={searchInput}
-                onChange={handleInputChange}
-                onSearch={handleSearch}
-                results={searchResults}
-                setLatitude={setLatitude}
-                setLongitude={setLongitude}
-              />
+        <div className="flex flex-col space-y-4 mt-4">
+          <div className="mb-3">
+            <div className="text-base font-bold mb-2">현재 등록한 주소</div>
+            <div className="w-full bg-gray-100 outline-none rounded-lg p-3 shadow">
+              {location}
             </div>
+
+            <SearchNotice
+              label="주소 검색"
+              name="location"
+              value={searchInput}
+              setTempLocation={(e) => setSearchInput(e.target.value)}
+              placeholder="주소를 검색하세요"
+              setLatitude={setLatitude}
+              setLongitude={setLongitude}
+              setLocation={setLocation}
+            />
           </div>
-          <button
-            className="text-white text-sm bg-[#A1A1A1] rounded-full font-bold px-4 py-2 shadow-md transition-shadow"
-            onClick={handleChangeLocation}
-          >
-            변경하기
-          </button>
         </div>
+        <button
+          className="text-white text-sm bg-[#A1A1A1] rounded-full font-bold px-4 py-2 shadow-md transition-shadow"
+          onClick={handleChangeLocation}
+        >
+          변경하기
+        </button>
       </div>
+
     </div>
   );
 }
