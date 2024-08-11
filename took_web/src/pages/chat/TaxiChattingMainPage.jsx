@@ -367,6 +367,7 @@ function TaxiChattingMainPage() {
       {showMenu && (
         <TaxiChattingMenu
           members={members}
+          setMembers={setMembers}
           taxiParty={taxiParty}
           taxiStatus={taxiStatus}
           handleMenuToggle={handleMenuToggle}
