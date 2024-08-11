@@ -50,10 +50,13 @@ function MainPage() {
             />
           </Link>
           <Link to={isLoggedIn ? '/chat/took' : '#'}>
-          <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets/TEMP/2fa2a9fc8ce9754513ab432bdb5a90489c27cbfa14306819517cd655141328fe?placeholderIfAbsent=true&apiKey=6a63372050fb46b6bb21a2ca3b7359ed" alt="" className="object-contain shrink-0 my-auto aspect-[0.95] w-[21px]"  className="object-contain shrink-0 my-auto w-6 aspect-square mt-[1px]"
-              onClick={() => handleButtonClick('/chat/took')}/>
-
-            
+            <img
+              loading="lazy"
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/2fa2a9fc8ce9754513ab432bdb5a90489c27cbfa14306819517cd655141328fe?placeholderIfAbsent=true&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
+              alt=""
+              className="object-contain shrink-0 my-auto aspect-[0.95] w-[21px]"
+              onClick={() => handleButtonClick('/chat/took')}
+            />
           </Link>
         </div>
       </div>
