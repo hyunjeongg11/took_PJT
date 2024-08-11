@@ -75,7 +75,7 @@ public class Taxi {
 
     public void updateTaxi(Long master, int max, boolean gender) {
         this.master = master;
-        this.max = max;
+        this.max = max + 1;
         this.gender = gender;
     }
 

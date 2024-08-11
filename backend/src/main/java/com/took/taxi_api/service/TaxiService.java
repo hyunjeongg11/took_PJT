@@ -42,7 +42,7 @@ public class TaxiService {
         Taxi taxi = Taxi.builder()
                 .gender(request.isGender())  // 성별 여부 설정
                 .count(0)  // 현재 인원 수를 0로 설정
-                .max(request.getMax())  // 최대 인원 수 설정
+                .max(request.getMax() + 1)  // 최대 인원 수 설정
                 .status(Taxi.Status.OPEN)  // 상태를 OPEN으로 설정
                 .createdAt(LocalDateTime.now())  // 생성 일시를 현재 시간으로 설정
                 .finishTime(LocalDateTime.now().plusHours(1))  // 종료 일시에 현재 시간에서 1시간을 더한 값으로 설정
