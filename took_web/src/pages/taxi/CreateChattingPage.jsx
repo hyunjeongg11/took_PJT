@@ -24,7 +24,6 @@ const CreateChattingPage = () => {
     try {
       // 1. 파티 참가 여부 확인
       const isJoined = await isUserJoinedTaxiPartyApi(userSeq);
-      navigate('/taxi/main');
       if (isJoined) {
         alert('이미 참여중입니다');
         navigate('/taxi/main');
@@ -75,6 +74,9 @@ const CreateChattingPage = () => {
       await addTaxiPartyMemberApi(memberParams);
 
       alert('채팅방과 택시 파티가 성공적으로 생성되었습니다.');
+      
+      // "/"로 이동
+      navigate('/');
     } catch (error) {
       console.error('Error creating chat room or taxi party:', error);
       alert('채팅방 또는 택시 파티 생성 중 오류가 발생했습니다.');

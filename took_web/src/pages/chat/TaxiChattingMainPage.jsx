@@ -32,7 +32,6 @@ function TaxiChattingMainPage() {
   const { seq: userSeq, setName } = useUser(); // useUser에서 userSeq를 가져옴
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [showActionIcons, setShowActionIcons] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -81,21 +80,16 @@ function TaxiChattingMainPage() {
       user_seq: userSeq,
       userName: userName,
       message: inputMessage,
+      timestamp: new Date().toISOString(),
     };
 
-    if (stompClient.current && stompClient.current.connected) {
-      stompClient.current.send(
-        '/pub/message/send',
-        {},
-        JSON.stringify(messageRequest)
-      );
-      setInputMessage('');
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      console.error('WebSocket is not connected.');
-    }
+    setMessages([...messages, newMessage]);
+    setInputMessage('');
+
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      setShowScrollButton(false);
+    }, 100);
   };
 
   const getUserProfileImgNo = (user_seq) => {
@@ -107,7 +101,7 @@ function TaxiChattingMainPage() {
     const container = scrollContainerRef.current;
     const isAtBottom =
       container.scrollHeight - container.scrollTop <=
-      container.clientHeight + 1;
+      container.clientHeight + 100;
     setShowScrollButton(!isAtBottom);
   };
 
@@ -120,63 +114,47 @@ function TaxiChattingMainPage() {
     setShowActionIcons(!showActionIcons);
   };
 
-  const openModal = (modalType) => {
-    setCurrentModal(modalType);
+  const handleClickOutside = (event) => {
+    if (
+      actionIconsRef.current &&
+      !actionIconsRef.current.contains(event.target)
+    ) {
+      setShowActionIcons(false);
+    }
+  };
+
+  const handleSettingDestination = () => {
+    navigate('/taxi/path');
+  };
+
+  const handleCheckDestinationList = () => {
+    navigate('/taxi/path-list');
+  };
+
+  const handleChatSetting = () => {
+    navigate('/taxi/setting');
+  };
+
+  const openModal = (message) => {
+    setModalMessage(message);
+    setShowModal(true);
   };
 
   const closeModal = () => {
-    setCurrentModal(null);
+    setShowModal(false);
   };
 
-  const handleShowParticipantList = () => {
-    setShowParticipantList(true);
+  const handleMenuToggle = () => {
+    setShowMenu(!showMenu);
   };
 
   const handleKickMember = (userName) => {
     openModal(`${userName}님을 채팅방에서\n내보내시겠습니까?`);
   };
 
-  // const handleClickOutside = (event) => {
-  //   if (
-  //     actionIconsRef.current &&
-  //     !actionIconsRef.current.contains(event.target)
-  //   ) {
-  //     setShowActionIcons(false);
-  //   }
-  // };
-
-  // const handleSettingDestination = () => {
-  //   navigate('/taxi/path');
-  // };
-
-  // const handleCheckDestinationList = () => {
-  //   navigate('/taxi/path-list');
-  // };
-
-  // const handleChatSetting = () => {
-  //   navigate('/taxi/setting');
-  // };
-
-  // const openModal = (message) => {
-  //   setModalMessage(message);
-  //   setShowModal(true);
-  // };
-
-  // const closeModal = () => {
-  //   setShowModal(false);
-  // };
-
-  // const handleMenuToggle = () => {
-  //   setShowMenu(!showMenu);
-  // };
-
-  // const handleKickMember = (userName) => {
-  //   openModal(`${userName}님을 채팅방에서 내보내시겠습니까?`);
-  // };
-
-  // const handleLeaveChatting = () => {
-  //   openModal('채팅방을 나가시겠습니까?');
-  // };
+  const handleLeaveChatting = () => {
+    openModal('채팅방을 나가시겠습니까?');
+  };
 
   const handleConfirmLeaveChatting = () => {
     navigate('/chat/list');
@@ -208,12 +186,12 @@ function TaxiChattingMainPage() {
     navigate('/taxi/input');
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      handleSendMessage();
-    }
-  };
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     if (!taxiSeq || !userSeq || !roomSeq) return; // 필요한 값이 없는 경우 종료
@@ -269,29 +247,22 @@ function TaxiChattingMainPage() {
     }
   }, [taxiParty]);
 
-  // useEffect(() => {
-  //   const handleKeyboardShow = () => {
-  //     setIsKeyboardVisible(true);
-  //   };
-  //   const handleKeyboardHide = () => {
-  //     setIsKeyboardVisible(false);
-  //   };
-
-  //   window.addEventListener('keyboardDidShow', handleKeyboardShow);
-  //   window.addEventListener('keyboardDidHide', handleKeyboardHide);
-
-  //   return () => {
-  //     window.removeEventListener('keyboardDidShow', handleKeyboardShow);
-  //     window.removeEventListener('keyboardDidHide', handleKeyboardHide);
-  //   };
-  // }, []);
-
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 72)}px`;
-    }
-  }, [inputMessage]);
+    const handleKeyboardShow = () => {
+      setIsKeyboardVisible(true);
+    };
+    const handleKeyboardHide = () => {
+      setIsKeyboardVisible(false);
+    };
+
+    window.addEventListener('keyboardDidShow', handleKeyboardShow);
+    window.addEventListener('keyboardDidHide', handleKeyboardHide);
+
+    return () => {
+      window.removeEventListener('keyboardDidShow', handleKeyboardShow);
+      window.removeEventListener('keyboardDidHide', handleKeyboardHide);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
@@ -303,7 +274,6 @@ function TaxiChattingMainPage() {
 
         <FaBars className="mt-2.5" onClick={handleMenuToggle} />
       </div>
-      <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
       {showMenu && (
         <TaxiChattingMenu
@@ -317,7 +287,7 @@ function TaxiChattingMainPage() {
         />
       )}
 
-      {/* {showModal && (
+      {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center text-base items-center z-50">
           <div className="bg-white rounded-2xl p-6 w-64">
             <p className="whitespace-pre-line mb-4">{modalMessage}</p>
@@ -353,34 +323,41 @@ function TaxiChattingMainPage() {
             </div>
           </div>
         </div>
-      )} */}
-      {/* 
+      )}
+
       <div className="w-full px-2 py-1">
         <div className="flex items-center bg-white p-2 rounded-lg shadow-md">
           <img src={speaker} alt="speaker" className="w-6 h-6 mx-1" />
           <div className="text-sm text-gray-700">경로를 설정해주세요!</div>
         </div>
-      </div> */}
+      </div>
 
       <div
         className="flex-grow overflow-y-scroll px-4 py-2 space-y-4 relative"
         onScroll={handleScroll}
         ref={scrollContainerRef}
+        style={{ paddingBottom: '100px' }}
       >
-        {Array.isArray(messages) && messages.length > 0 ? (
-          messages.map((message, index) => {
-            const { userSeq, message: text, createdAt } = message;
-            const isCurrentUser = userSeq === seq;
-            const messageDate = new Date(createdAt);
-            const formattedTime = formatTime(messageDate);
+        {messages.map((msg, index, array) => {
+          const sameUserAndTime =
+            index > 0 &&
+            msg.user_seq === array[index - 1].user_seq &&
+            msg.timestamp === array[index - 1].timestamp;
+          const lastMessageFromSameUser =
+            index < array.length - 1 &&
+            msg.user_seq === array[index + 1].user_seq &&
+            msg.timestamp === array[index + 1].timestamp;
+          const showDate =
+            lastDateRef.current !== formatDateOnly(msg.timestamp);
+          lastDateRef.current = formatDateOnly(msg.timestamp);
 
-            const user = users.find((user) => user.userSeq === userSeq);
-            const userProfileImage = user
-              ? getProfileImagePath(user.imageNo)
-              : '';
-            const userName = user ? user.userName : '';
-
-            return (
+          return (
+            <div key={msg.id}>
+              {showDate && (
+                <div className="w-1/2 text-center text-xs mx-auto py-1 bg-neutral-200 bg-opacity-70 rounded-full text-black mt-2 mb-5">
+                  {formatDateOnly(msg.timestamp)}
+                </div>
+              )}
               <div
                 className={`flex ${
                   msg.user_seq === userSeq ? 'justify-end' : 'justify-start'
@@ -432,41 +409,18 @@ function TaxiChattingMainPage() {
                 {msg.user_seq === userSeq && (
                   <div className="flex flex-col items-center ml-2">
                     <img
-                      src={userProfileImage}
-                      alt={userName}
-                      className="w-8 h-8 ml-2"
+                      src={getProfileImagePath(
+                        getUserProfileImgNo(msg.user_seq)
+                      )}
+                      alt={msg.userName}
+                      className="w-9 h-9 rounded-full self-start"
                     />
-                  </>
-                ) : (
-                  <>
-                    <img
-                      src={userProfileImage}
-                      alt={userName}
-                      className="w-8 h-8 mr-2 mt-2"
-                    />
-                    <div className="flex items-start flex-col ml-2">
-                      <span className="text-xs text-gray-500 text-left mb-1">
-                        {userName}
-                      </span>
-                      <div className="flex items-end">
-                        <div className="px-4 py-2 rounded-xl max-w-xs shadow-md bg-white relative">
-                          {text}
-                        </div>
-                        <div className="text-[10px] text-gray-500  mt-1 ml-2">
-                          {formattedTime}
-                        </div>
-                      </div>
-                    </div>
-                  </>
+                  </div>
                 )}
               </div>
-            );
-          })
-        ) : (
-          <div className="text-center rounded-xl m-2 text-sm py-1 shadow bg-gray-500 bg-opacity-10">
-            메시지가 없습니다.
-          </div>
-        )}
+            </div>
+          );
+        })}
         <div ref={messagesEndRef} />
       </div>
 
@@ -477,10 +431,11 @@ function TaxiChattingMainPage() {
       >
         {showSettlementButton && (
           <button
-            onClick={handleSendMessage}
-            className="ml-2 p-2 bg-main text-white rounded-full"
+            onClick={handleSettlement}
+            className="w-full py-4 bg-neutral-400 text-white text-lg font-bold flex items-center justify-center"
           >
-            <FaPaperPlane />
+            <FaCalculator className="mr-2" />
+            정산하기
           </button>
         )}
         <div className="w-full px-2 py-2 bg-white flex items-center relative">
@@ -519,52 +474,33 @@ function TaxiChattingMainPage() {
           )}
         </div>
       </div>
+
       {showActionIcons && (
         <div
-          className="w-full px-4 py-12 bg-white flex justify-around"
+          className="w-full px-4 py-2 bg-white flex justify-around absolute bottom-14 left-0 z-50"
           ref={actionIconsRef}
         >
           <div className="flex flex-col items-center mb-4">
             <div
               className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
-              onClick={() => openModal('calculator')}
+              onClick={handleSettingDestination}
             >
-              <img src={calculator} alt="정산" className="w-6 h-6" />
+              <img src={locationIcon} alt="경로 설정" className="w-5 h-6" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">정산</span>
+            <span className="mt-1 text-[11px] text-gray-500">경로 설정</span>
           </div>
           <div className="flex flex-col items-center">
             <div
               className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center"
-              onClick={() => openModal('money')}
+              onClick={handleCheckDestinationList}
             >
-              <img src={money} alt="주문금액" className="w-7 h-7" />
+              <img src={listIcon} alt="현재 경로 목록" className="w-5 h-6" />
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">주문금액</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <div
-              className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center"
-              onClick={() => openModal('delivery')}
-            >
-              <img src={delivery} alt="배달" className="w-6 h-5" />
-            </div>
-            <span className="mt-1 text-[11px] text-gray-500">배달</span>
+            <span className="mt-1 text-[11px] text-gray-500">
+              현재 경로 목록
+            </span>
           </div>
         </div>
-      )}
-      {currentModal === 'calculator' && (
-        <CalculatorModal
-          onClose={closeModal}
-          tempMember={users}
-          leader={chatRoom.userSeq}
-        />
-      )}
-      {currentModal === 'money' && (
-        <MoneyModal onClose={closeModal} tempMember={users} />
-      )}
-      {currentModal === 'delivery' && (
-        <DeliveryModal onClose={closeModal} tempMember={users} />
       )}
 
       {taxiParty?.master === userSeq && (

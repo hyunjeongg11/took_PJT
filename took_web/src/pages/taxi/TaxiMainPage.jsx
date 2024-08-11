@@ -14,6 +14,8 @@ import {
   getTaxiPartyPathApi,
   addTaxiPartyMemberApi,
   isUserJoinedTaxiPartyApi,
+  getAllTaxiPartyMembersApi,
+  updateTaxiPartyStatusApi,
 } from '../../apis/taxi.js';
 import { getUserInfoApi } from '../../apis/user.js';
 import { getAddr } from '../../utils/map.js';
@@ -56,6 +58,7 @@ function TaxiMainPage() {
       }
     };
 
+    // 유저 정보 가져옴 (성별 확인을 위해)
     const fetchUserGender = async () => {
       try {
         const userInfo = await getUserInfoApi({ userSeq });
@@ -65,6 +68,7 @@ function TaxiMainPage() {
       }
     };
 
+    // 근처 유저
     const fetchTaxiParties = async () => {
       try {
         const nearbyUsers = await getNearByUserPositionApi({
@@ -73,8 +77,9 @@ function TaxiMainPage() {
           lon: longitude,
         });
         const userSeqs = nearbyUsers.map((user) => user.userSeq);
-        userSeqs.push(userSeq); // 나의 userSeq를 추가
+        userSeqs.push(userSeq);
 
+        // 파티 리스트 조회
         const taxiPartyList = await getTaxiPartyListApi({ userSeqs });
 
         const taxiPartiesData = await Promise.all(
@@ -86,16 +91,21 @@ function TaxiMainPage() {
             const taxiPath = Array.isArray(taxiPathResponse)
               ? taxiPathResponse
               : [];
-              
-            // 중복 제거
+
             const destinations = [...new Set(taxiPath.map((path) => path.destiName))];
+
+            // count와 max 비교하여 status 업데이트
+            if (party.count >= party.max + 1) {
+              await updateTaxiPartyStatusApi({ taxiSeq: party.taxiSeq, status: 'FILLED' });
+              party.status = 'FILLED';
+            }
 
             return {
               ...party,
               imgNo: userInfo.imageNo,
-              userGender: userInfo.gender, // 작성자의 성별 추가
+              userGender: userInfo.gender,
               destinations,
-              taxiPath, // 경로 정보도 포함
+              taxiPath,
             };
           })
         );
@@ -113,51 +123,61 @@ function TaxiMainPage() {
     }
   }, [userSeq, latitude, longitude]);
 
-  const handleAddMemberOrEnterChat = async (item) => {
-    try {
-      // 사용자가 이미 다른 파티에 참가 중인지 확인
-      const userStatus = await isUserJoinedTaxiPartyApi(userSeq);
-
-      if (userStatus.isJoined) {
-        // 이미 다른 파티에 참가 중이라면 모달을 띄움
-        setModalMessage('이미 다른 택시 took에 참여중입니다.');
-        return;
-      }
-
-      // 아직 다른 파티에 참여하지 않은 경우
-      const isUserInPath = item.taxiPath.some(
-        (path) => path.userSeq === userSeq
-      );
-
-      if (isUserInPath) {
-        handleEnterChatRoom(item.roomSeq, item.taxiSeq, item.roomSeq);
-      } else if (item.count < item.max + 1) {
-        const memberData = {
-          taxiSeq: item.taxiSeq,
-          userSeq: userSeq,
-          destiName: item.taxiPath[0].destiName,
-          destiLat: item.taxiPath[0].destiLat,
-          destiLon: item.taxiPath[0].destiLon,
-          cost: item.taxiPath[0].cost,
-          routeRank: item.taxiPath[0].routeRank,
-        };
-
-        const response = await addTaxiPartyMemberApi(memberData);
-        if (response) {
-          console.log('Member added successfully:', response);
-          // 멤버 추가 후 바로 채팅방으로 이동
-          handleEnterChatRoom(item.roomSeq, item.taxiSeq, item.roomSeq);
-        }
-      }
-    } catch (error) {
-      console.error('Error checking user taxi party status:', error);
-    }
-  };
-
+  // 채팅방 입장
   const handleEnterChatRoom = (chatRoomId, taxiSeq, roomSeq) => {
     navigate(`/chat/taxi/${chatRoomId}`, {
       state: { taxiSeq, roomSeq },
     });
+  };
+
+  // 택시 파티 참여 또는 채팅방 입장
+  const handleAddMemberOrEnterChat = async (item) => {
+    try {
+      // 1. 기존 멤버 중복 체크
+      const allMembers = await getAllTaxiPartyMembersApi(item.taxiSeq);
+      const isAlreadyMember = allMembers.some(
+        (member) => member.userSeq === userSeq
+      );
+
+      // 2. 이미 참여 중이면 바로 채팅방으로 이동
+      if (isAlreadyMember) {
+        handleEnterChatRoom(item.roomSeq, item.taxiSeq, item.roomSeq);
+        return;
+      }
+
+      // 3. 'FILLED' 상태 체크
+      if (item.status === 'FILLED') {
+        setModalMessage('해당 택시 took은 \n모집이 완료되었습니다.');
+        return;
+      }
+
+      // 4. 다른 파티에 참여 중인지 확인
+      const userStatus = await isUserJoinedTaxiPartyApi(userSeq);
+
+      if (userStatus.isJoined) {
+        setModalMessage('이미 다른 택시 took에 참여중입니다.');
+        return;
+      }
+
+      // 5. 다른 파티에 참여 중이지 않으면 멤버 추가 후 채팅방으로 이동
+      const memberData = {
+        taxiSeq: item.taxiSeq,
+        userSeq: userSeq,
+        destiName: item.taxiPath[0].destiName,
+        destiLat: item.taxiPath[0].destiLat,
+        destiLon: item.taxiPath[0].destiLon,
+        cost: item.taxiPath[0].cost,
+        routeRank: item.taxiPath[0].routeRank,
+      };
+
+      const response = await addTaxiPartyMemberApi(memberData);
+      if (response) {
+        console.log('Member added successfully:', response);
+        handleEnterChatRoom(item.roomSeq, item.taxiSeq, item.roomSeq);
+      }
+    } catch (error) {
+      console.error('Error processing taxi party participation:', error);
+    }
   };
 
   const handleCreateTaxi = () => {
@@ -165,19 +185,18 @@ function TaxiMainPage() {
   };
 
   const closeModal = () => {
-    setModalMessage(''); // 모달 닫기
+    setModalMessage('');
   };
 
-  // 필터링 로직 수정
   const filteredData = taxiParties.filter((item) => {
     if (item.gender === false) {
-      return true; // gender가 false이면 무관이므로 항상 포함
+      return true;
     }
-    return item.userGender === userGender; // 작성자의 성별과 현재 유저의 성별 비교
+    return item.userGender === userGender;
   });
 
   return (
-    <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main">
+    <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main mb-12">
       <div className="bg-main py-4">
         <div className="flex items-center px-4 relative mb-4 mt-3">
           <BackButton />
@@ -213,10 +232,10 @@ function TaxiMainPage() {
                       item.gender === false
                         ? 'bg-white border border-neutral-300 text-gray-700'
                         : item.gender
-                          ? userGender === 'M'
-                            ? 'bg-blue-200 text-blue-600'
-                            : 'bg-pink-200 text-pink-600'
-                          : 'bg-blue-200 text-blue-600'
+                        ? userGender === 'M'
+                          ? 'bg-blue-200 text-blue-600'
+                          : 'bg-pink-200 text-pink-600'
+                        : 'bg-blue-200 text-blue-600'
                     }`}
                   >
                     {item.gender
@@ -245,7 +264,7 @@ function TaxiMainPage() {
                   }}
                 >
                   <img
-                    src={item.count < item.max + 1 ? enterIcon : notEnterIcon}
+                    src={item.status === 'FILLED' ? notEnterIcon : enterIcon}
                     alt="enter status"
                     className="w-8 h-8"
                   />
@@ -267,12 +286,21 @@ function TaxiMainPage() {
       </button>
 
       {modalMessage && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <p className="text-center text-lg font-semibold">{modalMessage}</p>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 whitespace-pre-line">
+          <div
+            className="bg-white p-6 rounded-xl shadow-lg"
+            style={{ width: '250px' }}
+          >
+            <p
+              className="text-center font-semibold"
+              style={{ fontSize: '16px' }}
+            >
+              {modalMessage}
+            </p>
             <button
-              className="mt-4 px-4 py-2 bg-main text-white rounded-lg"
+              className="mt-4 px-4 py-2 bg-neutral-300 text-white font-bold rounded-xl mx-auto block"
               onClick={closeModal}
+              style={{ width: '100px' }}
             >
               확인
             </button>
