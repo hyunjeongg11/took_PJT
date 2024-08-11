@@ -44,6 +44,7 @@ function TaxiChattingMainPage() {
   const [members, setMembers] = useState([]);
   const [userName, setUserName] = useState('');
   const [chatUsers, setChatUsers] = useState([]);
+  const [guestSeq, setGuestSeq] = useState(null);
   const textareaRef = useRef(null);
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
@@ -189,11 +190,19 @@ function TaxiChattingMainPage() {
   };
 
   const handleSettingDestination = () => {
-    navigate(`/taxi/path/${taxiSeq}`);
+    if (taxiStatus === 'OPEN') {
+      navigate(`/taxi/path/${taxiSeq}`, { state: { guestSeq: guestSeq } });
+    } else {
+      openModal('이미 경로가 확정되었어요');
+    }
   };
 
   const handleCheckDestinationList = () => {
-    navigate('/taxi/path-list');
+    navigate(`/taxi/path-list/${taxiSeq}`, {
+      state: {
+        members: members,
+      },
+    });
   };
 
   const handleChatSetting = () => {
@@ -260,7 +269,7 @@ function TaxiChattingMainPage() {
 
   useEffect(() => {
     if (!taxiSeq || !userSeq || !roomSeq) return;
-
+  
     const fetchTaxiPartyData = async () => {
       try {
         const [taxiPartyData, membersData, chatUsersData, messagesData] =
@@ -274,18 +283,31 @@ function TaxiChattingMainPage() {
             }),
           ]);
 
+        // 데이터를 확인용
+        console.log('Taxi Party Data:', taxiPartyData);
+        console.log('Members Data:', membersData);
+        console.log('Chat Users Data:', chatUsersData);
+        console.log('Messages Data:', messagesData);
+        
         setTaxiParty(taxiPartyData);
         setTaxiStatus(taxiPartyData.status);
         setMembers(membersData);
         setChatUsers(chatUsersData);
         setMessages(messagesData);
+  
+        // userSeq와 일치하는 guestSeq 찾기
+        const member = membersData.find((member) => member.userSeq === userSeq);
+        if (member) {
+          setGuestSeq(member.guestSeq);
+        }
       } catch (error) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
       }
     };
-
+  
     fetchTaxiPartyData();
   }, [taxiSeq, userSeq, roomSeq]);
+
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -363,36 +385,12 @@ function TaxiChattingMainPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center text-base items-center z-50">
           <div className="bg-white rounded-2xl p-6 w-64">
             <p className="whitespace-pre-line mb-4">{modalMessage}</p>
-            <div className="flex justify-between">
-              <button
-                onClick={closeModal}
-                className="bg-gray-200 text-black text-sm px-8 py-2 rounded-lg font-bold"
-              >
-                취소
-              </button>
-              {modalMessage === '채팅방을 나가시겠습니까?' ? (
-                <button
-                  onClick={handleConfirmLeaveChatting}
-                  className="bg-main text-white text-sm px-8 py-2 rounded-lg font-bold"
-                >
-                  확인
-                </button>
-              ) : modalMessage === '탑승 처리하시겠습니까?' ? (
-                <button
-                  onClick={handleConfirmBoardTaxi}
-                  className="bg-main text-white text-sm px-8 py-2 rounded-lg font-bold"
-                >
-                  확인
-                </button>
-              ) : (
-                <button
-                  onClick={handleConfirmDoneTaxi}
-                  className="bg-main text-white text-sm px-8 py-2 rounded-lg font-bold"
-                >
-                  확인
-                </button>
-              )}
-            </div>
+            <button
+              onClick={closeModal}
+              className="bg-main text-white text-sm px-8 py-2 rounded-lg font-bold"
+            >
+              확인
+            </button>
           </div>
         </div>
       )}

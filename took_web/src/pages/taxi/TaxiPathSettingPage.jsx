@@ -7,6 +7,7 @@ import {
   setDestinationAndCostApi,
   getNextDestinationRankApi,
 } from '../../apis/taxi';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../../store/user';
 
 const tempStartLat = 35.09362058403008;
@@ -14,6 +15,8 @@ const tempStartLon = 128.8556517902862;
 const tempTaxiSeq = 1;
 
 const TaxiPathSettingPage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [destination, setDestination] = useState('');
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
@@ -23,7 +26,7 @@ const TaxiPathSettingPage = () => {
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
 
   const dropdownRef = useRef(null);
-  const { seq: guestSeq } = useUser(); // 현재 로그인한 유저의 seq
+  const { guestSeq } = location.state || {};
 
   const handleDestinationChange = (e) => {
     setDestination(e.target.value);
@@ -65,12 +68,12 @@ const TaxiPathSettingPage = () => {
         destiLat: latitude,
         destiLon: longitude,
         cost,
-        routeRank: rank, // rank가 누락되지 않도록 추가
+        routeRank: rank,
       };
       await setDestinationAndCostApi(paramsForDestination);
 
       console.log('택시 파티 목적지 및 비용 설정 완료:', paramsForDestination);
-      // 성공 시 추가적인 동작 (예: 페이지 이동 또는 알림 표시 등)을 여기에 추가 가능
+      navigate(-1); // 완료 후 채팅방으로 이동
     } catch (error) {
       console.error('오류 발생:', error);
       // 오류 처리 (예: 오류 메시지 표시)
@@ -116,13 +119,13 @@ const TaxiPathSettingPage = () => {
             onChange={handleDestinationChange}
             setLatitude={setLatitude}
             setLongitude={setLongitude}
-            showDropdown={showDropdown}  // 드롭다운 보이기/숨기기 제어
-            setShowDropdown={setShowDropdown}  // 드롭다운 상태 제어 함수 전달
+            showDropdown={showDropdown}
+            setShowDropdown={setShowDropdown}
           />
         </div>
       </div>
 
-      <button 
+      <button
         onClick={handleAddClick}
         className="bg-main font-bold mx-auto text-white w-24 py-2 rounded-xl">
         추가하기
@@ -136,22 +139,20 @@ const TaxiPathSettingPage = () => {
             </div>
             <div className="flex items-center justify-center mb-2">
               <FaMapMarkerAlt className="h-5 w-5 mr-2 ml-1 mb-3 text-main" />
-              <span className="text-sm text-left mb-3">
-                {selectedAddress}
-              </span>
+              <span className="text-sm text-left mb-3">{selectedAddress}</span>
             </div>
             <div className="text-sm font-bold">
               <button
                 onClick={handleCloseModal}
                 className="bg-gray-200 text-gray-700 w-24 py-2 rounded-xl mr-4"
-                disabled={loading} // 로딩 중에는 버튼 비활성화
+                disabled={loading}
               >
                 이전
               </button>
               <button
                 onClick={handleConfirmAdd}
                 className="bg-main text-white w-24 py-2 rounded-xl"
-                disabled={loading} // 로딩 중에는 버튼 비활성화
+                disabled={loading}
               >
                 {loading ? '처리 중...' : '추가하기'}
               </button>
