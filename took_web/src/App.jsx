@@ -114,7 +114,7 @@ const ROUTER = createBrowserRouter([
   { path: '/taxi/request', element: <TaxiCostRequestPages /> },
   { path: '/taxi/main', element: <TaxiMainPage /> },
   { path: '/taxi/create', element: <CreateChattingPage /> },
-  { path: '/taxi/setting', element: <TaxiChattingSettingPage /> },
+  { path: '/taxi/setting/:id', element: <TaxiChattingSettingPage /> },
   { path: '/taxi/path/:id', element: <TaxiPathSettingPage /> },
   { path: '/taxi/path-list/:id', element: <CurrentPathListPage /> },
   { path: '/chat/delivery/:id/notice', element: <DeliveryNoticePage /> },

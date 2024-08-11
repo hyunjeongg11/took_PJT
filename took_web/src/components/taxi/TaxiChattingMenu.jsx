@@ -2,23 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { FaLocationDot, FaCrown } from 'react-icons/fa6';
 import { FaSignOutAlt, FaTimes } from 'react-icons/fa';
 import { IoIosSettings } from 'react-icons/io';
-import { TbMapCheck } from "react-icons/tb";
-import { LiaUserMinusSolid } from "react-icons/lia";
+import { TbMapCheck } from 'react-icons/tb';
+import { LiaUserMinusSolid } from 'react-icons/lia';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { getUserInfoApi } from '../../apis/user';
 import { useUser } from '../../store/user';
-import { updateTaxiPartyStatusApi, linkSettlementApi, deleteTaxiGuestApi, getAllTaxiPartyMembersApi } from '../../apis/taxi';
-import { makePartyApi } from '../../apis/payment/jungsan';
+import {
+  updateTaxiPartyStatusApi,
+  linkSettlementApi,
+  deleteTaxiGuestApi,
+  getAllTaxiPartyMembersApi,
+  deleteTaxiPartyApi,
+} from '../../apis/taxi';
+import { makePartyApi, insertAllMemberApi } from '../../apis/payment/jungsan';
+import { deleteRoomApi } from '../../apis/chat/chat';
+import { useNavigate } from 'react-router-dom';
 
 const TaxiChattingMenu = ({
   members,
-  setMembers, // 상태 업데이트를 위한 함수
+  setMembers,
   taxiParty,
   taxiStatus,
   handleMenuToggle,
-  handleKickMember,
-  handleLeaveChatting,
-  handleChatSetting,
 }) => {
   const { seq: currentUserSeq } = useUser();
   const [userInfos, setUserInfos] = useState({});
@@ -26,6 +31,7 @@ const TaxiChattingMenu = ({
   const [modalMessageLine2, setModalMessageLine2] = useState('');
   const [modalType, setModalType] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserInfos = async () => {
@@ -79,6 +85,79 @@ const TaxiChattingMenu = ({
     setShowModal(true);
   };
 
+  const handleLeaveChatting = async () => {
+    setModalType('leaveChat');
+    setModalMessageLine1('채팅방을 나가시겠어요?');
+    if (taxiParty.userSeq === currentUserSeq) {
+      setModalMessageLine2('방장이 나가면 채팅방이 없어져요');
+    } else {
+      setModalMessageLine2('');
+    }
+    setShowModal(true);
+  };
+
+  const handleModalAction = async () => {
+    try {
+      if (modalType === 'endRecruitment') {
+        await updateTaxiPartyStatusApi({
+          taxiSeq: taxiParty.taxiSeq,
+          status: 'FILLED',
+        });
+        console.log('택시 파티 상태가 FILLED로 업데이트되었습니다.');
+      } else if (modalType === 'confirmRoute') {
+        await updateTaxiPartyStatusApi({
+          taxiSeq: taxiParty.taxiSeq,
+          status: 'FILLED',
+        });
+        const partyResponse = await makePartyApi({
+          userSeq: currentUserSeq,
+          title: `taxi ${taxiParty.taxiSeq}`,
+          category: 1,
+        });
+        const { partySeq } = partyResponse;
+        await linkSettlementApi({ taxiSeq: taxiParty.taxiSeq, partySeq });
+        console.log('택시 파티와 정산이 연결되었습니다.');
+
+        const userCosts = members.map((member) => ({
+          userSeq: member.userSeq,
+          cost: member.cost,
+        }));
+
+        const insertParams = {
+          partySeq: partySeq,
+          userCosts: userCosts,
+        };
+
+        const insertResponse = await insertAllMemberApi(insertParams);
+        console.log('All members inserted with response:', insertResponse);
+      } else if (modalType === 'leaveChat') {
+        if (taxiParty.userSeq === currentUserSeq) {
+          await deleteTaxiPartyApi(taxiParty.taxiSeq);
+          await deleteRoomApi(taxiParty.roomSeq);
+          console.log('방장으로서 택시 파티와 채팅방을 삭제했습니다.');
+        } else {
+          await deleteTaxiGuestApi({
+            taxiSeq: taxiParty.taxiSeq,
+            userSeq: currentUserSeq,
+          });
+          console.log('게스트로서 택시 파티에서 나갔습니다.');
+        }
+
+        // 업데이트된 멤버 정보를 다시 가져오기 (선택 사항, 삭제된 게스트만 업데이트가 필요하면 위의 코드만으로 충분)
+        const updatedMemberList = await getAllTaxiPartyMembersApi(
+          taxiParty.taxiSeq
+        );
+        setMembers(updatedMemberList);
+
+        navigate('/'); // "/" 경로로 이동
+      }
+    } catch (error) {
+      console.error('API 호출 중 오류 발생:', error);
+    } finally {
+      setShowModal(false);
+    }
+  };
+
   // 택시 파티 멤버 삭제 핸들러
   const handleDeleteGuest = async (guestUserSeq) => {
     try {
@@ -89,38 +168,26 @@ const TaxiChattingMenu = ({
       console.log('게스트가 성공적으로 삭제되었습니다.');
 
       // 삭제된 게스트를 members 상태에서 제거
-      const updatedMembers = members.filter(member => member.userSeq !== guestUserSeq);
+      const updatedMembers = members.filter(
+        (member) => member.userSeq !== guestUserSeq
+      );
       setMembers(updatedMembers); // 업데이트된 멤버 목록 설정
 
       // 업데이트된 멤버 정보를 다시 가져오기 (선택 사항, 삭제된 게스트만 업데이트가 필요하면 위의 코드만으로 충분)
-      const updatedMemberList = await getAllTaxiPartyMembersApi(taxiParty.taxiSeq);
+      const updatedMemberList = await getAllTaxiPartyMembersApi(
+        taxiParty.taxiSeq
+      );
       setMembers(updatedMemberList);
     } catch (error) {
       console.error('게스트 삭제 중 오류 발생:', error);
     }
   };
 
-  const handleModalAction = async () => {
-    try {
-      if (modalType === 'endRecruitment') {
-        await updateTaxiPartyStatusApi({ taxiSeq: taxiParty.taxiSeq, status: 'FILLED' });
-        console.log('택시 파티 상태가 FILLED로 업데이트되었습니다.');
-      } else if (modalType === 'confirmRoute') {
-        await updateTaxiPartyStatusApi({ taxiSeq: taxiParty.taxiSeq, status: 'FILLED' });
-        const partyResponse = await makePartyApi({
-          userSeq: currentUserSeq,
-          title: `taxi ${taxiParty.taxiSeq}`,
-          category: 1,
-        });
-        const { partySeq } = partyResponse;
-        await linkSettlementApi({ taxiSeq: taxiParty.taxiSeq, partySeq });
-        console.log('택시 파티와 정산이 연결되었습니다.');
-      }
-    } catch (error) {
-      console.error('API 호출 중 오류 발생:', error);
-    } finally {
-      setShowModal(false);
-    }
+  // 채팅 설정 페이지로 이동하는 함수
+  const handleChatSetting = () => {
+    navigate(`/taxi/setting/${taxiParty.roomSeq}`, {
+      state: { taxiSeq: taxiParty.taxiSeq, taxiParty },
+    });
   };
 
   return (
@@ -135,24 +202,28 @@ const TaxiChattingMenu = ({
 
         <div className="text-base font-bold mt-6 ml-1 mb-4">경로</div>
         <ul>
-          {Array.from(new Set(members.map((member) => member.destiName))).map((destiName, index) => (
-            <li key={`${destiName}-${index}`} className="flex items-center justify-between mb-2 py-1">
-              <div className="items-center flex flex-row text-sm text-black">
-                <FaLocationDot className="mr-1 w-4 h-4 text-neutral-300" />
-                <span className="px-2">{destiName}</span>
-              </div>
-            </li>
-          ))}
+          {Array.from(new Set(members.map((member) => member.destiName))).map(
+            (destiName, index) => (
+              <li
+                key={`${destiName}-${index}`}
+                className="flex items-center justify-between mb-2 py-1"
+              >
+                <div className="items-center flex flex-row text-sm text-black">
+                  <FaLocationDot className="mr-1 w-4 h-4 text-neutral-300" />
+                  <span className="px-2">{destiName}</span>
+                </div>
+              </li>
+            )
+          )}
         </ul>
 
-        {/* 모임 관리 섹션 */}
         {taxiParty.userSeq === currentUserSeq && (
           <div className="mt-6">
             <div className="mt-6 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
-            <h2 className="text-base font-bold mb-4 ml-1">모임 관리</h2>
+            <h2 className="text-base font-bold mb-4 ml-1 mt-6">모임 관리</h2>
             <div className="flex items-center justify-between mb-2 ml-1 mr-10">
               <div
-                className="flex items-center text-sm text-black cursor-pointer"
+                className="flex items_center text-sm text-black cursor-pointer"
                 onClick={handleEndRecruitment}
               >
                 <LiaUserMinusSolid className="mr-2 w-5 h-5 text-neutral-700" />
@@ -174,48 +245,58 @@ const TaxiChattingMenu = ({
         <h2 className="text-base font-bold mt-6 mb-4 ml-1">참여자</h2>
         <ul>
           {members.map((member) => (
-            <li key={member.userSeq} className="flex items-center justify-between mb-2 ml-1">
+            <li
+              key={member.userSeq}
+              className="flex items-center justify-between mb-2 ml-1"
+            >
               <div className="flex items-center py-2">
                 <img
-                  src={userInfos[member.userSeq]?.profileImagePath || 'Loading...'}
+                  src={
+                    userInfos[member.userSeq]?.profileImagePath || 'Loading...'
+                  }
                   alt={userInfos[member.userSeq]?.userName || 'Loading...'}
                   className="w-8 h-8 mr-2"
                 />
                 <span className="text-sm">
                   {userInfos[member.userSeq]?.userName || 'Loading...'}
                 </span>
-                {currentUserSeq === member.userSeq && (
-                  <div className="ml-1 text-xs bg-neutral-400 px-1.5 py-1 rounded-full text-white">
-                    나
-                  </div>
-                )}
-                {taxiParty.master === member.userSeq && (
+                {member.userSeq === taxiParty.userSeq && (
                   <FaCrown className="text-yellow-500 ml-1 w-5" />
                 )}
               </div>
-              {taxiParty.userSeq === taxiParty.master && member.userSeq === taxiParty.master && (
-                <div className="ml-1 text-xs bg-main px-2 py-1 rounded-lg shadow-sm text-white">
-                  결제자
-                </div>
-              )}
-              {taxiParty.userSeq === currentUserSeq && member.userSeq !== taxiParty.master && (
-                <button
-                  className="text-red-600 border-2 border-red-600 rounded-lg py-1 px-2 text-xs"
-                  onClick={() => handleDeleteGuest(member.userSeq)} 
-                >
-                  내보내기
-                </button>
-              )}
+              <div className="flex items-center">
+                {member.userSeq === taxiParty.master && (
+                  <div className="text-xs bg-main px-2 py-1 rounded-lg shadow-sm text-white">
+                    결제자
+                  </div>
+                )}
+                {taxiParty.userSeq === currentUserSeq &&
+                  member.userSeq !== taxiParty.master &&
+                  member.userSeq !== taxiParty.userSeq && (
+                    <button
+                      className="text-red-600 border-2 border-red-600 rounded-lg py-1 px-2 text-xs ml-2"
+                      onClick={() => handleDeleteGuest(member.userSeq)}
+                    >
+                      내보내기
+                    </button>
+                  )}
+              </div>
             </li>
           ))}
         </ul>
         {taxiStatus !== 'BOARD' && taxiStatus !== 'DONE' && (
-          <button className="absolute bottom-4 left-4 text-gray-400" onClick={handleLeaveChatting}>
+          <button
+            className="absolute bottom-4 left-4 text-gray-400"
+            onClick={handleLeaveChatting}
+          >
             <FaSignOutAlt className="w-6 h-6" />
           </button>
         )}
         {currentUserSeq === taxiParty.userSeq && (
-          <button className="absolute bottom-4 right-4 text-gray-400" onClick={handleChatSetting}>
+          <button
+            className="absolute bottom-4 right-4 text-gray-400"
+            onClick={handleChatSetting}
+          >
             <IoIosSettings className="w-7 h-7" />
           </button>
         )}
@@ -223,17 +304,21 @@ const TaxiChattingMenu = ({
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-72"> 
+          <div className="bg-white p-6 rounded-lg shadow-xl w-72">
             <p
               className="text-center font-semibold whitespace-pre-line"
-              style={{ fontSize: '17px', color: 'black' }} 
+              style={{ fontSize: '17px', color: 'black' }}
             >
               {modalMessageLine1}
             </p>
-            {modalMessageLine2 && ( 
+            {modalMessageLine2 && (
               <p
                 className="text-center font-medium whitespace-pre-line"
-                style={{ fontSize: '14px', color: '#555555', marginTop: '10px' }} 
+                style={{
+                  fontSize: '14px',
+                  color: '#555555',
+                  marginTop: '10px',
+                }}
               >
                 {modalMessageLine2}
               </p>
@@ -258,7 +343,11 @@ const TaxiChattingMenu = ({
                   className="px-4 py-2 bg-main text-white font-bold rounded-xl w-full"
                   onClick={handleModalAction}
                 >
-                  {modalType === 'endRecruitment' ? '종료하기' : '확정하기'}
+                  {modalType === 'endRecruitment'
+                    ? '종료하기'
+                    : modalType === 'confirmRoute'
+                    ? '확정하기'
+                    : '확인'}
                 </button>
               </div>
             )}
