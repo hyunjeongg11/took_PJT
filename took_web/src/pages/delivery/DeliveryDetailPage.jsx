@@ -57,6 +57,7 @@ function DeliveryDetailPage() {
   const [stompClient, setStompClient] = useState(null);
   const [connected, setConnected] = useState(false);
   const [chatRoom, setChatRoom] = useState({});
+  const [showEndModal, setShowEndModal] = useState(false); // 모집 종료 모달 상태 추가
 
   useEffect(() => {
     const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
@@ -123,7 +124,11 @@ function DeliveryDetailPage() {
       const deliveryTime = new Date(deliveryResponse.deliveryTime);
       if (new Date() > deliveryTime) {
         await changeDeliveryStatusApi({ deliverySeq: id, status: 'DONE' });
-        navigate('/');
+        setShowEndModal(true); // 모집 종료 모달 표시
+        setTimeout(() => {
+          setShowEndModal(false);
+          navigate('/');
+        }, 3000); // 2초 후에 경로 이동
       }
     } catch (e) {
       console.error('배달 상세 조회 중 오류 발생:', e);
@@ -169,7 +174,7 @@ function DeliveryDetailPage() {
 
   const handleChatRedirect = () => {
     if (data && data.roomSeq) {
-      navigate(`/chat/delivery/${data.roomSeq}`, {state: {chatRoom }});
+      navigate(`/chat/delivery/${data.roomSeq}`, { state: { chatRoom } });
     }
   };
 
@@ -238,25 +243,23 @@ function DeliveryDetailPage() {
           </div>
           <div className="text-gray-700 my-3">{data?.content}</div>
         </div>
-       
-        {(
-  (isParticipant || isLeader) ? (
-    <button
-      className="w-full p-2 bg-main text-white rounded-lg"
-      onClick={handleChatRedirect}
-    >
-      채팅방 입장
-    </button>
-  ) : (
-    <button
-      className="w-full p-2 mt-2 bg-gray-300 text-gray-700 rounded-lg"
-      onClick={handleParticipate}
-      disabled={isParticipant}
-    >
-      {isParticipant ? '이미 참여중' : '참여하기'}
-    </button>
-  )
-)}
+
+        {isParticipant || isLeader ? (
+          <button
+            className="w-full p-2 bg-main text-white rounded-lg"
+            onClick={handleChatRedirect}
+          >
+            채팅방 입장
+          </button>
+        ) : (
+          <button
+            className="w-full p-2 mt-2 bg-gray-300 text-gray-700 rounded-lg"
+            onClick={handleParticipate}
+            disabled={isParticipant}
+          >
+            {isParticipant ? '이미 참여중' : '참여하기'}
+          </button>
+        )}
 
         {isLeader && (
           <button
@@ -296,6 +299,19 @@ function DeliveryDetailPage() {
             <div className="text-center mb-4">삭제가 완료되었습니다!</div>
           </div>
         </div>
+      )}
+
+{showEndModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="bg-white p-7 rounded-lg shadow-lg flex flex-col items-center">
+          <img
+            src={getProfileImagePath(userInfo?.imageNo)}
+            alt="took"
+            className="w-10 h-10 m-5 animate-jump"
+          />
+          <p>모집이 종료된 배달입니다</p>
+        </div>
+      </div>
       )}
     </div>
   );

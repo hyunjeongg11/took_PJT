@@ -276,22 +276,30 @@ function ChattingMainPage() {
                       <Link
                         to={`/chat/delivery/${deliveryInfo.deliverySeq}/notice`}
                       >
-                        {isLeader && (<span className="py-1 px-2 ml-16 bg-gray-400 rounded-md  text-white">
-                          수정
-                        </span>)}
+                        {isLeader && (
+                          <span className="py-1 px-2 ml-16 bg-gray-400 rounded-md  text-white">
+                            수정
+                          </span>
+                        )}
                       </Link>
                     </div>
                   </div>
                 ) : (
                   <div className="text-xs flex justify-center py-2">
-                    {isLeader ? <button
-                      className="bg-gray-300 font-semibold px-6 py-2 text-white rounded-lg"
-                      onClick={() =>
-                        (window.location.href = `/chat/delivery/${deliveryInfo.deliverySeq}/notice`)
-                      }
-                    >
-                      주문 정보 등록하기
-                    </button> : <div className=' px-2ㄴ py-2 text-gray-600'>주문정보가 등록되지 않았습니다</div>}
+                    {isLeader ? (
+                      <button
+                        className="bg-gray-300 font-semibold px-6 py-2 text-white rounded-lg"
+                        onClick={() =>
+                          (window.location.href = `/chat/delivery/${deliveryInfo.deliverySeq}/notice`)
+                        }
+                      >
+                        주문 정보 등록하기
+                      </button>
+                    ) : (
+                      <div className=" px-2ㄴ py-2 text-gray-600">
+                        주문정보가 등록되지 않았습니다
+                      </div>
+                    )}
                   </div>
                 )}
               </>
@@ -419,15 +427,20 @@ function ChattingMainPage() {
           className="w-full px-4 py-12 bg-white flex justify-around"
           ref={actionIconsRef}
         >
-         {isLeader && (<div className="flex flex-col items-center">
-            <div
-              className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center"
-              onClick={() => {openModal('money');console.log("open money modal")}}
-            >
-              <img src={money} alt="주문금액" className="w-7 h-7" />
+          {isLeader && (
+            <div className="flex flex-col items-center">
+              <div
+                className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center"
+                onClick={() => {
+                  openModal('money');
+                  console.log('open money modal');
+                }}
+              >
+                <img src={money} alt="주문금액" className="w-7 h-7" />
+              </div>
+              <span className="mt-1 text-[11px] text-gray-500">주문금액</span>
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">주문금액</span>
-          </div>)}
+          )}
           <div className="flex flex-col items-center">
             <div
               className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center"
@@ -437,15 +450,17 @@ function ChattingMainPage() {
             </div>
             <span className="mt-1 text-[11px] text-gray-500">배달</span>
           </div>
-        { isLeader &&( <div className="flex flex-col items-center mb-4">
-            <div
-              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
-              onClick={() => openModal('calculator')}
-            >
-              <img src={calculator} alt="정산" className="w-6 h-6" />
+          {isLeader && (
+            <div className="flex flex-col items-center mb-4">
+              <div
+                className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
+                onClick={() => openModal('calculator')}
+              >
+                <img src={calculator} alt="정산" className="w-6 h-6" />
+              </div>
+              <span className="mt-1 text-[11px] text-gray-500">정산</span>
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">정산</span>
-          </div>)}
+          )}
         </div>
       )}
       {currentModal === 'money' && isLeader && (

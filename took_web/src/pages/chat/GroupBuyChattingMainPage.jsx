@@ -35,8 +35,6 @@ import { getShopByRoom } from '../../apis/findByRoom';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
-
-
 function GroupBuyChattingMainPage() {
   const { id } = useParams();
   const location = useLocation();
@@ -82,13 +80,13 @@ function GroupBuyChattingMainPage() {
   const loadShopInfo = async () => {
     try {
       const response = await getShopByRoom(id);
-      console.log("shopInfo", response);
+      console.log('shopInfo', response);
       setShopInfo(response);
       if (seq === response.userSeq) {
         setIsLeader(true);
       }
     } catch (err) {
-      console.log("Error fetching shop info", err);
+      console.log('Error fetching shop info', err);
     }
   };
 
@@ -247,42 +245,41 @@ function GroupBuyChattingMainPage() {
       </div>
       <div className="mt-1 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
-     
       <div
-  className={`flex items-start p-2 m-1 rounded-lg shadow-md mx-3 ${isCollapsed ? 'bg-opacity-80 bg-white shadow-none' : 'bg-white w-[90%]'}`}
->
-  <img src={speaker} alt="speaker" className="w-6 h-6 ml-1" />
-  <div className="ml-2 flex-grow max-w-64">
-    <div className="text-sm mt-[2px]"></div>
-    {!isCollapsed && (
-      <div className="text-xs flex-col gap-2 justify-between flex py-2">
-        <div className="mb-1.5 flex flex-between w-[95%]">
-          <div className="w-16">물품명</div>
-          <span className="">{shopInfo.item}</span>
+        className={`flex items-start p-2 m-1 rounded-lg shadow-md mx-3 ${isCollapsed ? 'bg-opacity-80 bg-white shadow-none' : 'bg-white w-[90%]'}`}
+      >
+        <img src={speaker} alt="speaker" className="w-6 h-6 ml-1" />
+        <div className="ml-2 flex-grow max-w-64">
+          <div className="text-sm mt-[2px]"></div>
+          {!isCollapsed && (
+            <div className="text-xs flex-col gap-2 justify-between flex py-2">
+              <div className="mb-1.5 flex flex-between w-[95%]">
+                <div className="w-16">물품명</div>
+                <span className="">{shopInfo.item}</span>
+              </div>
+              <div className="mb-1.5 flex flex-between w-[95%]">
+                <div className="w-16">구매링크</div>
+                <Link to={shopInfo.site} className="underline overflow-hidden ">
+                  {shopInfo.site}
+                </Link>
+              </div>
+              <div className="flex flex-between w-[95%]">
+                <div className="w-16">수령장소</div>
+                <span className="">{shopInfo.place}</span>
+              </div>
+            </div>
+          )}
         </div>
-        <div className="mb-1.5 flex flex-between w-[95%]">
-          <div className="w-16">구매링크</div>
-          <Link to={shopInfo.site} className="underline overflow-hidden ">
-            {shopInfo.site}
-          </Link>
-        </div>
-        <div className="flex flex-between w-[95%]">
-          <div className="w-16">수령장소</div>
-          <span className="">{shopInfo.place}</span>
+        <div className="flex-shrink-0">
+          <button onClick={toggleCollapse} className="focus:outline-none">
+            {isCollapsed ? (
+              <FaChevronDown className="h-4 w-4 text-gray-400" />
+            ) : (
+              <FaChevronUp className="h-4 w-4 text-gray-400" />
+            )}
+          </button>
         </div>
       </div>
-    )}
-  </div>
-  <div className="flex-shrink-0">
-    <button onClick={toggleCollapse} className="focus:outline-none">
-      {isCollapsed ? (
-        <FaChevronDown className="h-4 w-4 text-gray-400" />
-      ) : (
-        <FaChevronUp className="h-4 w-4 text-gray-400" />
-      )}
-    </button>
-  </div>
-</div>
       <div
         className="flex-grow overflow-y-scroll px-4 py-2 space-y-4 relative"
         onScroll={handleScroll}
@@ -366,7 +363,6 @@ function GroupBuyChattingMainPage() {
         </button>
       )}
 
-     
       <div className="flex flex-col">
         <div className="relative bottom-0 left-0 right-0 bg-white p-2 shadow-md flex items-center">
           <textarea
@@ -396,9 +392,7 @@ function GroupBuyChattingMainPage() {
           className="w-full px-4 py-12 bg-white flex justify-around"
           ref={actionIconsRef}
         >
-
-           
-<div className="flex flex-col items-center">
+          <div className="flex flex-col items-center">
             <div
               className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center"
               onClick={() => navigate(`/groupbuy/total/${tempData.shopSeq}`)}
@@ -408,15 +402,17 @@ function GroupBuyChattingMainPage() {
             <span className="mt-1 text-[11px] text-gray-500">주문 정보</span>
           </div>
 
-          { isLeader && (<div className="flex flex-col items-center mb-4">
-            <div
-              className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
-              onClick={() => navigate(`/groupbuy/order/${tempData.shopSeq}`)}
-            >
-              <BsTruck className="text-white w-7 h-7" />
+          {isLeader && (
+            <div className="flex flex-col items-center mb-4">
+              <div
+                className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
+                onClick={() => navigate(`/groupbuy/order/${tempData.shopSeq}`)}
+              >
+                <BsTruck className="text-white w-7 h-7" />
+              </div>
+              <span className="mt-1 text-[11px] text-gray-500">배송 정보</span>
             </div>
-            <span className="mt-1 text-[11px] text-gray-500">배송 정보</span>
-          </div>)}
+          )}
           <div className="flex flex-col items-center mb-4">
             <div
               className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
@@ -426,8 +422,7 @@ function GroupBuyChattingMainPage() {
             </div>
             <span className="mt-1 text-[11px] text-gray-500">정산</span>
           </div>
-     
-         
+
           <div
             onClick={handleShowArrivalModal}
             className="flex flex-col items-center"
