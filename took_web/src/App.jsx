@@ -115,7 +115,7 @@ const ROUTER = createBrowserRouter([
   { path: '/taxi/main', element: <TaxiMainPage /> },
   { path: '/taxi/create', element: <CreateChattingPage /> },
   { path: '/taxi/setting', element: <TaxiChattingSettingPage /> },
-  { path: '/taxi/path', element: <TaxiPathSettingPage /> },
+  { path: '/taxi/path/:id', element: <TaxiPathSettingPage /> },
   { path: '/taxi/path-list', element: <CurrentPathListPage /> },
   { path: '/chat/delivery/:id/notice', element: <DeliveryNoticePage /> },
   { path: '/chat/list', element: <ChattingListPage /> },

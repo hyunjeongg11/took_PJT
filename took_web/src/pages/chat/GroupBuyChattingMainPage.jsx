@@ -29,66 +29,6 @@ import { getShopByRoom } from '../../apis/findByRoom';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
-<<<<<<< HEAD
-// todo: 실제 데이터와 연결 필요
-const tempMember = [
-  {
-    member_seq: 1,
-    party_seq: 1,
-    user_seq: 1,
-    userName: '조현정',
-    imgNo: 19,
-    cost: 13000,
-    real_cost: 12000,
-    status: true,
-    receive: false,
-    is_leader: true,
-    created_at: '2024-07-06T00:23:00',
-  },
-  {
-    member_seq: 2,
-    party_seq: 1,
-    user_seq: 2,
-    userName: '정희수',
-    imgNo: 12,
-    cost: 8000,
-    real_cost: 7500,
-    status: true,
-    receive: false,
-    is_leader: false,
-    created_at: '2024-07-06T00:23:00',
-  },
-  {
-    member_seq: 3,
-    party_seq: 1,
-    user_seq: 3,
-    userName: '차민주',
-    imgNo: 2,
-    cost: 16000,
-    real_cost: 14500,
-    status: true,
-    receive: false,
-    is_leader: false,
-    created_at: '2024-07-06T00:23:00',
-  },
-  {
-    member_seq: 4,
-    party_seq: 1,
-    user_seq: 4,
-    userName: '이재찬',
-    imgNo: 8,
-    cost: 16000,
-    real_real_cost: 14500,
-    status: true,
-    receive: false,
-    is_leader: false,
-    created_at: '2024-07-06T00:23:00',
-  },
-];
-=======
->>>>>>> dev-fe
-
-
 function GroupBuyChattingMainPage() {
   const { id } = useParams();
   const location = useLocation();
@@ -478,29 +418,8 @@ function GroupBuyChattingMainPage() {
             </div>
             <span className="mt-1 text-[11px] text-gray-500">정산</span>
           </div>
-<<<<<<< HEAD
-          <div className="flex flex-col items-center mb-4">
-            <div
-              className="w-11 h-11 rounded-full bg-[#E4C0ED] flex items-center justify-center"
-              onClick={() => navigate(`/groupbuy/order/${tempData.shopSeq}`)}
-            >
-              <BsTruck className="text-white w-7 h-7" />
-            </div>
-            <span className="mt-1 text-[11px] text-gray-500">배송</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <div
-              className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center"
-              onClick={() => navigate(`/groupbuy/total/${tempData.shopSeq}`)}
-            >
-              <AiOutlineInfoCircle className="text-white w-6 h-6" />
-            </div>
-            <span className="mt-1 text-[11px] text-gray-500">주문 정보</span>
-          </div>
-=======
      
          
->>>>>>> dev-fe
           <div
             onClick={handleShowArrivalModal}
             className="flex flex-col items-center"

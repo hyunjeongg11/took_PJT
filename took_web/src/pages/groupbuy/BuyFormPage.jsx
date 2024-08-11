@@ -137,20 +137,6 @@ function BuyFormPage() {
       return;
     }
 
-<<<<<<< HEAD
-    const params = {
-      roomSeq: 1, // todo: 실제 채팅방 시퀀스로 교체
-      userSeq: userSeq,
-      title: formData.title,
-      content: formData.content,
-      item: formData.item,
-      site: formData.site,
-      place: formData.place,
-      lat: formData.lat,
-      lon: formData.lon,
-      maxCount: parseInt(formData.max_person),
-    };
-=======
     // const params = {
     //   roomSeq: 28, // todo: 실제 채팅방 시퀀스로 교체
     //   userSeq: userSeq,
@@ -163,7 +149,6 @@ function BuyFormPage() {
     //   lon: formData.lon,
     //   maxCount: parseInt(formData.max_person),
     // };
->>>>>>> dev-fe
 
     try {
       if (id) {
