@@ -1,6 +1,7 @@
 import { React, useEffect, useState } from 'react';
+import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { makePartyApi } from '../../apis/payment/jungsan';
 import { useUser } from '../../store/user';
 import { insertAllMemberApi } from '../../apis/payment/jungsan';
@@ -9,18 +10,16 @@ function PaymentTotalPage() {
   const { seq: userSeq } = useUser();
   const [partySeq, setPartySeq] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const paymentsLocation = location.state?.payments || [];
-  console.log(paymentsLocation);
+  const [showModal, setShowModal] = useState(false); // 모달 창 상태 추가
 
   const temp_data = paymentsLocation;
-  console.log(temp_data);
 
   const calculateUserCosts = (temp_data) => {
-    console.log('calculateUserCosts함수 실행', calculateUserCosts);
     const userCostsMap = {};
 
     Object.values(temp_data).forEach((location) => {
-      console.log('location 출력', location);
       Object.values(location.users).forEach((user) => {
         const amount = parseFloat(user.amount.replace(/,/g, '')) || 0;
         if (userCostsMap[user.userSeq]) {
@@ -52,7 +51,6 @@ function PaymentTotalPage() {
       });
       if (response && response.partySeq) {
         setPartySeq(response.partySeq);
-        console.log('새로 생성된 파티 번호는' + response.partySeq);
       }
     } catch (error) {
       console.error('API 호출 에러:', error);
@@ -66,16 +64,20 @@ function PaymentTotalPage() {
       userCosts,
     };
 
-    console.log('변환된 형태를 출력합니다', params);
-
     try {
       const response = await insertAllMemberApi(params);
       if (response) {
-        console.log('API Response:', response);
+        // 요청 완료 후 모달 창을 표시
+        setShowModal(true);
       }
     } catch (error) {
       console.error('API 호출 에러:', error);
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate('/'); // 모달 닫힘과 동시에 홈으로 이동
   };
 
   const totalSum = Object.values(temp_data).reduce(
@@ -84,7 +86,10 @@ function PaymentTotalPage() {
   );
 
   return (
-    <div className="flex flex-col items-center px-14 py-20 bg-white max-w-[600px] mx-auto">
+    <div className="flex flex-col items-center px-14 py-10 bg-white max-w-[600px] mx-auto">
+      <div className="self-start mb-4">
+        <BackButton />
+      </div>
       <div className="text-4xl text-main">
         <span className="text-3xl font-bold text-main">정산 </span>
         <span className="text-main font-dela">took !</span>
@@ -129,11 +134,26 @@ function PaymentTotalPage() {
       </div>
 
       <div
-        className="px-16 py-3.5 mt-10 max-w-full text-base font-extrabold text-white whitespace-nowrap bg-main rounded-2xl shadow-sm w-[197px]"
+        className="px-16 py-2 mt-10 max-w-full text-base font-extrabold text-white whitespace-nowrap bg-main rounded-full shadow-sm w-[197px]"
         onClick={insertAllMemberApiRequest}
       >
         요청하기
       </div>
+
+      {/* 모달 창 */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-2xl p-6 text-center">
+            <h2 className="text-lg font-bold mb-4">요청이 완료되었습니다!</h2>
+            <button
+              onClick={handleCloseModal}
+              className="bg-gray-300 text-white px-6 py-2 rounded-xl"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

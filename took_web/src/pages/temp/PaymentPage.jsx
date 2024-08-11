@@ -10,19 +10,31 @@ import { getMainAccount } from '../../apis/account/oneclick';
 import { getAccountListApi } from '../../apis/account/info';
 import { bankNumToName } from '../../assets/payment/index.js';
 import { useUser } from '../../store/user';
-
+import { msgToAndroid } from '../../android/message';
+import {
+  onlyjungsanPayApi,
+  deliveryGroupPayApi,
+} from '../../apis/payment/jungsan';
 const PaymentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { seq: currentUserSeq } = useUser();
-  const { accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq } = location.state || {};
+  const {
+    accountSeq,
+    accountNum,
+    bankName,
+    amount,
+    userSeq,
+    numCategory,
+    partySeq,
+  } = location.state || {};
   const [userName, setUserName] = useState('');
   const [imageNo, setImageNo] = useState(null);
   const [mainAccount, setMainAccount] = useState(null);
   const [accountList, setAccountList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [attemptCount, setAttemptCount] = useState(0);
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -40,7 +52,11 @@ const PaymentPage = () => {
         const bankName = bankNumToName[mainAccountResponse.bankNum];
         const mainAccount = {
           ...mainAccountResponse,
-          bankName: bankName ? (bankName.length === 2 ? `${bankName}은행` : bankName) : ''
+          bankName: bankName
+            ? bankName.length === 2
+              ? `${bankName}은행`
+              : bankName
+            : '',
         };
         setMainAccount(mainAccount);
         setSelectedAccount(mainAccount);
@@ -51,7 +67,9 @@ const PaymentPage = () => {
 
     const fetchAccountList = async () => {
       try {
-        const accountListResponse = await getAccountListApi({ userSeq: currentUserSeq });
+        const accountListResponse = await getAccountListApi({
+          userSeq: currentUserSeq,
+        });
         const accountList = accountListResponse.list.map((account) => ({
           ...account,
           bankName: bankNumToName[account.bankNum],
@@ -66,18 +84,134 @@ const PaymentPage = () => {
     fetchMainAccount();
     fetchAccountList();
   }, [userSeq, currentUserSeq]);
+  // 생체 인증 및 결과 처리 함수
+  const handleAuthentication = ({
+    accountSeq,
+    amount,
+    userSeq,
+    currentUserSeq,
+    accountNum,
+    bankName,
+    numCategory,
+    partySeq,
+  }) => {
+    if (attemptCount >= 3) {
+      // 생체 인증을 3번 실패했을 경우
+      navigate('/pwd', {
+        state: {
+          accountSeq,
+          accountNum,
+          bankName,
+          amount,
+          userSeq,
+          numCategory,
+          partySeq,
+        },
+      });
+      return;
+    }
 
+    if (window.Android) {
+      window.Android.authenticate();
+    }
+
+    window.onAuthenticate = (success) => {
+      if (success) {
+        alert('생체 인증 성공');
+        msgToAndroid('생체 인증 성공');
+        processPayment();
+        navigate('/complete', {
+          state: { accountSeq, amount, userSeq, currentUserSeq },
+        });
+      } else {
+        alert('생체 인증 실패');
+        setAttemptCount((prevCount) => prevCount + 1); // 실패 시 시도 횟수 증가
+        if (attemptCount + 1 >= 3) {
+          // 3번 실패하면 비밀번호 입력 페이지로 이동
+          navigate('/pwd', {
+            state: {
+              accountSeq,
+              accountNum,
+              bankName,
+              amount,
+              userSeq,
+              numCategory,
+              partySeq,
+            },
+          });
+        }
+      }
+    };
+
+    if (window.Android) {
+      window.Android.authenticate();
+    }
+  };
   const handleSendMoney = () => {
     if (selectedAccount) {
       const { accountSeq, accountNum, bankName } = selectedAccount;
-      console.log(accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq)
-      navigate('/pwd', { state: { accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq } });
+      console.log(
+        accountSeq,
+        accountNum,
+        bankName,
+        amount,
+        userSeq,
+        numCategory,
+        partySeq
+      );
+      handleAuthentication({
+        accountSeq,
+        amount,
+        userSeq,
+        currentUserSeq,
+        accountNum,
+        bankName,
+        numCategory,
+        partySeq,
+      });
     } else if (mainAccount) {
       const { accountSeq, accountNum, bankName } = mainAccount;
-      navigate('/pwd', { state: { accountSeq, accountNum, bankName, amount, userSeq, numCategory, partySeq } });
+      handleAuthentication({
+        accountSeq,
+        amount,
+        userSeq,
+        currentUserSeq,
+        accountNum,
+        bankName,
+        numCategory,
+        partySeq,
+      });
     }
   };
+  const processPayment = async () => {
+    const requestData = {
+      userSeq: currentUserSeq,
+      partySeq,
+      accountSeq,
+    };
 
+    console.log('데이터를 출력합니다.', requestData);
+
+    try {
+      console.log('processPayment 호출됨:', requestData); // 로그 추가
+      console.log('카테고리,', numCategory);
+      if (numCategory === 4) {
+        console.log('정산합수 출력');
+        const response = await onlyjungsanPayApi(requestData);
+        console.log('onlyjungsanPayApi 응답:', response); // 로그 추가
+      } else if (numCategory === 1 || numCategory === 3) {
+        const response = await deliveryGroupPayApi(requestData);
+        console.log('deliveryGroupPayApi 응답:', response); // 로그 추가
+      }
+      navigate('/complete', {
+        state: { accountSeq, amount, userSeq, currentUserSeq },
+      });
+    } catch (error) {
+      console.log('응답:', requestData);
+      console.error('결제 처리 중 오류 발생:', error);
+      alert('결제 처리 중 오류가 발생했습니다.');
+    }
+  };
   const handleAccountChange = (account) => {
     setSelectedAccount(account);
     setIsModalOpen(false);
@@ -158,6 +292,6 @@ const PaymentPage = () => {
       )}
     </div>
   );
-}
+};
 
 export default PaymentPage;

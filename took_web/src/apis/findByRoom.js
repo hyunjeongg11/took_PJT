@@ -9,3 +9,12 @@ export const getDeliveryByRoom = async (roomSeq) => {
     return handleApiError(err);
   }
 };
+
+export const getShopByRoom = async (roomSeq) => {
+  try {
+    const response = await request.get(`/api/shops/selectByRoom/${roomSeq}`);
+    return response.data;
+  } catch (err) {
+    return handleApiError(err);
+  }
+};
