@@ -78,7 +78,7 @@ function MyPage() {
           <img
             loading="lazy"
             srcSet={profileImage}
-            className="self-center shadow-sm aspect-[0.93] w-[76px]"
+            className="self-center aspect-[0.93] w-[76px]"
           />
           <div className="flex gap-3 self-center mt-6 text-lgtext-center text-black whitespace-nowrap">
             <div>{userInfo.userName}</div>

@@ -10,8 +10,8 @@ export const getUserLocation = () => {
   }
 };
 
-export const onLocationReceived = () => {
-  window.onLocationReceived((latitude, longitude) => {
-    msgToAndroid(`${latitude}, ${longitude}`);
-  });
+export const postRefreshTokenToApp = (refreshToken) => {
+  if (window.Android) {
+    window.Android.getTokenFromWeb(refreshToken);
+  }
 };

@@ -8,6 +8,8 @@ import { useToken } from '../store/token.js';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../store/user.js';
 import { msgToAndroid } from '../android/message.js';
+import Cookies from 'js-cookie';
+import { postRefreshTokenToApp } from '../android/message.js';
 
 function LoginPage() {
   const [id, setId] = useState('');
@@ -29,6 +31,12 @@ function LoginPage() {
         const userInfo = await getUserInfoApi({ userSeq: response.userSeq });
         setUser(userInfo);
         setLoggedIn();
+
+        const refreshToken = Cookies.get('refreshToken');
+        if (refreshToken) {
+          postRefreshTokenToApp(refreshToken);
+          console.log('앱으로 토큰 전송');
+        }
         navigate('/');
       } else {
         alert('로그인 실패');
