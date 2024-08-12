@@ -171,6 +171,9 @@ public class ChatUserService {
                 .map(ChatRoomByUserSelectResponse::new)  // DTO 변환
                 .collect(Collectors.toList());
 
+        for (ChatRoomByUserSelectResponse chatRoomByUserSelectResponse : chatRoomByUserSelectResponseList) {
+            System.out.println("chatRoomByUserSelectResponse = " + chatRoomByUserSelectResponse.getRoomSeq());
+        }
         return chatRoomByUserSelectResponseList;
     }
 
