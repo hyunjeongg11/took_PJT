@@ -35,33 +35,34 @@ public class ChatRoomService {
                 .user(user)
                 .category(chatRoomCreateRequest.getCategory())
                 .createdAt(LocalDateTime.now())
+                .status(true)
                 .build();
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);  // 채팅방을 저장
         return new ChatRoomCreateResponse(savedChatRoom);  // ChatRoomCreateResponse로 변환하여 반환
     }
 
-    /**
-     * 모든 채팅방 조회
-     * @return 모든 채팅방 리스트
-     */
-    @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
-    public List<ChatRoomCategorySelectResponse> findAllRooms() {
-        return chatRoomRepository.findAll().stream()
-                .map(ChatRoomCategorySelectResponse::new)  // ChatRoom 엔티티를 ChatRoomCreateResponse로 변환
-                .collect(Collectors.toList());  // 리스트로 변환하여 반환
-    }
-
-    /**
-     * 카테고리로 채팅방 조회
-     * @param category 조회할 카테고리
-     * @return 조회된 채팅방 리스트
-     */
-    @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
-    public List<ChatRoomCategorySelectResponse> findRoomsByCategory(int category) {
-        return chatRoomRepository.findByCategory(category).stream()
-                .map(ChatRoomCategorySelectResponse::new)  // ChatRoom 엔티티를 ChatRoomCreateResponse로 변환
-                .collect(Collectors.toList());  // 리스트로 변환하여 반환
-    }
+//    /**
+//     * 모든 채팅방 조회
+//     * @return 모든 채팅방 리스트
+//     */
+//    @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
+//    public List<ChatRoomByUserSelectResponse> findAllRooms() {
+//        return chatRoomRepository.findAll().stream()
+//                .map(ChatRoomByUserSelectResponse::new)  // ChatRoom 엔티티를 ChatRoomCreateResponse로 변환
+//                .collect(Collectors.toList());  // 리스트로 변환하여 반환
+//    }
+//
+//    /**
+//     * 카테고리로 채팅방 조회
+//     * @param category 조회할 카테고리
+//     * @return 조회된 채팅방 리스트
+//     */
+//    @Transactional(readOnly = true)  // 읽기 전용 트랜잭션 설정, 성능 향상
+//    public List<ChatRoomByUserSelectResponse> findRoomsByCategory(int category) {
+//        return chatRoomRepository.findByCategory(category).stream()
+//                .map(ChatRoomByUserSelectResponse::new)  // ChatRoom 엔티티를 ChatRoomCreateResponse로 변환
+//                .collect(Collectors.toList());  // 리스트로 변환하여 반환
+//    }
 
     /**
      * 카테고리와 사용자 번호 목록으로 채팅방 조회

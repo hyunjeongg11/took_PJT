@@ -1,6 +1,8 @@
 package com.took.user_api.service.implement;
 
 
+import com.took.chat_api.entity.ChatRoom;
+import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.delivery_api.entity.Delivery;
 import com.took.delivery_api.repository.DeliveryRepository;
 import com.took.fcm_api.dto.AlarmRequest;
@@ -46,6 +48,7 @@ public class PartyServiceImpl implements PartyService {
     private final DeliveryRepository deliveryRepository;
     private final ShopRepository shopRepository;
     private final TaxiRepository taxiRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
 
     @Transactional
@@ -435,10 +438,14 @@ public class PartyServiceImpl implements PartyService {
         if(party.getCategory() == 1) {
             Delivery delivery = deliveryRepository.findByPartySeq(partySeq);
             delivery.updateStatus(String.valueOf(Delivery.Status.DONE));
+            ChatRoom chatRoom = chatRoomRepository.findById(delivery.getRoomSeq()).orElseThrow();
+            chatRoom.updateStaus(false);
         }
         else if(party.getCategory() ==3) {
             Shop shop = shopRepository.findByPartySeq(partySeq);
             shop.updateStatus(Shop.statusType.COMPLETED);
+            ChatRoom chatRoom = chatRoomRepository.findById(shop.getRoomSeq()).orElseThrow();
+            chatRoom.updateStaus(false);
         }
     }
 
@@ -628,7 +635,8 @@ public class PartyServiceImpl implements PartyService {
         if (count == party.getTotalMember() - 1) {
             Taxi taxi = taxiRepository.findByPartySeq(requestBody.getPartySeq());
             taxi.updateStatus(Taxi.Status.DONE);
-
+            ChatRoom chatRoom = chatRoomRepository.findById(taxi.getRoomSeq()).orElseThrow();
+            chatRoom.updateStaus(false);
             fcmService.sendMessage(
                     MessageRequest.builder()
                             .title("택시 결제 알림")
@@ -736,6 +744,8 @@ public class PartyServiceImpl implements PartyService {
 
             Taxi taxi = taxiRepository.findByPartySeq(requestBody.getPartySeq());
             taxi.updateStatus(Taxi.Status.DONE);
+            ChatRoom chatRoom = chatRoomRepository.findById(taxi.getRoomSeq()).orElseThrow();
+            chatRoom.updateStaus(false);
 
             fcmService.sendMessage(
                     MessageRequest.builder()

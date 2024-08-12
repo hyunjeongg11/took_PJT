@@ -35,20 +35,20 @@ public class ChatController {
         return ResponseEntity.ok(createdRoom);
     }
 
-    @Operation(summary = "모든 채팅방 조회", description = "모든 채팅방의 정보를 조회합니다.")
-    @GetMapping("/rooms")
-    public ResponseEntity<List<ChatRoomCategorySelectResponse>> getAllRooms() {
-        List<ChatRoomCategorySelectResponse> rooms = chatRoomService.findAllRooms();
-        return ResponseEntity.ok(rooms);
-    }
-
-    @Operation(summary = "특정 카테고리의 채팅방 조회", description = "특정 카테고리의 채팅방을 조회합니다.")
-    @GetMapping("/room/{category}")
-    public ResponseEntity<List<ChatRoomCategorySelectResponse>> getRoom(
-            @PathVariable @Parameter(description = "조회할 카테고리", required = true) int category) {
-        List<ChatRoomCategorySelectResponse> room = chatRoomService.findRoomsByCategory(category);
-        return ResponseEntity.ok(room);
-    }
+//    @Operation(summary = "모든 채팅방 조회", description = "모든 채팅방의 정보를 조회합니다.")
+//    @GetMapping("/rooms")
+//    public ResponseEntity<List<ChatRoomByUserSelectResponse>> getAllRooms() {
+//        List<ChatRoomByUserSelectResponse> rooms = chatRoomService.findAllRooms();
+//        return ResponseEntity.ok(rooms);
+//    }
+//
+//    @Operation(summary = "특정 카테고리의 채팅방 조회", description = "특정 카테고리의 채팅방을 조회합니다.")
+//    @GetMapping("/room/{category}")
+//    public ResponseEntity<List<ChatRoomByUserSelectResponse>> getRoom(
+//            @PathVariable @Parameter(description = "조회할 카테고리", required = true) int category) {
+//        List<ChatRoomByUserSelectResponse> room = chatRoomService.findRoomsByCategory(category);
+//        return ResponseEntity.ok(room);
+//    }
 
     @Operation(summary = "특정 카테고리와 사용자의 채팅방 조회", description = "특정 카테고리와 사용자가 만든 채팅방을 조회합니다.")
     @PostMapping("/rooms/filter")
@@ -127,9 +127,9 @@ public class ChatController {
 
     @Operation(summary = "해당 유저가 채팅방 목록 조회", description = "특정 유저의 모든 채팅방을 조회합니다.")
     @GetMapping("/rooms/{userSeq}")
-    public ResponseEntity<List<ChatRoomCategorySelectResponse>> getRoomsByUser(
+    public ResponseEntity<List<ChatRoomByUserSelectResponse>> getRoomsByUser(
             @PathVariable @Parameter(description = "조회할 유저의 고유 번호", required = true) Long userSeq) {
-        List<ChatRoomCategorySelectResponse> rooms = chatUserService.findRoomsByUser(userSeq);
+        List<ChatRoomByUserSelectResponse> rooms = chatUserService.findRoomsByUser(userSeq);
         return ResponseEntity.ok(rooms);
     }
 }

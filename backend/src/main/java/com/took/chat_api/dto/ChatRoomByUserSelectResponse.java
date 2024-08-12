@@ -2,7 +2,6 @@ package com.took.chat_api.dto;
 
 import com.took.chat_api.entity.ChatRoom;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,7 +10,7 @@ import java.time.LocalDateTime;
  * 채팅방 카테고리별 조회 응답 DTO
  */
 @Data
-public class ChatRoomCategorySelectResponse {
+public class ChatRoomByUserSelectResponse {
     @Schema(description = "채팅방 고유 번호", example = "123")
     private Long roomSeq;  // 채팅방 고유 번호
 
@@ -27,12 +26,15 @@ public class ChatRoomCategorySelectResponse {
     @Schema(description = "채팅방 카테고리", example = "1")
     private int category; // 채팅방 카테고리
 
-    public ChatRoomCategorySelectResponse(ChatRoom chatRoom) {
+    @Schema(description = "채팅방 활성화 여부", example = "true")
+    private boolean status;
+
+    public ChatRoomByUserSelectResponse(ChatRoom chatRoom) {
         this.roomSeq = chatRoom.getRoomSeq();
         this.roomTitle = chatRoom.getRoomTitle();
         this.userSeq = chatRoom.getUser().getUserSeq();
         this.createdAt = chatRoom.getCreatedAt();
         this.category = chatRoom.getCategory();
+        this.status = chatRoom.isStatus();
     }
-
 }

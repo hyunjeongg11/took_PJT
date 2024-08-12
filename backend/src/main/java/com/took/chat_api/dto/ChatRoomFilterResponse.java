@@ -26,11 +26,15 @@ public class ChatRoomFilterResponse {
     @Schema(description = "채팅방 카테고리", example = "1")
     private int category; // 채팅방 카테고리
 
+    @Schema(description = "채팅방 활성화 여부", example = "true")
+    private boolean status;
+
     public ChatRoomFilterResponse(ChatRoom chatRoom) {
         this.roomSeq = chatRoom.getRoomSeq();
         this.roomTitle = chatRoom.getRoomTitle();
         this.userSeq = chatRoom.getUser().getUserSeq();
         this.createdAt = chatRoom.getCreatedAt();
         this.category = chatRoom.getCategory();
+        this.status = chatRoom.isStatus();
     }
 }

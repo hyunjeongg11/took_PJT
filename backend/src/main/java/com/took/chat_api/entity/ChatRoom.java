@@ -33,4 +33,11 @@ public class ChatRoom {
 
     @Column(nullable = false) // Not Null 설정
     private int category;
+
+    @Column(nullable = false) // Not Null 설정
+    private boolean status;
+
+    public void updateStaus(boolean b) {
+        this.status = b;
+    }
 }

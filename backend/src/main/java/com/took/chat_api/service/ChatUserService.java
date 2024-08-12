@@ -128,7 +128,7 @@ public class ChatUserService {
     }
 
     @Transactional
-    public List<ChatRoomCategorySelectResponse> findRoomsByUser(Long userSeq) {
+    public List<ChatRoomByUserSelectResponse> findRoomsByUser(Long userSeq) {
         // 주어진 userSeq로 UserEntity 조회
         UserEntity user = userRepository.findById(userSeq).orElseThrow();
 
@@ -143,7 +143,7 @@ public class ChatUserService {
 
         // ChatRoom을 ChatRoomCategorySelectResponse로 변환
         return chatRooms.stream()
-                .map(ChatRoomCategorySelectResponse::new)  // DTO 변환
+                .map(ChatRoomByUserSelectResponse::new)  // DTO 변환
                 .collect(Collectors.toList());
     }
 }
