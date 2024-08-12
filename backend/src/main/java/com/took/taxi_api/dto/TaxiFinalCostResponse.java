@@ -19,6 +19,6 @@ public class TaxiFinalCostResponse {
         private Long userSeq;
 
         @Schema(description = "사용자 비용", example = "10000")
-        private int cost;
+        private Long cost;
     }
 }

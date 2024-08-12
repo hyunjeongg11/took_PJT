@@ -24,6 +24,12 @@ public class MakeTaxiPartyRequest {
     @Schema(description = "결제자", example = "123")
     private Long master;
 
+    @Schema(description = "출발지 위도", example = "37.123456")
+    private double startLat;
+
+    @Schema(description = "출발지 경도", example = "127.123456")
+    private double startLon;
+
     @Data
     @Schema(description = "사용자 정보 객체")
     public static class User {

@@ -147,7 +147,7 @@ public class TaxiService {
     @Transactional
     public void startTaxi(TaxiStartRequest request) {
         Taxi taxi = taxiRepository.findById(request.getTaxiSeq()).orElseThrow();
-        taxi.updateStart(request.getStartLat(), request.getStartLon(), request.getCost());
+        taxi.updateStart(request.getStartLat(), request.getStartLon());
     }
 
     @Transactional
@@ -174,12 +174,12 @@ public class TaxiService {
 
         TaxiFinalCostResponse response = new TaxiFinalCostResponse();
         List<TaxiFinalCostResponse.User> userList = new ArrayList<>();
-        int totalUserCost = request.getUsers().stream().mapToInt(TaxiFInalCostRequest.User::getCost).sum();
+        long totalUserCost = request.getUsers().stream().mapToLong(TaxiFInalCostRequest.User::getCost).sum();
 
         // 결제 비용 계산
         for (TaxiFInalCostRequest.User user : request.getUsers()) {
-            int userCost = user.getCost();
-            int proportionateCost = (int) Math.round(((double) userCost / totalUserCost) * request.getAllCost());
+            Long userCost = user.getCost();
+            Long proportionateCost = Math.round(((double) userCost / totalUserCost) * request.getAllCost());
 
             TaxiFinalCostResponse.User userCostResponse = new TaxiFinalCostResponse.User();
             userCostResponse.setUserSeq(user.getUserSeq());

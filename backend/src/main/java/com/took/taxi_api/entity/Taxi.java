@@ -62,7 +62,7 @@ public class Taxi {
     private LocalDateTime finishTime;  // 종료 일시
 
     @Column
-    private int cost;  // 비용
+    private Long cost;  // 비용
 
     @Column(nullable = false)
     private Long master;  // 결제자 번호
@@ -83,13 +83,12 @@ public class Taxi {
         this.status = status;
     }
 
-    public void updateStart(double startLat, double startLon, int cost) {
+    public void updateStart(double startLat, double startLon) {
         this.startLat = startLat;
         this.startLon = startLon;
-        this.cost = cost;
     }
 
-    public void updateCost(int cost) {
+    public void updateCost(Long cost) {
         this.cost = cost;
     }
 

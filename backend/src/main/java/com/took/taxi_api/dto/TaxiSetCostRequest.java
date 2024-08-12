@@ -7,5 +7,5 @@ public class TaxiSetCostRequest {
 
     private Long taxiSeq;  // 택시 식별 번호
 
-    private int cost;  // 비용
+    private Long cost;  // 비용
 }

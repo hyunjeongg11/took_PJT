@@ -13,7 +13,7 @@ public class TaxiFInalCostRequest {
     private Long taxiSeq;
 
     @Schema(description = "전체 비용", example = "50000")
-    private int allCost;
+    private Long allCost;
 
     @Schema(description = "사용자들의 비용 정보")
     private List<User> users;
@@ -25,6 +25,6 @@ public class TaxiFInalCostRequest {
         private Long userSeq;
 
         @Schema(description = "사용자 비용", example = "10000")
-        private int cost;
+        private Long cost;
     }
 }
