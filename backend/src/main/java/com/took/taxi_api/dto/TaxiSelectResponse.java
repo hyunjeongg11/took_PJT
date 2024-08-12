@@ -47,7 +47,7 @@ public class TaxiSelectResponse {
     private LocalDateTime finishTime;
 
     @Schema(description = "총 비용", example = "5000")
-    private int cost;
+    private Long cost;
 
     @Schema(description = "마스터 식별 번호", example = "1")
     private Long master;
