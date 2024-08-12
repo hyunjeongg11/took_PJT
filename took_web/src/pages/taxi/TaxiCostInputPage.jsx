@@ -98,7 +98,7 @@ function TaxiCostInputPage() {
   
           if (balance < 0 && member.user_seq !== userSeq) {
             const notificationParams = {
-              title: `Took 정산 요청이 왔어요!`,
+              title: `택시 took 정산 요청이 왔어요!`,
               body: `${userName}님에게 ${Math.abs(balance)}원을 송금해주세요.`,
               sender: userSeq, // 현재 로그인한 유저의 seq
               userSeq: member.user_seq, // 알림을 받을 유저의 seq
