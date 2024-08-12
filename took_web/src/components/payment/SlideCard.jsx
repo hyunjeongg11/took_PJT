@@ -50,6 +50,7 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
         processPayment();
         const amount = member.cost;
         const userSeq = member.userSeq
+        onClose();
         onNavigate('/complete', {
         state: { accountSeq, amount, userSeq, currentUserSeq },
         });
@@ -58,6 +59,7 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
         const userSeq = member.userSeq
         const numCategory = member.category
         const partySeq = member.partySeq
+        onClose();
         onNavigate('/pwd', {
           state: {
             accountSeq,
@@ -103,7 +105,6 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
       } else if (member.category === 1 || member.category === 3) {
         await deliveryGroupPayApi(requestData);
       }
-      onClose();
     } catch (error) {
       console.error('결제 처리 중 오류 발생:', error);
       alert('결제 처리 중 오류가 발생했습니다.');
