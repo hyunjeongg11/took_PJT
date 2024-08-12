@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.Comparator;
 
 @RequiredArgsConstructor  // Lombok 어노테이션으로, final 필드에 대해 생성자를 자동으로 생성
 @Service  // 이 클래스가 서비스 역할을 한다는 것을 Spring에게 알려주는 어노테이션
@@ -33,6 +33,7 @@ public class ChatUserService {
 
     /**
      * 유저가 이미 채팅방에 존재하는지 확인하는 메서드
+     *
      * @param chatUserCreateRequest 유저의 방 입장 요청 정보를 담은 객체
      * @return 유저가 채팅방에 존재하지 않으면 true, 존재하면 false
      */
@@ -49,6 +50,7 @@ public class ChatUserService {
 
     /**
      * 유저가 채팅방에 새로 참가할 때 처리하는 메서드
+     *
      * @param chatUserCreateRequest 유저의 방 입장 요청 정보를 담은 객체
      * @return 방에 입장한 유저의 정보
      */
@@ -70,6 +72,7 @@ public class ChatUserService {
 
     /**
      * 유저가 채팅방에서 퇴장할 때 처리하는 메서드
+     *
      * @param chatUserDeleteRequest 유저의 방 퇴장 요청 정보를 담은 객체
      */
     @Transactional  // 트랜잭션 설정, 해당 메서드가 실행되는 동안 트랜잭션이 유지됨
@@ -88,8 +91,10 @@ public class ChatUserService {
 
     /**
      * 유저가 채팅방에서 강퇴당할때 처리하는 메서드
+     *
      * @param chatUserDeleteRequest 유저의 방 퇴장 요청 정보를 담은 객체
      */
+    @Transactional
     public void kickUserFromRoom(ChatUserDeleteRequest chatUserDeleteRequest) {
         UserEntity user = userRepository.findById(chatUserDeleteRequest.getUserSeq()).orElseThrow();
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
@@ -104,8 +109,10 @@ public class ChatUserService {
 
     /**
      * 채팅방의 유저리스트를 조회하는 메서드
+     *
      * @param roomSeq 채팅방 번호
      */
+    @Transactional
     public List<ChatUserSelectResponse> findUserByRoom(Long roomSeq) {
         // 채팅방을 ID로 조회, 없을 경우 예외 발생
         ChatRoom chatRoom = chatRoomRepository.findById(roomSeq).orElseThrow();
@@ -133,6 +140,8 @@ public class ChatUserService {
                 .collect(Collectors.toList());
     }
 
+
+    // 사용자가 참여하고 있는 채팅방 목록 조회
     @Transactional
     public List<ChatRoomByUserSelectResponse> findRoomsByUser(Long userSeq) {
         // 주어진 userSeq로 UserEntity 조회
@@ -149,7 +158,7 @@ public class ChatUserService {
 
 
         // 각 채팅방의 최신 메시지 생성 시간을 기준으로 정렬
-        return chatRooms.stream()
+        List<ChatRoomByUserSelectResponse> chatRoomByUserSelectResponseList = chatRooms.stream()
                 .map(chatRoom -> {
                     ChatMessage latestMessage = chatMessageRepository.findLatestMessageByChatRoom(chatRoom);
                     LocalDateTime latestMessageTime = latestMessage != null ? latestMessage.getCreatedAt() : LocalDateTime.MIN;
@@ -159,6 +168,10 @@ public class ChatUserService {
                 .map(ChatRoomWithLatestMessage::getChatRoom)
                 .map(ChatRoomByUserSelectResponse::new)  // DTO 변환
                 .collect(Collectors.toList());
+
+        System.out.println(chatRoomByUserSelectResponseList);
+
+        return chatRoomByUserSelectResponseList;
     }
 
     // 채팅방과 최신 메시지 시간을 포함하는 클래스
