@@ -13,7 +13,7 @@ import BackButton from "../../components/common/BackButton.jsx";
 
 // 알고리즘 추가 작성 필요!
 function PaymentInputPage() {
-  const { seq: userSeq } = useUser();
+  const { seq: userSeq ,img_no : img_no} = useUser();
   // 네비게이트 설정 (버튼 클릭시 이동을 위한 연동)
   const navigate = useNavigate();
 
@@ -25,8 +25,7 @@ function PaymentInputPage() {
     userSeq,
     name: '나',
     userName: '나',
-    imageNo: 1,
-    img_no: 1,
+    img_no: img_no,
     selected: true,
     distance: 0,
   };

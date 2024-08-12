@@ -119,7 +119,7 @@ const BuyDetailPage = () => {
     const checkIfJoined = async () => {
       try {
         const isJoinResponse = await isJoinApi(shopData.shopSeq, userSeq);
-        setIsJoin(isJoinResponse);
+        setIsParticipant(isJoinResponse);
       } catch (error) {
         console.error('Error checking join status:', error);
       }
@@ -263,7 +263,7 @@ const BuyDetailPage = () => {
           </Link>
         </div>
 
-        {shopData.userSeq !== userSeq && isJoin && (
+        {shopData.userSeq !== userSeq && isParticipant && (
           <div className="flex flex-col items-center pt-3 pb-1 mt-4 bg-main rounded-2xl shadow-md">
             <div className="flex flex-col px-16 text-xs font-semibold text-white">
               <div className="mt-4">
