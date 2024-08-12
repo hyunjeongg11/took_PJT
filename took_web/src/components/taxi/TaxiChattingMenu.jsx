@@ -260,6 +260,11 @@ const TaxiChattingMenu = ({
                 <span className="text-sm">
                   {userInfos[member.userSeq]?.userName || 'Loading...'}
                 </span>
+                {currentUserSeq === member.userSeq && (
+                  <div className="ml-1 text-xs bg-neutral-400 px-1.5 py-1 rounded-full text-white">
+                    나
+                  </div>
+                )}
                 {member.userSeq === taxiParty.userSeq && (
                   <FaCrown className="text-yellow-500 ml-1 w-5" />
                 )}
