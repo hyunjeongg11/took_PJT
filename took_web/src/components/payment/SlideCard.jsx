@@ -23,13 +23,13 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
   const fetchMainAccount = async () => {
     try {
       const mainAccountResponse = await getMainAccount(currentUserSeq);
-      const bankName = bankNumToName[mainAccountResponse.bankNum];
+      const tempBankName = bankNumToName[mainAccountResponse.bankNum];
       const mainAccount = {
         ...mainAccountResponse,
-        bankName: bankName
-          ? bankName.length === 2
-            ? `${bankName}은행`
-            : bankName
+        bankName: tempBankName
+          ? tempBankName.length === 2
+            ? `${tempBankName}은행`
+            : tempBankName
           : '',
       };
       setAccountSeq(mainAccount.accountSeq);
@@ -43,17 +43,18 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
     if (window.Android) {
       window.Android.authenticate();
     }
-    processPayment();
-    onClose();
-    const amount = member.cost;
-    const userSeq = member.userSeq
-    onNavigate('/complete', {
-    state: { accountSeq, amount, userSeq, currentUserSeq },
-    });
+    
     window.onAuthenticate = (result) => {
       if (result) {
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
+        processPayment();
+        onClose();
+        const amount = member.cost;
+        const userSeq = member.userSeq
+        onNavigate('/complete', {
+        state: { accountSeq, amount, userSeq, currentUserSeq },
+        });
       } else {
         const amount = member.cost;
         const userSeq = member.userSeq
