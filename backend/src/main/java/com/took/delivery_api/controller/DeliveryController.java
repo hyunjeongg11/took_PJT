@@ -74,8 +74,8 @@ public class DeliveryController {
     @PutMapping("/modify")
     ResponseEntity<?> modifyDelivery(
             @RequestBody @Parameter(description = "배달 글 수정 요청 정보", required = true) DeliveryModifyRequest request) {
-        Delivery delivery = deliveryService.modifyDelivery(request);
         System.out.println("요청 값: " + request.getDeliverySeq());
+        Delivery delivery = deliveryService.modifyDelivery(request);
         // 알림 생성
         List<Long> userSeqs = userService.searchNearUser(delivery.getUser().getUserSeq(), request.getPickupLat(), request.getPickupLon());
         if(userSeqs != null && !userSeqs.isEmpty()) {
