@@ -123,7 +123,7 @@ const CreateChattingPage = () => {
       alert('채팅방과 택시 파티가 성공적으로 생성되었습니다.');
 
       // 생성한 채팅방으로 이동
-      navigate(`/chat/taxi/${roomSeq}`);
+      navigate(`/chat/taxi/${roomSeq}`, { state: { taxiSeq, roomSeq } });
     } catch (error) {
       console.error('Error creating chat room or taxi party:', error);
       alert('채팅방 또는 택시 파티 생성 중 오류가 발생했습니다.');
