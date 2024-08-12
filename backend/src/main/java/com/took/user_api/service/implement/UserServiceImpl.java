@@ -99,6 +99,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Long> searchNearUser(Long userSeq, double lat, double lon) {
         List<UserEntity> userList = userRepository.findAll();
+        System.out.println("수령지 주소: " + lat + ", " + lon);
         return userList.stream()
                 .map(user -> {
                     if(user.getLat() == null || user.getLon() == null) {

@@ -39,7 +39,6 @@ public class DeliveryController {
     ResponseEntity<DeliveryCreateResponse> createDelivery(
             @RequestBody @Parameter(description = "배달 생성 요청 정보", required = true) DeliveryCreateRequest request) {
         DeliveryCreateResponse response = deliveryService.createDelivery(request);
-        System.out.println("수령지 주소: " + request.getPickupLat() + " " + request.getPickupLon());
         // 알림 생성
         List<Long> userSeqs = userService.searchNearUser(request.getUserSeq(), request.getPickupLat(), request.getPickupLon());
         if(userSeqs != null && !userSeqs.isEmpty()) {
