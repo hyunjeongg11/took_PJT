@@ -10,9 +10,9 @@ export const getUserLocation = () => {
   }
 };
 
-export const postLoginInfoToApp = (id, pwd) => {
+export const postLoginInfoToApp = (id, pwd, userSeq) => {
   if (window.Android) {
-    window.Android.getTokenFromWeb(id, pwd);
+    window.Android.getTokenFromWeb(id, pwd, parseInt(userSeq, 10));
     window.Android.showToast(id);
   }
 };
