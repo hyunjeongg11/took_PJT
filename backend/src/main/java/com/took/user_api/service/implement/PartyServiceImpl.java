@@ -497,7 +497,7 @@ public class PartyServiceImpl implements PartyService {
             }
             if (!success) {
                 // 예외처리
-                return -1L;
+                throw new RuntimeException("결제 실패로 인해 트랜잭션을 롤백합니다.");
             }
 
             // member DB 추가
