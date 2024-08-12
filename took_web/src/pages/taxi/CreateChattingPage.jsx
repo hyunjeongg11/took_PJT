@@ -11,6 +11,7 @@ import {
   calculateIndividualExpectedCostApi,
   isUserJoinedTaxiPartyApi,
 } from '../../apis/taxi.js';
+import SearchDropDown from '../../components/map/SearchDropDown.jsx';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 
@@ -23,6 +24,10 @@ const CreateChattingPage = () => {
   const { latitude, longitude } = usePosition();
   const [connected, setConnected] = useState(false);
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setDestination(e.target.value);
+  };
 
   useEffect(() => {
     const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
@@ -117,8 +122,8 @@ const CreateChattingPage = () => {
 
       alert('채팅방과 택시 파티가 성공적으로 생성되었습니다.');
 
-      // "/"로 이동
-      navigate('/');
+      // 생성한 채팅방으로 이동
+      navigate(`/chat/taxi/${roomSeq}`);
     } catch (error) {
       console.error('Error creating chat room or taxi party:', error);
       alert('채팅방 또는 택시 파티 생성 중 오류가 발생했습니다.');
@@ -137,36 +142,23 @@ const CreateChattingPage = () => {
       <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
 
       <div className="flex flex-col px-6 py-4 space-y-8">
+        <SearchDropDown
+          label="목적지 검색"
+          name="destination"
+          value={destination}
+          onChange={handleChange}
+          placeholder="목적지를 입력하세요"
+          setLatitude={() => {}}
+          setLongitude={() => {}}
+        />
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">
-            목적지 설정
-          </label>
-          <div className="mt-1 relative rounded-md">
-            <input
-              type="text"
-              className="block w-full pr-10 py-4 px-3 shadow-md bg-neutral-100 border-gray-300 focus:outline-none focus:ring-main focus:border-main text-sm rounded-md"
-              placeholder="목적지를 입력하세요"
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-            />
-            <button className="absolute inset-y-0 right-0 pr-3 flex items-center">
-              <img
-                src={searchIcon}
-                alt="목적지 검색"
-                className="h-6 w-6 text-gray-400"
-              />
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-bold text-gray-700">
+          <label className="block text-base font-bold text-gray-700">
             모집 인원 설정
           </label>
           <select
             value={userCount}
             onChange={(e) => setUserCount(parseInt(e.target.value, 10))}
-            className="h-12 mt-2 bg-neutral-100 w-full rounded border-r-8 border-transparent px-4 text-sm shadow-md"
+            className="h-12 mt-2 bg-neutral-100 w-full rounded border-r-8 border-transparent px-4 text-base shadow-md"
           >
             {[1, 2, 3].map((count) => (
               <option key={count} value={count}>
@@ -177,13 +169,13 @@ const CreateChattingPage = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700">
+          <label className="block text-base font-bold text-gray-700">
             모집 성별 선택
           </label>
           <select
             value={genderPreference}
             onChange={(e) => setGenderPreference(e.target.value)}
-            className="h-12 mt-2 bg-neutral-100 w-full rounded border-r-8 border-transparent px-4 text-sm shadow-md"
+            className="h-12 mt-2 bg-neutral-100 w-full rounded border-r-8 border-transparent px-4 text-base shadow-md"
           >
             <option value="무관">무관</option>
             <option value="동성">동성</option>
