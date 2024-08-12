@@ -194,7 +194,7 @@ function TaxiMainPage() {
   });
 
   return (
-    <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main mb-12">
+    <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main mb-16">
       <div className="bg-main py-4">
         <div className="flex items-center px-4 relative mb-4 mt-3">
           <BackButton />

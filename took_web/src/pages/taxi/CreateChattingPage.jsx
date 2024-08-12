@@ -51,6 +51,8 @@ const CreateChattingPage = () => {
         max: parseInt(userCount, 10),
         roomSeq,
         userSeq,
+        latitude,
+        longitude,
       };
       const taxiResponse = await createTaxiPartyApi(taxiParams);
       const { taxiSeq } = taxiResponse;
@@ -62,6 +64,7 @@ const CreateChattingPage = () => {
         endLat: 35, // todo : 임시로 35로 설정
         endLon: 128, // todo : 임시로 128로 설정
       };
+
       const costResponse = await calculateIndividualExpectedCostApi(costParams);
       const { cost } = costResponse;
 
@@ -78,7 +81,7 @@ const CreateChattingPage = () => {
       await addTaxiPartyMemberApi(memberParams);
 
       alert('채팅방과 택시 파티가 성공적으로 생성되었습니다.');
-      
+
       // "/"로 이동
       navigate('/');
     } catch (error) {
