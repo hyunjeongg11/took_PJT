@@ -232,10 +232,8 @@ function TaxiMainPage() {
                       item.gender === false
                         ? 'bg-white border border-neutral-300 text-gray-700'
                         : item.gender
-                        ? userGender === 'M'
-                          ? 'bg-blue-200 text-blue-600'
-                          : 'bg-pink-200 text-pink-600'
-                        : 'bg-blue-200 text-blue-600'
+                          ? 'bg-pink-200 text-pink-600'
+                          : 'bg-blue-200 text-blue-600'
                     }`}
                   >
                     {item.gender

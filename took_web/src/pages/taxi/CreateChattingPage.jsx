@@ -11,6 +11,7 @@ import {
   calculateIndividualExpectedCostApi,
   isUserJoinedTaxiPartyApi,
 } from '../../apis/taxi.js';
+import SearchDropDown from '../../components/map/SearchDropDown.jsx';
 
 const CreateChattingPage = () => {
   const [destination, setDestination] = useState('');
@@ -19,6 +20,9 @@ const CreateChattingPage = () => {
   const { seq: userSeq } = useUser();
   const { latitude, longitude } = usePosition();
   const navigate = useNavigate();
+  const handleChange = (e) => {
+    setDestination(e.target.value);
+  }
 
   const handleCreateChatRoom = async () => {
     try {
@@ -95,7 +99,7 @@ const CreateChattingPage = () => {
       <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
 
       <div className="flex flex-col px-6 py-4 space-y-8">
-        <div>
+        {/* <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">
             목적지 설정
           </label>
@@ -115,8 +119,17 @@ const CreateChattingPage = () => {
               />
             </button>
           </div>
-        </div>
-
+        </div> */}
+        <SearchDropDown
+          label="목적지 검색"
+          name="destination"
+          value={destination}
+          onChange={handleChange}
+          placeholder="목적지를 입력하세요"
+          setLatitude={() => {}}
+          setLongitude={() => {}}
+        />
+        {/* //todo <- 여기 setLatitude, setLongitude에 위경도 변경하는 함수 적용하기 */}
         <div>
           <label className="block text-sm font-bold text-gray-700">
             모집 인원 설정

@@ -3,6 +3,7 @@ import BackButton from '../../components/common/BackButton';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useUser } from '../../store/user';
 import { getChatRoomMessageApi, getUsersApi } from '../../apis/chat/chat';
+import { partyDetailApi } from '../../apis/payment/jungsan';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { formatDateOnly, formatTime } from '../../utils/formatDate';
 import speaker from '../../assets/common/speaker.png';
@@ -287,10 +288,12 @@ function TaxiChattingMainPage() {
   const handleConfirmDoneTaxi = async () => {
     setShowSettlementButton(true); // '정산하기' 버튼을 표시합니다.
     closeModal(); // 모달을 닫습니다.
-};
+  };
 
   const handleSettlement = () => {
-    navigate('/taxi/input');
+    navigate(`/taxi/input/${taxiParty.partySeq}`, {
+      state: { taxiParty, members, userName },
+    });
   };
 
   useEffect(() => {
@@ -545,7 +548,7 @@ function TaxiChattingMainPage() {
           isKeyboardVisible ? 'hidden' : ''
         }`}
       >
-        {showSettlementButton && (
+        {taxiParty?.master === userSeq && showSettlementButton && (
           <button
             onClick={handleSettlement}
             className="w-full py-4 bg-neutral-400 text-white text-lg font-bold flex items-center justify-center"
