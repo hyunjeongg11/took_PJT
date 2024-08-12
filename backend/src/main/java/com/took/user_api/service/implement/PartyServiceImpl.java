@@ -471,13 +471,10 @@ public class PartyServiceImpl implements PartyService {
         long receiveCost = 0L;
         boolean success = true;
 
-        System.out.println("requestBody: " + requestBody);
         for (MakeTaxiPartyRequest.User user : requestBody.getUsers()) {
             boolean check = user.getUserSeq().equals(requestBody.getMaster());
             UserEntity userEntity = userRepository.findById(user.getUserSeq()).orElseThrow();
             AccountEntity account = accountRepository.findByUserAndMainTrue(userEntity);
-            System.out.println("user: " + userEntity);
-            System.out.println("account: " + account);
             long fakeCost = 0L;
 
             if (!check) {
