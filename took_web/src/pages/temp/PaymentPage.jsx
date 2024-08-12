@@ -19,22 +19,14 @@ const PaymentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { seq: currentUserSeq } = useUser();
-  const {
-    accountSeq,
-    accountNum,
-    bankName,
-    amount,
-    userSeq,
-    numCategory,
-    partySeq,
-  } = location.state || {};
+  const { accountSeq, amount, userSeq, numCategory, partySeq } =
+    location.state || {};
   const [userName, setUserName] = useState('');
   const [imageNo, setImageNo] = useState(null);
   const [mainAccount, setMainAccount] = useState(null);
   const [accountList, setAccountList] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [attemptCount, setAttemptCount] = useState(0);
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -95,28 +87,12 @@ const PaymentPage = () => {
     numCategory,
     partySeq,
   }) => {
-    if (attemptCount >= 3) {
-      // 생체 인증을 3번 실패했을 경우
-      navigate('/pwd', {
-        state: {
-          accountSeq,
-          accountNum,
-          bankName,
-          amount,
-          userSeq,
-          numCategory,
-          partySeq,
-        },
-      });
-      return;
-    }
-
     if (window.Android) {
       window.Android.authenticate();
     }
 
-    window.onAuthenticate = (success) => {
-      if (success) {
+    window.onAuthenticate = (result) => {
+      if (result) {
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
         processPayment();
@@ -124,41 +100,24 @@ const PaymentPage = () => {
           state: { accountSeq, amount, userSeq, currentUserSeq },
         });
       } else {
-        alert('생체 인증 실패');
-        setAttemptCount((prevCount) => prevCount + 1); // 실패 시 시도 횟수 증가
-        if (attemptCount + 1 >= 3) {
-          // 3번 실패하면 비밀번호 입력 페이지로 이동
-          navigate('/pwd', {
-            state: {
-              accountSeq,
-              accountNum,
-              bankName,
-              amount,
-              userSeq,
-              numCategory,
-              partySeq,
-            },
-          });
-        }
+        navigate('/pwd', {
+          state: {
+            accountSeq,
+            accountNum,
+            bankName,
+            amount,
+            userSeq,
+            numCategory,
+            partySeq,
+          },
+        });
       }
     };
-
-    if (window.Android) {
-      window.Android.authenticate();
-    }
   };
   const handleSendMoney = () => {
     if (selectedAccount) {
       const { accountSeq, accountNum, bankName } = selectedAccount;
-      console.log(
-        accountSeq,
-        accountNum,
-        bankName,
-        amount,
-        userSeq,
-        numCategory,
-        partySeq
-      );
+
       handleAuthentication({
         accountSeq,
         amount,

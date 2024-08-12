@@ -90,10 +90,12 @@ const DeliveryListPage = () => {
               현위치
             </button>
           </div>
-          
-        </div><div className='text-[10px] text-gray-300 p-2'>
-          {selectedOption === '주소지' ? "사용자가 설정한 기본 주소지 주변의 배달 글을 불러옵니다" : "현재 위치 주변의 배달 글을 불러옵니다"}</div>
-          
+        </div>
+        <div className="text-[10px] text-gray-300 p-2">
+          {selectedOption === '주소지'
+            ? '사용자가 설정한 기본 주소지 주변의 배달 글을 불러옵니다'
+            : '현재 위치 주변의 배달 글을 불러옵니다'}
+        </div>
 
         {deliveryList.map((item, index) => (
           <div

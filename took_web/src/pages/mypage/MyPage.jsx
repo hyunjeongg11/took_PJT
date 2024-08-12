@@ -27,6 +27,7 @@ function MyPage() {
     userName: '',
     imageNo: '', // 기본 이미지 설정
   });
+  const [addr, setAddr] = useState();
   const [profileImage, setProfileImage] = useState('');
 
   useEffect(() => {
@@ -39,6 +40,7 @@ function MyPage() {
             userName: response.userName,
             imageNo: response.imageNo, // 기본 이미지 사용
           });
+          setAddr(response.addr);
         }
       } catch (error) {
         console.error('사용자 정보를 가져오는 중 에러 발생', error);
@@ -78,7 +80,7 @@ function MyPage() {
           <img
             loading="lazy"
             srcSet={profileImage}
-            className="self-center shadow-sm aspect-[0.93] w-[76px]"
+            className="self-center aspect-[0.93] w-[76px]"
           />
           <div className="flex gap-3 self-center mt-6 text-lgtext-center text-black whitespace-nowrap">
             <div>{userInfo.userName}</div>
@@ -125,16 +127,21 @@ function MyPage() {
               <div>앱푸시 알림 설정</div>
             </div>
           </Link>
-          <Link to="/location">
-            <div className="flex gap-4 mt-11 leading-[150%]">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/d0f450f90003c58982276d9ccafa89c809352286aee0d7c27ed982e6ba7be2b8?"
-                className="shrink-0 w-5 aspect-[0.8] fill-main"
-              />
-              <div className="my-auto">위치 / 주소 설정</div>
-            </div>
-          </Link>
+
+          <div
+            className="flex gap-4 mt-11 leading-[150%]"
+            onClick={() => {
+              navigate('/location', { state: { addr } });
+            }}
+          >
+            <img
+              loading="lazy"
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/d0f450f90003c58982276d9ccafa89c809352286aee0d7c27ed982e6ba7be2b8?"
+              className="shrink-0 w-5 aspect-[0.8] fill-main"
+            />
+            <div className="my-auto">위치 / 주소 설정</div>
+          </div>
+
           <Link to="/payment-methods">
             <div className="flex gap-3.5 mt-10 leading-[150%]">
               <img

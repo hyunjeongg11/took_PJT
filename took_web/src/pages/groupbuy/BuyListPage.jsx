@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import BackButton from '../../components/common/BackButton';
 import { Link } from 'react-router-dom';
 import { BuyCard } from '../../components/groupbuy/BuyCard';
 import { getAllShopApi } from '../../apis/groupBuy/shop';
 import { useUser } from '../../store/user';
+import backIcon from '../../assets/common/back.svg';
 
 function BuyListPage() {
   const { seq: userSeq } = useUser();
@@ -15,7 +15,7 @@ function BuyListPage() {
   useEffect(() => {
     const fetchBuyList = async () => {
       try {
-        const params = [userSeq, 1, 2, 3]; // todo: 수령장소가 현위치 근처인 곳의 게시물을 작성한 userSeq를 받아와야 함
+        const params = [userSeq, 7, 9];
         const data = await getAllShopApi(params);
         if (Array.isArray(data)) {
           const updatedData = data
@@ -40,8 +40,13 @@ function BuyListPage() {
   return (
     <div className="flex flex-col pt-5 bg-white min-w-screen min-h-screen">
       <div className="flex flex-col items-center justify-center px-5 w-full">
-        <BackButton />
-        <div className="self-center mb-3 text-2xl text-main font-extrabold">
+        <Link to='/'><img
+      src={backIcon}
+      alt="뒤로"
+      className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
+     
+    /> </Link>
+       <div className="self-center mb-3 text-2xl text-main font-extrabold">
           공구 <span className="font-dela">took !</span>
         </div>
         <div className="flex flex-col p-5 mt-2.5 w-full bg-neutral-50 shadow-md rounded-2xl border border-neutral-200 overflow-y-auto">
