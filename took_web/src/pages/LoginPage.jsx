@@ -31,7 +31,7 @@ function LoginPage() {
         setUser(userInfo);
         setLoggedIn();
         if (window.Android) {
-          postLoginInfoToApp(id, password);
+          postLoginInfoToApp(id, password, response.userSeq);
         }
 
         navigate('/');

@@ -89,6 +89,32 @@ export const onlyjungsanPayApi = async (params) => {
   }
 };
 
+// 택시 정산 파티 생성 (가결제시) 가결제 실패시 -1 반환
+// 요청
+/*요청
+{
+  "title": "공항까지 같이 가요",
+  "category": 2,
+  "cost": 15000,
+  "users": [
+    {
+      "userSeq": 456,
+      "fakeCost": 5000
+    }
+  ],
+  "master": 123,
+  "startLat": 37.123456,
+  "startLon": 127.123456
+}
+*/
+export const makeTaxiPartyApi = async (params) => {
+  try {
+    const response = await request.post('//api/pay/make-taxi-party', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
 /*
 
 정산시 호스트가 돈 받을 떄

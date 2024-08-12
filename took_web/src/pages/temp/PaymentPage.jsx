@@ -80,8 +80,6 @@ const PaymentPage = () => {
   const handleAuthentication = ({
     accountSeq,
     amount,
-    userSeq,
-    currentUserSeq,
     accountNum,
     bankName,
     numCategory,
@@ -120,8 +118,6 @@ const PaymentPage = () => {
       handleAuthentication({
         accountSeq,
         amount,
-        userSeq,
-        currentUserSeq,
         accountNum,
         bankName,
         numCategory,
@@ -132,8 +128,6 @@ const PaymentPage = () => {
       handleAuthentication({
         accountSeq,
         amount,
-        userSeq,
-        currentUserSeq,
         accountNum,
         bankName,
         numCategory,

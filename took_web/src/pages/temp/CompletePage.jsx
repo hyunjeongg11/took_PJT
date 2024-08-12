@@ -21,6 +21,11 @@ function CompletePage() {
   });
 
   useEffect(() => {
+    console.log(currentUserSeq)
+    console.log(userSeq)
+    console.log(amount)
+    console.log(accountSeq)
+
     // 사용자의 이름을 가져오기 위한 API 호출
     const fetchUserName = async () => {
       try {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Draggable from 'react-draggable';
-import { useNavigate } from 'react-router-dom';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { formatNumber } from '../../utils/format';
 import { AiOutlineClose } from 'react-icons/ai';
@@ -10,33 +9,91 @@ import {
 } from '../../apis/payment/jungsan';
 import { useUser } from '../../store/user';
 import { getMainAccount } from '../../apis/account/oneclick';
+import { msgToAndroid } from '../../android/message';
+import { bankNumToName } from '../../assets/payment/index.js';
+import { BiRepost } from 'react-icons/bi';
 
-const SlideCard = ({ member, onClose }) => {
+const SlideCard = ({ member, onClose, onNavigate  }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [slid, setSlid] = useState(false);
   const [backgroundWidth, setBackgroundWidth] = useState(0);
-  const navigate = useNavigate();
-  const { seq } = useUser();
+  const { seq: currentUserSeq } = useUser();
+  const [tempMainAccount, setTempMainAccount] = useState(null);
+  const amount = member.cost;
+  const userSeq = member.userSeq;
+  const numCategory = member.category;
+  const partySeq = member.partySeq;
+  
+  const handleAuthentication = () => {
+    const accountSeq = tempMainAccount.accountSeq
+    const accountNum = tempMainAccount.accountNum
+    const bankName = tempMainAccount.bankName
+    if (window.Android) {
+      window.Android.authenticate();
+    }
+    window.onAuthenticate = (result) => {
+      if (result) {
+        processPayment();
+        alert('생체 인증 성공');
+        msgToAndroid('생체 인증 성공');
+        onClose();
+        onNavigate('/complete', 
+        { accountSeq, amount, userSeq, currentUserSeq },
+        );
+      } else {
+        onClose();
+        onNavigate('/pwd', {
+            accountSeq,
+            accountNum,
+            bankName,
+            amount,
+            userSeq,
+            numCategory,
+            partySeq,
+          },
+        );
+      }
+    };
+  };
   useEffect(() => {
     setBackgroundWidth(position.x + 32); // 배경이 좀 더 빠르게 업데이트되도록 설정
   }, [position]);
-
+  useEffect(() => {
+    const fetchMainAccount = async () => {
+      try {
+        const mainAccountResponse = await getMainAccount(currentUserSeq);
+        const tempBankName = bankNumToName[mainAccountResponse.bankNum];
+        const mainAccount = {
+          ...mainAccountResponse,
+          bankName: tempBankName
+            ? tempBankName.length === 2
+              ? `${tempBankName}은행`
+              : tempBankName
+            : '',
+        };
+        setTempMainAccount(mainAccount)
+      } catch (error) {
+        console.error('Error fetching main account:', error);
+      }
+    };
+    fetchMainAccount();
+  }, [currentUserSeq]);
   const handleStop = (e, data) => {
     if (data.x >= 100) {
       // 동그라미가 충분히 오른쪽으로 이동했는지 확인
       setSlid(true);
       setTimeout(() => {
         // 실제 송금 기능을 여기에 추가하면 됩니다.
-        processPayment();
+        handleAuthentication();
       }, 1000);
     } else {
       setPosition({ x: 0, y: 0 }); // 동그라미를 원래 위치로 되돌림
     }
   };
   const processPayment = async () => {
-    const response = await getMainAccount(seq);
+    const response = await getMainAccount(currentUserSeq);
     const requestData = {
-      userSeq: seq, // 지금 로그인한 userSeq 사용해야 함 (useUser 사용해도 됨)
+      userSeq: currentUserSeq, // 지금 로그인한 userSeq 사용해야 함 (useUser 사용해도 됨)
       partySeq: member.partySeq,
       accountSeq: response.accountSeq,
     };
@@ -47,7 +104,6 @@ const SlideCard = ({ member, onClose }) => {
       } else if (member.category === 1 || member.category === 3) {
         await deliveryGroupPayApi(requestData);
       }
-      onClose();
     } catch (error) {
       console.error('결제 처리 중 오류 발생:', error);
       alert('결제 처리 중 오류가 발생했습니다.');
