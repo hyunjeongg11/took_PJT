@@ -155,6 +155,7 @@ function BuyFormPage() {
       if (id) {
         // 수정 모드
         await modifyShopApi(id, {
+          userSeq,
           title: formData.title,
           content: formData.content,
           item: formData.item,

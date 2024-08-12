@@ -150,6 +150,7 @@ function CreateDeliveryPage() {
           await modifyDeliveryApi({
             userSeq,
             roomSeq: room,
+            deliverySeq: id,
             storeName: form.storeName,
             pickupPlace: form.deliveryAddress,
             pickupLat: pickLat,
