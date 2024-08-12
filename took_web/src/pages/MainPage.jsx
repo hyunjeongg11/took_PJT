@@ -22,7 +22,7 @@ function MainPage() {
       setTimeout(() => {
         setShowModal(false);
         navigate('/login');
-      }, 1000);
+      }, 500); // 시연할때 1000으로 늘려도됨!
     }
   };
 
