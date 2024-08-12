@@ -142,7 +142,6 @@ public class AuthServiceImpl implements AuthService {
             dto.setPassword(encodePassword);
 
             UserEntity userEntity = new UserEntity(dto);
-            System.out.println("userEntity를 출력합니다."+userEntity);
             userRepository.save(userEntity);
 
             //

@@ -1,17 +1,5 @@
 package com.took.user_api.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.took.chat_api.entity.ChatRoom;
-import com.took.chat_api.entity.ChatUser;
-import com.took.delivery_api.entity.Delivery;
-import com.took.delivery_api.entity.DeliveryGuest;
-import com.took.shop_api.entity.PurchaseInfo;
-import com.took.shop_api.entity.Shop;
-import com.took.shop_api.entity.ShopGuest;
-import com.took.taxi_api.entity.Taxi;
-import com.took.taxi_api.entity.TaxiGuest;
 import com.took.user_api.dto.request.auth.SignUpRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Getter
@@ -99,6 +86,7 @@ public class UserEntity {
         this.loginStatus = LoginStatus.TOOK; // 기본값 설정
         this.role = "ROLE_USER";
         this.imageNo = (int)(Math.random() * 23) + 1;
+        this.alarm = true;
     }
 
     public UserEntity(String email, String password, String nickname,String userId) {
@@ -111,7 +99,6 @@ public class UserEntity {
         this.loginStatus = LoginStatus.GOOGLE;
         this.role = "ROLE_USER";
         this.imageNo = (int)(Math.random() * 23) + 1;
-
     }
 
     public UserEntity(String userId, String email) {
