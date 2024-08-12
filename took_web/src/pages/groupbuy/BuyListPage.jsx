@@ -21,10 +21,9 @@ function BuyListPage() {
           const updatedData = data
             .map((buy) => ({
               ...buy,
-              status:
-                buy.count === buy.maxCount ? 'IN_PROGRESSING' : buy.status,
+              status: buy.count === buy.maxCount ? 'IN_PROGRESS' : buy.status,
             }))
-            .filter((buy) => buy.status !== 'IN_PROGRESSING'); // 'IN_PROGRESSING' 상태인 항목 필터링
+            .filter((buy) => buy.status === 'OPEN'); // 'OPEN' 상태인 항목만 필터링
           setBuyList(updatedData);
         } else {
           setBuyList([]); // 응답이 배열이 아닌 경우 빈 배열로 설정

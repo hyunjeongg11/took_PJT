@@ -161,6 +161,7 @@ export const updateTaxiPartyApi = async (params) => {
 /* 
 {
     "taxiSeq": "long" // 택시 번호
+    "status": "string" // 상태 (OPEN, FILLED, BOARD, DONE)
 }
 */
 // 응답: 없음
@@ -237,12 +238,9 @@ export const addTaxiPartyMemberApi = async (params) => {
 }
 */
 // 응답: 없음
-export const removeTaxiPartyMemberApi = async (params) => {
+export const deleteTaxiGuestApi = async (params) => {
   try {
-    const response = await request.post(
-      `/api/taxi/guest/${params.userSeq}`,
-      params
-    );
+    const response = await request.post('/api/taxi/guest/delete', params);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -419,7 +417,7 @@ export const setTotalCostApi = async (params) => {
   }
 };
 
-// 최종 비용 계산
+// 최종 비용 계산 ( 결제 금액 입력 시 )
 // 요청
 /* 
 {

@@ -96,6 +96,40 @@ const BuyDetailPage = () => {
 
 
 
+  useEffect(() => {
+    const updateStatusIfNeeded = async () => {
+      if (shopData && shopData.count === shopData.maxCount) {
+        try {
+          const params = { status: 'IN_PROGRESS' };
+          console.log('Params:', params);
+          await modifyShopStatusApi(shopData.shopSeq, params);
+          console.log('Status updated to IN_PROGRESS');
+          const updatedData = await getShopApi(id);
+          setShopData(updatedData);
+        } catch (error) {
+          console.error('Error updating status:', error);
+        }
+      }
+    };
+
+    updateStatusIfNeeded();
+  }, [shopData, id]);
+
+  useEffect(() => {
+    const checkIfJoined = async () => {
+      try {
+        const isJoinResponse = await isJoinApi(shopData.shopSeq, userSeq);
+        setIsJoin(isJoinResponse);
+      } catch (error) {
+        console.error('Error checking join status:', error);
+      }
+    };
+
+    if (shopData) {
+      checkIfJoined();
+    }
+  }, [shopData, userSeq]);
+
   if (!shopData) {
     return <div>Loading...</div>;
   }
@@ -121,6 +155,18 @@ const BuyDetailPage = () => {
     try {
       await deleteShopApi(shopData.shopSeq);
       console.log('삭제 완료');
+      navigate('/groupbuy/list', { state: { shouldRefresh: true } });
+    } catch (error) {
+      console.error('API call error:', error);
+    }
+  };
+
+  const handleEndRecruitment = async () => {
+    try {
+      const params = { status: 'IN_PROGRESS' };
+      console.log('Params:', params);  // 로그 추가
+      await modifyShopStatusApi(shopData.shopSeq, params);
+      console.log('모집 종료 완료');
       navigate('/groupbuy/list', { state: { shouldRefresh: true } });
     } catch (error) {
       console.error('API call error:', error);
@@ -217,7 +263,7 @@ const BuyDetailPage = () => {
           </Link>
         </div>
 
-        {shopData.userSeq !== userSeq && (
+        {shopData.userSeq !== userSeq && isJoin && (
           <div className="flex flex-col items-center pt-3 pb-1 mt-4 bg-main rounded-2xl shadow-md">
             <div className="flex flex-col px-16 text-xs font-semibold text-white">
               <div className="mt-4">
@@ -244,6 +290,14 @@ const BuyDetailPage = () => {
               참여하기
             </div>
           </div>
+        )}
+        {shopData.userSeq === userSeq && (
+          <button
+            onClick={handleEndRecruitment}
+            className="bg-main px-12 py-3 mb-8 mt-6 w-full shadow-sm font-bold text-white rounded-2xl"
+          >
+            모집 종료하기
+          </button>
         )}
       </div>
 

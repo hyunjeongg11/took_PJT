@@ -1,46 +1,102 @@
-import React, { useState } from 'react';
-import { FaMapMarkerAlt } from 'react-icons/fa'; // react-icons의 FaMapMarkerAlt 아이콘 사용
+import React, { useState, useEffect, useRef } from 'react';
+import { FaMapMarkerAlt } from 'react-icons/fa';
 import BackButton from '../../components/common/BackButton';
-import searchIcon from '../../assets/taxi/search.png';
 import SearchDropdown from '../../components/map/SearchDropDown';
+import {
+  calculateIndividualExpectedCostApi,
+  setDestinationAndCostApi,
+  getNextDestinationRankApi,
+} from '../../apis/taxi';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useUser } from '../../store/user';
+
+const tempStartLat = 35.09362058403008;
+const tempStartLon = 128.8556517902862;
+const tempTaxiSeq = 1;
 
 const TaxiPathSettingPage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [destination, setDestination] = useState('');
-  const [latitude, setLatitude] = useState();
-  const [longitude, setLongitude] = useState();
-  const [filteredData, setFilteredData] = useState([]);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState('');
-  const [searchPageOpen, setSearchPageOpen] = useState(false); // Search 컴포넌트와 관련된 상태
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
+
+  const dropdownRef = useRef(null);
+  const { guestSeq } = location.state || {};
 
   const handleDestinationChange = (e) => {
-    const value = e.target.value;
-    setDestination(value);
-
-    // 필터링된 데이터 상태 업데이트
-    // 원본 데이터는 예시로 넣어두었으며, 실제 데이터로 대체 필요
-    const filtered = tempData.filter((data) => data.address.includes(value));
-    setFilteredData(filtered);
+    setDestination(e.target.value);
+    setShowDropdown(true);
   };
 
-  const handleAddClick = (address) => {
-    setSelectedAddress(address);
-    setIsModalOpen(true);
+  const handleAddClick = () => {
+    if (destination) {
+      setSelectedAddress(destination);
+      setIsModalOpen(true);
+      setShowDropdown(false); // 선택하면 드롭다운을 닫음
+    }
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
-  const handleConfirmAdd = () => {
-    console.log('추가된 주소:', selectedAddress);
-    setIsModalOpen(false);
+  const handleConfirmAdd = async () => {
+    setLoading(true);
+    try {
+      // 1. 다음 목적지 순위 가져오기
+      const rank = await getNextDestinationRankApi(tempTaxiSeq);
+
+      // 2. 개인 예상 비용 계산
+      const paramsForCost = {
+        startLat: tempStartLat,
+        startLon: tempStartLon,
+        endLat: latitude,
+        endLon: longitude,
+      };
+      const costResponse = await calculateIndividualExpectedCostApi(paramsForCost);
+      const cost = costResponse.cost; // cost 변수에 값을 할당
+
+      // 3. 택시 파티 목적지 및 비용 설정
+      const paramsForDestination = {
+        guestSeq,
+        destiName: selectedAddress,
+        destiLat: latitude,
+        destiLon: longitude,
+        cost,
+        routeRank: rank,
+      };
+      await setDestinationAndCostApi(paramsForDestination);
+
+      console.log('택시 파티 목적지 및 비용 설정 완료:', paramsForDestination);
+      navigate(-1); // 완료 후 채팅방으로 이동
+    } catch (error) {
+      console.error('오류 발생:', error);
+      // 오류 처리 (예: 오류 메시지 표시)
+      alert('오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setLoading(false);
+      setIsModalOpen(false);
+    }
   };
 
-  const handleSearchClick = () => {
-    // Search 컴포넌트를 열기 위한 상태 변경
-    setSearchPageOpen(true);
+  const handleClickOutside = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setShowDropdown(false);
+    }
   };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
@@ -51,7 +107,7 @@ const TaxiPathSettingPage = () => {
         </div>
       </div>
 
-      <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
+      <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 min-h-[0.5px]" />
 
       <div className="flex flex-col px-6 py-4">
         <div>
@@ -107,41 +163,36 @@ const TaxiPathSettingPage = () => {
         </div>
       </div>
 
-      {searchPageOpen && (
-        <div className="absolute top-0 left-0 right-0 bottom-0 bg-white z-50">
-          <button
-            className="absolute top-2 right-2 text-black"
-            onClick={() => setSearchPageOpen(false)}
-          >
-            X
-          </button>
-        </div>
-      )}
+      <button
+        onClick={handleAddClick}
+        className="bg-main font-bold mx-auto text-white w-24 py-2 rounded-xl">
+        추가하기
+      </button>
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-xl max-w-[250px] w-full text-center">
-            <div className="mb-6 text-left font-bold">
+            <div className="mb-6 ml-1 text-left font-bold">
               해당 경로를 추가하시겠습니까?
             </div>
-            <div className="flex items-center justify-center mb-4">
-              <FaMapMarkerAlt className="h-9 w-9 mr-2 ml-1 mb-5 text-main" />
-              <span className="text-sm text-left ml-2 mb-3">
-                {selectedAddress}
-              </span>
+            <div className="flex items-center justify-center mb-2">
+              <FaMapMarkerAlt className="h-5 w-5 mr-2 ml-1 mb-3 text-main" />
+              <span className="text-sm text-left mb-3">{selectedAddress}</span>
             </div>
-            <div className="">
+            <div className="text-sm font-bold">
               <button
                 onClick={handleCloseModal}
                 className="bg-gray-200 text-gray-700 w-24 py-2 rounded-xl mr-4"
+                disabled={loading}
               >
                 이전
               </button>
               <button
                 onClick={handleConfirmAdd}
                 className="bg-main text-white w-24 py-2 rounded-xl"
+                disabled={loading}
               >
-                추가하기
+                {loading ? '처리 중...' : '추가하기'}
               </button>
             </div>
           </div>

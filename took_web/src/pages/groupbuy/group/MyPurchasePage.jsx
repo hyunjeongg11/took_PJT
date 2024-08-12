@@ -2,6 +2,7 @@ import BackButton from '../../../components/common/BackButton';
 import getProfileImagePath from '../../../utils/getProfileImagePath';
 import { formatNumber } from '../../../utils/format';
 
+// todo: 실제 데이터와 연결해야 함
 const my_temp_data = {
   id: 1,
   items: [

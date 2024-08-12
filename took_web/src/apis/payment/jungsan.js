@@ -7,10 +7,6 @@ import { handleApiError } from '../errorHandling';
   "userSeq": 1,
   "title": "친구들과의 모임",
   "category": 1,
-  "cost": 100000,
-  "totalMember": 10,
-  "reciever": false,
-  "deliveryTip": 5000
 }
 응답
 {
