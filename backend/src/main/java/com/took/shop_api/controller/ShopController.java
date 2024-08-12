@@ -32,8 +32,8 @@ public class ShopController {
     @Operation(summary = "상점 생성", description = "새로운 상점을 생성합니다.")
     @ApiResponse(responseCode = "201", description = "상점이 성공적으로 생성됨")
     @PostMapping("/create")
-    public ResponseEntity<Shop> addShop(@RequestBody @Schema(description = "상점 생성 요청 데이터") AddShopRequest request) {
-        Shop saveShop = shopService.save(request);
+    public ResponseEntity<AddShopResponseDto> addShop(@RequestBody @Schema(description = "상점 생성 요청 데이터") AddShopRequest request) {
+        AddShopResponseDto saveShop = shopService.save(request);
         // 알림 생성
         List<Long> userSeqs = userService.searchNearUser(request.getUserSeq(), request.getLat(), request.getLon());
         if(userSeqs != null && !userSeqs.isEmpty()) {
@@ -79,7 +79,7 @@ public class ShopController {
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateShop(@PathVariable @Schema(description = "상점 ID", example = "1") long id,
                                            @RequestBody @Schema(description = "상점 업데이트 요청 데이터") UpdateShopRequest request) {
-        Shop updateShop = shopService.update(id, request);
+        shopService.update(id, request);
         // 알림 생성
         List<Long> userSeqs = userService.searchNearUser(request.getUserSeq(), request.getLat(), request.getLon());
         if(userSeqs != null && !userSeqs.isEmpty()) {

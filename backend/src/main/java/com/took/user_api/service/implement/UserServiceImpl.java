@@ -102,18 +102,15 @@ public class UserServiceImpl implements UserService {
         return userList.stream()
                 .map(user -> {
                     if(user.getLat() == null || user.getLon() == null) {
-                        System.out.println("위치 정보 없음" + user.getUserSeq());
                         return null;
                     }
                     if(!user.getAlarm()) {
-                        System.out.println("알림 설정 안함" + user.getUserSeq());
                         return null;
                     }
                     double distance = calculateDistance(lat, lon, user.getLat(), user.getLon());
                     if(distance <= distanceThreshold) {
                         return user.getUserSeq();
                     } else {
-                        System.out.println("거리 초과" + user.getUserSeq());
                         return null;
                     }
                 })

@@ -36,7 +36,7 @@ public class ShopService {
     private double distanceThreshold;
 
     @Transactional
-    public Shop save(AddShopRequest request) {
+    public AddShopResponseDto save(AddShopRequest request) {
         UserEntity user = userRepository.findById(request.getUserSeq()).orElseThrow();
         Shop shop = Shop.builder().user(user)
                 .roomSeq(request.getRoomSeq())
@@ -53,7 +53,8 @@ public class ShopService {
 
         ShopGuest shopGuest = ShopGuest.builder().shop(shop).user(user).build();
         shopGuestRepository.save(shopGuest);
-        return shop;
+
+        return new AddShopResponseDto(shop);
     }
 
     @Transactional
@@ -87,13 +88,11 @@ public class ShopService {
     }
 
     @Transactional
-    public Shop update(Long id, UpdateShopRequest request) {
+    public void update(Long id, UpdateShopRequest request) {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
 
         shop.update(request.getTitle(), request.getContent(), request.getItem(), request.getSite(), request.getPlace(), request.getMaxCount());
-
-        return shop;
     }
 
     @Transactional
