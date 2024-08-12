@@ -34,8 +34,6 @@ public class ShopController {
         Shop saveShop = shopService.save(request);
         // 알림 생성
         List<Long> userSeqs = userService.searchNearUser(request.getUserSeq(), request.getLat(), request.getLon());
-        System.out.println("위도: "+ request.getLat() + " 경도: " + request.getLon());
-        System.out.println("알림 목록: " + userSeqs);
         if(userSeqs != null && !userSeqs.isEmpty()) {
             fcmService.sendMessage(
                     MessageRequest.builder()
@@ -80,6 +78,17 @@ public class ShopController {
     public ResponseEntity<Shop> updateShop(@PathVariable @Schema(description = "상점 ID", example = "1") long id,
                                            @RequestBody @Schema(description = "상점 업데이트 요청 데이터") UpdateShopRequest request) {
         Shop updateShop = shopService.update(id, request);
+        // 알림 생성
+        List<Long> userSeqs = userService.searchNearUser(updateShop.getUser().getUserSeq(), request.getLat(), request.getLon());
+        if(userSeqs != null && !userSeqs.isEmpty()) {
+            fcmService.sendMessage(
+                    MessageRequest.builder()
+                            .title("같이 주문해요!")
+                            .body("공동 구매 모집 글이 올라왔어요!")
+                            .userSeqList(userSeqs)
+                            .build()
+            );
+        }
         return ResponseEntity.ok()
                 .body(updateShop);
     }

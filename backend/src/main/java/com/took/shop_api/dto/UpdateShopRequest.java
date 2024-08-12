@@ -25,6 +25,12 @@ public class UpdateShopRequest {
     @Schema(description = "상점 위치", example = "서울 강남구 테헤란로 123")
     private String place;  // 상점 위치
 
+    @Schema(description = "상점 위도", example = "37.123456")
+    private double lat;  // 상점 위도
+
+    @Schema(description = "상점 경도", example = "127.123456")
+    private double lon;  // 상점 경도
+
     @Schema(description = "최대 수용 인원", example = "50")
     private int maxCount;  // 최대 수용 인원
 }

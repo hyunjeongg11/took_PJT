@@ -62,9 +62,10 @@ public class DeliveryService {
 
     // 글 수정
     @Transactional
-    public void modifyDelivery(DeliveryModifyRequest request) {
+    public Delivery modifyDelivery(DeliveryModifyRequest request) {
         Delivery delivery = deliveryRepository.findById(request.getDeliverySeq()).orElseThrow();
         delivery.updateDelivery(request);
+        return delivery;
     }
 
     // 글 삭제

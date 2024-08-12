@@ -1,6 +1,7 @@
 package com.took.delivery_api.controller;
 
 import com.took.delivery_api.dto.*;
+import com.took.delivery_api.entity.Delivery;
 import com.took.delivery_api.service.DeliveryGuestService;
 import com.took.delivery_api.service.DeliveryService;
 import com.took.fcm_api.dto.MessageRequest;
@@ -73,7 +74,18 @@ public class DeliveryController {
     @PutMapping("/modify")
     ResponseEntity<?> modifyDelivery(
             @RequestBody @Parameter(description = "배달 글 수정 요청 정보", required = true) DeliveryModifyRequest request) {
-        deliveryService.modifyDelivery(request);
+        Delivery delivery = deliveryService.modifyDelivery(request);
+        // 알림 생성
+        List<Long> userSeqs = userService.searchNearUser(delivery.getUser().getUserSeq(), request.getPickupLat(), request.getPickupLon());
+        if(userSeqs != null && !userSeqs.isEmpty()) {
+            fcmservice.sendMessage(
+                    MessageRequest.builder()
+                            .title("같이 배달 시켜먹을래요?")
+                            .body("근처에 배달 시킬 사람이 있어요!")
+                            .userSeqList(userSeqs)
+                            .build()
+            );
+        }
         return ResponseEntity.noContent().build();
     }
 
