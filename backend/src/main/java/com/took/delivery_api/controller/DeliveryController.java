@@ -74,7 +74,6 @@ public class DeliveryController {
     @PutMapping("/modify")
     ResponseEntity<?> modifyDelivery(
             @RequestBody @Parameter(description = "배달 글 수정 요청 정보", required = true) DeliveryModifyRequest request) {
-        System.out.println("요청 값: " + request.getDeliverySeq());
         Delivery delivery = deliveryService.modifyDelivery(request);
         // 알림 생성
         List<Long> userSeqs = userService.searchNearUser(delivery.getUser().getUserSeq(), request.getPickupLat(), request.getPickupLon());
@@ -148,6 +147,7 @@ public class DeliveryController {
     @PostMapping("/list")
     ResponseEntity<List<DeliverySelectResponse>> getList(
             @RequestBody @Parameter(description = "배달 글 목록 조회 요청 정보", required = true) DeliveryListSelectRequest request) {
+        System.out.println("배달 글 목록 조회 요청값: " + request);
         List<DeliverySelectResponse> response = deliveryService.getList(request);
         return ResponseEntity.ok(response);
     }
