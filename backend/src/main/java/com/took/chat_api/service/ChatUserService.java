@@ -158,19 +158,29 @@ public class ChatUserService {
 
 
         // 각 채팅방의 최신 메시지 생성 시간을 기준으로 정렬
-        List<ChatRoomByUserSelectResponse> chatRoomByUserSelectResponseList = chatRooms.stream()
+        List<ChatRoomWithLatestMessage> chatRoomWithLatestMessages = chatRooms.stream()
                 .map(chatRoom -> {
                     ChatMessage latestMessage = chatMessageRepository.findLatestMessageByChatRoom(chatRoom);
                     LocalDateTime latestMessageTime = latestMessage != null ? latestMessage.getCreatedAt() : LocalDateTime.MIN;
-                    System.out.println("chatRoom = " + chatRoom.getRoomSeq());
-                    System.out.println("latestMessageTime = " + latestMessageTime);
                     return new ChatRoomWithLatestMessage(chatRoom, latestMessageTime);
                 })
+                .toList();
+
+        // 정렬 전 상태 출력
+        System.out.println("정렬 전:");
+        for (ChatRoomWithLatestMessage item : chatRoomWithLatestMessages) {
+            System.out.println("chatRoom = " + item.getChatRoom().getRoomSeq() + ", latestMessageTime = " + item.getLatestMessageTime());
+        }
+
+        // 정렬
+        List<ChatRoomByUserSelectResponse> chatRoomByUserSelectResponseList = chatRoomWithLatestMessages.stream()
                 .sorted(Comparator.comparing(ChatRoomWithLatestMessage::getLatestMessageTime).reversed())
                 .map(ChatRoomWithLatestMessage::getChatRoom)
                 .map(ChatRoomByUserSelectResponse::new)  // DTO 변환
                 .collect(Collectors.toList());
 
+        // 정렬 후 상태 출력
+        System.out.println("정렬 후:");
         for (ChatRoomByUserSelectResponse chatRoomByUserSelectResponse : chatRoomByUserSelectResponseList) {
             System.out.println("chatRoomByUserSelectResponse = " + chatRoomByUserSelectResponse.getRoomSeq());
         }
