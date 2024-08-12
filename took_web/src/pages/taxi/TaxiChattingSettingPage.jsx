@@ -39,7 +39,7 @@ function TaxiChattingSettingPage() {
       try {
         // 1. 모든 택시 파티 멤버 조회
         const members = await getAllTaxiPartyMembersApi(taxiSeq);
-        
+
         // 1-1. routeRank로 정렬
         const sortedMembers = members.sort((a, b) => a.routeRank - b.routeRank);
         setDestinations(sortedMembers);
@@ -144,10 +144,7 @@ function TaxiChattingSettingPage() {
       const updateResponse = await updateTaxiPartyApi(params);
       console.log('Update response:', updateResponse); // API 응답 확인
 
-      if (!updateResponse.success) {
-        throw new Error('Failed to update taxi party settings');
-      }
-
+      console.log('destinations :', destinations);
       // 2. 목적지 순서 설정 API 호출
       for (let i = 0; i < destinations.length; i++) {
         const rankParams = {
@@ -155,24 +152,22 @@ function TaxiChattingSettingPage() {
           destiName: destinations[i].destiName,
           routeRank: i + 1,
         };
-
+        console.log('Rank params: ', rankParams); // API 호출 전 파라미터 확인
         const rankResponse = await setDestinationRankApi(rankParams);
-        if (!rankResponse.success) {
-          throw new Error(
-            `Failed to set rank for destination ${destinations[i].destiName}`
-          );
-        }
       }
 
-      // 3. 모든 API 호출이 성공하면 채팅 페이지로 이동
       console.log('All API calls successful, navigating...');
+      // API 호출이 성공하면 채팅 페이지로 이동
+      navigate(`/chat/taxi/${taxiParty.roomSeq}`, {
+        state: {
+          roomSeq: taxiParty.roomSeq,
+          taxiSeq,
+        },
+      });
     } catch (error) {
       console.error('Error saving settings:', error);
       // alert('설정 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
-    } finally {
-      // API 호출이 성공하든 실패하든 채팅 페이지로 이동
-      navigate(`/taxi/main`);
-    }
+    } finally {}
   };
 
   return (
