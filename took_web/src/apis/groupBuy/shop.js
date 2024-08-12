@@ -238,3 +238,12 @@ export const isJoinApi = async (shopSeq, userSeq) => {
     return handleApiError(error);
   }
 };
+
+export const nearShopApi = async (userSeq) => {
+  try {
+    const response = await request.get(`/api/shops/selectAll/${userSeq}`);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
