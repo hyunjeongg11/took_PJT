@@ -464,8 +464,6 @@ public class PartyServiceImpl implements PartyService {
                 .totalMember(requestBody.getUsers().size())
                 .build();
         PartyEntity newParty = partyRepository.save(party);
-        Taxi taxi = taxiRepository.findByPartySeq(newParty.getPartySeq());
-        taxi.updateStart(requestBody.getStartLat(), requestBody.getStartLon());
 
         long receiveCost = 0L;
         boolean success = true;
