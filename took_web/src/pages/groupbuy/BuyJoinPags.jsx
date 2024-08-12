@@ -2,6 +2,8 @@ import React from 'react';
 // import { useParams } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
+
+// todo: 실제 데이터와 연결해야 함
 const temp_data = {
   id: 1,
   title: '마이프로틴 공동구매 모집합니다',

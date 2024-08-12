@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import taxiIcon from '../../assets/payment/taxiTook.png';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { formatNumber } from '../../utils/format';
 import { formatDate } from '../../utils/formatDate';
+import { calculateFinalCostApi, setTotalCostApi } from '../../apis/taxi';
 
-// 임시 데이터
+// todo: 실제 데이터와 연동 필요
+// todo: took 요청하기 버튼 누르면 정산으로 연결되는 api 연동 필요
 const tempTaxi = {
   taxi_seq: 1,
   room_seq: 1,
@@ -31,7 +33,7 @@ const tempMember = [
     user_seq: 1,
     userName: '조현정',
     imgNo: 19,
-    cost: 13000,
+    cost: 13000, // 예상 비용(선결제)
     real_cost: 12000,
     status: true,
     receive: false,
@@ -66,56 +68,58 @@ const tempMember = [
   },
 ];
 
-const tempParty = {
-  party_seq: 1,
-  title: '택시',
-  category: 'taxi',
-  cost: 34000,
-  created_at: '2024-07-06T00:23:00',
-  count: 3,
-  total_member: 3,
-};
-
-const tempTaxiGuest = [
-  {
-    guest_seq: 1,
-    taxi_seq: 1,
-    user_seq: 1,
-    cost: 12000,
-    dsti_name: '목적지1',
-    dsti_lat: null,
-    dsti_lng: null,
-    route_rank: 1,
-  },
-  {
-    guest_seq: 2,
-    taxi_seq: 1,
-    user_seq: 2,
-    cost: 7500,
-    dsti_name: '목적지2',
-    dsti_lat: null,
-    dsti_lng: null,
-    route_rank: 2,
-  },
-  {
-    guest_seq: 3,
-    taxi_seq: 1,
-    user_seq: 3,
-    cost: 14500,
-    dsti_name: '목적지3',
-    dsti_lat: null,
-    dsti_lng: null,
-    route_rank: 3,
-  },
-];
-
 function TaxiCostInputPage() {
   const [totalAmount, setTotalAmount] = useState('');
+  const [members, setMembers] = useState(tempMember);
   const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     const value = e.target.value.replace(/[^0-9]/g, '');
     setTotalAmount(value);
+
+    if (value) {
+      try {
+        const params = {
+          users: members.map((member) => ({
+            userSeq: member.user_seq,
+            cost: member.cost,
+          })),
+          allCost: parseInt(value, 10),
+          taxiSeq: tempTaxi.taxi_seq,
+        };
+
+        const result = await calculateFinalCostApi(params);
+
+        const updatedMembers = members.map((member) => {
+          const updatedUser = result.users.find(
+            (user) => user.userSeq === member.user_seq
+          );
+          return {
+            ...member,
+            real_cost: updatedUser ? updatedUser.cost : member.real_cost,
+          };
+        });
+
+        setMembers(updatedMembers);
+      } catch (error) {
+        console.error('Error calculating final cost:', error);
+      }
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (totalAmount) {
+      try {
+        const params = {
+          taxiSeq: tempTaxi.taxi_seq,
+          cost: parseInt(totalAmount, 10),
+        };
+        await setTotalCostApi(params);
+        navigate('/somePath'); // 실제 경로로 변경
+      } catch (error) {
+        console.error('Error setting total cost:', error);
+      }
+    }
   };
 
   return (
@@ -153,7 +157,7 @@ function TaxiCostInputPage() {
             </div>
           </div>
 
-          {tempMember.map((member) => {
+          {members.map((member) => {
             const balance = member.cost - member.real_cost;
             const formattedBalance =
               balance > 0 ? `+${formatNumber(balance)}` : formatNumber(balance);
@@ -191,7 +195,9 @@ function TaxiCostInputPage() {
                         <div className="flex justify-between mt-2 ml-1">
                           <span className="text-sm">차액</span>
                           <span
-                            className={`text-sm font-bold ${balance > 0 ? 'text-green-500' : 'text-red-500'}`}
+                            className={`text-sm font-bold ${
+                              balance >= 0 ? 'text-green-500' : 'text-red-500'
+                            }`}
                           >
                             {formattedBalance} 원
                           </span>
@@ -210,7 +216,7 @@ function TaxiCostInputPage() {
             className={`w-full max-w-[280px] py-3 rounded-2xl text-white text-lg font-bold ${
               totalAmount ? 'bg-main' : 'bg-main/50'
             }`}
-            onClick={() => totalAmount && navigate('/somePath')} // 실제 경로로 변경
+            onClick={handleSubmit}
             disabled={!totalAmount}
           >
             {totalAmount ? 'took 요청하기' : '금액을 입력해 주세요'}

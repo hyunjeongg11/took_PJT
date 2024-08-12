@@ -48,7 +48,22 @@ export const getChatFilterApi = async (params) => {
   }
 };
 
-//채팅방 메시지 조회
+//채팅방의 모든 메시지 조회
+// 요청 Body
+// {
+//   "roomSeq": "long",  // 채팅방 번호
+//   "userSeq": "long"  // 사용자 번호
+// }
+// 응답 Body
+// [
+//   {
+//     "type": "string",    // 메시지 타입 (ENTER, TALK, EXIT, MATCH, MATCH_REQUEST)
+//     "userSeq": "long",  // 메시지 송신자 번호
+//     "message": "string", // 메시지 내용
+//     "createdAt": "string"// 메시지 생성 시간
+//   },
+//   ...
+// ]
 export const getChatRoomMessageApi = async (params) => {
   try {
     const response = await request.post('/api/chat/message/list', params);
@@ -67,7 +82,16 @@ export const deleteRoomApi = async (roomSeq) => {
   }
 };
 
-///api/chat/users/{roomSeq}
+// 채팅방에 속한 유저 조회
+// 응답 Body
+// [
+//   {
+//     "userSeq": "long" // 사용자 번호
+//     "userName": "string",
+//     "imageNo": "int"
+//   },
+// 	...
+// ]
 export const getUsersApi = async (roomSeq) => {
   try {
     const response = await request.get(`/api/chat/users/${roomSeq}`);

@@ -74,6 +74,9 @@ const CreateChattingPage = () => {
       await addTaxiPartyMemberApi(memberParams);
 
       alert('채팅방과 택시 파티가 성공적으로 생성되었습니다.');
+      
+      // "/"로 이동
+      navigate('/');
     } catch (error) {
       console.error('Error creating chat room or taxi party:', error);
       alert('채팅방 또는 택시 파티 생성 중 오류가 발생했습니다.');

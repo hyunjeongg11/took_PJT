@@ -1,46 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BackButton from '../../components/common/BackButton';
 import CheckExpectedCost from '../../components/taxi/CheckExpectedCost';
 import getProfileImagePath from '../../utils/getProfileImagePath';
-
-const tempData = [
-  {
-    userName: '차민주',
-    userId: 1,
-    imgNo: 20,
-    gender: '여성',
-    userDestination: '부산 강서구 녹산산단335로 7 송정삼정그린코아더시티',
-    expectedCost: 13800,
-  },
-  {
-    userName: '조현정',
-    userId: 2,
-    imgNo: 19,
-    gender: '여성',
-    userDestination: '부산 강서구 명지국제5로 170-5 명일초등학교',
-    expectedCost: 11500,
-  },
-  {
-    userName: '정희수',
-    userId: 3,
-    imgNo: 21,
-    gender: '여성',
-    userDestination: '부산 강서구 명지국제5로 170-5 명일초등학교',
-    expectedCost: 9500,
-  },
-];
-
-const tempUser = {
-  userName: '차민주',
-  userId: 1,
-  gender: '여성',
-};
+import { calculateTotalExpectedCostApi } from '../../apis/taxi';
+import { useLocation } from 'react-router-dom';
+import { usePosition } from '../../store/position';
+import { getUserInfoApi } from '../../apis/user';
 
 function CurrentPathListPage() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [totalExpectedCost, setTotalExpectedCost] = useState(null);
+  const [tempData, setTempData] = useState([]);
+  const { latitude, longitude } = usePosition();
+  const location = useLocation();
+  const { members, taxiParty } = location.state || {};
 
-  const handleOpenPopup = () => {
-    setIsPopupOpen(true);
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const updatedTempData = await Promise.all(
+        members.map(async (member) => {
+          try {
+            const userInfo = await getUserInfoApi({ userSeq: member.userSeq });
+            return {
+              userName: userInfo.userName || 'Unknown',  // 가져온 사용자 이름
+              userId: member.userSeq,
+              imgNo: userInfo.imageNo || 1,  // 가져온 프로필 이미지 번호
+              userDestination: member.destiName,
+              latitude: member.destiLat,
+              longitude: member.destiLon,
+              expectedCost: member.cost,
+            };
+          } catch (error) {
+            console.error(`Failed to fetch user info for userSeq: ${member.userSeq}`, error);
+            return {
+              userName: 'Unknown',
+              userId: member.userSeq,
+              imgNo: 1,
+              userDestination: member.destiName,
+              latitude: member.destiLat,
+              longitude: member.destiLon,
+              expectedCost: member.cost,
+            };
+          }
+        })
+      );
+      setTempData(updatedTempData);
+    };
+
+    fetchUserInfo();
+  }, [members]);
+
+  const handleOpenPopup = async () => {
+    try {
+      const locations = [
+        { lat: latitude, lon: longitude }, // 현재 위치를 첫 번째로 추가
+        ...tempData.map((user) => ({
+          lat: user.latitude,
+          lon: user.longitude,
+        })),
+      ];
+
+      const users = tempData.map((user) => ({
+        userSeq: user.userId,
+        cost: user.expectedCost,
+      }));
+
+      const params = {
+        locations,
+        users,
+      };
+
+      const result = await calculateTotalExpectedCostApi(params);
+      setTotalExpectedCost(result);
+      setIsPopupOpen(true);
+    } catch (error) {
+      console.error('Error calculating total expected cost:', error);
+    }
   };
 
   const handleClosePopup = () => {
@@ -60,7 +95,7 @@ function CurrentPathListPage() {
 
       <div className="flex flex-col px-8 py-4 space-y-6">
         {tempData.map((item, index) => (
-          <div key={index}>
+          <div key={item.userId}> {/* userId를 고유 key로 사용 */}
             <div className="flex items-center mb-2">
               <div className="text-2xl font-bold mr-4">{index + 1}</div>
               <div className="flex flex-col items-center w-16 mr-2">
@@ -89,12 +124,15 @@ function CurrentPathListPage() {
         예상비용 확인하기
       </button>
 
-      <CheckExpectedCost
-        isOpen={isPopupOpen}
-        onClose={handleClosePopup}
-        destinations={tempData}
-        tempUser={tempUser}
-      />
+      {totalExpectedCost && (
+        <CheckExpectedCost
+          isOpen={isPopupOpen}
+          onClose={handleClosePopup}
+          destinations={tempData}
+          tempUser={{ userName: '차민주', userId: 1 }} // 실제 사용자 정보로 교체 가능
+          totalExpectedCost={totalExpectedCost}
+        />
+      )}
     </div>
   );
 }
