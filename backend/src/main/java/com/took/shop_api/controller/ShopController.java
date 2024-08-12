@@ -34,6 +34,7 @@ public class ShopController {
         Shop saveShop = shopService.save(request);
         // 알림 생성
         List<Long> userSeqs = userService.searchNearUser(request.getUserSeq(), request.getLat(), request.getLon());
+        System.out.println("알림 목록: " + userSeqs);
         if(userSeqs != null && !userSeqs.isEmpty()) {
             fcmService.sendMessage(
                     MessageRequest.builder()
