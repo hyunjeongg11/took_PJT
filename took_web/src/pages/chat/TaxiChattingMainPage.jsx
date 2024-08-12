@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import BackButton from '../../components/common/BackButton';
+import backIcon from "../../assets/common/back.svg";
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useUser } from '../../store/user';
 import { getChatRoomMessageApi, getUsersApi } from '../../apis/chat/chat';
@@ -25,6 +25,21 @@ import TaxiChattingMenu from '../../components/taxi/TaxiChattingMenu';
 import { getUserInfoApi } from '../../apis/user';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+const BackButton = () => {
+  const navigate = useNavigate();
+  const handleBackClick = () => {
+    navigate('/');
+  };
+  return (
+    <img
+      src={backIcon}
+      alt="메인으로"
+      className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
+      onClick={handleBackClick}
+    />
+  );
+};
 
 function TaxiChattingMainPage() {
   const { id: roomSeq } = useParams();
@@ -132,7 +147,7 @@ function TaxiChattingMainPage() {
         roomSeq: roomSeq,
         userSeq: userSeq,
       });
-  
+      console.log('채팅 내용:', response);
       // 각 메시지에 대해 추가 유저 정보를 가져옴
       const messagesWithUserInfo = await Promise.all(
         response.map(async (msg) => {
@@ -155,6 +170,7 @@ function TaxiChattingMainPage() {
     try {
       const response = await getUsersApi(roomSeq);
       setChatUsers(response);
+      console.log('users', response);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -312,7 +328,7 @@ function TaxiChattingMainPage() {
           await Promise.all([
             getTaxiPartyApi(taxiSeq),
             getAllTaxiPartyMembersApi(taxiSeq),
-            getUsersApi(taxiSeq),
+            getUsersApi(roomSeq),
             getChatRoomMessageApi({
               roomSeq: roomSeq,
               userSeq: userSeq,

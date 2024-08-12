@@ -22,16 +22,19 @@ function CurrentPathListPage() {
           try {
             const userInfo = await getUserInfoApi({ userSeq: member.userSeq });
             return {
-              userName: userInfo.userName || 'Unknown',  // 가져온 사용자 이름
+              userName: userInfo.userName || 'Unknown', // 가져온 사용자 이름
               userId: member.userSeq,
-              imgNo: userInfo.imageNo || 1,  // 가져온 프로필 이미지 번호
+              imgNo: userInfo.imageNo || 1, // 가져온 프로필 이미지 번호
               userDestination: member.destiName,
               latitude: member.destiLat,
               longitude: member.destiLon,
               expectedCost: member.cost,
             };
           } catch (error) {
-            console.error(`Failed to fetch user info for userSeq: ${member.userSeq}`, error);
+            console.error(
+              `Failed to fetch user info for userSeq: ${member.userSeq}`,
+              error
+            );
             return {
               userName: 'Unknown',
               userId: member.userSeq,
