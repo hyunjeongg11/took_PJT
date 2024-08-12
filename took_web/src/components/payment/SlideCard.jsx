@@ -41,13 +41,12 @@ const SlideCard = ({ member, onClose }) => {
     if (window.Android) {
       window.Android.authenticate();
     }
-    
-    
+    msgToAndroid('test2');
     window.onAuthenticate = (result) => {
       if (result) {
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
-        msgToAndroid("test");
+        console.log("test")
         processPayment();
         const amount = member.cost;
         const accountSeq = mainAccount.accountSeq
@@ -89,6 +88,7 @@ const SlideCard = ({ member, onClose }) => {
       setTimeout(() => {
         // 실제 송금 기능을 여기에 추가하면 됩니다.
       fetchMainAccount();
+      msgToAndroid('test1');
       handleAuthentication();
       }, 1000);
     } else {
@@ -109,7 +109,6 @@ const SlideCard = ({ member, onClose }) => {
       } else if (member.category === 1 || member.category === 3) {
         await deliveryGroupPayApi(requestData);
       }
-      
       onClose();
     } catch (error) {
       console.error('결제 처리 중 오류 발생:', error);
