@@ -181,7 +181,7 @@ public class PartyServiceImpl implements PartyService {
             } else {
                 maskedName = name; // 이름이 1글자인 경우 그대로 사용
             }
-            alarm.setBody(maskedName + "님에게 " + cost + "원 TOOK!!");
+            alarm.setBody(maskedName + "님에게 " + cost + "원 took!!");
             alarm.setSender(leaderSeq);
             alarm.setUserSeq(userCost.getUserSeq());
             alarm.setPartySeq(party.getPartySeq());
