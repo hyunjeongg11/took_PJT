@@ -41,12 +41,10 @@ const SlideCard = ({ member, onClose }) => {
     if (window.Android) {
       window.Android.authenticate();
     }
-    msgToAndroid('test2');
     window.onAuthenticate = (result) => {
       if (result) {
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
-        console.log("test")
         processPayment();
         const amount = member.cost;
         const accountSeq = mainAccount.accountSeq
@@ -88,7 +86,6 @@ const SlideCard = ({ member, onClose }) => {
       setTimeout(() => {
         // 실제 송금 기능을 여기에 추가하면 됩니다.
       fetchMainAccount();
-      msgToAndroid('test1');
       handleAuthentication();
       }, 1000);
     } else {
