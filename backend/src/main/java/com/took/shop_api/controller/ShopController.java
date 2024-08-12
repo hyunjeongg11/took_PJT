@@ -6,7 +6,6 @@ import com.took.shop_api.dto.*;
 import com.took.shop_api.entity.Shop;
 import com.took.shop_api.repository.ShopRepository;
 import com.took.shop_api.service.ShopService;
-import com.took.user_api.entity.UserEntity;
 import com.took.user_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -81,9 +80,8 @@ public class ShopController {
     public ResponseEntity<Shop> updateShop(@PathVariable @Schema(description = "상점 ID", example = "1") long id,
                                            @RequestBody @Schema(description = "상점 업데이트 요청 데이터") UpdateShopRequest request) {
         Shop updateShop = shopService.update(id, request);
-        UserEntity user = updateShop.getUser();
         // 알림 생성
-        List<Long> userSeqs = userService.searchNearUser(user.getUserSeq(), request.getLat(), request.getLon());
+        List<Long> userSeqs = userService.searchNearUser(request.getUserSeq(), request.getLat(), request.getLon());
         if(userSeqs != null && !userSeqs.isEmpty()) {
             fcmService.sendMessage(
                     MessageRequest.builder()

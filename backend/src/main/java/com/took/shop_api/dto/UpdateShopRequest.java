@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @Getter
 public class UpdateShopRequest {
 
+    @Schema(description = "사용자 고유 번호", example = "123")
+    private Long userSeq;
+    
     @Schema(description = "상점 제목", example = "스타벅스 강남점")
     private String title;  // 상점 제목
 

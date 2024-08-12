@@ -14,6 +14,9 @@ public class DeliveryModifyRequest {
     @Schema(description = "배달 고유 번호", example = "123")
     private Long deliverySeq;  // 배달 고유 번호
 
+    @Schema(description = "사용자 고유 번호", example = "456")
+    private Long userSeq;  // 사용자 고유 번호
+
     @Schema(description = "상점 이름", example = "피자헛")
     private String storeName;  // 상점 이름
 

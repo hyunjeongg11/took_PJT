@@ -6,7 +6,6 @@ import com.took.delivery_api.service.DeliveryGuestService;
 import com.took.delivery_api.service.DeliveryService;
 import com.took.fcm_api.dto.MessageRequest;
 import com.took.fcm_api.service.FCMService;
-import com.took.user_api.entity.UserEntity;
 import com.took.user_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -76,9 +75,8 @@ public class DeliveryController {
     ResponseEntity<?> modifyDelivery(
             @RequestBody @Parameter(description = "배달 글 수정 요청 정보", required = true) DeliveryModifyRequest request) {
         Delivery delivery = deliveryService.modifyDelivery(request);
-        UserEntity user = delivery.getUser();
         // 알림 생성
-        List<Long> userSeqs = userService.searchNearUser(user.getUserSeq(), request.getPickupLat(), request.getPickupLon());
+        List<Long> userSeqs = userService.searchNearUser(request.getUserSeq(), request.getPickupLat(), request.getPickupLon());
         if(userSeqs != null && !userSeqs.isEmpty()) {
             fcmservice.sendMessage(
                     MessageRequest.builder()
@@ -149,7 +147,6 @@ public class DeliveryController {
     @PostMapping("/list")
     ResponseEntity<List<DeliverySelectResponse>> getList(
             @RequestBody @Parameter(description = "배달 글 목록 조회 요청 정보", required = true) DeliveryListSelectRequest request) {
-        System.out.println("배달 글 목록 조회 요청값: " + request);
         List<DeliverySelectResponse> response = deliveryService.getList(request);
         return ResponseEntity.ok(response);
     }
