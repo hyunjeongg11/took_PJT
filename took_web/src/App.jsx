@@ -114,7 +114,7 @@ const ROUTER = createBrowserRouter([
   { path: '/groupbuy/join/:id', element: <BuyJoinPage /> },
   { path: '/groupbuy/form', element: <BuyFormPage /> },
   { path: '/groupbuy/form/:id', element: <BuyFormPage /> },
-  { path: '/taxi/input', element: <TaxiCostInputPage /> },
+  { path: '/taxi/input/:id', element: <TaxiCostInputPage /> },
   { path: '/taxi/request', element: <TaxiCostRequestPages /> },
   { path: '/taxi/main', element: <TaxiMainPage /> },
   { path: '/taxi/create', element: <CreateChattingPage /> },
