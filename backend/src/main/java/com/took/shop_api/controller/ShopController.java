@@ -77,7 +77,7 @@ public class ShopController {
     @Operation(summary = "상점 업데이트", description = "상점 ID로 상점 정보를 업데이트합니다.")
     @ApiResponse(responseCode = "200", description = "상점 정보 업데이트 성공")
     @PutMapping("/update/{id}")
-    public ResponseEntity<Shop> updateShop(@PathVariable @Schema(description = "상점 ID", example = "1") long id,
+    public ResponseEntity<?> updateShop(@PathVariable @Schema(description = "상점 ID", example = "1") long id,
                                            @RequestBody @Schema(description = "상점 업데이트 요청 데이터") UpdateShopRequest request) {
         Shop updateShop = shopService.update(id, request);
         // 알림 생성
@@ -91,8 +91,7 @@ public class ShopController {
                             .build()
             );
         }
-        return ResponseEntity.ok()
-                .body(updateShop);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "상점 상태 업데이트", description = "상점 ID로 상점 상태를 업데이트합니다.")
