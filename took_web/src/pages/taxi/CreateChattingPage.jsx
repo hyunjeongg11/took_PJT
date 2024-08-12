@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import searchIcon from '../../assets/taxi/search.png';
@@ -11,18 +11,52 @@ import {
   calculateIndividualExpectedCostApi,
   isUserJoinedTaxiPartyApi,
 } from '../../apis/taxi.js';
-import SearchDropDown from '../../components/map/SearchDropDown.jsx';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
 
 const CreateChattingPage = () => {
+  const [stompClient, setStompClient] = useState(null);
   const [destination, setDestination] = useState('');
   const [userCount, setUserCount] = useState(1);
   const [genderPreference, setGenderPreference] = useState('무관');
   const { seq: userSeq } = useUser();
   const { latitude, longitude } = usePosition();
+  const [connected, setConnected] = useState(false);
   const navigate = useNavigate();
-  const handleChange = (e) => {
-    setDestination(e.target.value);
-  }
+
+  useEffect(() => {
+    const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
+    const stompClientInstance = Stomp.over(socket);
+    stompClientInstance.connect({}, () => {
+      console.log('WebSocket 연결 성공');
+      setConnected(true);
+    });
+    setStompClient(stompClientInstance);
+
+    return () => {
+      if (stompClientInstance && stompClientInstance.connected) {
+        stompClientInstance.disconnect(() => {
+          console.log('WebSocket 연결 해제');
+        });
+      }
+    };
+  }, []);
+
+  const enterRoom = ({ roomSeq, userSeq }) => {
+    if (stompClient && connected) {
+      stompClient.send(
+        '/pub/room/enter',
+        {},
+        JSON.stringify({
+          roomSeq,
+          userSeq,
+        })
+      );
+    } else {
+      console.error('WebSocket 연결이 아직 준비되지 않았습니다.');
+      // 재시도 로직을 추가하거나 사용자에게 알림
+    }
+  };
 
   const handleCreateChatRoom = async () => {
     try {
@@ -34,7 +68,7 @@ const CreateChattingPage = () => {
         return;
       }
 
-      // 2. 방생성
+      // 2. 채팅방 생성
       const chatParams = {
         roomTitle: destination,
         userSeq,
@@ -43,7 +77,7 @@ const CreateChattingPage = () => {
       const chatResponse = await createChatApi(chatParams);
       const { roomSeq } = chatResponse;
 
-      // 3. 파티 생성
+      // 3. 택시 파티 생성
       const genderValue = genderPreference === '동성';
 
       const taxiParams = {
@@ -51,6 +85,8 @@ const CreateChattingPage = () => {
         max: parseInt(userCount, 10),
         roomSeq,
         userSeq,
+        latitude,
+        longitude,
       };
       const taxiResponse = await createTaxiPartyApi(taxiParams);
       const { taxiSeq } = taxiResponse;
@@ -62,6 +98,7 @@ const CreateChattingPage = () => {
         endLat: 35, // todo : 임시로 35로 설정
         endLon: 128, // todo : 임시로 128로 설정
       };
+
       const costResponse = await calculateIndividualExpectedCostApi(costParams);
       const { cost } = costResponse;
 
@@ -75,10 +112,11 @@ const CreateChattingPage = () => {
         cost,
         routeRank: 1,
       };
+      await enterRoom({ roomSeq: chatResponse.roomSeq, userSeq });
       await addTaxiPartyMemberApi(memberParams);
 
       alert('채팅방과 택시 파티가 성공적으로 생성되었습니다.');
-      
+
       // "/"로 이동
       navigate('/');
     } catch (error) {
@@ -99,7 +137,7 @@ const CreateChattingPage = () => {
       <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
 
       <div className="flex flex-col px-6 py-4 space-y-8">
-        {/* <div>
+        <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">
             목적지 설정
           </label>
@@ -119,17 +157,8 @@ const CreateChattingPage = () => {
               />
             </button>
           </div>
-        </div> */}
-        <SearchDropDown
-          label="목적지 검색"
-          name="destination"
-          value={destination}
-          onChange={handleChange}
-          placeholder="목적지를 입력하세요"
-          setLatitude={() => {}}
-          setLongitude={() => {}}
-        />
-        {/* //todo <- 여기 setLatitude, setLongitude에 위경도 변경하는 함수 적용하기 */}
+        </div>
+
         <div>
           <label className="block text-sm font-bold text-gray-700">
             모집 인원 설정

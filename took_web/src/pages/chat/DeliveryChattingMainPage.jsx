@@ -87,14 +87,37 @@ function ChattingMainPage() {
   const fetchRoomMessages = async () => {
     try {
       const response = await getChatRoomMessageApi({
-        roomSeq: id,
-        userSeq: seq,
+        roomSeq: roomSeq,
+        userSeq: userSeq,
       });
-      setMessages(response);
+  
+      // 각 메시지에 대해 추가 유저 정보를 가져옴
+      const messagesWithUserInfo = await Promise.all(
+        response.map(async (msg) => {
+          try {
+            const userInfo = await getUserInfoApi({ userSeq: msg.userSeq });
+            return {
+              ...msg,
+              userName: userInfo.userName,
+              imgNo: userInfo.imgNo,  // imgNo 추가
+            };
+          } catch (error) {
+            console.error('Error fetching user info:', error);
+            return {
+              ...msg,
+              userName: 'Unknown',
+              imgNo: 1,  // 기본 프로필 이미지 사용
+            };
+          }
+        })
+      );
+  
+      setMessages(messagesWithUserInfo);
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      console.error('메시지를 불러오는 중 오류 발생:', error);
     }
   };
+  
 
   const loadUsers = async () => {
     try {

@@ -95,10 +95,10 @@ function TaxiMainPage() {
             const destinations = [...new Set(taxiPath.map((path) => path.destiName))];
 
             // count와 max 비교하여 status 업데이트
-            if (party.count >= party.max) {
-              await updateTaxiPartyStatusApi({ taxiSeq: party.taxiSeq, status: 'FILLED' });
-              party.status = 'FILLED';
-            }
+            // if (party.count >= party.max) {
+            //   await updateTaxiPartyStatusApi({ taxiSeq: party.taxiSeq, status: 'FILLED' });
+            //   party.status = 'FILLED';
+            // }
 
             return {
               ...party,
@@ -154,7 +154,7 @@ function TaxiMainPage() {
       // 4. 다른 파티에 참여 중인지 확인
       const userStatus = await isUserJoinedTaxiPartyApi(userSeq);
 
-      if (userStatus.isJoined) {
+      if (userStatus) {
         setModalMessage('이미 다른 택시 took에 참여중입니다.');
         return;
       }
