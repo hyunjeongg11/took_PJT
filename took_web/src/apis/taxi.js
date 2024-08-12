@@ -223,9 +223,16 @@ export const deleteTaxiPartyApi = async (taxiSeq) => {
 export const addTaxiPartyMemberApi = async (params) => {
   try {
     const response = await request.post('/api/taxi/guest/create', params);
-    return response.data;
+    // 응답이 204일 경우에도 성공으로 처리
+    if (response.status === 200 || response.status === 204) {
+      return true; // 성공 시 true 반환
+    } else {
+      console.error(`API 호출 실패, 응답 코드: ${response.status}`);
+      return false; // 성공 못한 경우 false 반환
+    }
   } catch (error) {
-    return handleApiError(error);
+    console.error('API 호출 중 오류 발생:', error);
+    return false; // 오류 발생 시 false 반환
   }
 };
 
