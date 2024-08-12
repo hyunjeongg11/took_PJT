@@ -7,6 +7,7 @@ import buyingIcon from '../../assets/chat/buyingIcon.png';
 import tookIcon from '../../assets/chat/tookIcon.png';
 import { getChatListApi } from '../../apis/chat/chat';
 import { useUser } from '../../store/user';
+import { getSeletByRoomApi } from '../../apis/taxi';
 
 function formatTime(timeString) {
   const date = new Date(timeString);
@@ -49,13 +50,27 @@ function ChattingListPage() {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const { seq } = useUser();
-  const handleChatRoomClick = (chatRoom) => {
+
+  const handleChatRoomClick = async (chatRoom) => {
     let route;
+    let state = { chatRoom, roomSeq: chatRoom.roomSeq }; // roomSeq 추가
+
     switch (chatRoom.category) {
       case 1:
         route = `/chat/delivery/${chatRoom.roomSeq}`;
         break;
       case 2:
+        try {
+          // getSeletByRoomApi 호출하여 taxiSeq를 가져옴
+          console.log('roomSeq', chatRoom.roomSeq);
+          const taxiData = await getSeletByRoomApi({
+            roomSeq: chatRoom.roomSeq,
+          });
+          console.log('taxiData', taxiData);
+          state = { ...state, taxiSeq: taxiData.taxiSeq }; // taxiSeq를 state에 추가
+        } catch (error) {
+          console.error('Error fetching taxi data:', error);
+        }
         route = `/chat/taxi/${chatRoom.roomSeq}`;
         break;
       case 3:
@@ -64,7 +79,8 @@ function ChattingListPage() {
       default:
         route = `/chat/${chatRoom.roomSeq}`;
     }
-    navigate(route, { state: { chatRoom } });
+
+    navigate(route, { state });
   };
 
   const loadChatRooms = async () => {

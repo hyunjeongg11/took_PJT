@@ -547,3 +547,30 @@ export const calculateTotalExpectedCostApi = async (params) => {
     return handleApiError(error);
   }
 };
+
+// roomSeq로 참가 중인 택시 조회
+//응답
+// {
+//   "taxiSeq": 1,
+//   "roomSeq": 1,
+//   "userSeq": 1,
+//   "partySeq": 1,
+//   "startLat": 37.5665,
+//   "startLon": 126.978,
+//   "gender": true,
+//   "count": 3,
+//   "max": 4,
+//   "status": "OPEN",
+//   "createdAt": "2024-08-12T14:17:48.073Z",
+//   "finishTime": "2024-08-12T14:17:48.073Z",
+//   "cost": 5000,
+//   "master": 1
+// }
+export const getSeletByRoomApi = async (roomSeq) => {
+  try {
+    const response = await request.get(`/api/taxi/seletByRoom/${roomSeq}`);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
