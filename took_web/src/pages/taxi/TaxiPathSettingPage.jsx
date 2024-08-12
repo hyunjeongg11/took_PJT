@@ -55,18 +55,17 @@ const TaxiPathSettingPage = () => {
 
       <div className="flex flex-col px-6 py-4">
         <div>
-        <SearchDropdown
-                 placeholder="목적지를 입력하세요"
-                 label="목적지 검색"
-                 value={destination}
-                 name="destination"
-                 onChange={handleDestinationChange}
-                 setLatitude={setLatitude}
-                 setLongitude={setLongitude}
-              />
-               // 목적지 name: destination에 저장
-               // latitude, longitude 에 저장
-         {/* <label className="block text-sm font-bold text-gray-700 mb-2">
+          <SearchDropdown
+            placeholder="목적지를 입력하세요"
+            label="목적지 검색"
+            value={destination}
+            name="destination"
+            onChange={handleDestinationChange}
+            setLatitude={setLatitude}
+            setLongitude={setLongitude}
+          />
+          {/*// 목적지 name: destination에 저장 // latitude, longitude 에 저장
+           <label className="block text-sm font-bold text-gray-700 mb-2">
             목적지 검색
           </label>
           <div className="relative rounded-md">
