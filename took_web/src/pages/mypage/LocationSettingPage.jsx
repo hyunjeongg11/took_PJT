@@ -56,7 +56,7 @@ function LocationSettingPage() {
           />
           배달 took 알림을 받을 위치를 설정해주세요
         </div>
-        <div className="flex flex-col space-y-4 mt-4">
+        <div className="flex flex-col space-y-4 mt-4 w-[80%]">
           <div className="mb-3">
             <div className="text-base font-bold mb-2">현재 등록한 주소</div>
             <div className="w-full bg-gray-100 outline-none rounded-lg p-3 shadow">
