@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Draggable from 'react-draggable';
-import { useNavigate } from 'react-router-dom';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { formatNumber } from '../../utils/format';
 import { AiOutlineClose } from 'react-icons/ai';
@@ -17,9 +16,10 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [slid, setSlid] = useState(false);
   const [backgroundWidth, setBackgroundWidth] = useState(0);
-  const navigate = useNavigate();
-  const { seq } = useUser();
-  const [mainAccount, setMainAccount] = useState(null);
+  const { seq: currentUserSeq } = useUser();
+  const [accountSeq, setAccountSeq] = useState(null);
+  const [accountNum, setAccountNum] = useState(null);
+  const [bankName, setBankName] = useState(null);
   const fetchMainAccount = async () => {
     try {
       const mainAccountResponse = await getMainAccount(seq);
@@ -32,7 +32,9 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
             : bankName
           : '',
       };
-      setMainAccount(mainAccount);
+      setAccountSeq(mainAccount.accountSeq);
+      setAccountNum(mainAccount.accountNum);
+      setBankName(mainAccount.bankName)
     } catch (error) {
       console.error('Error fetching main account:', error);
     }
@@ -47,18 +49,13 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
         msgToAndroid('생체 인증 성공');
         processPayment();
         const amount = member.cost;
-        const accountSeq = mainAccount.accountSeq
-        const currentUserSeq = mainAccount.userSeq
         const userSeq = member.userSeq
         onNavigate('/complete', {
         state: { accountSeq, amount, userSeq, currentUserSeq },
         });
       } else {
         const amount = member.cost;
-        const accountSeq = mainAccount.accountSeq
-        const accountNum = mainAccount.accountNum
-        const bankName = mainAccount.bankName
-        const userSeq = mainAccount.userSeq
+        const userSeq = member.userSeq
         const numCategory = member.category
         const partySeq = member.partySeq
         onNavigate('/pwd', {
@@ -83,10 +80,10 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
     if (data.x >= 100) {
       // 동그라미가 충분히 오른쪽으로 이동했는지 확인
       setSlid(true);
-      setTimeout(() => {
+      setTimeout(async () => {
         // 실제 송금 기능을 여기에 추가하면 됩니다.
-      fetchMainAccount();
-      handleAuthentication();
+        await fetchMainAccount();
+        handleAuthentication();
       }, 1000);
     } else {
       setPosition({ x: 0, y: 0 }); // 동그라미를 원래 위치로 되돌림
