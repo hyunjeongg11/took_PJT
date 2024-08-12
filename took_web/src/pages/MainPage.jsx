@@ -22,7 +22,7 @@ function MainPage() {
       setTimeout(() => {
         setShowModal(false);
         navigate('/login');
-      }, 2000);
+      }, 1000);
     }
   };
 
