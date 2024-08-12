@@ -67,8 +67,9 @@ const UserListPage = () => {
   };
 
   const handleNavigate = () => {
-    console.log('넘어갈 유저를 출력합니다', users);
-    navigate('/dutch/input', { state: { users } });
+    const selectedUsers = users.filter(user => user.selected); // selected가 true인 사용자만 필터링
+    console.log('넘어갈 유저를 출력합니다', selectedUsers);
+    navigate('/dutch/input', { state: { users: selectedUsers } });
   };
 
   return (
