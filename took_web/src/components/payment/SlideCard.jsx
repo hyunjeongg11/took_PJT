@@ -22,7 +22,7 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
   const [bankName, setBankName] = useState(null);
   const fetchMainAccount = async () => {
     try {
-      const mainAccountResponse = await getMainAccount(seq);
+      const mainAccountResponse = await getMainAccount(currentUserSeq);
       const bankName = bankNumToName[mainAccountResponse.bankNum];
       const mainAccount = {
         ...mainAccountResponse,
@@ -43,17 +43,17 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
     if (window.Android) {
       window.Android.authenticate();
     }
+    processPayment();
+    onClose();
+    const amount = member.cost;
+    const userSeq = member.userSeq
+    onNavigate('/complete', {
+    state: { accountSeq, amount, userSeq, currentUserSeq },
+    });
     window.onAuthenticate = (result) => {
       if (result) {
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
-        processPayment();
-        const amount = member.cost;
-        const userSeq = member.userSeq
-        onClose();
-        onNavigate('/complete', {
-        state: { accountSeq, amount, userSeq, currentUserSeq },
-        });
       } else {
         const amount = member.cost;
         const userSeq = member.userSeq
@@ -92,9 +92,9 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
     }
   };
   const processPayment = async () => {
-    const response = await getMainAccount(seq);
+    const response = await getMainAccount(currentUserSeq);
     const requestData = {
-      userSeq: seq, // 지금 로그인한 userSeq 사용해야 함 (useUser 사용해도 됨)
+      userSeq: currentUserSeq, // 지금 로그인한 userSeq 사용해야 함 (useUser 사용해도 됨)
       partySeq: member.partySeq,
       accountSeq: response.accountSeq,
     };

@@ -4,7 +4,7 @@ import SendMoneyCard from '../../components/payment/SendMoneyCard';
 import SlideCard from '../../components/payment/SlideCard';
 import { useUser } from '../../store/user';
 import { noPayList } from '../../apis/payment/jungsan';
-
+import { useNavigate } from 'react-router-dom';
 const groupByMonth = (items, dateKey) => {
   return items.reduce((acc, item) => {
     const month = new Date(item[dateKey]).toLocaleDateString('ko-KR', {
@@ -18,6 +18,7 @@ const groupByMonth = (items, dateKey) => {
 };
 
 function MyTookPage() {
+  const navigate = useNavigate();
   const [showSlide, setShowSlide] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [noPay, setNoPay] = useState([]);
