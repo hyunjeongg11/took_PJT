@@ -17,52 +17,31 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
   const [slid, setSlid] = useState(false);
   const [backgroundWidth, setBackgroundWidth] = useState(0);
   const { seq: currentUserSeq } = useUser();
-  const [accountSeq, setAccountSeq] = useState(null);
-  const [accountNum, setAccountNum] = useState(null);
-  const [bankName, setBankName] = useState(null);
-  const fetchMainAccount = async () => {
-    try {
-      const mainAccountResponse = await getMainAccount(currentUserSeq);
-      const tempBankName = bankNumToName[mainAccountResponse.bankNum];
-      const mainAccount = {
-        ...mainAccountResponse,
-        bankName: tempBankName
-          ? tempBankName.length === 2
-            ? `${tempBankName}은행`
-            : tempBankName
-          : '',
-      };
-      setAccountSeq(mainAccount.accountSeq);
-      setAccountNum(mainAccount.accountNum);
-      setBankName(mainAccount.bankName)
-    } catch (error) {
-      console.error('Error fetching main account:', error);
-    }
-  };
+  const [tempMainAccount, setTempMainAccount] = useState(null);
+  const amount = member.cost;
+  const userSeq = member.userSeq;
+  const numCategory = member.category;
+  const partySeq = member.partySeq;
+  
   const handleAuthentication = () => {
     if (window.Android) {
       window.Android.authenticate();
     }
-    
+    const accountSeq = tempMainAccount.accountSeq
+    const accountNum = tempMainAccount.accountNum
+    const bankName = tempMainAccount.bankName
     window.onAuthenticate = (result) => {
       if (result) {
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
         processPayment();
         onClose();
-        const amount = member.cost;
-        const userSeq = member.userSeq
-        onNavigate('/complete', {
-        state: { accountSeq, amount, userSeq, currentUserSeq },
-        });
+        onNavigate('/complete', 
+        { accountSeq, amount, userSeq, currentUserSeq },
+        );
       } else {
-        const amount = member.cost;
-        const userSeq = member.userSeq
-        const numCategory = member.category
-        const partySeq = member.partySeq
         onClose();
         onNavigate('/pwd', {
-          state: {
             accountSeq,
             accountNum,
             bankName,
@@ -71,21 +50,39 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
             numCategory,
             partySeq,
           },
-        });
+        );
       }
     };
   };
   useEffect(() => {
     setBackgroundWidth(position.x + 32); // 배경이 좀 더 빠르게 업데이트되도록 설정
   }, [position]);
-
+  useEffect(() => {
+    const fetchMainAccount = async () => {
+      try {
+        const mainAccountResponse = await getMainAccount(currentUserSeq);
+        const tempBankName = bankNumToName[mainAccountResponse.bankNum];
+        const mainAccount = {
+          ...mainAccountResponse,
+          bankName: tempBankName
+            ? tempBankName.length === 2
+              ? `${tempBankName}은행`
+              : tempBankName
+            : '',
+        };
+        setTempMainAccount(mainAccount)
+      } catch (error) {
+        console.error('Error fetching main account:', error);
+      }
+    };
+    fetchMainAccount();
+  }, [tempMainAccount]);
   const handleStop = (e, data) => {
     if (data.x >= 100) {
       // 동그라미가 충분히 오른쪽으로 이동했는지 확인
       setSlid(true);
-      setTimeout(async () => {
+      setTimeout(() => {
         // 실제 송금 기능을 여기에 추가하면 됩니다.
-        await fetchMainAccount();
         handleAuthentication();
       }, 1000);
     } else {
