@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface ChatMessageRepositoryCustom {
     List<ChatMessage> findMessagesByRoomSeqAndUserJoinTime(ChatRoom chatRoom, UserEntity user);
+    ChatMessage findLatestMessageByChatRoom(ChatRoom chatRoom);
 }

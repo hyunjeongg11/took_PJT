@@ -39,4 +39,13 @@ public class ChatMessageRepositoryCustomImpl implements ChatMessageRepositoryCus
                 // 결과를 리스트로 반환
                 .fetch();
     }
+
+
+    public ChatMessage findLatestMessageByChatRoom(ChatRoom chatRoom) {
+        QChatMessage chatMessage = QChatMessage.chatMessage;  // QueryDSL을 사용한 ChatMessage 엔티티의 메타데이터
+        return queryFactory.selectFrom(chatMessage)
+                .where(chatMessage.chatRoom.eq(chatRoom))
+                .orderBy(chatMessage.createdAt.desc())
+                .fetchFirst();
+    }
 }

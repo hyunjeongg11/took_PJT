@@ -1,12 +1,16 @@
 package com.took.chat_api.service;
 
 import com.took.chat_api.dto.*;
+import com.took.chat_api.entity.ChatMessage;
 import com.took.chat_api.entity.ChatRoom;
 import com.took.chat_api.entity.ChatUser;
+import com.took.chat_api.repository.ChatMessageRepository;
 import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.chat_api.repository.ChatUserRepository;
 import com.took.user_api.entity.UserEntity;
 import com.took.user_api.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.Comparator;
 
 @RequiredArgsConstructor  // Lombok 어노테이션으로, final 필드에 대해 생성자를 자동으로 생성
 @Service  // 이 클래스가 서비스 역할을 한다는 것을 Spring에게 알려주는 어노테이션
@@ -23,6 +28,7 @@ public class ChatUserService {
 
     private final ChatUserRepository chatUserRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
 
     /**
@@ -141,9 +147,25 @@ public class ChatUserService {
                 .distinct()
                 .toList();
 
-        // ChatRoom을 ChatRoomCategorySelectResponse로 변환
+
+        // 각 채팅방의 최신 메시지 생성 시간을 기준으로 정렬
         return chatRooms.stream()
+                .map(chatRoom -> {
+                    ChatMessage latestMessage = chatMessageRepository.findLatestMessageByChatRoom(chatRoom);
+                    LocalDateTime latestMessageTime = latestMessage != null ? latestMessage.getCreatedAt() : LocalDateTime.MIN;
+                    return new ChatRoomWithLatestMessage(chatRoom, latestMessageTime);
+                })
+                .sorted(Comparator.comparing(ChatRoomWithLatestMessage::getLatestMessageTime).reversed())
+                .map(ChatRoomWithLatestMessage::getChatRoom)
                 .map(ChatRoomByUserSelectResponse::new)  // DTO 변환
                 .collect(Collectors.toList());
+    }
+
+    // 채팅방과 최신 메시지 시간을 포함하는 클래스
+    @Getter
+    @AllArgsConstructor
+    public static class ChatRoomWithLatestMessage {
+        private final ChatRoom chatRoom;
+        private final LocalDateTime latestMessageTime;
     }
 }
