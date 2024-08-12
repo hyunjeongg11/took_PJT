@@ -223,7 +223,7 @@ export const deleteTaxiPartyApi = async (taxiSeq) => {
 export const addTaxiPartyMemberApi = async (params) => {
   try {
     const response = await request.post('/api/taxi/guest/create', params);
-    return response.data;
+    return response;
   } catch (error) {
     return handleApiError(error);
   }
