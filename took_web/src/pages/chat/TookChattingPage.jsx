@@ -251,7 +251,8 @@ function TookChattingPage() {
       </div>
       <div className="h-12 mt-3"></div>
       <div className="flex flex-col items-start space-y-4 px-2 py-2 overflow-y-auto">
-        {sortedTempData.map((item, index) => {
+        {sortedTempData.length > 0 ? (
+        sortedTempData.map((item, index) => {
           const showDate = lastDate.current !== formatDateOnly(item.chatTime);
           lastDate.current = formatDateOnly(item.chatTime);
 
@@ -265,7 +266,11 @@ function TookChattingPage() {
               {renderMessage(item, handlePayment)}
             </div>
           );
-        })}
+        })
+      ) : (
+        <div className="flex justify-center items-center w-full h-full min-h-screen">
+        </div>
+      )}
         <div ref={chatEndRef} />
       </div>
 
