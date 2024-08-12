@@ -124,23 +124,25 @@ const MyTookMoneyPage = () => {
           나의 툭머니
         </div>
       </div>
-      <div className="flex items-center justify-between mb-5 p-3 bg-[#FBFBFB] rounded-lg shadow-md mx-4">
-        <span className="text-black text-sm">등록 계좌</span>
-        <div className="flex items-center text-sm font-bold">
-          {accounts.length > 0 ? (
-            <>
-              <img
-                src={getImagePath(accounts[0].bankNum)}
-                alt="은행 로고"
-                className="w-6 h-6 mr-2"
-              />
-              {bankNumToName[accounts[0].bankNum]} 외 {accounts.length - 1}개
-            </>
-          ) : (
-            <span>등록된 계좌가 없습니다</span>
-          )}
+      <Link to="/payment-methods">
+        <div className="flex items-center justify-between mb-5 p-3 bg-[#FBFBFB] rounded-lg shadow-md mx-4">
+          <span className="text-black text-sm">등록 계좌</span>
+          <div className="flex items-center text-sm font-bold">
+            {accounts.length > 0 ? (
+              <>
+                <img
+                  src={getImagePath(accounts[0].bankNum)}
+                  alt="은행 로고"
+                  className="w-6 h-6 mr-2"
+                />
+                {bankNumToName[accounts[0].bankNum]} 외 {accounts.length - 1}개
+              </>
+            ) : (
+              <span>0개</span>
+            )}
+          </div>
         </div>
-      </div>
+      </Link>
       <div className="mx-4">
         <div className="bg-[#FBFBFB] p-4 rounded-2xl shadow-lg">
           <div className="flex items-center justify-between text-lg font-bold mb-2">

@@ -148,7 +148,7 @@ const renderMessage = (item, handlePayment) => (
             </div>
             {item.status === false && (
               <button
-                onClick={() => handlePayment(item.amount, item.sender)}
+                onClick={() => handlePayment(item.amount, item.sender, item.numCategory, item.partySeq)}
                 className="mt-3 py-1.5 px-10 w-full bg-neutral-100 bg-opacity-80 text-neutral-800 text-sm font-bold rounded-xl mx-auto"
               >
                 송금하기
@@ -251,7 +251,8 @@ function TookChattingPage() {
       </div>
       <div className="h-12 mt-3"></div>
       <div className="flex flex-col items-start space-y-4 px-2 py-2 overflow-y-auto">
-        {sortedTempData.map((item, index) => {
+        {sortedTempData.length > 0 ? (
+        sortedTempData.map((item, index) => {
           const showDate = lastDate.current !== formatDateOnly(item.chatTime);
           lastDate.current = formatDateOnly(item.chatTime);
 
@@ -265,7 +266,11 @@ function TookChattingPage() {
               {renderMessage(item, handlePayment)}
             </div>
           );
-        })}
+        })
+      ) : (
+        <div className="flex justify-center items-center w-full h-full min-h-screen">
+        </div>
+      )}
         <div ref={chatEndRef} />
       </div>
 

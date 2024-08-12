@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import backIcon from '../../assets/delivery/whiteBack.svg';
-import plusIcon from '../../assets/taxi/plus.png'; // '+' 아이콘 경로
-import enterIcon from '../../assets/taxi/enter.png'; // 입장 가능 아이콘
-import notEnterIcon from '../../assets/taxi/notEnter.png'; // 입장 불가능 아이콘
+import plusIcon from '../../assets/taxi/plus.png';
+import enterIcon from '../../assets/taxi/enter.png';
+import notEnterIcon from '../../assets/taxi/notEnter.png';
 import locationIcon from '../../assets/taxi/location.png';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { useUser } from '../../store/user.js';
@@ -19,7 +19,7 @@ import {
 } from '../../apis/taxi.js';
 import { getUserInfoApi } from '../../apis/user.js';
 import { getAddr } from '../../utils/map.js';
-
+import Modal from '../../components/common/titleMessageCommonModal.jsx';
 const BackButton = () => {
   const navigate = useNavigate();
   const handleBackClick = () => {
@@ -41,10 +41,12 @@ function TaxiMainPage() {
   const { seq: userSeq } = user;
   const { latitude, longitude } = usePosition();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+
   const [location, setLocation] = useState('');
   const [taxiParties, setTaxiParties] = useState([]);
   const [userGender, setUserGender] = useState('');
-  const [modalMessage, setModalMessage] = useState(''); // 모달 메시지 상태
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -58,7 +60,6 @@ function TaxiMainPage() {
       }
     };
 
-    // 유저 정보 가져옴 (성별 확인을 위해)
     const fetchUserGender = async () => {
       try {
         const userInfo = await getUserInfoApi({ userSeq });
@@ -68,7 +69,6 @@ function TaxiMainPage() {
       }
     };
 
-    // 근처 유저
     const fetchTaxiParties = async () => {
       try {
         const nearbyUsers = await getNearByUserPositionApi({
@@ -79,7 +79,6 @@ function TaxiMainPage() {
         const userSeqs = nearbyUsers.map((user) => user.userSeq);
         userSeqs.push(userSeq);
 
-        // 파티 리스트 조회
         const taxiPartyList = await getTaxiPartyListApi({ userSeqs });
 
         const taxiPartiesData = await Promise.all(
@@ -93,12 +92,6 @@ function TaxiMainPage() {
               : [];
 
             const destinations = [...new Set(taxiPath.map((path) => path.destiName))];
-
-            // count와 max 비교하여 status 업데이트
-            if (party.count >= party.max) {
-              await updateTaxiPartyStatusApi({ taxiSeq: party.taxiSeq, status: 'FILLED' });
-              party.status = 'FILLED';
-            }
 
             return {
               ...party,
@@ -123,43 +116,38 @@ function TaxiMainPage() {
     }
   }, [userSeq, latitude, longitude]);
 
-  // 채팅방 입장
   const handleEnterChatRoom = (chatRoomId, taxiSeq, roomSeq) => {
     navigate(`/chat/taxi/${chatRoomId}`, {
       state: { taxiSeq, roomSeq },
     });
   };
 
-  // 택시 파티 참여 또는 채팅방 입장
   const handleAddMemberOrEnterChat = async (item) => {
     try {
-      // 1. 기존 멤버 중복 체크
       const allMembers = await getAllTaxiPartyMembersApi(item.taxiSeq);
       const isAlreadyMember = allMembers.some(
         (member) => member.userSeq === userSeq
       );
 
-      // 2. 이미 참여 중이면 바로 채팅방으로 이동
       if (isAlreadyMember) {
         handleEnterChatRoom(item.roomSeq, item.taxiSeq, item.roomSeq);
         return;
       }
 
-      // 3. 'FILLED' 상태 체크
       if (item.status === 'FILLED') {
-        setModalMessage('해당 택시 took은 \n모집이 완료되었습니다.');
+        setModalMessage('해당 택시 took은 \n모집이 완료되었어요.');
+        setIsModalOpen(true);
         return;
       }
 
-      // 4. 다른 파티에 참여 중인지 확인
       const userStatus = await isUserJoinedTaxiPartyApi(userSeq);
 
-      if (userStatus.isJoined) {
-        setModalMessage('이미 다른 택시 took에 참여중입니다.');
+      if (userStatus) {
+        setModalMessage('이미 참여중이에요!');
+        setIsModalOpen(true);
         return;
       }
 
-      // 5. 다른 파티에 참여 중이지 않으면 멤버 추가 후 채팅방으로 이동
       const memberData = {
         taxiSeq: item.taxiSeq,
         userSeq: userSeq,
@@ -180,11 +168,21 @@ function TaxiMainPage() {
     }
   };
 
-  const handleCreateTaxi = () => {
+  const handleCreateTaxi = async () => {
+    const userStatus = await isUserJoinedTaxiPartyApi(userSeq);
+    console.log("현재 유저의 상태는 ", userStatus);
+  
+    if (userStatus) {
+      setModalMessage('이미 참여중이에요!');
+      setIsModalOpen(true); // 모달 열기
+      return;
+    }
+  
     navigate('/taxi/create');
   };
 
   const closeModal = () => {
+    setIsModalOpen(false);
     setModalMessage('');
   };
 
@@ -196,7 +194,7 @@ function TaxiMainPage() {
   });
 
   return (
-    <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main mb-12">
+    <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main mb-16">
       <div className="bg-main py-4">
         <div className="flex items-center px-4 relative mb-4 mt-3">
           <BackButton />
@@ -232,8 +230,8 @@ function TaxiMainPage() {
                       item.gender === false
                         ? 'bg-white border border-neutral-300 text-gray-700'
                         : item.gender
-                          ? 'bg-pink-200 text-pink-600'
-                          : 'bg-blue-200 text-blue-600'
+                        ? 'bg-pink-200 text-pink-600'
+                        : 'bg-blue-200 text-blue-600'
                     }`}
                   >
                     {item.gender
@@ -262,7 +260,7 @@ function TaxiMainPage() {
                   }}
                 >
                   <img
-                    src={item.status === 'FILLED' ? notEnterIcon : enterIcon}
+                    src={item.status === 'OPEN' ? enterIcon : notEnterIcon}
                     alt="enter status"
                     className="w-8 h-8"
                   />
@@ -283,27 +281,12 @@ function TaxiMainPage() {
         <img src={plusIcon} alt="+" className="w-8 h-8" />
       </button>
 
-      {modalMessage && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 whitespace-pre-line">
-          <div
-            className="bg-white p-6 rounded-xl shadow-lg"
-            style={{ width: '250px' }}
-          >
-            <p
-              className="text-center font-semibold"
-              style={{ fontSize: '16px' }}
-            >
-              {modalMessage}
-            </p>
-            <button
-              className="mt-4 px-4 py-2 bg-neutral-300 text-white font-bold rounded-xl mx-auto block"
-              onClick={closeModal}
-              style={{ width: '100px' }}
-            >
-              확인
-            </button>
-          </div>
-        </div>
+      {isModalOpen && (
+        <Modal
+          title="알림"
+          message={modalMessage}
+          onClose={closeModal}
+        />
       )}
     </div>
   );

@@ -7,6 +7,9 @@ import { LiaUserMinusSolid } from 'react-icons/lia';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { getUserInfoApi } from '../../apis/user';
 import { useUser } from '../../store/user';
+import { usePosition } from '../../store/position.js';
+import { deleteRoomApi } from '../../apis/chat/chat.js';
+import { makeTaxiPartyApi } from '../../apis/payment/jungsan.js';
 import {
   updateTaxiPartyStatusApi,
   linkSettlementApi,
@@ -14,8 +17,6 @@ import {
   getAllTaxiPartyMembersApi,
   deleteTaxiPartyApi,
 } from '../../apis/taxi';
-import { makePartyApi, insertAllMemberApi } from '../../apis/payment/jungsan';
-import { deleteRoomApi } from '../../apis/chat/chat';
 import { useNavigate } from 'react-router-dom';
 
 const TaxiChattingMenu = ({
@@ -27,6 +28,7 @@ const TaxiChattingMenu = ({
 }) => {
   const { seq: currentUserSeq } = useUser();
   const [userInfos, setUserInfos] = useState({});
+  const { latitude, longitude } = usePosition();
   const [modalMessageLine1, setModalMessageLine1] = useState('');
   const [modalMessageLine2, setModalMessageLine2] = useState('');
   const [modalType, setModalType] = useState('');
@@ -98,41 +100,49 @@ const TaxiChattingMenu = ({
 
   const handleModalAction = async () => {
     try {
+      // 모집 확정 클릭 시 "FILLED"로 상태 업데이트
       if (modalType === 'endRecruitment') {
         await updateTaxiPartyStatusApi({
           taxiSeq: taxiParty.taxiSeq,
           status: 'FILLED',
         });
         console.log('택시 파티 상태가 FILLED로 업데이트되었습니다.');
+        // 경로 확정 클릭시
       } else if (modalType === 'confirmRoute') {
+        //  "FILLED"로 상태 업데이트
         await updateTaxiPartyStatusApi({
           taxiSeq: taxiParty.taxiSeq,
           status: 'FILLED',
         });
-        const partyResponse = await makePartyApi({
-          userSeq: currentUserSeq,
+        console.log('택시 파티 상태가 FILLED로 업데이트되었습니다.');
+
+        // 택시파티내의 모든 멤버 조회
+        const membersResponse = await getAllTaxiPartyMembersApi(
+          taxiParty.taxiSeq
+        );
+        const partyParams = {
           title: `taxi ${taxiParty.taxiSeq}`,
-          category: 1,
-        });
-        const { partySeq } = partyResponse;
-        await linkSettlementApi({ taxiSeq: taxiParty.taxiSeq, partySeq });
-        console.log('택시 파티와 정산이 연결되었습니다.');
-
-        const userCosts = members.map((member) => ({
-          userSeq: member.userSeq,
-          cost: member.cost,
-        }));
-
-        const insertParams = {
-          partySeq: partySeq,
-          userCosts: userCosts,
+          category: 2,
+          cost: membersResponse.reduce((sum, member) => sum + member.cost, 0),
+          users: membersResponse.map((member) => ({
+            userSeq: member.userSeq,
+            fakeCost: member.cost,
+          })),
+          master: taxiParty.master,
+          startLat: latitude,
+          startLon: longitude,
+          taxiSeq: taxiParty.taxiSeq,
         };
 
-        const insertResponse = await insertAllMemberApi(insertParams);
-        console.log('All members inserted with response:', insertResponse);
+        // 택시 정산 파티 생성(가결제시) 가결제 실패시 -1 반환
+        const partyResponse = await makeTaxiPartyApi(partyParams);
+        console.log('택시 정산 partyseq:', partyResponse);
+        // 나가기 버튼 클릭시
       } else if (modalType === 'leaveChat') {
         if (taxiParty.userSeq === currentUserSeq) {
+          // 택시 파티 삭제
           await deleteTaxiPartyApi(taxiParty.taxiSeq);
+          // 룸 삭제
           await deleteRoomApi(taxiParty.roomSeq);
           console.log('방장으로서 택시 파티와 채팅방을 삭제했습니다.');
         } else {
@@ -143,7 +153,6 @@ const TaxiChattingMenu = ({
           console.log('게스트로서 택시 파티에서 나갔습니다.');
         }
 
-        // 업데이트된 멤버 정보를 다시 가져오기 (선택 사항, 삭제된 게스트만 업데이트가 필요하면 위의 코드만으로 충분)
         const updatedMemberList = await getAllTaxiPartyMembersApi(
           taxiParty.taxiSeq
         );
@@ -167,13 +176,11 @@ const TaxiChattingMenu = ({
       });
       console.log('게스트가 성공적으로 삭제되었습니다.');
 
-      // 삭제된 게스트를 members 상태에서 제거
       const updatedMembers = members.filter(
         (member) => member.userSeq !== guestUserSeq
       );
-      setMembers(updatedMembers); // 업데이트된 멤버 목록 설정
+      setMembers(updatedMembers);
 
-      // 업데이트된 멤버 정보를 다시 가져오기 (선택 사항, 삭제된 게스트만 업데이트가 필요하면 위의 코드만으로 충분)
       const updatedMemberList = await getAllTaxiPartyMembersApi(
         taxiParty.taxiSeq
       );
@@ -351,8 +358,8 @@ const TaxiChattingMenu = ({
                   {modalType === 'endRecruitment'
                     ? '종료하기'
                     : modalType === 'confirmRoute'
-                    ? '확정하기'
-                    : '확인'}
+                      ? '확정하기'
+                      : '확인'}
                 </button>
               </div>
             )}

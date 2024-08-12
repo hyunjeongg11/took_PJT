@@ -34,15 +34,7 @@ const HistoryCard = ({
             {status}
           </span>
         </div>
-        <div>
-          {status === '정산 진행 중' ? (
-            <button className="text-white text-xs font-bold bg-neutral-400/75 px-4 py-1.5 shadow-md rounded-full">
-              채팅
-            </button>
-          ) : (
-            <img src={nextIcon} alt="next" className="w-2 h-4" />
-          )}
-        </div>
+        
       </div>
       <div className="flex items-center">
         <img
