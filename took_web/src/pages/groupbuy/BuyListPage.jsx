@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { BuyCard } from '../../components/groupbuy/BuyCard';
-import { getAllShopApi } from '../../apis/groupBuy/shop';
 import { useUser } from '../../store/user';
 import backIcon from '../../assets/common/back.svg';
+import { nearShopApi } from '../../apis/groupBuy/shop';
 
 function BuyListPage() {
   const { seq: userSeq } = useUser();
@@ -15,8 +15,9 @@ function BuyListPage() {
   useEffect(() => {
     const fetchBuyList = async () => {
       try {
-        const params = [userSeq, 7, 9, 1, 2, 3, 4, 5, 6, 8, 10];
-        const data = await getAllShopApi(params);
+        const data = await nearShopApi(userSeq);
+        console.log('근처 유저들을 데리고 옵니다', data);
+
         if (Array.isArray(data)) {
           const updatedData = data
             .map((buy) => ({
@@ -25,6 +26,7 @@ function BuyListPage() {
             }))
             .filter((buy) => buy.status === 'OPEN'); // 'OPEN' 상태인 항목만 필터링
           setBuyList(updatedData);
+          console.log("출력1",buyList);
         } else {
           setBuyList([]); // 응답이 배열이 아닌 경우 빈 배열로 설정
         }
@@ -40,13 +42,14 @@ function BuyListPage() {
   return (
     <div className="flex flex-col pt-5 bg-white min-w-screen min-h-screen">
       <div className="flex flex-col items-center justify-center px-5 w-full">
-        <Link to='/'><img
-      src={backIcon}
-      alt="뒤로"
-      className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
-     
-    /> </Link>
-       <div className="self-center mb-3 text-2xl text-main font-extrabold">
+        <Link to="/">
+          <img
+            src={backIcon}
+            alt="뒤로"
+            className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
+          />{' '}
+        </Link>
+        <div className="self-center mb-3 text-2xl text-main font-extrabold">
           공구 <span className="font-dela">took !</span>
         </div>
         <div className="flex flex-col p-5 mt-2.5 w-full bg-neutral-50 shadow-md rounded-2xl border border-neutral-200 overflow-y-auto">
