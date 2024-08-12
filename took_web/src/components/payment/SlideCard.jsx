@@ -13,7 +13,7 @@ import { getMainAccount } from '../../apis/account/oneclick';
 import { msgToAndroid } from '../../android/message';
 import { bankNumToName } from '../../assets/payment/index.js';
 
-const SlideCard = ({ member, onClose }) => {
+const SlideCard = ({ member, onClose, onNavigate  }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [slid, setSlid] = useState(false);
   const [backgroundWidth, setBackgroundWidth] = useState(0);
@@ -50,7 +50,7 @@ const SlideCard = ({ member, onClose }) => {
         const accountSeq = mainAccount.accountSeq
         const currentUserSeq = mainAccount.userSeq
         const userSeq = member.userSeq
-        navigate('/complete', {
+        onNavigate('/complete', {
         state: { accountSeq, amount, userSeq, currentUserSeq },
         });
       } else {
@@ -61,7 +61,7 @@ const SlideCard = ({ member, onClose }) => {
         const userSeq = mainAccount.userSeq
         const numCategory = member.category
         const partySeq = member.partySeq
-        navigate('/pwd', {
+        onNavigate('/pwd', {
           state: {
             accountSeq,
             accountNum,

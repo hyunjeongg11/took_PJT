@@ -51,7 +51,9 @@ function MyTookPage() {
     setSelectedMember(member);
     setShowSlide(true);
   };
-
+  const handlePageChange = (path, state) => {
+    navigate(path, { state });
+  };
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen font-[Nanum Gothic]">
       <div className="flex items-center px-4 py-3">
@@ -80,7 +82,7 @@ function MyTookPage() {
 
       {showSlide && selectedMember && (
         <SlideCard
-          member={selectedMember}
+          member={selectedMember} onNavigate={handlePageChange}
           onClose={() => setShowSlide(false)}
         />
       )}
