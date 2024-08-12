@@ -24,12 +24,12 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
   const partySeq = member.partySeq;
   
   const handleAuthentication = () => {
-    if (window.Android) {
-      window.Android.authenticate();
-    }
     const accountSeq = tempMainAccount.accountSeq
     const accountNum = tempMainAccount.accountNum
     const bankName = tempMainAccount.bankName
+    if (window.Android) {
+      window.Android.authenticate();
+    }
     window.onAuthenticate = (result) => {
       if (result) {
         processPayment();
@@ -76,7 +76,7 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
       }
     };
     fetchMainAccount();
-  }, [tempMainAccount]);
+  }, [currentUserSeq]);
   const handleStop = (e, data) => {
     if (data.x >= 100) {
       // 동그라미가 충분히 오른쪽으로 이동했는지 확인
