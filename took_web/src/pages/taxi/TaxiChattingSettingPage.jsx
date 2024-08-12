@@ -168,7 +168,7 @@ function TaxiChattingSettingPage() {
       console.log('All API calls successful, navigating...');
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('설정 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+      // alert('설정 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
       // API 호출이 성공하든 실패하든 채팅 페이지로 이동
       navigate(`/taxi/main`);
