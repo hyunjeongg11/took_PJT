@@ -7,7 +7,8 @@ import { loginApi, getUserInfoApi } from '../apis/user.js';
 import { useToken } from '../store/token.js';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../store/user.js';
-import { msgToAndroid } from '../android/message.js';
+import { msgToAndroid, postLoginInfoToApp } from '../android/message.js';
+import Cookies from 'js-cookie';
 
 function LoginPage() {
   const [id, setId] = useState('');
@@ -29,6 +30,10 @@ function LoginPage() {
         const userInfo = await getUserInfoApi({ userSeq: response.userSeq });
         setUser(userInfo);
         setLoggedIn();
+        if (window.Android) {
+          postLoginInfoToApp(id, password);
+        }
+
         navigate('/');
       } else {
         alert('로그인 실패');

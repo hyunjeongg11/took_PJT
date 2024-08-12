@@ -1,54 +1,72 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useLocation, useNavigate } from 'react-router-dom'; // useNavigate 추가
 import BackButton from '../../components/common/BackButton';
 import CheckExpectedCost from '../../components/taxi/CheckExpectedCost';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { usePosition } from '../../store/position';
 import changeOrderIcon from '../../assets/taxi/changeOrder.png';
-import { calculateTotalExpectedCostApi, updateTaxiPartyApi, setDestinationRankApi } from '../../apis/taxi';
-
-// todo: 택시 파티 경로 조회 api 사용해서 실제 데이터와 연동 필요
-const tempData = [
-  {
-    userName: '차민주',
-    userId: 1,
-    imgNo: 5,
-    gender: '여성',
-    userDestination: '부산 강서구 녹산산단335로 7 송정삼정그린코아더시티',
-    latitude: 35.0894681,
-    longitude: 128.8535056,
-    expectedCost: 13800,
-  },
-  {
-    userName: '조현정',
-    userId: 2,
-    imgNo: 6,
-    gender: '여성',
-    userDestination: '부산 강서구 명지국제5로 170-5 명일초등학교',
-    latitude: 35.1094409,
-    longitude: 128.922555,
-    expectedCost: 11500,
-  },
-];
-
-const tempUser = {
-  userName: '차민주',
-  userId: 1,
-  gender: '여성',
-};
+import { useUser } from '../../store/user.js';
+import { getUserInfoApi } from '../../apis/user.js';
+import {
+  calculateTotalExpectedCostApi,
+  updateTaxiPartyApi,
+  setDestinationRankApi,
+  getAllTaxiPartyMembersApi,
+} from '../../apis/taxi';
 
 function TaxiChattingSettingPage() {
-  const [destinations, setDestinations] = useState(tempData);
-  const [paymentUser, setPaymentUser] = useState(tempData[0].userName);
-  const [userCount, setUserCount] = useState(1);
-  const [genderPreference, setGenderPreference] = useState('무관'); // 모집 성별
+  useParams();
+  const {
+    state: { taxiSeq, taxiParty },
+  } = useLocation();
+  const navigate = useNavigate(); // navigate 추가
+  const [destinations, setDestinations] = useState([]);
+  const [paymentUser, setPaymentUser] = useState('');
+  const [userCount, setUserCount] = useState(taxiParty.max - 1);
+  const [genderPreference, setGenderPreference] = useState(
+    taxiParty.gender === true ? '동성' : '무관'
+  );
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userInfos, setUserInfos] = useState({});
   const [draggingIndex, setDraggingIndex] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [totalExpectedCost, setTotalExpectedCost] = useState(null);
   const { latitude, longitude } = usePosition();
+  const { seq: currentUserSeq } = useUser();
 
   useEffect(() => {
-    // Handle the logic when the latitude or longitude changes
-  }, [latitude, longitude]);
+    const fetchData = async () => {
+      try {
+        // 1. 모든 택시 파티 멤버 조회
+        const members = await getAllTaxiPartyMembersApi(taxiSeq);
+        
+        // 1-1. routeRank로 정렬
+        const sortedMembers = members.sort((a, b) => a.routeRank - b.routeRank);
+        setDestinations(sortedMembers);
+
+        // 2. 현재 사용자 정보 가져오기
+        const userInfo = await getUserInfoApi({ userSeq: currentUserSeq });
+        setCurrentUser(userInfo);
+
+        // 3. 각 멤버의 정보 가져오기 (프로필 이미지 및 이름)
+        const userInfoMap = {};
+        for (const member of members) {
+          const info = await getUserInfoApi({ userSeq: member.userSeq });
+          userInfoMap[member.userSeq] = info;
+        }
+        setUserInfos(userInfoMap);
+
+        // 초기 결제자 설정
+        if (members.length > 0) {
+          setPaymentUser(taxiParty.master);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, [taxiSeq, currentUserSeq]);
 
   const onDragStart = (e, index) => {
     e.dataTransfer.effectAllowed = 'move';
@@ -68,6 +86,12 @@ function TaxiChattingSettingPage() {
   };
 
   const onDragEnd = () => {
+    // 드래그가 끝난 후 순서를 기준으로 routeRank 재설정
+    const updatedDestinations = destinations.map((dest, index) => ({
+      ...dest,
+      routeRank: index + 1, // 1부터 시작하는 순서로 설정
+    }));
+    setDestinations(updatedDestinations);
     setDraggingIndex(null);
   };
 
@@ -76,22 +100,23 @@ function TaxiChattingSettingPage() {
       const locations = [
         { lat: latitude, lon: longitude }, // 현재 위치를 첫번째로 추가
         ...destinations.map((dest) => ({
-          lat: dest.latitude,
-          lon: dest.longitude,
+          lat: dest.destiLat,
+          lon: dest.destiLon,
         })),
       ];
 
       const users = destinations.map((dest) => ({
-        userSeq: dest.userId,
-        cost: dest.expectedCost,
+        userSeq: dest.userSeq,
+        cost: dest.cost,
       }));
 
       const params = {
         locations,
         users,
       };
-
+      console.log('caculateParams: ', params);
       const result = await calculateTotalExpectedCostApi(params);
+      console.log('result: ', result);
       setTotalExpectedCost(result);
       setIsPopupOpen(true);
     } catch (error) {
@@ -104,42 +129,49 @@ function TaxiChattingSettingPage() {
   };
 
   const handleSaveSettings = async () => {
-    const masterUser = destinations.find((user) => user.userName === paymentUser);
-    if (!masterUser) {
-      console.error('Error: Payment user not found');
-      return;
-    }
-
     const genderValue = genderPreference === '동성';
-    
+
     const params = {
-      taxiSeq: 1, // Replace with actual taxiSeq
-      master: masterUser.userId,
+      taxiSeq,
+      master: paymentUser,
       max: userCount,
       gender: genderValue,
     };
 
     try {
-      await updateTaxiPartyApi(params);
-      console.log('Settings saved successfully');
+      // 1. 택시 파티 업데이트 API 호출
+      console.log('Updating taxi party with params:', params); // API 호출 전 파라미터 확인
+      const updateResponse = await updateTaxiPartyApi(params);
+      console.log('Update response:', updateResponse); // API 응답 확인
+
+      if (!updateResponse.success) {
+        throw new Error('Failed to update taxi party settings');
+      }
+
+      // 2. 목적지 순서 설정 API 호출
+      for (let i = 0; i < destinations.length; i++) {
+        const rankParams = {
+          taxiSeq,
+          destiName: destinations[i].destiName,
+          routeRank: i + 1,
+        };
+
+        const rankResponse = await setDestinationRankApi(rankParams);
+        if (!rankResponse.success) {
+          throw new Error(
+            `Failed to set rank for destination ${destinations[i].destiName}`
+          );
+        }
+      }
+
+      // 3. 모든 API 호출이 성공하면 채팅 페이지로 이동
+      console.log('All API calls successful, navigating...');
     } catch (error) {
       console.error('Error saving settings:', error);
-    }
-
-    // 목적지 순서 설정 API 호출
-    for (let i = 0; i < destinations.length; i++) {
-      const rankParams = {
-        taxiSeq: 1, // Replace with actual taxiSeq
-        destiName: destinations[i].userDestination,
-        routeRank: i + 1, // 순서는 1부터 시작
-      };
-
-      try {
-        await setDestinationRankApi(rankParams);
-        console.log(`Rank for destination ${destinations[i].userDestination} set successfully`);
-      } catch (error) {
-        console.error(`Error setting rank for destination ${destinations[i].userDestination}:`, error);
-      }
+      // alert('설정 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      // API 호출이 성공하든 실패하든 채팅 페이지로 이동
+      navigate(`/taxi/main`);
     }
   };
 
@@ -181,19 +213,23 @@ function TaxiChattingSettingPage() {
                 >
                   <div className="flex flex-col items-center w-16">
                     <img
-                      src={getProfileImagePath(item.imgNo)}
-                      alt={`${item.userName} 프로필 사진`}
+                      src={getProfileImagePath(
+                        userInfos[item.userSeq]?.imageNo || 1
+                      )}
+                      alt={`${userInfos[item.userSeq]?.userName || 'Unknown'} 프로필 사진`}
                       className="w-9 h-9 mb-1"
                     />
-                    <span className="text-xs font-bold">{item.userName}</span>
+                    <span className="text-xs font-bold">
+                      {userInfos[item.userSeq]?.userName || 'Unknown'}
+                    </span>
                   </div>
                   <span className="text-sm text-black ml-2">
-                    {item.userDestination}
+                    {item.destiName}
                   </span>
                   <img
                     src={changeOrderIcon}
                     alt="경로 순서 변경"
-                    className="w-4 h-3.5 ml-4"
+                    className="w-4 h-3.5 ml-auto"
                   />
                 </div>
                 {index < destinations.length - 1 && (
@@ -219,12 +255,12 @@ function TaxiChattingSettingPage() {
           </label>
           <select
             value={paymentUser}
-            onChange={(e) => setPaymentUser(e.target.value)}
+            onChange={(e) => setPaymentUser(parseInt(e.target.value, 10))}
             className="h-12 mt-2 bg-neutral-100 w-full rounded border-r-8 border-transparent px-4 text-sm shadow-md"
           >
             {destinations.map((item) => (
-              <option key={item.userName} value={item.userName}>
-                {item.userName}
+              <option key={item.userSeq} value={item.userSeq}>
+                {userInfos[item.userSeq]?.userName || 'Unknown'}
               </option>
             ))}
           </select>
@@ -266,7 +302,7 @@ function TaxiChattingSettingPage() {
         isOpen={isPopupOpen}
         onClose={closePopup}
         destinations={destinations}
-        tempUser={tempUser}
+        currentUser={currentUser}
         totalExpectedCost={totalExpectedCost} // 총 예상 비용 전달
       />
     </div>

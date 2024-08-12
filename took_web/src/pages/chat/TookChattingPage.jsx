@@ -164,7 +164,6 @@ const renderMessage = (item, handlePayment) => (
   </div>
 );
 
-
 function TookChattingPage() {
   const navigate = useNavigate();
   const lastDate = useRef(null);
@@ -204,7 +203,7 @@ function TookChattingPage() {
       try {
         const response = await getAlarmListApi(seq);
 
-        console.log("리스트 출력 ",response);
+        console.log('리스트 출력 ', response);
         const formattedData = response.map((alarm) => ({
           category:
             alarm.category === 4
@@ -225,7 +224,7 @@ function TookChattingPage() {
           sender: alarm.sender,
           numCategory: alarm.category,
           partySeq: alarm.partySeq,
-          status : alarm.status
+          status: alarm.status,
         }));
         console.log(formattedData);
         setTempData(formattedData);

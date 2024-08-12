@@ -95,7 +95,7 @@ function TaxiMainPage() {
             const destinations = [...new Set(taxiPath.map((path) => path.destiName))];
 
             // count와 max 비교하여 status 업데이트
-            if (party.count >= party.max + 1) {
+            if (party.count >= party.max) {
               await updateTaxiPartyStatusApi({ taxiSeq: party.taxiSeq, status: 'FILLED' });
               party.status = 'FILLED';
             }
@@ -270,7 +270,7 @@ function TaxiMainPage() {
                   />
                 </button>
                 <span className="text-xs font-semibold text-gray-700">
-                  {item.count} / {item.max + 1}
+                  {item.count} / {item.max}
                 </span>
               </div>
             </div>

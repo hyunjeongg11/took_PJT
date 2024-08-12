@@ -12,17 +12,18 @@ import {
   linkSettlementApi,
   deleteTaxiGuestApi,
   getAllTaxiPartyMembersApi,
+  deleteTaxiPartyApi,
 } from '../../apis/taxi';
 import { makePartyApi, insertAllMemberApi } from '../../apis/payment/jungsan';
+import { deleteRoomApi } from '../../apis/chat/chat';
 import { useNavigate } from 'react-router-dom';
 
 const TaxiChattingMenu = ({
   members,
-  setMembers, // 상태 업데이트를 위한 함수 (내보내기)
+  setMembers,
   taxiParty,
   taxiStatus,
   handleMenuToggle,
-  handleLeaveChatting,
 }) => {
   const { seq: currentUserSeq } = useUser();
   const [userInfos, setUserInfos] = useState({});
@@ -84,6 +85,79 @@ const TaxiChattingMenu = ({
     setShowModal(true);
   };
 
+  const handleLeaveChatting = async () => {
+    setModalType('leaveChat');
+    setModalMessageLine1('채팅방을 나가시겠어요?');
+    if (taxiParty.userSeq === currentUserSeq) {
+      setModalMessageLine2('방장이 나가면 채팅방이 없어져요');
+    } else {
+      setModalMessageLine2('');
+    }
+    setShowModal(true);
+  };
+
+  const handleModalAction = async () => {
+    try {
+      if (modalType === 'endRecruitment') {
+        await updateTaxiPartyStatusApi({
+          taxiSeq: taxiParty.taxiSeq,
+          status: 'FILLED',
+        });
+        console.log('택시 파티 상태가 FILLED로 업데이트되었습니다.');
+      } else if (modalType === 'confirmRoute') {
+        await updateTaxiPartyStatusApi({
+          taxiSeq: taxiParty.taxiSeq,
+          status: 'FILLED',
+        });
+        const partyResponse = await makePartyApi({
+          userSeq: currentUserSeq,
+          title: `taxi ${taxiParty.taxiSeq}`,
+          category: 1,
+        });
+        const { partySeq } = partyResponse;
+        await linkSettlementApi({ taxiSeq: taxiParty.taxiSeq, partySeq });
+        console.log('택시 파티와 정산이 연결되었습니다.');
+
+        const userCosts = members.map((member) => ({
+          userSeq: member.userSeq,
+          cost: member.cost,
+        }));
+
+        const insertParams = {
+          partySeq: partySeq,
+          userCosts: userCosts,
+        };
+
+        const insertResponse = await insertAllMemberApi(insertParams);
+        console.log('All members inserted with response:', insertResponse);
+      } else if (modalType === 'leaveChat') {
+        if (taxiParty.userSeq === currentUserSeq) {
+          await deleteTaxiPartyApi(taxiParty.taxiSeq);
+          await deleteRoomApi(taxiParty.roomSeq);
+          console.log('방장으로서 택시 파티와 채팅방을 삭제했습니다.');
+        } else {
+          await deleteTaxiGuestApi({
+            taxiSeq: taxiParty.taxiSeq,
+            userSeq: currentUserSeq,
+          });
+          console.log('게스트로서 택시 파티에서 나갔습니다.');
+        }
+
+        // 업데이트된 멤버 정보를 다시 가져오기 (선택 사항, 삭제된 게스트만 업데이트가 필요하면 위의 코드만으로 충분)
+        const updatedMemberList = await getAllTaxiPartyMembersApi(
+          taxiParty.taxiSeq
+        );
+        setMembers(updatedMemberList);
+
+        navigate('/'); // "/" 경로로 이동
+      }
+    } catch (error) {
+      console.error('API 호출 중 오류 발생:', error);
+    } finally {
+      setShowModal(false);
+    }
+  };
+
   // 택시 파티 멤버 삭제 핸들러
   const handleDeleteGuest = async (guestUserSeq) => {
     try {
@@ -116,49 +190,6 @@ const TaxiChattingMenu = ({
     });
   };
 
-  const handleModalAction = async () => {
-    try {
-      if (modalType === 'endRecruitment') {
-        await updateTaxiPartyStatusApi({
-          taxiSeq: taxiParty.taxiSeq,
-          status: 'FILLED',
-        });
-        console.log('택시 파티 상태가 FILLED로 업데이트되었습니다.');
-      } else if (modalType === 'confirmRoute') {
-        await updateTaxiPartyStatusApi({
-          taxiSeq: taxiParty.taxiSeq,
-          status: 'FILLED',
-        });
-        const partyResponse = await makePartyApi({
-          userSeq: currentUserSeq,
-          title: `taxi ${taxiParty.taxiSeq}`,
-          category: 1,
-        });
-        const { partySeq } = partyResponse;
-        await linkSettlementApi({ taxiSeq: taxiParty.taxiSeq, partySeq });
-        console.log('택시 파티와 정산이 연결되었습니다.');
-
-        // insertAllMemberApi 호출
-        const userCosts = members.map((member) => ({
-          userSeq: member.userSeq,
-          cost: member.cost,
-        }));
-
-        const insertParams = {
-          partySeq: partySeq,
-          userCosts: userCosts,
-        };
-
-        const insertResponse = await insertAllMemberApi(insertParams);
-        console.log('All members inserted with response:', insertResponse);
-      }
-    } catch (error) {
-      console.error('API 호출 중 오류 발생:', error);
-    } finally {
-      setShowModal(false);
-    }
-  };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-50">
       <div className="w-4/5 h-full bg-white shadow-md p-4 relative">
@@ -186,14 +217,13 @@ const TaxiChattingMenu = ({
           )}
         </ul>
 
-        {/* 모임 관리 섹션 */}
         {taxiParty.userSeq === currentUserSeq && (
           <div className="mt-6">
             <div className="mt-6 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
             <h2 className="text-base font-bold mb-4 ml-1 mt-6">모임 관리</h2>
             <div className="flex items-center justify-between mb-2 ml-1 mr-10">
               <div
-                className="flex items-center text-sm text-black cursor-pointer"
+                className="flex items_center text-sm text-black cursor-pointer"
                 onClick={handleEndRecruitment}
               >
                 <LiaUserMinusSolid className="mr-2 w-5 h-5 text-neutral-700" />
@@ -313,7 +343,11 @@ const TaxiChattingMenu = ({
                   className="px-4 py-2 bg-main text-white font-bold rounded-xl w-full"
                   onClick={handleModalAction}
                 >
-                  {modalType === 'endRecruitment' ? '종료하기' : '확정하기'}
+                  {modalType === 'endRecruitment'
+                    ? '종료하기'
+                    : modalType === 'confirmRoute'
+                    ? '확정하기'
+                    : '확인'}
                 </button>
               </div>
             )}

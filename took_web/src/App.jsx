@@ -5,6 +5,10 @@ import { usePosition } from './store/position';
 import { getUserLocation } from './android/message';
 import { saveUserPositionApi } from './apis/position/userPosition';
 import { getUserSeq } from './utils/getUserSeq';
+import { loginApi } from './apis/user';
+import { useToken } from './store/token';
+import { useUser } from './store/user';
+import { getUserInfoApi } from './apis/user';
 import {
   MainPage,
   LoginPage,
@@ -114,7 +118,7 @@ const ROUTER = createBrowserRouter([
   { path: '/taxi/request', element: <TaxiCostRequestPages /> },
   { path: '/taxi/main', element: <TaxiMainPage /> },
   { path: '/taxi/create', element: <CreateChattingPage /> },
-  { path: '/taxi/setting', element: <TaxiChattingSettingPage /> },
+  { path: '/taxi/setting/:id', element: <TaxiChattingSettingPage /> },
   { path: '/taxi/path/:id', element: <TaxiPathSettingPage /> },
   { path: '/taxi/path-list/:id', element: <CurrentPathListPage /> },
   { path: '/chat/delivery/:id/notice', element: <DeliveryNoticePage /> },
@@ -146,16 +150,41 @@ function App() {
       console.log('User sequence is not available');
     }
   };
+  const { setUserSeq, setUser, setLoggedIn } = useUser();
+  const { setAccessToken } = useToken();
 
   useEffect(() => {
+    const fetchData = async (id, pwd) => {
+      try {
+        const response = await loginApi(
+          { userId: id, password: pwd },
+          setAccessToken
+        );
+        if (response.code === 'su') {
+          setUserSeq(response.userSeq);
+          console.log(response.userSeq);
+          const userInfo = await getUserInfoApi({ userSeq: response.userSeq });
+          setUser(userInfo);
+          setLoggedIn();
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+      }
+    };
+
     getUserLocation();
     window.onLocation = (latitude, longitude) => {
       console.log('Received location:', latitude, longitude);
       msgToAndroid(
-        `Received location in onLocation:, ${latitude}, ${longitude}`
+        `Received location in onLocation: ${latitude}, ${longitude}`
       );
       savePosition({ latitude, longitude });
       setPosition({ latitude, longitude });
+    };
+
+    window.onLogin = (id, pwd) => {
+      console.log('userData', id, pwd);
+      fetchData(id, pwd);
     };
 
     window.onNotification = (notificationData) => {
@@ -167,7 +196,6 @@ function App() {
       delete window.onNotification;
     };
   }, [seq]);
-
   return <RouterProvider router={ROUTER} />;
 }
 
