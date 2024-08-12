@@ -162,14 +162,15 @@ public class ChatUserService {
                 .map(chatRoom -> {
                     ChatMessage latestMessage = chatMessageRepository.findLatestMessageByChatRoom(chatRoom);
                     LocalDateTime latestMessageTime = latestMessage != null ? latestMessage.getCreatedAt() : LocalDateTime.MIN;
+                    System.out.println("chatRoom = " + chatRoom.getRoomSeq());
+                    System.out.println("latestMessage = " + latestMessage);
+                    System.out.println("latestMessageTime = " + latestMessageTime);
                     return new ChatRoomWithLatestMessage(chatRoom, latestMessageTime);
                 })
                 .sorted(Comparator.comparing(ChatRoomWithLatestMessage::getLatestMessageTime).reversed())
                 .map(ChatRoomWithLatestMessage::getChatRoom)
                 .map(ChatRoomByUserSelectResponse::new)  // DTO 변환
                 .collect(Collectors.toList());
-
-        System.out.println(chatRoomByUserSelectResponseList);
 
         return chatRoomByUserSelectResponseList;
     }
