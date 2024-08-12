@@ -22,7 +22,7 @@ function MainPage() {
       setTimeout(() => {
         setShowModal(false);
         navigate('/login');
-      }, 500); // 시연할때 1000으로 늘려도됨!
+      }, 1000);
     }
   };
 
@@ -32,7 +32,7 @@ function MainPage() {
     <div className="flex min-h-screen items-center justify-center flex-col max-w-screen">
       <div className="flex gap-5 justify-between w-full items-center bg-white pt-10 px-7">
         <div className="flex flex-col justify-center ml-3 items-center">
-          <Link to="/payment-methods">
+          <Link to="/">
             <div className="font-dela text-main text-4xl">took</div>
             <span className="text-black font-nanum text-[11px] mt-[1px]">
               올인원 정산 플랫폼
@@ -54,7 +54,7 @@ function MainPage() {
               loading="lazy"
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/2fa2a9fc8ce9754513ab432bdb5a90489c27cbfa14306819517cd655141328fe?placeholderIfAbsent=true&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
               alt=""
-              className="object-contain shrink-0 my-auto aspect-[0.95] w-[21px]"
+              className="object-contain shrink-0 my-auto aspect-[0.95] w-[21px] mt-0.5"
               onClick={() => handleButtonClick('/chat/took')}
             />
           </Link>
@@ -102,7 +102,7 @@ function MainPage() {
             />
           </div>
           <div className="flex flex-col">
-            <div onClick={() => handleButtonClick('/account')}>
+            <div onClick={() => handleButtonClick('/payment-methods')}>
               <img
                 loading="lazy"
                 src="https://cdn.builder.io/api/v1/image/assets/TEMP/0b78b4f2a34b054ea6b200953659047054914f073223a91dba4e7707856cce89?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
