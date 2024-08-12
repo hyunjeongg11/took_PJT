@@ -90,12 +90,12 @@ const PaymentPage = () => {
     if (window.Android) {
       window.Android.authenticate();
     }
-
+    
     window.onAuthenticate = (result) => {
       if (result) {
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
-        processPayment();
+        processPayment(accountSeq);
         navigate('/complete', {
           state: { accountSeq, amount, userSeq, currentUserSeq },
         });
@@ -117,7 +117,6 @@ const PaymentPage = () => {
   const handleSendMoney = () => {
     if (selectedAccount) {
       const { accountSeq, accountNum, bankName } = selectedAccount;
-
       handleAuthentication({
         accountSeq,
         amount,
@@ -142,7 +141,7 @@ const PaymentPage = () => {
       });
     }
   };
-  const processPayment = async () => {
+  const processPayment = async (accountSeq) => {
     const requestData = {
       userSeq: currentUserSeq,
       partySeq,

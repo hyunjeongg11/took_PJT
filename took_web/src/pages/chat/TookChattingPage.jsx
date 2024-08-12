@@ -148,7 +148,7 @@ const renderMessage = (item, handlePayment) => (
             </div>
             {item.status === false && (
               <button
-                onClick={() => handlePayment(item.amount, item.sender)}
+                onClick={() => handlePayment(item.amount, item.sender, item.numCategory, item.partySeq)}
                 className="mt-3 py-1.5 px-10 w-full bg-neutral-100 bg-opacity-80 text-neutral-800 text-sm font-bold rounded-xl mx-auto"
               >
                 송금하기
