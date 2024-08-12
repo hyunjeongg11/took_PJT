@@ -163,7 +163,6 @@ public class ChatUserService {
                     ChatMessage latestMessage = chatMessageRepository.findLatestMessageByChatRoom(chatRoom);
                     LocalDateTime latestMessageTime = latestMessage != null ? latestMessage.getCreatedAt() : LocalDateTime.MIN;
                     System.out.println("chatRoom = " + chatRoom.getRoomSeq());
-                    System.out.println("latestMessage = " + latestMessage);
                     System.out.println("latestMessageTime = " + latestMessageTime);
                     return new ChatRoomWithLatestMessage(chatRoom, latestMessageTime);
                 })
