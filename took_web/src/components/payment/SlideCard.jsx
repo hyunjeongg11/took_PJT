@@ -10,6 +10,8 @@ import {
 } from '../../apis/payment/jungsan';
 import { useUser } from '../../store/user';
 import { getMainAccount } from '../../apis/account/oneclick';
+import { msgToAndroid } from '../../android/message';
+import { bankNumToName } from '../../assets/payment/index.js';
 
 const SlideCard = ({ member, onClose }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -17,6 +19,57 @@ const SlideCard = ({ member, onClose }) => {
   const [backgroundWidth, setBackgroundWidth] = useState(0);
   const navigate = useNavigate();
   const { seq } = useUser();
+  const [mainAccount, setMainAccount] = useState(null);
+  const fetchMainAccount = async () => {
+    try {
+      const mainAccountResponse = await getMainAccount(seq);
+      const bankName = bankNumToName[mainAccountResponse.bankNum];
+      const mainAccount = {
+        ...mainAccountResponse,
+        bankName: bankName
+          ? bankName.length === 2
+            ? `${bankName}은행`
+            : bankName
+          : '',
+      };
+      setMainAccount(mainAccount);
+    } catch (error) {
+      console.error('Error fetching main account:', error);
+    }
+  };
+  const handleAuthentication = () => {
+    if (window.Android) {
+      window.Android.authenticate();
+    }
+    
+    window.onAuthenticate = (result) => {
+      if (result) {
+        alert('생체 인증 성공');
+        msgToAndroid('생체 인증 성공');
+        processPayment();
+       
+      } else {
+        const accountSeq = mainAccount.accountSeq
+        const accountNum = mainAccount.accountNum
+        const bankName = mainAccount.bankName
+        const amount = member.cost
+        const userSeq = mainAccount.userSeq
+        const numCategory = member.category
+        const partySeq = member.partySeq
+        navigate('/pwd', {
+          state: {
+            accountSeq,
+            accountNum,
+            bankName,
+            amount,
+            userSeq,
+            numCategory,
+            partySeq,
+          },
+        });
+      }
+    };
+  };
   useEffect(() => {
     setBackgroundWidth(position.x + 32); // 배경이 좀 더 빠르게 업데이트되도록 설정
   }, [position]);
@@ -27,7 +80,8 @@ const SlideCard = ({ member, onClose }) => {
       setSlid(true);
       setTimeout(() => {
         // 실제 송금 기능을 여기에 추가하면 됩니다.
-        processPayment();
+      fetchMainAccount();
+      handleAuthentication();
       }, 1000);
     } else {
       setPosition({ x: 0, y: 0 }); // 동그라미를 원래 위치로 되돌림
@@ -48,6 +102,13 @@ const SlideCard = ({ member, onClose }) => {
         await deliveryGroupPayApi(requestData);
       }
       onClose();
+      const amount = member.cost;
+      const accountSeq = mainAccount.accountSeq
+      const currentUserSeq = mainAccount.userSeq
+      const userSeq = member.userSeq
+      navigate('/complete', {
+        state: { accountSeq, amount, userSeq, currentUserSeq },
+      });
     } catch (error) {
       console.error('결제 처리 중 오류 발생:', error);
       alert('결제 처리 중 오류가 발생했습니다.');
