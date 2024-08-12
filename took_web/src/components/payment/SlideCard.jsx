@@ -32,9 +32,9 @@ const SlideCard = ({ member, onClose, onNavigate  }) => {
     const bankName = tempMainAccount.bankName
     window.onAuthenticate = (result) => {
       if (result) {
+        processPayment();
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
-        processPayment();
         onClose();
         onNavigate('/complete', 
         { accountSeq, amount, userSeq, currentUserSeq },
