@@ -47,6 +47,7 @@ const SlideCard = ({ member, onClose }) => {
       if (result) {
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
+        msgToAndroid("test");
         processPayment();
         const amount = member.cost;
         const accountSeq = mainAccount.accountSeq
