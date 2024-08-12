@@ -42,17 +42,24 @@ const SlideCard = ({ member, onClose }) => {
       window.Android.authenticate();
     }
     
+    
     window.onAuthenticate = (result) => {
       if (result) {
         alert('생체 인증 성공');
         msgToAndroid('생체 인증 성공');
         processPayment();
-       
+        const amount = member.cost;
+        const accountSeq = mainAccount.accountSeq
+        const currentUserSeq = mainAccount.userSeq
+        const userSeq = member.userSeq
+        navigate('/complete', {
+        state: { accountSeq, amount, userSeq, currentUserSeq },
+        });
       } else {
+        const amount = member.cost;
         const accountSeq = mainAccount.accountSeq
         const accountNum = mainAccount.accountNum
         const bankName = mainAccount.bankName
-        const amount = member.cost
         const userSeq = mainAccount.userSeq
         const numCategory = member.category
         const partySeq = member.partySeq
@@ -101,14 +108,8 @@ const SlideCard = ({ member, onClose }) => {
       } else if (member.category === 1 || member.category === 3) {
         await deliveryGroupPayApi(requestData);
       }
+      
       onClose();
-      const amount = member.cost;
-      const accountSeq = mainAccount.accountSeq
-      const currentUserSeq = mainAccount.userSeq
-      const userSeq = member.userSeq
-      navigate('/complete', {
-        state: { accountSeq, amount, userSeq, currentUserSeq },
-      });
     } catch (error) {
       console.error('결제 처리 중 오류 발생:', error);
       alert('결제 처리 중 오류가 발생했습니다.');
