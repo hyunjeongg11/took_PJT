@@ -154,7 +154,7 @@ function TaxiMainPage() {
       // 4. 다른 파티에 참여 중인지 확인
       const userStatus = await isUserJoinedTaxiPartyApi(userSeq);
 
-      if (userStatus.isJoined) {
+      if (userStatus) {
         setModalMessage('이미 다른 택시 took에 참여중입니다.');
         return;
       }
@@ -196,7 +196,7 @@ function TaxiMainPage() {
   });
 
   return (
-    <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main mb-12">
+    <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main mb-16">
       <div className="bg-main py-4">
         <div className="flex items-center px-4 relative mb-4 mt-3">
           <BackButton />
