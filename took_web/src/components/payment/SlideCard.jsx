@@ -11,6 +11,7 @@ import { useUser } from '../../store/user';
 import { getMainAccount } from '../../apis/account/oneclick';
 import { msgToAndroid } from '../../android/message';
 import { bankNumToName } from '../../assets/payment/index.js';
+import { BiRepost } from 'react-icons/bi';
 
 const SlideCard = ({ member, onClose, onNavigate  }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
