@@ -47,7 +47,7 @@ const UserListPage = () => {
       .filter((user) => user.userSeq !== seq) //나와 같은 거는 안불러오게
       .map((user) => ({
         ...user,
-        seleced: false,
+        selected: false,
         name: user.userName,
         img_no: user.imageNo,
       }));
