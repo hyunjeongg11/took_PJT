@@ -177,7 +177,7 @@ function SignupPage() {
           phoneNumber: removeHyphens(phoneNumber),
           birth,
         });
-        alert('회원가입이 완료되었습니다.');
+        alert('회원가입이 완료되었습니다. 계좌를 등록해주세요.');
         msgToAndroid('회원가입이 완료되었습니다. 계좌를 등록해주세요.');
         navigate('/login');
       } catch (error) {
