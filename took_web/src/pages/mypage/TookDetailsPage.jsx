@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import BackButton from '../../components/common/BackButton';
+import { formatNumber } from '../../utils/format';
 import { useParams } from 'react-router-dom';
 import { FaBell } from 'react-icons/fa';
 import completeIcon from '../../assets/payment/complete.png'; // 정산 완료 아이콘 경로
@@ -70,7 +71,7 @@ function TookDetailsPage() {
             partySeq: response.partyDetailList[0].party.partySeq,
             title: response.partyDetailList[0].party.title,
             category: response.partyDetailList[0].party.category,
-            cost: response.partyDetailList[0].party.cost,
+            cost: response.partyDetailList[0].party.cost, // 실결제 금액
             status: response.partyDetailList[0].party.status
               ? '완료'
               : '미완료',
@@ -86,7 +87,7 @@ function TookDetailsPage() {
             memberSeq: member.memberSeq,
             name: member.user.userName,
             imageNo: member.user.imageNo,
-            orderAmount: member.cost,
+            orderAmount: member.cost, // 택시일 경우 이게 가결제 금액
             amount: member.cost + (party.deliveryTip || 0) / party.totalMember,
             status: member.leader || member.status ? '완료' : '미완료',
             isLeader: member.leader,
@@ -172,7 +173,23 @@ function TookDetailsPage() {
               </span>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <div>
+            <div className="flex text-sm justify-between mt-2 ml-1">
+              선결제금액{' '}
+              <span className="ml-2 text-black"> 
+                {/* todo: 파티 돌게 */}
+                {formatNumber(party.cost)} 원
+              </span>
+            </div>
+            <div className="flex text-sm justify-between mt-2 ml-1 mb-4">
+              실결제금액{' '}
+              <span className="ml-2 text-black">
+                {formatNumber(user.orderAmount)} 원
+              </span>
+            </div>
+          </div>
+        )}
         {index < users.length - 1 && (
           <div className="border-b border-dashed border-gray-300 my-2"></div>
         )}

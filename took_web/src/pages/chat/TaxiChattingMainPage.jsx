@@ -321,7 +321,7 @@ function TaxiChattingMainPage() {
 
   useEffect(() => {
     if (!taxiSeq || !userSeq || !roomSeq) return;
-  
+
     const fetchTaxiPartyData = async () => {
       try {
         const [taxiPartyData, membersData, chatUsersData, messagesData] =
@@ -335,18 +335,12 @@ function TaxiChattingMainPage() {
             }),
           ]);
 
-        // 데이터 확인용
-        console.log('Taxi Party Data:', taxiPartyData);
-        console.log('Members Data:', membersData);
-        console.log('Chat Users Data:', chatUsersData);
-        console.log('Messages Data:', messagesData);
-        
         setTaxiParty(taxiPartyData);
-        setTaxiStatus(taxiPartyData.status);
+        setTaxiStatus(taxiPartyData.status); // 상태 설정
         setMembers(membersData);
         setChatUsers(chatUsersData);
         setMessages(messagesData);
-  
+
         // userSeq와 일치하는 guestSeq 찾기
         const member = membersData.find((member) => member.userSeq === userSeq);
         if (member) {
@@ -356,7 +350,7 @@ function TaxiChattingMainPage() {
         console.error('데이터를 불러오는 중 오류 발생:', error);
       }
     };
-  
+
     fetchTaxiPartyData();
   }, [taxiSeq, userSeq, roomSeq]);
 
@@ -406,7 +400,6 @@ function TaxiChattingMainPage() {
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
           {chatRoom?.roomTitle || members[0]?.destiName || '채팅방'}
         </div>
-
         <FaBars className="mt-2.5" onClick={handleMenuToggle} />
       </div>
 
@@ -416,6 +409,7 @@ function TaxiChattingMainPage() {
           setMembers={setMembers}
           taxiParty={taxiParty}
           taxiStatus={taxiStatus}
+          setTaxiStatus={setTaxiStatus} // 상태 변경 함수를 전달
           handleMenuToggle={handleMenuToggle}
           handleKickMember={handleKickMember}
           handleLeaveChatting={handleLeaveChatting}
