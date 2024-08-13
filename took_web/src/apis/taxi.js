@@ -43,7 +43,8 @@ export const createTaxiPartyApi = async (params) => {
 // 요청
 /* 
 {
-    "userSeqs": ["long"] // 사용자 번호 리스트
+  "lat": 37.123456,
+  "lon": 127.123456
 }
 */
 // 응답
