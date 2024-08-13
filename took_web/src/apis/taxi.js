@@ -575,3 +575,29 @@ export const getSeletByRoomApi = async (roomSeq) => {
     return handleApiError(error);
   }
 };
+
+// 택시 정산 실결제
+// 요청 Body
+// {
+//   "partySeq": 123,
+//   "cost": 20000,
+//   "users": [
+//     {
+//       "userSeq": 456,
+//       "fakeCost": 5000
+//     }
+//   ]
+// }
+// 응답 Body
+// {
+//   "code": "string",
+//   "message": "string"
+// }
+export const finalizeTaxiSettlementApi = async (params) => {
+  try {
+    const response = await request.post('/api/pay/final-taxi-party', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};

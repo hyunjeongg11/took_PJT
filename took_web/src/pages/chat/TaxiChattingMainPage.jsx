@@ -243,6 +243,7 @@ function TaxiChattingMainPage() {
     navigate(`/taxi/path-list/${taxiSeq}`, {
       state: {
         members: members,
+        taxiParty: taxiParty,
       },
     });
   };
@@ -373,16 +374,6 @@ function TaxiChattingMainPage() {
       container.clientHeight + 1;
     setShowScrollButton(!isAtBottom);
   }, [messages]);
-
-  useEffect(() => {
-    if (taxiParty && taxiParty.count === taxiParty.max) {
-      const updateStatus = async () => {
-        await updateTaxiPartyStatusApi({ taxiSeq: taxiParty.taxiSeq });
-        setTaxiStatus('FILLED');
-      };
-      updateStatus();
-    }
-  }, [taxiParty]);
 
   useEffect(() => {
     const handleKeyboardShow = () => {
