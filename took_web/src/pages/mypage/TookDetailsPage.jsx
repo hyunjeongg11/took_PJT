@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import BackButton from '../../components/common/BackButton';
 import { useParams } from 'react-router-dom';
+import { FaBell } from 'react-icons/fa';
 import completeIcon from '../../assets/payment/complete.png'; // 정산 완료 아이콘 경로
 import incompleteIcon from '../../assets/payment/incomplete.png'; // 정산 미완료 아이콘 경로
 import deliveryIcon from '../../assets/payment/deliveryTook.png'; // 배달 took 아이콘 경로
@@ -10,6 +11,7 @@ import { partyDetailApi } from '../../apis/payment/jungsan';
 import { useUser } from '../../store/user';
 import payIcon from '../../assets/payment/payTook.png';
 import buyIcon from '../../assets/payment/buyTook.png';
+import RequestCard from '../../components/payment/RequestCard'; // RequestCard 컴포넌트 추가
 
 const categoryMap = {
   1: '배달',
@@ -30,6 +32,7 @@ const getProfileImagePath = (imgNo) => {
   });
   return profileImages[`../../assets/profile/img${imgNo}.png`]?.default || '';
 };
+
 const formatDateTime = (dateString) => {
   const date = new Date(dateString);
 
@@ -47,11 +50,17 @@ const formatDateTime = (dateString) => {
 
   return `${formattedDate} ${formattedTime}`;
 };
+
 function TookDetailsPage() {
   const { id } = useParams();
   const { seq } = useUser();
-  const [users, setUser] = useState([]);
+  const [users, setUsers] = useState([]);
   const [party, setParty] = useState(null);
+  const [isLeader, setIsLeader] = useState(false);
+  const [popupUserName, setPopupUserName] = useState(null); // 팝업용 상태 추가
+  const [popupMember, setPopupMember] = useState(null); // 팝업용 멤버 상태 추가
+  const [senderName, setSenderName] = useState('');
+
   useEffect(() => {
     const fetchPartys = async () => {
       try {
@@ -72,31 +81,38 @@ function TookDetailsPage() {
             deliveryTip: response.partyDetailList[0].party.deliveryTip,
           };
           setParty(party);
+
           const partyList = response.partyDetailList.map((member) => ({
             memberSeq: member.memberSeq,
             name: member.user.userName,
             imageNo: member.user.imageNo,
             orderAmount: member.cost,
-            amount: member.cost + party.deliveryTip / party.totalMember,
-            status: member.leader || member.status ? '완료' : '미완료', // status 매핑
+            amount: member.cost + (party.deliveryTip || 0) / party.totalMember,
+            status: member.leader || member.status ? '완료' : '미완료',
+            isLeader: member.leader,
+            isCompleted: member.status,
+            userSeq: member.user.userSeq,
             createdAt: member.createdAt,
-            fakeCost: member.fakeCost,
-            restCost: member.restCost,
-            deliveryTip: party.deliveryTip / party.totalMember,
-            isMe: member.user.userSeq == seq ? true : false,
+            isMe: member.user.userSeq === seq,
           }));
-          setUser(partyList);
+          setUsers(partyList);
+
+          const currentUser = partyList.find((user) => user.isMe);
+          setSenderName(currentUser?.name || '');
+          setIsLeader(currentUser?.isLeader || false);
         }
       } catch (error) {
         console.error('계좌 정보를 불러오는데 실패했습니다:', error);
       }
     };
+
     fetchPartys();
-  }, []);
+  }, [id, seq]);
 
   if (!party) {
-    return <div>Loading...</div>; // 파티 정보가 로드되기 전까지 로딩 화면 표시
+    return <div>Loading...</div>;
   }
+
   const type = categoryMap[party.category];
   const date = formatDateTime(party.createdAt);
 
@@ -116,11 +132,25 @@ function TookDetailsPage() {
               {user.isMe && (
                 <img src={isMeIcon} alt="본인" className="ml-2 w-9.5 h-5" />
               )}
+              {party.category === 4 &&
+                !user.isLeader &&
+                !user.isCompleted &&
+                isLeader && (
+                  <FaBell
+                    className="ml-2 text-yellow-400 cursor-pointer"
+                    onClick={() => {
+                      setPopupUserName(user.name);
+                      setPopupMember(user);
+                    }}
+                  />
+                )}
             </div>
             <div className="text-right">
               <span>{user.amount.toLocaleString()}원</span>
               <div
-                className={`text-sm ${isCompleted ? 'text-gray-500' : 'text-[#DD5555]'}`}
+                className={`text-sm ${
+                  isCompleted ? 'text-gray-500' : 'text-[#DD5555]'
+                }`}
               >
                 {user.status}
               </div>
@@ -138,7 +168,7 @@ function TookDetailsPage() {
             <div className="flex justify-between">
               <span>배달팁</span>
               <span className="font-normal">
-                {user.deliveryTip.toLocaleString()}원
+                {(party.deliveryTip / party.totalMember).toLocaleString()}원
               </span>
             </div>
           </div>
@@ -181,7 +211,7 @@ function TookDetailsPage() {
             </div>
             <div className="ml-auto">
               <img
-                src={party.status == '미완료' ? incompleteIcon : completeIcon}
+                src={party.status === '미완료' ? incompleteIcon : completeIcon}
                 alt="정산 상태"
                 className="w-17 h-16"
               />
@@ -191,6 +221,18 @@ function TookDetailsPage() {
           {users.map((user, index) => renderUserDetails(user, index))}
         </div>
       </div>
+
+      {popupUserName && popupMember && (
+        <RequestCard
+          userName={popupUserName}
+          onClose={() => setPopupUserName(null)}
+          member={popupMember}
+          sender={seq}
+          senderName={senderName}
+          partySeq={party.partySeq}
+          category={party.category} // 카테고리 값 설정 (1(배달), 2(택시), 3(공구), 4(정산))
+        />
+      )}
     </div>
   );
 }

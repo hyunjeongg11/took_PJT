@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { sendReminderNotification } from '../../apis/alarm/sendAlarm';
 
-function RequestCard({ userName, onClose, member, sender, senderName, partySeq, category }) {
+function RequestCard({
+  userName,
+  onClose,
+  member,
+  sender,
+  senderName,
+  partySeq,
+  category,
+}) {
   const [requestSent, setRequestSent] = useState(false);
 
   const getCategoryTitle = (category) => {
@@ -19,12 +27,30 @@ function RequestCard({ userName, onClose, member, sender, senderName, partySeq, 
     }
   };
 
+  const getBodyMessage = () => {
+    if (category === 2) {
+      return `${senderName}님에게 ${Math.abs(member.cost - member.real_cost)}원을 송금해주세요.`;
+    } else if (category === 4) {
+      return `${senderName}님에게 ${member.amount.toLocaleString()}원을 송금해주세요.`;
+    }
+    return '';
+  };
+
+  const getCost = () => {
+    if (category === 2) {
+      return member.real_cost - member.cost;
+    } else if (category === 4) {
+      return member.amount;
+    }
+    return 0;
+  };
+
   const handleRequest = async () => {
     const params = {
       title: `${getCategoryTitle(category)} took 정산 요청이 왔어요!`,
-      body: `${senderName}님에게 ${Math.abs(member.cost - member.real_cost)}원을 송금해주세요.`,
+      body: getBodyMessage(),
       sender: sender,
-      userSeq: member.user_seq,
+      userSeq: member.userSeq,
       partySeq: partySeq,
       category: category,
       url1: '/path/to/first/url', // 적절한 URL 경로 설정
@@ -34,7 +60,7 @@ function RequestCard({ userName, onClose, member, sender, senderName, partySeq, 
       differenceCost: member.real_cost - member.cost,
       deliveryCost: 0, // 배달비가 있다면 설정
       orderCost: 0,
-      cost: member.real_cost - member.cost,
+      cost: getCost(),
     };
 
     try {
