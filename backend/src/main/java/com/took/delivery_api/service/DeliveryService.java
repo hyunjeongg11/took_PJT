@@ -104,6 +104,7 @@ public class DeliveryService {
     @Transactional
     public List<DeliverySelectResponse> getList(DeliveryListSelectRequest request) {
         List<Delivery> deliveryList = deliveryRepository.findAll();
+        System.out.println("요청 주소: " + request.getLat() + ", " + request.getLon());
         return deliveryList.stream()
                 .map(delivery -> {
                     double distance = calculateDistance(request.getLat(), request.getLon(), delivery.getPickupLat(), delivery.getPickupLon());

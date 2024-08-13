@@ -338,7 +338,7 @@ public class PartyServiceImpl implements PartyService {
         PartyEntity party = partyRepository.findById(requestBody.getPartySeq()).orElseThrow();
         UserEntity user = userRepository.findById(requestBody.getUserSeq()).orElseThrow();
         MemberEntity member = memberRepository.findByPartyAndUser(party, user);
-        
+
 
         //빼주기 전에 돈 있는 없는지 검사
         AccountEntity account = accountRepository.findById(requestBody.getAccountSeq()).orElseThrow();
