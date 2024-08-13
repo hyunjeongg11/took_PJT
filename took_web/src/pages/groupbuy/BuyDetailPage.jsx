@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import backIcon from '../../assets/common/back.svg';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
+import { modifyShopStatusApi } from '../../apis/groupBuy/shop';
 import { TbPencil } from 'react-icons/tb';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -150,6 +151,7 @@ const BuyDetailPage = () => {
         console.log('들어가기전 마지막 출력', chatRoom);
         console.log('들어갈 방 번호', shopData.roomSeq);
         navigate(`/chat/buy/${shopData.roomSeq}`, { state: { chatRoom } });
+        
       } else {
         console.error('Failed to join the group buy');
       }
@@ -157,6 +159,10 @@ const BuyDetailPage = () => {
       console.error('API call error:', error);
     }
   };
+
+  const handleChatRedirect = () => {
+    navigate(`/chat/buy/${shopData.roomSeq}`, { state: { chatRoom } });
+  }
 
   const handleDelete = async () => {
     try {
@@ -270,6 +276,13 @@ const BuyDetailPage = () => {
           </Link>
         </div>
 
+        {!isParticipant && ( <button
+            className="bg-main px-12 py-3 mt-6 w-full shadow-sm font-bold text-white rounded-2xl"
+            onClick={handleChatRedirect}
+          >
+            채팅방 입장
+          </button>)}
+
         {shopData.userSeq !== userSeq && isParticipant && (
           <div className="flex flex-col items-center pt-3 pb-1 mt-4 bg-main rounded-2xl shadow-md">
             <div className="flex flex-col px-16 text-xs font-semibold text-white">
@@ -301,7 +314,7 @@ const BuyDetailPage = () => {
         {shopData.userSeq === userSeq && (
           <button
             onClick={handleEndRecruitment}
-            className="bg-main px-12 py-3 mb-8 mt-6 w-full shadow-sm font-bold text-white rounded-2xl"
+            className="bg-red-500 px-12 py-3 mb-8 mt-6 w-full shadow-sm font-bold text-white rounded-2xl"
           >
             모집 종료하기
           </button>

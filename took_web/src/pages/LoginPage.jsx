@@ -29,9 +29,11 @@ function LoginPage() {
         console.log(response.userSeq);
         const userInfo = await getUserInfoApi({ userSeq: response.userSeq });
         setUser(userInfo);
+        const userSeq = response.userSeq;
+        const jwt = response.accessToken;
         setLoggedIn();
         if (window.Android) {
-          postLoginInfoToApp(id, password, response.userSeq);
+          postLoginInfoToApp(userSeq, jwt, id, password);
         }
 
         navigate('/');

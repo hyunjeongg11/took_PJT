@@ -23,6 +23,8 @@ const CreateChattingPage = () => {
   const { seq: userSeq } = useUser();
   const { latitude, longitude } = usePosition();
   const [connected, setConnected] = useState(false);
+  const [destinationLat, setDestinationLat] = useState(null);
+  const [destinationLon, setDestinationLon] = useState(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -59,7 +61,6 @@ const CreateChattingPage = () => {
       );
     } else {
       console.error('WebSocket 연결이 아직 준비되지 않았습니다.');
-      // 재시도 로직을 추가하거나 사용자에게 알림
     }
   };
 
@@ -90,8 +91,8 @@ const CreateChattingPage = () => {
         max: parseInt(userCount, 10),
         roomSeq,
         userSeq,
-        latitude,
-        longitude,
+        lat: parseFloat(latitude),
+        lon: parseFloat(longitude),
       };
       const taxiResponse = await createTaxiPartyApi(taxiParams);
       const { taxiSeq } = taxiResponse;
@@ -100,8 +101,8 @@ const CreateChattingPage = () => {
       const costParams = {
         startLat: latitude,
         startLon: longitude,
-        endLat: 35, // todo : 임시로 35로 설정
-        endLon: 128, // todo : 임시로 128로 설정
+        endLat: parseFloat(destinationLat), // todo : 검색해온 값 넣기
+        endLon: parseFloat(destinationLon), // todo : 검색해온 값 넣기
       };
 
       const costResponse = await calculateIndividualExpectedCostApi(costParams);
@@ -112,8 +113,8 @@ const CreateChattingPage = () => {
         taxiSeq,
         userSeq,
         destiName: destination,
-        destiLat: 35, // 임시로 35로 설정
-        destiLon: 128, // 임시로 128로 설정
+        destiLat: parseFloat(destinationLat), // todo : 검색해온 값 넣기
+        destiLon: parseFloat(destinationLon), // todo : 검색해온 값 넣기
         cost,
         routeRank: 1,
       };
@@ -148,8 +149,8 @@ const CreateChattingPage = () => {
           value={destination}
           onChange={handleChange}
           placeholder="목적지를 입력하세요"
-          setLatitude={() => {}}
-          setLongitude={() => {}}
+          setLatitude={setDestinationLat}
+          setLongitude={setDestinationLon}
         />
         <div>
           <label className="block text-base font-bold text-gray-700">

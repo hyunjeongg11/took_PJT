@@ -104,7 +104,14 @@ function TaxiMainPage() {
         const userSeqs = nearbyUsers.map((user) => user.userSeq);
         userSeqs.push(userSeq);
 
-        const taxiPartyList = await getTaxiPartyListApi({ userSeqs });
+        const listParams = {
+          lat: parseFloat(latitude),
+          lon: parseFloat(longitude),
+        };
+        console.log('현재 lat:', parseFloat(latitude));
+        console.log('현재 lon:', parseFloat(longitude));
+
+        const taxiPartyList = await getTaxiPartyListApi(listParams);
 
         const taxiPartiesData = await Promise.all(
           taxiPartyList.map(async (party) => {

@@ -87,37 +87,14 @@ function ChattingMainPage() {
   const fetchRoomMessages = async () => {
     try {
       const response = await getChatRoomMessageApi({
-        roomSeq: roomSeq,
-        userSeq: userSeq,
+        roomSeq: id,
+        userSeq: seq,
       });
-  
-      // 각 메시지에 대해 추가 유저 정보를 가져옴
-      const messagesWithUserInfo = await Promise.all(
-        response.map(async (msg) => {
-          try {
-            const userInfo = await getUserInfoApi({ userSeq: msg.userSeq });
-            return {
-              ...msg,
-              userName: userInfo.userName,
-              imgNo: userInfo.imgNo,  // imgNo 추가
-            };
-          } catch (error) {
-            console.error('Error fetching user info:', error);
-            return {
-              ...msg,
-              userName: 'Unknown',
-              imgNo: 1,  // 기본 프로필 이미지 사용
-            };
-          }
-        })
-      );
-  
-      setMessages(messagesWithUserInfo);
+      setMessages(response);
     } catch (error) {
-      console.error('메시지를 불러오는 중 오류 발생:', error);
+      console.error('Error fetching messages:', error);
     }
   };
-  
 
   const loadUsers = async () => {
     try {
@@ -223,11 +200,7 @@ function ChattingMainPage() {
   };
 
   useEffect(() => {
-    const container = scrollContainerRef.current;
-    const isAtBottom =
-      container.scrollHeight - container.scrollTop <=
-      container.clientHeight + 1;
-    setShowScrollButton(!isAtBottom);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   useEffect(() => {

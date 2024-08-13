@@ -22,12 +22,14 @@ const DeliveryListPage = () => {
   const seq = getUserSeq();
 
   useEffect(() => {
-    const fetchDeliveryList = async () => {
+    console.log('selectedOption를 출력합니다.', selectedOption);
+
+    const fetchDeliveryList = async (latitude, longitude) => {
       try {
-        const params =
-          selectedOption === '주소지'
-            ? { lat, lon }
-            : { lat: latitude, lon: longitude };
+        const params = { lat: latitude, lon: longitude };
+
+        console.log('lat', latitude);
+        console.log('lon', longitude);
 
         const response = await getDeliveryListApi(params);
         const openList = response.filter((item) => item.status === 'OPEN');
@@ -48,15 +50,30 @@ const DeliveryListPage = () => {
         if (response) {
           setLat(response.lat);
           setLon(response.lon);
+
+          console.log('2. 유저의 위치 정보를 출력합니다', response.lat);
+          console.log('2. 유저의 위치 정보를 출력합니다', response.lon);
+          return { lat: response.lat, lon: response.lon };
         }
-        console.log(response);
       } catch (e) {
         console.error('저장된 주소를 가져오는 중 오류가 발생했습니다:', e);
       }
     };
-    fetchStoredAddress();
-    fetchDeliveryList();
-  }, [selectedOption]);
+
+    const fetchData = async () => {
+      if (selectedOption === '주소지') {
+        console.log('1. 먼저 위치 정보를 불러옵니다');
+        const userPosition = await fetchStoredAddress();
+        if (userPosition) {
+          fetchDeliveryList(userPosition.lat, userPosition.lon);
+        }
+      } else {
+        fetchDeliveryList(latitude, longitude);
+      }
+    };
+
+    fetchData();
+  }, [selectedOption, latitude, longitude, seq]);
 
   const handleCreateDelivery = () => {
     navigate('/delivery/create');

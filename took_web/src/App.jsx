@@ -154,19 +154,21 @@ function App() {
   const { setAccessToken } = useToken();
 
   useEffect(() => {
-    const fetchData = async (id, pwd) => {
+    const fetchData = async (userSeq, jwt, id, pwd) => {
       try {
         const response = await loginApi(
           { userId: id, password: pwd },
           setAccessToken
         );
-        if (response.code === 'su') {
+
+        if (response.code == 'su') {
           setUserSeq(response.userSeq);
-          console.log(response.userSeq);
-          const userInfo = await getUserInfoApi({ userSeq: response.userSeq });
-          setUser(userInfo);
-          setLoggedIn();
         }
+
+        setAccessToken(jwt);
+        setLoggedIn();
+        const userInfo = await getUserInfoApi({ userSeq });
+        setUser(userInfo);
       } catch (error) {
         console.error('Login error:', error);
       }
@@ -182,9 +184,9 @@ function App() {
       setPosition({ latitude, longitude });
     };
 
-    window.onLogin = (id, pwd) => {
-      console.log('userData', id, pwd);
-      fetchData(id, pwd);
+    window.onLogin = (userSeq, jwt, id, pwd) => {
+      console.log('userData', userSeq, jwt);
+      fetchData(userSeq, jwt, id, pwd);
     };
 
     window.onNotification = (notificationData) => {

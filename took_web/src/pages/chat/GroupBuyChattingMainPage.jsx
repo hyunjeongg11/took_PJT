@@ -125,11 +125,7 @@ function GroupBuyChattingMainPage() {
   };
 
   useEffect(() => {
-    const container = scrollContainerRef.current;
-    const isAtBottom =
-      container.scrollHeight - container.scrollTop <=
-      container.clientHeight + 1;
-    setShowScrollButton(!isAtBottom);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   useEffect(() => {
@@ -389,24 +385,24 @@ function GroupBuyChattingMainPage() {
           <div className="flex flex-col items-center">
             <div
               className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center"
-              onClick={() => navigate(`/groupbuy/total/${tempData.shopSeq}`)}
+              onClick={() => navigate(`/groupbuy/total/${shopInfo.shopSeq}`)}
             >
               <AiOutlineInfoCircle className="text-white w-6 h-6" />
             </div>
             <span className="mt-1 text-[11px] text-gray-500">주문 정보</span>
           </div>
 
-          {isLeader && (
+         
             <div className="flex flex-col items-center mb-4">
               <div
                 className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
-                onClick={() => navigate(`/groupbuy/order/${tempData.shopSeq}`)}
+                onClick={() => navigate(`/groupbuy/order/${shopInfo.shopSeq}`)}
               >
                 <BsTruck className="text-white w-7 h-7" />
               </div>
               <span className="mt-1 text-[11px] text-gray-500">배송 정보</span>
             </div>
-          )}
+         
           <div className="flex flex-col items-center mb-4">
             <div
               className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
@@ -430,10 +426,10 @@ function GroupBuyChattingMainPage() {
       )}
 
       {currentModal === 'money' && (
-        <MoneyModal onClose={closeModal} tempMember={tempMember} />
+        <MoneyModal onClose={closeModal} tempMember={users} />
       )}
       {currentModal === 'calculator' && (
-        <CalculatorModal onClose={closeModal} tempMember={tempMember} />
+        <CalculatorModal onClose={closeModal} tempMember={users} />
       )}
 
       {showParticipantList && (
@@ -446,9 +442,9 @@ function GroupBuyChattingMainPage() {
       )}
       {showArrivalModal && (
         <ArrivalNotificationModal
-          members={tempMember}
+          members={users}
           onClose={handleCloseArrivalModal}
-          shopSeq={tempData.shopSeq}
+          shopSeq={shopInfo.shopSeq}
         />
       )}
     </div>
