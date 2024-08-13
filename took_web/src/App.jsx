@@ -190,13 +190,11 @@ function App() {
       fetchData(seq, token, id, password);
     };
 
-   
-
     return () => {
       delete window.onLocation;
       delete window.onLogin;
     };
-  }, [seq]);
+  }, []);
   return <RouterProvider router={ROUTER} />;
 }
 
