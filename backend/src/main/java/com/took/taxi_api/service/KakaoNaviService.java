@@ -113,10 +113,10 @@ public class KakaoNaviService {
         Map<String, Object> summary = (Map<String, Object>) route.get("summary");
         Map<String, Object> fare = (Map<String, Object>) summary.get("fare");
 
-        long taxiCost = (long) fare.get("taxi");
-        long tollCost = (long) fare.get("toll");
+        int taxiCost = (int) fare.get("taxi");
+        int tollCost = (int) fare.get("toll");
 
-        return taxiCost + tollCost;
+        return (long) taxiCost + (long) tollCost;
     }
 
     /**
