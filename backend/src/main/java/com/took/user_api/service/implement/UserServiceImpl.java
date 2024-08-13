@@ -99,27 +99,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Long> searchNearUser(Long userSeq, double lat, double lon) {
         List<UserEntity> userList = userRepository.findAll();
-        System.out.println("수령지 주소: " + lat + ", " + lon);
+//        System.out.println("수령지 주소: " + lat + ", " + lon);
         return userList.stream()
                 .map(user -> {
                     if(Objects.equals(user.getUserSeq(), userSeq)) {
-                        System.out.println("본인 제외: " + user.getUserSeq());
+//                        System.out.println("본인 제외: " + user.getUserSeq());
                         return null;
                     }
                     if(user.getLat() == null || user.getLon() == null) {
-                        System.out.println("위경도값 없음: " + user.getUserSeq());
+//                        System.out.println("위경도값 없음: " + user.getUserSeq());
                         return null;
                     }
                     if(!user.getAlarm()) {
-                        System.out.println("알람 끔: " + user.getUserSeq());
+//                        System.out.println("알람 끔: " + user.getUserSeq());
                         return null;
                     }
                     double distance = calculateDistance(lat, lon, user.getLat(), user.getLon());
                     if(distance <= distanceThreshold) {
-                        System.out.println("알람리스트 추가: " + user.getUserSeq());
+//                        System.out.println("알람리스트 추가: " + user.getUserSeq());
                         return user.getUserSeq();
                     } else {
-                        System.out.println("거리 너무 멀어: " + user.getUserSeq());
+//                        System.out.println("거리 너무 멀어: " + user.getUserSeq());
                         return null;
                     }
                 })
