@@ -112,8 +112,8 @@ function BuyFormPage() {
       item: formData.item,
       site: formData.site,
       place: formData.place,
-      lat: latitude,
-      lon: longitude,
+      lat: parseFloat(latitude),
+      lon: parseFloat(longitude),
       maxCount: parseInt(formData.max_person),
     });
     console.log('공동 구매 등록 완료');

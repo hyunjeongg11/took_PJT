@@ -59,7 +59,7 @@ const ArrivalNotificationModal = ({ members, onClose, shopSeq }) => {
           {members.map((member) => (
             <img
               key={member.user_seq}
-              src={getProfileImagePath(member.imgNo)}
+              src={getProfileImagePath(member.imageNo)}
               alt={member.userName}
               className="w-12 h-12 animate-shake mt-4"
             />
