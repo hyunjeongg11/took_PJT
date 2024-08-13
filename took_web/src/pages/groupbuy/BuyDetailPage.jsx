@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import backIcon from '../../assets/common/back.svg';
 import BackButton from '../../components/common/BackButton';
 import getProfileImagePath from '../../utils/getProfileImagePath';
+import { modifyShopStatusApi } from '../../apis/groupBuy/shop';
 import { TbPencil } from 'react-icons/tb';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -149,7 +150,7 @@ const BuyDetailPage = () => {
         // todo: 실제 채팅방으로 연결
         console.log('들어가기전 마지막 출력', chatRoom);
         console.log('들어갈 방 번호', shopData.roomSeq);
-        navigate(`/chat/buy/${shopData.roomSeq}`, { state: { chatRoom } });
+        
       } else {
         console.error('Failed to join the group buy');
       }
@@ -157,6 +158,10 @@ const BuyDetailPage = () => {
       console.error('API call error:', error);
     }
   };
+
+  const handleChatRedirect = () => {
+    navigate(`/chat/buy/${shopData.roomSeq}`, { state: { chatRoom } });
+  }
 
   const handleDelete = async () => {
     try {
@@ -269,6 +274,13 @@ const BuyDetailPage = () => {
             </div>
           </Link>
         </div>
+
+        {!isParticipant && ( <button
+            className=" p-2 py-3 bg-main text-white font-semibold text-md rounded-2xl my-4 shadow-md"
+            onClick={handleChatRedirect}
+          >
+            채팅방 입장
+          </button>)}
 
         {shopData.userSeq !== userSeq && isParticipant && (
           <div className="flex flex-col items-center pt-3 pb-1 mt-4 bg-main rounded-2xl shadow-md">
