@@ -28,7 +28,9 @@ public class FCMService {
                 .userSeq(String.valueOf(request.getUserSeq()))  // request에서 userId 가져옴
                 .token(request.getToken())
                 .build();
-        fcmRepository.save(fcmToken);
+        System.out.println("fcmToken " +fcmToken);
+        FCMToken test = fcmRepository.save(fcmToken);
+        System.out.println("test " + test);
     }
 
     public String getToken(long userSeq) {
