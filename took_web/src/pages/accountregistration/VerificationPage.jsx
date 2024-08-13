@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import { sendSmsApi, verifySmsApi } from '../../apis/sms';
@@ -18,6 +18,23 @@ function VerificationPage() {
   const [isVerified, setIsVerified] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState('');
   const [isValidCode, setIsValidCode] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerHeight < 500) {
+        setKeyboardVisible(true);
+      } else {
+        setKeyboardVisible(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleNameChange = (e) => setName(e.target.value);
   const handlePhoneNumberChange = (e) => {
@@ -78,25 +95,6 @@ function VerificationPage() {
   };
 
   const handleNextClick = () => {
-    // if (isFormValid) {
-    //   const params = {
-    //     userSeq, // useUser 훅을 사용하여 가져온 userSeq 사용
-    //     main: false, // 주계좌 여부 설정 (필요에 따라 변경)
-    //     accountName,
-    //     accountNum: `${account}`,
-    //     accountPwd: parseInt(password),
-    //   };
-
-    //   try {
-    //     const response = await linkAccountApi(params);
-    //     console.log(response);
-    //     // 성공 처리 (예: 완료 페이지로 이동)
-    //     navigate('/setsimplepwd', { state: { bank, account, password, accountName } });
-    //   } catch (error) {
-    //     console.error('API 호출 중 오류 발생:', error);
-    //     // 오류 처리
-    //   }
-    // }
     if (isFormValid) {
       navigate('/setsimplepwd', {
         state: { bank, account, password, accountName },
@@ -190,18 +188,20 @@ function VerificationPage() {
           {verificationStatus}
         </div>
       </div>
-      <button
-        className={`w-[calc(100%-40px)] py-3 rounded-full text-white text-lg font-bold cursor-pointer transition-all duration-300 ${isFormValid ? 'bg-[#FF7F50] shadow-md' : 'bg-[#FF7F50]/50'} absolute bottom-5 left-1/2 transform -translate-x-1/2`}
-        disabled={!isFormValid}
-        onMouseOver={(e) =>
-          isFormValid &&
-          (e.currentTarget.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.2)')
-        }
-        onMouseOut={(e) => (e.currentTarget.style.boxShadow = 'none')}
-        onClick={handleNextClick}
-      >
-        다음
-      </button>
+      {!keyboardVisible && ( // 키패드가 보일 때는 숨김
+        <button
+          className={`w-[calc(100%-40px)] py-3 rounded-full text-white text-lg font-bold cursor-pointer transition-all duration-300 ${isFormValid ? 'bg-[#FF7F50] shadow-md' : 'bg-[#FF7F50]/50'} absolute bottom-5 left-1/2 transform -translate-x-1/2`}
+          disabled={!isFormValid}
+          onMouseOver={(e) =>
+            isFormValid &&
+            (e.currentTarget.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.2)')
+          }
+          onMouseOut={(e) => (e.currentTarget.style.boxShadow = 'none')}
+          onClick={handleNextClick}
+        >
+          다음
+        </button>
+      )}
     </div>
   );
 }
