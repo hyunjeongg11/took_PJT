@@ -125,11 +125,7 @@ function GroupBuyChattingMainPage() {
   };
 
   useEffect(() => {
-    const container = scrollContainerRef.current;
-    const isAtBottom =
-      container.scrollHeight - container.scrollTop <=
-      container.clientHeight + 1;
-    setShowScrollButton(!isAtBottom);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   useEffect(() => {
