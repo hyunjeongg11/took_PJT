@@ -1,5 +1,7 @@
 package com.took.shop_api.service;
 
+import com.took.chat_api.entity.ChatRoom;
+import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.shop_api.dto.*;
 import com.took.shop_api.entity.Shop;
 import com.took.shop_api.entity.ShopGuest;
@@ -31,6 +33,7 @@ public class ShopService {
     private final PartyService partyService;
     private final PartyRepository partyRepository;
     private final MemberRepository memberRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Value("${distance.threshold}")
     private double distanceThreshold;
@@ -84,7 +87,11 @@ public class ShopService {
 
     @Transactional
     public void delete(Long id) {
+        Shop shop = shopRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
+        ChatRoom chatRoom = chatRoomRepository.findById(shop.getRoomSeq()).orElseThrow();
         shopRepository.deleteById(id);
+        chatRoomRepository.delete(chatRoom);
     }
 
     @Transactional

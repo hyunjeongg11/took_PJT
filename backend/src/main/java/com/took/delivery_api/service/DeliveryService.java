@@ -1,5 +1,7 @@
 package com.took.delivery_api.service;
 
+import com.took.chat_api.entity.ChatRoom;
+import com.took.chat_api.repository.ChatRoomRepository;
 import com.took.delivery_api.dto.*;
 import com.took.delivery_api.entity.Delivery;
 import com.took.delivery_api.repository.DeliveryRepository;
@@ -23,6 +25,7 @@ public class DeliveryService {
     // 리포지토리 주입
     private final DeliveryRepository deliveryRepository;
     private final UserRepository userRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Value("${distance.threshold}")
     private double distanceThreshold;
@@ -70,7 +73,10 @@ public class DeliveryService {
     // 글 삭제
     @Transactional
     public void deleteDelivery(Long deliverySeq) {
+        Delivery delivery = deliveryRepository.findById(deliverySeq).orElseThrow();
+        ChatRoom chatRoom = chatRoomRepository.findById(delivery.getRoomSeq()).orElseThrow();
         deliveryRepository.deleteById(deliverySeq);
+        chatRoomRepository.delete(chatRoom);
     }
 
     // 공지사항 등록
