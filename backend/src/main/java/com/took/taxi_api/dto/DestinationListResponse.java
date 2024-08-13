@@ -12,7 +12,7 @@ public class DestinationListResponse {
     private Long userSeq;
 
     @Schema(description = "비용", example = "10000")
-    private int cost;
+    private Long cost;
 
     @Schema(description = "목적지 이름", example = "서울역")
     private String destiName;

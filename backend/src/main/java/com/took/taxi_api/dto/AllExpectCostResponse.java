@@ -10,7 +10,7 @@ import java.util.List;
 public class AllExpectCostResponse {
 
     @Schema(description = "총 예상 비용", example = "50000")
-    private int allCost;
+    private Long allCost;
 
     @Schema(description = "총 거리", example = "10.5")
     private double distance;
@@ -28,6 +28,6 @@ public class AllExpectCostResponse {
         private Long userSeq;
 
         @Schema(description = "비용", example = "10000")
-        private int cost;
+        private Long cost;
     }
 }

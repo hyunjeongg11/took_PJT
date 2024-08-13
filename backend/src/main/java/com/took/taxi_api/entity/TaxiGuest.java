@@ -30,7 +30,7 @@ public class TaxiGuest {
     private UserEntity user; // 사용자 번호
 
     @Column(nullable = false)
-    private int cost;  // 비용
+    private Long cost;  // 비용
 
     @Column(nullable = false)
     private String destiName;  // 목적지 이름
@@ -44,7 +44,7 @@ public class TaxiGuest {
     @Column(nullable = false)
     private int routeRank;  // 경로 순위
 
-    public void updateDestiAndCost(String destiName, double destiLat, double destiLon, int cost, int routeRank) {
+    public void updateDestiAndCost(String destiName, double destiLat, double destiLon, Long cost, int routeRank) {
         this.destiName = destiName;
         this.destiLat = destiLat;
         this.destiLon = destiLon;

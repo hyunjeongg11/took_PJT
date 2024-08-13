@@ -20,7 +20,7 @@ public class GuestSetDestinationAndCostRequest {
     private double destiLon;
 
     @Schema(description = "비용", example = "15000")
-    private int cost;
+    private Long cost;
 
     @Schema(description = "목적지 순위", example = "1")
     private int routeRank;

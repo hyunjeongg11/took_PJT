@@ -32,6 +32,6 @@ public class AllExpectCostRequest {
         private Long userSeq;
 
         @Schema(description = "비용", example = "10000")
-        private int cost;
+        private Long cost;
     }
 }

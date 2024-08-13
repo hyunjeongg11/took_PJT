@@ -8,9 +8,9 @@ import lombok.Data;
 public class ExpectCostResponse {
 
     @Schema(description = "택시 비용 + 톨게이트 비용", example = "15000")
-    private int cost;
+    private Long cost;
 
-    public ExpectCostResponse(int cost) {
+    public ExpectCostResponse(Long cost) {
         this.cost = cost;
     }
 }
