@@ -103,6 +103,9 @@ public class DeliveryService {
     // 배달 글 리스트 조회 (거리 기반)
     @Transactional
     public List<DeliverySelectResponse> getList(DeliveryListSelectRequest request) {
+        if(request.getLat() == 0 || request.getLon() == 0) {
+            return null;
+        }
         List<Delivery> deliveryList = deliveryRepository.findAll();
         return deliveryList.stream()
                 .map(delivery -> {

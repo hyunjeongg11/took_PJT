@@ -204,10 +204,12 @@ public class ShopService {
 
     @Transactional
     public List<ShopResponse> findShopsByUserId(Long id) {
+        UserEntity user = userRepository.findById(id).orElseThrow();
+        if(user.getLat() == 0 && user.getLon() == 0) {
+            return null;
+        }
 
         List<Shop> shops = shopRepository.findAll();
-        UserEntity user = userRepository.findById(id).orElseThrow();
-
         return shops.stream()
                 .map(shop -> {
                     double distance = calculateDistance(user.getLat(), user.getLon(), shop.getLat(), shop.getLon());

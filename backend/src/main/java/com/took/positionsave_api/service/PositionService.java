@@ -80,6 +80,9 @@ public class PositionService {
      * @return 일정 거리 이내의 유저 리스트 (PositionUserListResponse)
      */
     public List<PositionUserListResponse> getNearbyUsers(PositionUserListRequest request) {
+        if(request.getLat() == 0 || request.getLon() == 0) {
+            return null;
+        }
         List<Position> allUsers = (List<Position>) positionRepository.findAll();
 
         return allUsers.stream()
