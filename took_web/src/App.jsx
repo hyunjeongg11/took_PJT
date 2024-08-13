@@ -184,18 +184,17 @@ function App() {
       setPosition({ latitude, longitude });
     };
 
-    window.onLogin = (userSeq, jwt, id, pwd) => {
-      console.log('userData', userSeq, jwt);
-      fetchData(userSeq, jwt, id, pwd);
+    window.onLogin = (seq, token, id, password) => {
+      console.log('userData', seq, token);
+      msgToAndroid('userData', seq, token, id, password);
+      fetchData(seq, token, id, password);
     };
 
-    window.onNotification = (notificationData) => {
-      msgToAndroid(notificationData);
-    };
+   
 
     return () => {
       delete window.onLocation;
-      delete window.onNotification;
+      delete window.onLogin;
     };
   }, [seq]);
   return <RouterProvider router={ROUTER} />;
