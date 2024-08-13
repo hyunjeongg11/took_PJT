@@ -178,7 +178,7 @@ function SignupPage() {
           birth,
         });
         alert('회원가입이 완료되었습니다.');
-        msgToAndroid('회원가입이 완료되었습니다');
+        msgToAndroid('회원가입이 완료되었습니다. 계좌를 등록해주세요.');
         navigate('/login');
       } catch (error) {
         alert('회원가입 중 오류가 발생했습니다.');
