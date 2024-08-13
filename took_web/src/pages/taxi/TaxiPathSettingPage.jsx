@@ -67,7 +67,7 @@ const TaxiPathSettingPage = () => {
         destiName: selectedAddress,
         destiLat: latitude,
         destiLon: longitude,
-        cost,
+        cost: cost,
         routeRank: rank,
       };
       await setDestinationAndCostApi(paramsForDestination);

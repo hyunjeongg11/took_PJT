@@ -5,7 +5,11 @@ import taxiIcon from '../../assets/payment/taxiTook.png';
 import getProfileImagePath from '../../utils/getProfileImagePath';
 import { formatNumber } from '../../utils/format';
 import { formatDate } from '../../utils/formatDate';
-import { calculateFinalCostApi, setTotalCostApi } from '../../apis/taxi';
+import {
+  calculateFinalCostApi,
+  setTotalCostApi,
+  finalizeTaxiSettlementApi,
+} from '../../apis/taxi';
 import { partyDetailApi } from '../../apis/payment/jungsan';
 import { sendReminderNotification } from '../../apis/alarm/sendAlarm';
 import { useUser } from '../../store/user';
@@ -18,19 +22,18 @@ function TaxiCostInputPage() {
   const navigate = useNavigate();
   const { id } = useParams(); // partySeq
   const { seq: userSeq } = useUser();
-
   useEffect(() => {
     const fetchPartyDetails = async () => {
       try {
         const response = await partyDetailApi(id);
-        console.log(response);
+        // console.log(response);
         const partyDetailMembers = response.partyDetailList.map((detail) => ({
           member_seq: detail.memberSeq,
           party_seq: detail.party.partySeq,
           user_seq: detail.user.userSeq,
           userName: detail.user.userName,
           imgNo: detail.user.imageNo,
-          cost: detail.cost, // 예상 비용 (선결제)
+          cost: detail.fakeCost, // 예상 비용 (선결제)
           real_cost: detail.fakeCost, // 나중에 업데이트될 실결제 금액
           status: detail.status,
           receive: detail.receive,
@@ -51,13 +54,13 @@ function TaxiCostInputPage() {
   const handleInputChange = async (e) => {
     const value = e.target.value.replace(/[^0-9]/g, '');
     setTotalAmount(value);
-
-    if (value && partyMembers.length > 0) {
+  
+    if (value && members.length > 0) {
       try {
         const params = {
-          users: partyMembers.map((member) => ({
-            userSeq: member.user_seq,
-            cost: member.cost,
+          users: members.map((member) => ({
+            userSeq: member.userSeq, // location.state에서 받아온 members의 userSeq 사용
+            cost: member.cost, // location.state에서 받아온 members의 cost 사용
           })),
           allCost: parseInt(value, 10),
           taxiSeq: taxiParty.taxiSeq,
@@ -74,7 +77,6 @@ function TaxiCostInputPage() {
             real_cost: updatedUser ? updatedUser.cost : member.real_cost,
           };
         });
-
         setPartyMembers(updatedMembers);
       } catch (error) {
         console.error('Error calculating final cost:', error);
@@ -86,45 +88,30 @@ function TaxiCostInputPage() {
     if (totalAmount) {
       try {
         // 총 비용 설정 API 호출
-        const params = {
+        const setTotalCostParams = {
           taxiSeq: taxiParty.taxiSeq,
           cost: parseInt(totalAmount, 10),
         };
-        await setTotalCostApi(params);
+        await setTotalCostApi(setTotalCostParams);
   
-        // balance가 음수이고, 나를 제외한 유저들에게 독촉 알림 전송
-        for (const member of partyMembers) {
-          const balance = member.cost - member.real_cost;
-  
-          if (balance < 0 && member.user_seq !== userSeq) {
-            const notificationParams = {
-              title: `택시 took 정산 요청이 왔어요!`,
-              body: `${userName}님에게 ${Math.abs(balance)}원을 송금해주세요.`,
-              sender: userSeq, // 현재 로그인한 유저의 seq
-              userSeq: member.user_seq, // 알림을 받을 유저의 seq
-              partySeq: taxiParty.partySeq, // 파티 Seq
-              category: 2, // (2: Taxi)
-              url1: `/`, // 알림 클릭 시 이동할 경로
-              url2: '', // 추가 URL이 필요한 경우 설정
-              preCost: member.cost,
-              actualCost: member.real_cost,
-              differenceCost: member.real_cost - member.cost,
-              deliveryCost: 0, // 배달비가 있다면 설정
-              orderCost: 0,
-              cost: Math.abs(balance), // 요청 금액은 음수 balance의 절대값
-            };
-            try {
-              await sendReminderNotification(notificationParams);
-            } catch (error) {
-              console.error('Error sending reminder notification:', error);
-              alert('정산 요청 중 오류가 발생했습니다. 다시 시도해주세요.');
-            }
-          }
-        }
+        // 택시 정산 실결제 API 호출
+        const finalizeSettlementParams = {
+          partySeq: taxiParty.partySeq,
+          cost: parseInt(totalAmount, 10),
+          users: partyMembers.map((member) => ({
+            userSeq: member.user_seq,
+            cost: member.real_cost, // 실결제 금액(real_cost) 사용
+          })),
+        };
+
+        console.log('이거다!!!!!!!!!!!!!!!!!!!!!', finalizeSettlementParams);
+        const response = await finalizeTaxiSettlementApi(finalizeSettlementParams);
+        console.log('택시 정산 응답:', response);
+
         // 성공적으로 처리된 경우, 메인 화면으로 이동
         navigate('/');
       } catch (error) {
-        console.error('Error setting total cost:', error);
+        console.error('Error finalizing taxi settlement:', error);
       }
     }
   };
