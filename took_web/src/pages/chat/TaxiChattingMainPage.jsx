@@ -66,17 +66,6 @@ function TaxiChattingMainPage() {
   const currentSubscription = useRef(null);
   const [confirmAction, setConfirmAction] = useState(null);
 
-  const fetchUserProfileImage = async (userSeq) => {
-    try {
-      const userInfo = await getUserInfoApi({ userSeq });
-      return getProfileImagePath(userInfo.imageNo); // imageNo로 이미지 경로 생성
-    } catch (error) {
-      console.error('Error fetching user info:', error);
-      return ''; // 에러 발생 시 빈 문자열 반환
-    }
-  };
-  
-
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -180,7 +169,6 @@ function TaxiChattingMainPage() {
     try {
       const response = await getUsersApi(roomSeq);
       setChatUsers(response);
-      console.log('users', response);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -213,7 +201,8 @@ function TaxiChattingMainPage() {
 
   const getUserProfileImgNo = (userSeq) => {
     const user = chatUsers.find((member) => member.userSeq === userSeq);
-    return user ? user.imgNo : 1;
+    const imgNo = user ? user.imageNo : 1;
+    return imgNo;
   };
 
   const handleScroll = () => {
@@ -477,7 +466,7 @@ function TaxiChattingMainPage() {
       </div>
 
       <div
-        className="flex-grow overflow-y-scroll px-4 py-2 space-y-4 relative"
+        className="flex-grow overflow-y-scroll px-4 py-2 mb-11 space-y-4 relative"
         onScroll={handleScroll}
         ref={scrollContainerRef}
       >
@@ -511,7 +500,7 @@ function TaxiChattingMainPage() {
                 {message.userSeq !== userSeq && (
                   <div className="flex flex-col items-center mr-2">
                     <img
-                      src={getProfileImagePath(message.userSeq)}
+                      src={getProfileImagePath(getUserProfileImgNo(message.userSeq))}
                       alt={message.userName}
                       className="w-9 h-9 self-start"
                     />
@@ -554,7 +543,7 @@ function TaxiChattingMainPage() {
                 {message.userSeq === userSeq && (
                   <div className="flex flex-col items-center ml-2">
                     <img
-                      src={getProfileImagePath(message.userSeq)}
+                      src={getProfileImagePath(getUserProfileImgNo(message.userSeq))}
                       alt={message.userName}
                       className="w-9 h-9 self-start"
                     />
