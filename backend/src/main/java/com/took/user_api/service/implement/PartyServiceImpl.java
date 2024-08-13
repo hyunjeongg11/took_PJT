@@ -781,10 +781,19 @@ public class PartyServiceImpl implements PartyService {
             BankEntity bank = bankRepository.findById(pay.getAccount().getBank().getBankSeq()).orElseThrow();
             String accountNum = bank.getAccountNum();
             String maskedAccountNum = accountNum.substring(accountNum.length() - 4);
-            String maskedUserName = null;
-            int imageNo = -1;
-
-            if (pay.getCategory() == 4) {
+            String maskedUserName;
+            int imageNo;
+            
+            if (pay.getCategory() == 1) {
+                maskedUserName = "배달 took";
+                imageNo = 31;
+            } else if (pay.getCategory() == 2) {
+                maskedUserName = "택시 took";
+                imageNo = 32;
+            } else if (pay.getCategory() == 3) {
+                maskedUserName = "공구 took";
+                imageNo = 33;
+            } else {
                 UserEntity userEntity = userRepository.findById(pay.getTargetUserSeq()).orElseThrow();
                 String userName = userEntity.getUserName();
                 imageNo = userEntity.getImageNo();
