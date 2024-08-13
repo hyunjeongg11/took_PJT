@@ -580,11 +580,11 @@ export const getSeletByRoomApi = async (roomSeq) => {
 // 요청 Body
 // {
 //   "partySeq": 123,
-//   "cost": 20000,
+//   "cost": 20000, // 입력한 총 금액
 //   "users": [
 //     {
 //       "userSeq": 456,
-//       "fakeCost": 5000
+//       "cost": 5000 // 실결제 금액
 //     }
 //   ]
 // }

@@ -93,21 +93,20 @@ function TaxiCostInputPage() {
           cost: parseInt(totalAmount, 10),
         };
         await setTotalCostApi(setTotalCostParams);
-
+  
         // 택시 정산 실결제 API 호출
         const finalizeSettlementParams = {
           partySeq: taxiParty.partySeq,
           cost: parseInt(totalAmount, 10),
-          users: members.map((member) => ({
-            userSeq: member.userSeq,
-            fakeCost: member.cost, // 가결제 금액
+          users: partyMembers.map((member) => ({
+            userSeq: member.user_seq,
+            cost: member.real_cost, // 실결제 금액(real_cost) 사용
           })),
         };
 
-        const response = await finalizeTaxiSettlementApi(
-          finalizeSettlementParams
-        );
-        // console.log('택시 정산 응답:', response);
+        console.log('이거다!!!!!!!!!!!!!!!!!!!!!', finalizeSettlementParams);
+        const response = await finalizeTaxiSettlementApi(finalizeSettlementParams);
+        console.log('택시 정산 응답:', response);
 
         // 성공적으로 처리된 경우, 메인 화면으로 이동
         navigate('/');

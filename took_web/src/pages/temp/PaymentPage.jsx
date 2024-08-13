@@ -14,6 +14,7 @@ import { msgToAndroid } from '../../android/message';
 import {
   onlyjungsanPayApi,
   deliveryGroupPayApi,
+  restCostPayApi,
 } from '../../apis/payment/jungsan';
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -154,6 +155,10 @@ const PaymentPage = () => {
       } else if (numCategory === 1 || numCategory === 3) {
         const response = await deliveryGroupPayApi(requestData);
         console.log('deliveryGroupPayApi 응답:', response); // 로그 추가
+      } else {
+        // 택시일 경우
+        const response = await restCostPayApi(requestData);
+        console.log('taxi restCostPayApi 응답:', response); // 로그 추가
       }
       navigate('/complete', {
         state: { accountSeq, amount, userSeq, currentUserSeq },
