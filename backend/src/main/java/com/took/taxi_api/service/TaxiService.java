@@ -210,9 +210,7 @@ public class TaxiService {
     // 해당 채팅방의 택시 정보
     @Transactional
     public TaxiSelectResponse selectByRoom(Long roomSeq) {
-        System.out.println("roomSeq: " + roomSeq);
         Taxi taxi = taxiRepository.findByRoomSeq(roomSeq);
-        System.out.println("taxi: " + taxi);
         return new TaxiSelectResponse(taxi);
     }
 }
