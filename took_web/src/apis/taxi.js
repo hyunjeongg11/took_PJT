@@ -225,7 +225,8 @@ export const addTaxiPartyMemberApi = async (params) => {
     const response = await request.post('/api/taxi/guest/create', params);
     return response;
   } catch (error) {
-    return handleApiError(error);
+    console.error('API 호출 중 오류 발생:', error);
+    return false; // 오류 발생 시 false 반환
   }
 };
 
