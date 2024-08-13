@@ -24,6 +24,7 @@ const TaxiChattingMenu = ({
   setMembers,
   taxiParty,
   taxiStatus,
+  setTaxiStatus, // 상태 변경 함수 받기
   handleMenuToggle,
 }) => {
   const { seq: currentUserSeq } = useUser();
@@ -100,20 +101,19 @@ const TaxiChattingMenu = ({
 
   const handleModalAction = async () => {
     try {
-      // 모집 확정 클릭 시 "FILLED"로 상태 업데이트
       if (modalType === 'endRecruitment') {
         await updateTaxiPartyStatusApi({
           taxiSeq: taxiParty.taxiSeq,
           status: 'FILLED',
         });
-        console.log('택시 파티 상태가 FILLED로 업데이트되었습니다.');
-        // 경로 확정 클릭시
+        setTaxiStatus('FILLED'); // 상태 변경
+
       } else if (modalType === 'confirmRoute') {
-        //  "FILLED"로 상태 업데이트
         await updateTaxiPartyStatusApi({
           taxiSeq: taxiParty.taxiSeq,
           status: 'FILLED',
         });
+        setTaxiStatus('FILLED'); // 상태 변경
         console.log('택시 파티 상태가 FILLED로 업데이트되었습니다.');
 
         // 택시파티내의 모든 멤버 조회
