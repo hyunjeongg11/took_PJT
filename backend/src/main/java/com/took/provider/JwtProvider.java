@@ -82,13 +82,13 @@ public class JwtProvider {
 
 
         }catch (MalformedJwtException e) {
-            System.out.println("Invalid JWT token");
+//            System.out.println("Invalid JWT token");
         } catch (ExpiredJwtException e) {
-            System.out.println("Expired JWT token");
+//            System.out.println("Expired JWT token");
         } catch (UnsupportedJwtException e) {
-            System.out.println("Unsupported JWT token");
+//            System.out.println("Unsupported JWT token");
         } catch (IllegalArgumentException e) {
-            System.out.println("JWT token compact of handler are invalid");
+//            System.out.println("JWT token compact of handler are invalid");
         }
 
         return subject;

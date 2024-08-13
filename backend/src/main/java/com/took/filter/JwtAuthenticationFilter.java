@@ -39,22 +39,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        System.out.println("필터에 진입합니다.");
+//        System.out.println("필터에 진입합니다.");
         System.out.println("요청 path 출력: " + request.getRequestURI());
-        System.out.println("요청의 인증 방법을 출력합니다: " + request.getAuthType());
-        System.out.println("요청의 전송 방법을 출력합니다: " + request.getMethod());
+//        System.out.println("요청의 인증 방법을 출력합니다: " + request.getAuthType());
+//        System.out.println("요청의 전송 방법을 출력합니다: " + request.getMethod());
 
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer")) {
-            System.out.println("헤더가 없습니다. 다음으로 넘어갑니다.");
-            System.out.println("request: " + request.getRequestURI() + " response: " + response);
+//            System.out.println("헤더가 없습니다. 다음으로 넘어갑니다.");
+//            System.out.println("request: " + request.getRequestURI() + " response: " + response);
             filterChain.doFilter(request, response);
-            System.out.println("필터 체인 이후 로깅 추가 - 헤더 없음");
+//            System.out.println("필터 체인 이후 로깅 추가 - 헤더 없음");
             return;
         }
 
         String token = header.substring(7);
-        System.out.println("토큰: " + token);
+//        System.out.println("토큰: " + token);
 
 
         if (tokenBlacklistService.isTokenBlacklisted(token)) {
@@ -62,29 +62,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             return;
         }
 
-        System.out.println("블랙박스를 빠져 나옵니다.");
+//        System.out.println("블랙박스를 빠져 나옵니다.");
 
         try {
             token = parseVearerToken(request);
             if (token == null) {
-                System.out.println("토큰이 없기에 넘어갑니다.");
+//                System.out.println("토큰이 없기에 넘어갑니다.");
                 filterChain.doFilter(request, response);
-                System.out.println("필터 체인 이후 로깅 추가 - 토큰 없음");
+//                System.out.println("필터 체인 이후 로깅 추가 - 토큰 없음");
                 return;
             }
 
             String userId = jwtProvider.validate(token);
-            System.out.println("유효한 사용자 ID: " + userId);
+//            System.out.println("유효한 사용자 ID: " + userId);
 
             if (userId == null) {
                 filterChain.doFilter(request, response);
-                System.out.println("필터 체인 이후 로깅 추가 - 유효하지 않은 사용자 ID");
+//                System.out.println("필터 체인 이후 로깅 추가 - 유효하지 않은 사용자 ID");
                 return;
             }
 
             UserEntity userEntity = userRepository.findByUserId(userId);
             String role = userEntity.getRole();
-            System.out.println("사용자 역할: " + role);
+//            System.out.println("사용자 역할: " + role);
 
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(role));
@@ -98,12 +98,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             SecurityContextHolder.setContext(securityContext);
 
         } catch (Exception exception) {
-            System.out.println("필터에서 에러를 출력합니다.");
+//            System.out.println("필터에서 에러를 출력합니다.");
             exception.printStackTrace();
         }
 
         filterChain.doFilter(request, response);
-        System.out.println("필터 체인 이후 로깅 추가 - 정상 처리");
+//        System.out.println("필터 체인 이후 로깅 추가 - 정상 처리");
     }
 
 

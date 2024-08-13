@@ -21,8 +21,8 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
             AuthenticationException exception
     ) throws IOException, ServletException {
         // 로그인 실패 시 예외 정보를 콘솔에 출력
-        System.out.println("OAuth2 로그인 실패:");
-        System.out.println("예외 메시지: " + exception.getMessage());
+//        System.out.println("OAuth2 로그인 실패:");
+//        System.out.println("예외 메시지: " + exception.getMessage());
 
         // 실패 후 리다이렉트할 URL 설정 (예: 로그인 페이지로 리다이렉트)
         String redirectUrl = "https://i11e205.p.ssafy.io/";
