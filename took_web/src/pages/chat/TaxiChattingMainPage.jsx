@@ -243,6 +243,7 @@ function TaxiChattingMainPage() {
     navigate(`/taxi/path-list/${taxiSeq}`, {
       state: {
         members: members,
+        taxiParty: taxiParty,
       },
     });
   };
