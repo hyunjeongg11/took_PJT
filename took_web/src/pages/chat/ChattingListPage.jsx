@@ -63,9 +63,7 @@ function ChattingListPage() {
         try {
           // getSeletByRoomApi 호출하여 taxiSeq를 가져옴
           console.log('roomSeq', chatRoom.roomSeq);
-          const taxiData = await getSeletByRoomApi({
-            roomSeq: chatRoom.roomSeq,
-          });
+          const taxiData = await getSeletByRoomApi(chatRoom.roomSeq);
           console.log('taxiData', taxiData);
           state = { ...state, taxiSeq: taxiData.taxiSeq }; // taxiSeq를 state에 추가
         } catch (error) {

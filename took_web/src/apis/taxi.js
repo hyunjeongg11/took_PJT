@@ -568,7 +568,7 @@ export const calculateTotalExpectedCostApi = async (params) => {
 // }
 export const getSeletByRoomApi = async (roomSeq) => {
   try {
-    const response = await request.get(`/api/taxi/seletByRoom/${roomSeq}`);
+    const response = await request.get(`/api/taxi/selectByRoom/${roomSeq}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);
