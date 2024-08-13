@@ -1,10 +1,7 @@
 package com.took.user_api.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -15,6 +12,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity(name = "account")
 @Table(name = "account")
 @Builder
+@ToString
 public class AccountEntity {
     
     @Id

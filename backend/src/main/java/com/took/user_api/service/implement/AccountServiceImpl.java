@@ -114,7 +114,7 @@ public class AccountServiceImpl implements AccountService {
 
             int size = al.size();
             System.out.println("al: " + al);
-            System.out.println("bl: " + bl.toString());
+            System.out.println("bl: " + bl);
             System.out.println("size: " + size);
 
             for(int i=0;i<size;i++){

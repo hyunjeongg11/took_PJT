@@ -1,10 +1,7 @@
 package com.took.user_api.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @AllArgsConstructor
@@ -12,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity(name = "bank")
 @Table(name = "bank")
 @Builder
+@ToString
 public class BankEntity {
     
     @Id
