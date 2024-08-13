@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { msgToAndroid } from './android/message';
 import { usePosition } from './store/position';
 import { getUserLocation } from './android/message';
 import { saveUserPositionApi } from './apis/position/userPosition';
 import { getUserSeq } from './utils/getUserSeq';
+import { loginApi } from './apis/user';
 import { useToken } from './store/token';
 import { useUser } from './store/user';
 import { getUserInfoApi } from './apis/user';
@@ -133,7 +134,6 @@ const ROUTER = createBrowserRouter([
   { path: '/chat/buy/:id', element: <GroupBuyChattingMainPage /> },
 ]);
 
-
 function App() {
   const { setPosition } = usePosition();
   // const { seq } = useUser(); // make sure to destructure `setUserSeq`
@@ -150,13 +150,21 @@ function App() {
       console.log('User sequence is not available');
     }
   };
-  const { setUser, setLoggedIn } = useUser();
+  const { setUserSeq, setUser, setLoggedIn } = useUser();
   const { setAccessToken } = useToken();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async (userSeq, jwt) => {
+    const fetchData = async (userSeq, jwt, id, pwd) => {
       try {
+        const response = await loginApi(
+          { userId: id, password: pwd },
+          setAccessToken
+        );
+
+        if (response.code == 'su') {
+          setUserSeq(response.userSeq);
+        }
+
         setAccessToken(jwt);
         setLoggedIn();
         const userInfo = await getUserInfoApi({ userSeq });
@@ -176,19 +184,18 @@ function App() {
       setPosition({ latitude, longitude });
     };
 
-    window.onLogin = (userSeq, jwt) => {
+    window.onLogin = (userSeq, jwt, id, pwd) => {
       console.log('userData', userSeq, jwt);
-      fetchData(userSeq, jwt);
+      fetchData(userSeq, jwt, id, pwd);
     };
 
-    window.goAlarm = () => {
-       navigate('/chat/took');
-    }
+    window.onNotification = (notificationData) => {
+      msgToAndroid(notificationData);
+    };
 
     return () => {
       delete window.onLocation;
-      delete window.onLogin;
-      delete window.goAlarm;
+      delete window.onNotification;
     };
   }, [seq]);
   return <RouterProvider router={ROUTER} />;

@@ -33,7 +33,7 @@ function LoginPage() {
         const jwt = response.accessToken;
         setLoggedIn();
         if (window.Android) {
-          postLoginInfoToApp(userSeq, jwt);
+          postLoginInfoToApp(userSeq, jwt, id, password);
         }
 
         navigate('/');
