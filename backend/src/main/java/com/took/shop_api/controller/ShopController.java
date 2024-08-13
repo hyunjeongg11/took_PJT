@@ -4,7 +4,6 @@ import com.took.fcm_api.dto.MessageRequest;
 import com.took.fcm_api.service.FCMService;
 import com.took.shop_api.dto.*;
 import com.took.shop_api.entity.Shop;
-import com.took.shop_api.repository.ShopRepository;
 import com.took.shop_api.service.ShopService;
 import com.took.user_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +26,6 @@ public class ShopController {
     private final ShopService shopService;
     private final UserService userService;
     private final FCMService fcmService;
-    private final ShopRepository shopRepository;
 
     @Operation(summary = "상점 생성", description = "새로운 상점을 생성합니다.")
     @ApiResponse(responseCode = "201", description = "상점이 성공적으로 생성됨")

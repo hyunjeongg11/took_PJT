@@ -232,11 +232,6 @@ public class PartyServiceImpl implements PartyService {
         AccountEntity account = accountRepository.findById(requestBody.getAccountSeq()).orElseThrow();
         MemberEntity member = memberRepository.findByPartyAndUser(party, user);
 
-//      파티가 끝나고 해버리면 안됨
-//      나는 돈을 보냈는데 파티가 끝나지 않아도 난 그 알림에서 돈보내기 버튼을 누룰 수 있으면 안됨.
-        Alarm alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(), requestBody.getPartySeq());
-
-
         Long memberCost = member.getCost();
 
 //          빼주기 전에 돈 있는 없는지 검사
@@ -264,7 +259,10 @@ public class PartyServiceImpl implements PartyService {
 
 
 //        돈이 빠져나갔으니 해당 알림의 상태는 true
-        alarm.updateStatus(true);
+        List<Alarm> alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(), requestBody.getPartySeq());
+        for (Alarm a : alarm) {
+            a.updateStatus(true);
+        }
 
 
 //          빼주는 순간 리더에게 돈 들어가게
@@ -340,11 +338,7 @@ public class PartyServiceImpl implements PartyService {
         PartyEntity party = partyRepository.findById(requestBody.getPartySeq()).orElseThrow();
         UserEntity user = userRepository.findById(requestBody.getUserSeq()).orElseThrow();
         MemberEntity member = memberRepository.findByPartyAndUser(party, user);
-
-
-//      나는 돈을 보냈는데 파티가 끝나지 않아도 난 그 알림에서 돈보내기 버튼을 누룰 수 있으면 안됨.
-        Alarm alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(), requestBody.getPartySeq());
-
+        
 
         //빼주기 전에 돈 있는 없는지 검사
         AccountEntity account = accountRepository.findById(requestBody.getAccountSeq()).orElseThrow();
@@ -366,7 +360,10 @@ public class PartyServiceImpl implements PartyService {
         bank.updateBalance(balance - membercost);
         member.updateStatus(true);
         //        돈이 빠져나갔으니 해당 알림의 상태는 true
-        alarm.updateStatus(true);
+        List<Alarm> alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(), requestBody.getPartySeq());
+        for (Alarm a : alarm) {
+            a.updateStatus(true);
+        }
 
         party.updateReceiveCost(party.getReceiveCost() + membercost);
         party.updateCount(party.getCount() + 1);
@@ -699,8 +696,10 @@ public class PartyServiceImpl implements PartyService {
         bank.updateBalance(balance - restCost);
         party.updateCount(1);
 
-        Alarm alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(), requestBody.getPartySeq());
-        alarm.updateStatus(true);
+        List<Alarm> alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(), requestBody.getPartySeq());
+        for (Alarm a : alarm) {
+            a.updateStatus(true);
+        }
 
         // 리더에게 송금
         MemberEntity leaderMember = memberRepository.findByPartyAndLeaderTrue(party);

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     List<Alarm> findByUserSeq(long userSeq);
-    Alarm findByUserSeqAndPartySeq(Long userSeq, Long partySeq);
+    List<Alarm> findByUserSeqAndPartySeq(Long userSeq, Long partySeq);
 }
