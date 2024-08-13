@@ -150,6 +150,7 @@ const BuyDetailPage = () => {
         // todo: 실제 채팅방으로 연결
         console.log('들어가기전 마지막 출력', chatRoom);
         console.log('들어갈 방 번호', shopData.roomSeq);
+        navigate(`/chat/buy/${shopData.roomSeq}`, { state: { chatRoom } });
         
       } else {
         console.error('Failed to join the group buy');
@@ -276,7 +277,7 @@ const BuyDetailPage = () => {
         </div>
 
         {!isParticipant && ( <button
-            className=" p-2 py-3 bg-main text-white font-semibold text-md rounded-2xl my-4 shadow-md"
+            className="bg-main px-12 py-3 mt-6 w-full shadow-sm font-bold text-white rounded-2xl"
             onClick={handleChatRedirect}
           >
             채팅방 입장
@@ -313,7 +314,7 @@ const BuyDetailPage = () => {
         {shopData.userSeq === userSeq && (
           <button
             onClick={handleEndRecruitment}
-            className="bg-main px-12 py-3 mb-8 mt-6 w-full shadow-sm font-bold text-white rounded-2xl"
+            className="bg-red-500 px-12 py-3 mb-8 mt-6 w-full shadow-sm font-bold text-white rounded-2xl"
           >
             모집 종료하기
           </button>

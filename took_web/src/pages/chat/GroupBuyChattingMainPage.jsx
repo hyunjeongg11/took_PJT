@@ -392,7 +392,7 @@ function GroupBuyChattingMainPage() {
             <span className="mt-1 text-[11px] text-gray-500">주문 정보</span>
           </div>
 
-          {isLeader && (
+         
             <div className="flex flex-col items-center mb-4">
               <div
                 className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
@@ -402,7 +402,7 @@ function GroupBuyChattingMainPage() {
               </div>
               <span className="mt-1 text-[11px] text-gray-500">배송 정보</span>
             </div>
-          )}
+         
           <div className="flex flex-col items-center mb-4">
             <div
               className="w-11 h-11 rounded-full bg-[#AEC8F0] flex items-center justify-center"
