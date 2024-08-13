@@ -114,7 +114,7 @@ function TaxiChattingSettingPage() {
         locations,
         users,
       };
-      console.log('caculateParams: ', params);
+
       const result = await calculateTotalExpectedCostApi(params);
       console.log('result: ', result);
       setTotalExpectedCost(result);
