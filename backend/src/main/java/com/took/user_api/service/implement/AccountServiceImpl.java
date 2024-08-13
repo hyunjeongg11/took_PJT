@@ -113,9 +113,6 @@ public class AccountServiceImpl implements AccountService {
             bl = bankRepository.findByBankSeqIn(bankSeq);
 
             int size = al.size();
-            System.out.println("al: " + al);
-            System.out.println("bl: " + bl);
-            System.out.println("size: " + size);
 
             for(int i=0;i<size;i++){
                 result.add(new AccountListResponsetDto.BankAccount(dto.getUserSeq(),
