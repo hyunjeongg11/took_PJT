@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-dom';
 import { msgToAndroid } from './android/message';
 import { usePosition } from './store/position';
 import { getUserLocation } from './android/message';
 import { saveUserPositionApi } from './apis/position/userPosition';
 import { getUserSeq } from './utils/getUserSeq';
-import { loginApi } from './apis/user';
 import { useToken } from './store/token';
 import { useUser } from './store/user';
 import { getUserInfoApi } from './apis/user';
@@ -134,6 +133,7 @@ const ROUTER = createBrowserRouter([
   { path: '/chat/buy/:id', element: <GroupBuyChattingMainPage /> },
 ]);
 
+
 function App() {
   const { setPosition } = usePosition();
   // const { seq } = useUser(); // make sure to destructure `setUserSeq`
@@ -152,6 +152,7 @@ function App() {
   };
   const { setUser, setLoggedIn } = useUser();
   const { setAccessToken } = useToken();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async (userSeq, jwt) => {
@@ -180,13 +181,14 @@ function App() {
       fetchData(userSeq, jwt);
     };
 
-    window.onNotification = (notificationData) => {
-      msgToAndroid(notificationData);
-    };
+    window.goAlarm = () => {
+       navigate('/chat/took');
+    }
 
     return () => {
       delete window.onLocation;
-      delete window.onNotification;
+      delete window.onLogin;
+      delete window.goAlarm;
     };
   }, [seq]);
   return <RouterProvider router={ROUTER} />;
