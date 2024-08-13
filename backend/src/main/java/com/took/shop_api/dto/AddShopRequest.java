@@ -2,12 +2,12 @@ package com.took.shop_api.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
 public class AddShopRequest {
 
     @Schema(description = "채팅방 고유 번호", example = "12345")

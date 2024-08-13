@@ -31,7 +31,6 @@ public class ShopController {
     @ApiResponse(responseCode = "201", description = "상점이 성공적으로 생성됨")
     @PostMapping("/create")
     public ResponseEntity<AddShopResponseDto> addShop(@RequestBody @Schema(description = "상점 생성 요청 데이터") AddShopRequest request) {
-        System.out.println("공동구매 글 작성 수령지 값:  " + request.getLat() + ", " + request.getLon());
         AddShopResponseDto saveShop = shopService.save(request);
         // 알림 생성
         List<Long> userSeqs = userService.searchNearUser(request.getUserSeq(), request.getLat(), request.getLon());
