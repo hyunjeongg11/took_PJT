@@ -8,7 +8,7 @@ import tookIcon from '../../assets/chat/tookIcon.png';
 import { getChatListApi } from '../../apis/chat/chat';
 import { useUser } from '../../store/user';
 import { getSeletByRoomApi } from '../../apis/taxi';
-
+import CompleteIcon from '../../assets/payment/complete.png';
 function formatTime(timeString) {
   const date = new Date(timeString);
   const now = new Date();
@@ -104,7 +104,7 @@ function ChattingListPage() {
       <div className="mt-2 w-full border-0 border-solid bg-neutral-400 bg-opacity-40 border-neutral-400 border-opacity-40 min-h-[0.5px]" />
 
       <div className="flex flex-col">
-        {rooms.map((chat) => (
+      {rooms.map((chat) => (
           <div
             key={chat.roomSeq}
             className="flex items-center px-6 py-4 border-b border-gray-200 cursor-pointer"
@@ -124,7 +124,7 @@ function ChattingListPage() {
                   {formatTime(chat.createdAt)}
                 </div>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <div className="text-sm text-gray-600">
                   {chat.recentChatMessage}
                 </div>
@@ -133,6 +133,11 @@ function ChattingListPage() {
                     {chat.unreadMessages}
                   </div>
                 )}
+              {chat.status === false && (
+                <div className=" text-xs text-white bg-red-500 opacity-90 px-2 py-1 rounded-full shadow-md">
+                  정산 완료
+                </div>
+              )}
               </div>
             </div>
           </div>
