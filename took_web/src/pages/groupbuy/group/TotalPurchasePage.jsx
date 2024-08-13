@@ -15,7 +15,7 @@ import { useUser } from '../../../store/user.js';
 import { useLocation } from 'react-router-dom';
 import { makePartyApi } from '../../../apis/pay.js';
 import { insertAllMemberApi } from '../../../apis/payment/jungsan.js';
-import { setPartyApi } from '../../../apis/groupBuy/shop.js';
+import { setPartyApi, getShopApi } from '../../../apis/groupBuy/shop.js';
 
 function TotalPurchasePage() {
   const location = useLocation();
@@ -28,6 +28,23 @@ function TotalPurchasePage() {
   const { seq: currentUserSeq } = useUser();
   const [showModal, setShowModal] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState(null);
+  const [chatRoom, setChatRoom] = useState();
+  const [deliveryTip, setDeliveryTip] = useState(0);
+
+  const fetchShopData = async () => {
+    try {
+      const data = await getShopApi(shopSeq);
+
+      setChatRoom((prev) => ({
+        ...prev,
+        userSeq: data.userSeq,
+        roomTitle: data.title,
+      }));
+
+    } catch (error) {
+      console.log('fetching shop data error', error);
+    }
+  };
 
   useEffect(() => {
     const fetchPurchaseData = async () => {
@@ -48,8 +65,17 @@ function TotalPurchasePage() {
             }
           })
         );
+
+        // userSeq가 shopInfo.userSeq와 일치하는 항목의 shipCost를 찾기
+        const leaderPurchase = purchasesWithUserNames.find(
+          (purchase) => purchase.userSeq === shopInfo.userSeq
+        );
+
+        // 배달비로 shipCost 저장
+        const calculatedDeliveryTip = leaderPurchase ? leaderPurchase.shipCost : 0;
+        setDeliveryTip(calculatedDeliveryTip);
+
         setPurchaseData(purchasesWithUserNames);
-        console.log(purchasesWithUserNames)
         setTotalAmountSum(response.listTotal || 0);
       } catch (error) {
         console.error('Error fetching purchase data:', error);
@@ -57,7 +83,7 @@ function TotalPurchasePage() {
         setLoading(false);
       }
     };
-
+    fetchShopData();
     fetchPurchaseData();
   }, [shopSeq]);
   
@@ -78,7 +104,7 @@ function TotalPurchasePage() {
   // 파티 생성
   const handleComplete = async () => {
     try {
-      
+
       const response = await makePartyApi({
         userSeq: shopInfo.userSeq,
         title: shopInfo.title,
@@ -98,16 +124,17 @@ function TotalPurchasePage() {
         
         // shopInfo.userSeq와 일치하는 사용자의 shipCost를 deliveryTip으로 설정
         const leaderPurchase = purchaseData.find(purchase => purchase.userSeq === shopInfo.userSeq);
-        const deliveryTip = leaderPurchase ? leaderPurchase.shipCost : 0;
-        
+        const calculatedDeliveryTip = leaderPurchase ? leaderPurchase.shipCost : 0;
+
         // 최종 요청 바디 생성
         const requestBody = {
           partySeq: response.partySeq,  // 이 값은 필요에 따라 동적으로 설정해야 함
           userCosts: userCosts,
-          deliveryTip: deliveryTip,
+          deliveryTip: calculatedDeliveryTip,
         };
         
         const response2 = await insertAllMemberApi(requestBody);
+        navigate(`/chat/buy/${shopInfo.roomSeq}`, { state: { chatRoom } });
       }
       
     } catch (error) {
@@ -187,17 +214,11 @@ function TotalPurchasePage() {
                         ))}
                       </div>
                     </div>
-                    <div className="flex justify-between mb-2">
-                      <span className="font-bold">배달비</span>
-                      <div className="text-right">
-                        {formatNumber(el.shipCost)}원
-                      </div>
-                    </div>
                     <hr className="my-2 border-neutral-300" />
                     <div className="flex justify-between">
                       <span className="font-bold text-black">전체 금액</span>
                       <div className="text-right text-black font-semibold">
-                        {formatNumber(el.total)}원
+                        {formatNumber(el.price)}원
                       </div>
                     </div>
                   </div>
@@ -207,11 +228,14 @@ function TotalPurchasePage() {
           </div>
           <hr className="border border-neutral-300 w-[90%] my-2 mx-auto" />
           <div className="text-black font-bold text-lg text-center px-5 py-3">
+            배송비 : {formatNumber(deliveryTip)}원
+          </div>
+          <div className="text-black font-bold text-lg text-center px-5 py-3">
             총 금액 : {formatNumber(totalAmountSum)}원
           </div>
         </div>
       </div>
-      {currentUserSeq === shopInfo.userSeq && (
+      {!shopInfo.partySeq && currentUserSeq === shopInfo.userSeq && (
           <button
             className="bg-main px-12 py-3 mt-6 w-full shadow-sm font-bold text-white rounded-2xl"
             onClick={handleComplete}

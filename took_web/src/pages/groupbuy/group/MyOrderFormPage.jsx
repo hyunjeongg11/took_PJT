@@ -7,6 +7,7 @@ import {
 } from '../../../apis/groupBuy/purchase';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { useUser } from '../../../store/user.js';
+import { getShopApi } from '../../../apis/groupBuy/shop.js';
 
 const initialData = [{ name: '', option: '', etc: '' }];
 
@@ -14,16 +15,21 @@ function MyOrderFormPage() {
   const { id: shopSeq } = useParams(); // 현재 경로에서 shopSeq 값을 가져옴
   const { state } = useLocation(); // navigate를 통해 전달된 상태 값 (purchase 정보 포함)
   const { seq: userSeq } = useUser();
+  const [shopInfo, setShopInfo] = useState({});
   const [myData, setMyData] = useState(initialData);
   const [total, setTotal] = useState('');
+  const [shipCost, setShipCost] = useState(''); // 배송비 상태 추가
   const navigate = useNavigate();
   const isEditMode = state && state.purchase; // 수정 모드인지 확인
+  const [isLeader, setIsLeader] = useState(false);
 
   useEffect(() => {
     // 수정 모드인 경우, 기존 구매 정보를 폼에 설정
     if (isEditMode) {
       const { purchase } = state;
       setTotal(purchase.price); // 기존 총 금액 설정
+      setShipCost(purchase.shipCost); // 기존 배송비 설정
+      loadShopInfo();
       setMyData(
         purchase.productList.map((product) => ({
           name: product.productName,
@@ -34,6 +40,22 @@ function MyOrderFormPage() {
     }
   }, [isEditMode, state]);
 
+  useEffect(() => {
+      loadShopInfo();
+  }, [userSeq]);
+
+  const loadShopInfo = async () => {
+    try {
+      const response = await getShopApi(shopSeq);
+      console.log('shopInfo', response);
+      setShopInfo(response);
+      if (userSeq === response.userSeq) {
+        setIsLeader(true);
+      }
+    } catch (err) {
+      console.log('Error fetching shop info', err);
+    }
+  };
   const handleChange = (idx, field, value) => {
     const newData = myData.map((item, index) =>
       index === idx ? { ...item, [field]: value } : item
@@ -54,7 +76,6 @@ function MyOrderFormPage() {
 
   const handleSubmit = async () => {
     const price = parseInt(total, 10);
-    const shipCost = 0;
 
     const productList = myData.map((item) => ({
       productName: item.name,
@@ -66,7 +87,7 @@ function MyOrderFormPage() {
       userSeq,
       shopSeq: parseInt(shopSeq, 10),
       price,
-      shipCost,
+      shipCost: parseInt(shipCost, 10),
       productList,
     };
 
@@ -83,7 +104,7 @@ function MyOrderFormPage() {
         await writePurchaseApi(params);
         alert('주문 정보가 성공적으로 등록되었습니다.');
       }
-      navigate(`/groupbuy/total/${shopSeq}`);
+      navigate(`/groupbuy/total/${shopSeq}`, { state: { shopInfo } });
     } catch (error) {
       alert('에러가 발생했습니다. 다시 시도해주세요.');
       console.error('API call error:', error);
@@ -160,6 +181,19 @@ function MyOrderFormPage() {
               상품 추가하기
             </div>
           </div>
+          {isLeader && (
+            <div className="flex text-sm flex-col items-start py-3 px-4 m-4 border border-neutral-200 text-black bg-white rounded-xl shadow-sm">
+              <label className="w-full flex justify-between items-center">
+                배송비
+                <input
+                  type="text"
+                  value={shipCost} // 배송비 상태와 연결
+                  onChange={(e) => setShipCost(e.target.value)} // 배송비 상태 업데이트
+                  className="ml-4 py-2 p-2 rounded-md text-right border border-collapse focus:outline-none focus:ring-2 focus:ring-main"
+                />
+              </label>
+            </div>
+          )}
           <div className="flex text-sm flex-col items-start py-3 px-4 m-4 border border-neutral-200 text-black bg-white rounded-xl shadow-sm">
             <label className="w-full flex justify-between items-center">
               총 금액
