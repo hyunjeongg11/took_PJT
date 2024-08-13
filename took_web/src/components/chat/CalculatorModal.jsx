@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../store/user';
 
-const CalculatorModal = ({ onClose, tempMember, leader }) => {
+const CalculatorModal = ({ onClose, tempMember, leader, id }) => {
   const modalRef = useRef(null);
   const navigate = useNavigate();
   const [showRequestModal, setShowRequestModal] = useState(false);
@@ -44,7 +44,7 @@ const CalculatorModal = ({ onClose, tempMember, leader }) => {
             )}
             <li
               className="cursor-pointer"
-              onClick={() => navigate('/tookDetails')}
+              onClick={() => navigate(`/tookDetails/${id}`)}
             >
               정산 현황보기
             </li>

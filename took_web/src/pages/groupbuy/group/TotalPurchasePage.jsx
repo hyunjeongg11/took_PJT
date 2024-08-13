@@ -12,8 +12,14 @@ import {
 } from '../../../apis/groupBuy/purchase';
 import { getUserInfoApi } from '../../../apis/user.js';
 import { useUser } from '../../../store/user.js';
+import { useLocation } from 'react-router-dom';
+import { makePartyApi } from '../../../apis/pay.js';
+import { insertAllMemberApi } from '../../../apis/payment/jungsan.js';
+import { setPartyApi } from '../../../apis/groupBuy/shop.js';
 
 function TotalPurchasePage() {
+  const location = useLocation();
+  const { shopInfo } = location.state || {};
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
   const { id: shopSeq } = useParams(); // 현재 경로에서 shopSeq 값을 가져옴
   const [purchaseData, setPurchaseData] = useState([]);
@@ -35,15 +41,15 @@ function TotalPurchasePage() {
               const userInfo = await getUserInfoApi({
                 userSeq: purchase.userSeq,
               });
-              return { ...purchase, userName: userInfo.userName };
+              return { ...purchase, userName: userInfo.userName, imgNo: userInfo.imageNo };
             } catch (error) {
               console.error('Error fetching user info:', error);
               return purchase;
             }
           })
         );
-
         setPurchaseData(purchasesWithUserNames);
+        console.log(purchasesWithUserNames)
         setTotalAmountSum(response.listTotal || 0);
       } catch (error) {
         console.error('Error fetching purchase data:', error);
@@ -54,7 +60,7 @@ function TotalPurchasePage() {
 
     fetchPurchaseData();
   }, [shopSeq]);
-
+  
   const handleDelete = async () => {
     try {
       await deleteMyPurchaseApi(purchaseToDelete);
@@ -69,6 +75,45 @@ function TotalPurchasePage() {
     }
   };
 
+  // 파티 생성
+  const handleComplete = async () => {
+    try {
+      
+      const response = await makePartyApi({
+        userSeq: shopInfo.userSeq,
+        title: shopInfo.title,
+        category: 3
+      });
+      // 정산 API 호출 
+      if(response){
+        const setParty = await setPartyApi({
+          shopSeq: shopInfo.shopSeq,
+          partySeq: response.partySeq
+        });
+
+        const userCosts = purchaseData.map(purchase => ({
+          userSeq: purchase.userSeq,
+          cost: purchase.price,
+        }));
+        
+        // shopInfo.userSeq와 일치하는 사용자의 shipCost를 deliveryTip으로 설정
+        const leaderPurchase = purchaseData.find(purchase => purchase.userSeq === shopInfo.userSeq);
+        const deliveryTip = leaderPurchase ? leaderPurchase.shipCost : 0;
+        
+        // 최종 요청 바디 생성
+        const requestBody = {
+          partySeq: response.partySeq,  // 이 값은 필요에 따라 동적으로 설정해야 함
+          userCosts: userCosts,
+          deliveryTip: deliveryTip,
+        };
+        
+        const response2 = await insertAllMemberApi(requestBody);
+      }
+      
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
   // 수정 버튼 클릭 시 호출되는 함수
   const handleEdit = (purchase) => {
     // 특정 구매 정보(purchase)를 상태로 전달하며, /groupbuy/my-order/:shopSeq 페이지로 이동
@@ -108,7 +153,7 @@ function TotalPurchasePage() {
                   <div className="flex items-center mb-2">
                     <img
                       loading="lazy"
-                      src={getProfileImagePath(el.userSeq)}
+                      src={getProfileImagePath(el.imgNo)}
                       alt="Profile"
                       className="w-7"
                     />
@@ -166,7 +211,14 @@ function TotalPurchasePage() {
           </div>
         </div>
       </div>
-
+      {currentUserSeq === shopInfo.userSeq && (
+          <button
+            className="bg-main px-12 py-3 mt-6 w-full shadow-sm font-bold text-white rounded-2xl"
+            onClick={handleComplete}
+          >
+            주문 확정
+          </button>
+        )}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 shadow-md rounded-2xl">

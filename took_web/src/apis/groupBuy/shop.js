@@ -247,3 +247,12 @@ export const nearShopApi = async (userSeq) => {
     return handleApiError(error);
   }
 };
+
+export const setPartyApi = async (params) => {
+  try {
+    const response = await request.put(`/api/shops/setParty`, params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};

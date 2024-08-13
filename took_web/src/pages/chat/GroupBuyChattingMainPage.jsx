@@ -1,4 +1,3 @@
-// GroupBuyChattingMainPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation, Link } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
@@ -385,7 +384,7 @@ function GroupBuyChattingMainPage() {
           <div className="flex flex-col items-center">
             <div
               className="w-11 h-11 rounded-full bg-[#D2ACA4] flex items-center justify-center"
-              onClick={() => navigate(`/groupbuy/total/${shopInfo.shopSeq}`)}
+              onClick={() => navigate(`/groupbuy/total/${shopInfo.shopSeq}`, { state: { shopInfo } })}
             >
               <AiOutlineInfoCircle className="text-white w-6 h-6" />
             </div>
@@ -429,7 +428,7 @@ function GroupBuyChattingMainPage() {
         <MoneyModal onClose={closeModal} tempMember={users} />
       )}
       {currentModal === 'calculator' && (
-        <CalculatorModal onClose={closeModal} tempMember={users} />
+        <CalculatorModal onClose={closeModal} tempMember={users} id={shopInfo.partySeq} />
       )}
 
       {showParticipantList && (
