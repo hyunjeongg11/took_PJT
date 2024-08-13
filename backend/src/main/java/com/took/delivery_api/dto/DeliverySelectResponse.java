@@ -1,6 +1,7 @@
 package com.took.delivery_api.dto;
 
 import com.took.delivery_api.entity.Delivery;
+import com.took.user_api.entity.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -60,7 +61,13 @@ public class DeliverySelectResponse {
     @Schema(description = "완료 시간", example = "2024-12-31T14:00:00")
     private LocalDateTime finishTime;  // 완료 시간
 
-    public DeliverySelectResponse(Delivery delivery) {
+    @Schema(description = "사용자 이름", example = "김투")
+    private String userName;
+
+    @Schema(description = "사용자 이미지", example = "1")
+    private int userImage;
+
+    public DeliverySelectResponse(Delivery delivery, UserEntity user) {
         this.deliverySeq = delivery.getDeliverySeq();
         this.userSeq = delivery.getUser().getUserSeq();
         this.roomSeq = delivery.getRoomSeq();
@@ -77,5 +84,7 @@ public class DeliverySelectResponse {
         this.count = delivery.getCount();
         this.createdAt = delivery.getCreatedAt();
         this.finishTime = delivery.getFinishTime();
+        this.userName = user.getUserName();
+        this.userImage = user.getImageNo();
     }
 }

@@ -108,7 +108,7 @@ public class DeliveryService {
                 .map(delivery -> {
                     double distance = calculateDistance(request.getLat(), request.getLon(), delivery.getPickupLat(), delivery.getPickupLon());
                     if (distance <= distanceThreshold) { // 거리 범위를 1000m로 설정
-                        return new DeliverySelectResponse(delivery);
+                        return new DeliverySelectResponse(delivery, delivery.getUser());
                     } else {
                         return null;
                     }
@@ -121,7 +121,7 @@ public class DeliveryService {
     @Transactional
     public DeliverySelectResponse getDetail(Long deliverySeq) {
         Delivery delivery = deliveryRepository.findById(deliverySeq).orElseThrow();
-        return new DeliverySelectResponse(delivery);
+        return new DeliverySelectResponse(delivery, delivery.getUser());
     }
 
     // 배달 상태 변경
@@ -150,6 +150,6 @@ public class DeliveryService {
     @Transactional
     public DeliverySelectResponse selectByRoom(Long roomSeq) {
         Delivery delivery = deliveryRepository.findByRoomSeq(roomSeq);
-        return new DeliverySelectResponse(delivery);
+        return new DeliverySelectResponse(delivery, delivery.getUser());
     }
 }
