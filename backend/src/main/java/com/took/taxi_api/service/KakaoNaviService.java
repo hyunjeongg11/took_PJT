@@ -36,7 +36,7 @@ public class KakaoNaviService {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(kakaoRequest, headers);
         ResponseEntity<Map> response = restTemplate.exchange(URL, HttpMethod.POST, entity, Map.class);
 
-        int totalCost = extractTotalCost(response.getBody());
+        Long totalCost = extractTotalCost(response.getBody());
         return new ExpectCostResponse(totalCost);
     }
 
@@ -65,7 +65,7 @@ public class KakaoNaviService {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(kakaoRequest, headers);
         ResponseEntity<Map> response = restTemplate.exchange(URL, HttpMethod.POST, entity, Map.class);
 
-        int totalCost = extractTotalCost(response.getBody());
+        Long totalCost = extractTotalCost(response.getBody());
         int distance = extractDistance(response.getBody());
         int duration = extractDuration(response.getBody());
         return distributeCost(request.getUsers(), totalCost, distance, duration);
@@ -79,16 +79,16 @@ public class KakaoNaviService {
      * @param duration 총 시간
      * @return 분배된 비용 정보가 담긴 응답 데이터
      */
-    private AllExpectCostResponse distributeCost(List<AllExpectCostRequest.User> users, int totalCost, int distance, int duration) {
+    private AllExpectCostResponse distributeCost(List<AllExpectCostRequest.User> users, Long totalCost, int distance, int duration) {
         AllExpectCostResponse response = new AllExpectCostResponse();
         List<AllExpectCostResponse.User> userCostList = new ArrayList<>();
 
-        int totalUserCost = users.stream().mapToInt(AllExpectCostRequest.User::getCost).sum();
+        long totalUserCost = users.stream().mapToLong(AllExpectCostRequest.User::getCost).sum();
     
         // 예상 비용 비율별 , 결제 예상 비용 계산
         for (AllExpectCostRequest.User user : users) {
-            int userCost = user.getCost();
-            int proportionateCost = (int) Math.round(((double) userCost / totalUserCost) * totalCost);
+            Long userCost = user.getCost();
+            Long proportionateCost = Math.round(((double) userCost / totalUserCost) * totalCost);
 
             AllExpectCostResponse.User userCostResponse = new AllExpectCostResponse.User();
             userCostResponse.setUserSeq(user.getUserSeq());
@@ -108,13 +108,13 @@ public class KakaoNaviService {
      * @param responseBody 카카오 네비게이션 API의 응답 데이터
      * @return 총 비용 (택시 비용 + 톨 비용)
      */
-    private int extractTotalCost(Map<String, Object> responseBody) {
+    private Long extractTotalCost(Map<String, Object> responseBody) {
         Map<String, Object> route = ((List<Map<String, Object>>) responseBody.get("routes")).get(0);
         Map<String, Object> summary = (Map<String, Object>) route.get("summary");
         Map<String, Object> fare = (Map<String, Object>) summary.get("fare");
 
-        int taxiCost = (Integer) fare.get("taxi");
-        int tollCost = (Integer) fare.get("toll");
+        Long taxiCost = (Long) fare.get("taxi");
+        Long tollCost = (Long) fare.get("toll");
 
         return taxiCost + tollCost;
     }
