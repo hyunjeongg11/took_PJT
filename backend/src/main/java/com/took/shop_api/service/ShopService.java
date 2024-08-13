@@ -210,7 +210,7 @@ public class ShopService {
                 .map(shop -> {
                     double distance = calculateDistance(user.getLat(), user.getLon(), shop.getLat(), shop.getLon());
                     if (distance <= distanceThreshold) { // 거리 범위를 1000m로 설정
-                        return new ShopResponse(shop, user);
+                        return new ShopResponse(shop, shop.getUser());
                     } else {
                         return null;
                     }
