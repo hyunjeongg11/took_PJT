@@ -29,10 +29,8 @@ export const createChatApi = async (params) => {
 export const getChatListApi = async (userSeq) => {
   try {
     const response = await request.get(`/api/chat/rooms/${userSeq}`);
-    const sortedData = response.data.sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    );
-    return sortedData;
+   
+    return response.data;
   } catch (error) {
     return handleApiError(error);
   }
