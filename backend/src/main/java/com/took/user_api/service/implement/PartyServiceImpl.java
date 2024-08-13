@@ -552,10 +552,7 @@ public class PartyServiceImpl implements PartyService {
         MemberEntity leaderMember = memberRepository.findByPartyAndLeaderTrue(party);
         UserEntity leader = userRepository.findById(leaderMember.getUser().getUserSeq()).orElseThrow();
 
-        System.out.println("request: " + requestBody);
-
         for (FinalTaxiPartyRequest.User user : requestBody.getUsers()) {
-            System.out.println("요청 유저: " + user);
             UserEntity userEntity = userRepository.findById(user.getUserSeq()).orElseThrow();
             MemberEntity member = memberRepository.findByPartyAndUser(party, userEntity);
             if (member.isLeader()) continue; // 결제자는 패스

@@ -28,9 +28,7 @@ public class FCMService {
                 .userSeq(String.valueOf(request.getUserSeq()))  // request에서 userId 가져옴
                 .token(request.getToken())
                 .build();
-        System.out.println("fcmToken " + fcmToken);
         FCMToken test = fcmRepository.save(fcmToken);
-        System.out.println("test " + test);
     }
 
     public String getToken(long userSeq) {
@@ -114,8 +112,6 @@ public class FCMService {
                 .addAllTokens(getTokens(request.getUserSeqList()))
                 .setNotification(notification)
                 .build();
-        System.out.println(message);
-        System.out.println(getTokens(request.getUserSeqList()));
         try {
             FirebaseMessaging.getInstance().sendMulticast(message);
         } catch (Exception e) {
