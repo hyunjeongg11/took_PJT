@@ -234,7 +234,7 @@ public class PartyServiceImpl implements PartyService {
 
 //      파티가 끝나고 해버리면 안됨
 //      나는 돈을 보냈는데 파티가 끝나지 않아도 난 그 알림에서 돈보내기 버튼을 누룰 수 있으면 안됨.
-        Alarm alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(),requestBody.getPartySeq());
+        Alarm alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(), requestBody.getPartySeq());
 
 
         Long memberCost = member.getCost();
@@ -343,7 +343,7 @@ public class PartyServiceImpl implements PartyService {
 
 
 //      나는 돈을 보냈는데 파티가 끝나지 않아도 난 그 알림에서 돈보내기 버튼을 누룰 수 있으면 안됨.
-        Alarm alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(),requestBody.getPartySeq());
+        Alarm alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(), requestBody.getPartySeq());
 
 
         //빼주기 전에 돈 있는 없는지 검사
@@ -435,13 +435,12 @@ public class PartyServiceImpl implements PartyService {
         );
 
         // 배달or 공구 상태 DONE으로 변경
-        if(party.getCategory() == 1) {
+        if (party.getCategory() == 1) {
             Delivery delivery = deliveryRepository.findByPartySeq(partySeq);
             delivery.updateStatus(String.valueOf(Delivery.Status.DONE));
             ChatRoom chatRoom = chatRoomRepository.findById(delivery.getRoomSeq()).orElseThrow();
             chatRoom.updateStaus(false);
-        }
-        else if(party.getCategory() ==3) {
+        } else if (party.getCategory() == 3) {
             Shop shop = shopRepository.findByPartySeq(partySeq);
             shop.updateStatus(Shop.statusType.COMPLETED);
             ChatRoom chatRoom = chatRoomRepository.findById(shop.getRoomSeq()).orElseThrow();
@@ -587,6 +586,16 @@ public class PartyServiceImpl implements PartyService {
                                 .cost(exchange)
                                 .build()
                 );
+            } else if (exchange == 0) {
+                member.updateStatus(true);
+                count++;
+                fcmService.sendMessage(
+                        MessageRequest.builder()
+                                .title("'" + party.getTitle() + "' 택시 탑승 완료")
+                                .body("택시 탑승이 완료 되었습니다.")
+                                .userSeqList(List.of(user.getUserSeq()))
+                                .build()
+                );
             } else {
                 long balance = bank.getBalance() + exchange;
                 bank.updateBalance(balance);
@@ -690,7 +699,7 @@ public class PartyServiceImpl implements PartyService {
         bank.updateBalance(balance - restCost);
         party.updateCount(1);
 
-        Alarm alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(),requestBody.getPartySeq());
+        Alarm alarm = alarmRepository.findByUserSeqAndPartySeq(requestBody.getUserSeq(), requestBody.getPartySeq());
         alarm.updateStatus(true);
 
         // 리더에게 송금

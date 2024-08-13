@@ -126,11 +126,8 @@ public class TaxiGuestService {
      */
     @Transactional
     public void setDestinationAndCost(GuestSetDestinationAndCostRequest request) {
-        System.out.println("요청 값: " + request);
         TaxiGuest taxiGuest = taxiGuestRepository.findById(request.getGuestSeq()).orElseThrow();
-        System.out.println("업데이트 전: " + taxiGuest);
         taxiGuest.updateDestiAndCost(request.getDestiName(), request.getDestiLat(), request.getDestiLon(), request.getCost(), request.getRouteRank());
-        System.out.println("업데이트 후: " +  taxiGuest);
     }
 
     /**
