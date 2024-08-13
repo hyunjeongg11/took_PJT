@@ -65,10 +65,10 @@ public class TaxiService {
      */
     @Transactional
     public List<TaxiSelectResponse> listTaxi(TaxiListSelectRequest request) {
-        List<Taxi> taxis = taxiRepository.findAll();
         if(request.getLat() == 0 || request.getLon() == 0) {
             return null;
         }
+        List<Taxi> taxis = taxiRepository.findAll();
         return taxis.stream()
                 .map(taxi -> {
                     double distance = calculateDistance(taxi.getWriteLat(), taxi.getWriteLon(), request.getLat(), request.getLon());
