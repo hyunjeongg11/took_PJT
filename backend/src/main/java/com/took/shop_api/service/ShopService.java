@@ -99,7 +99,7 @@ public class ShopService {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
         shop.update(request.getTitle(), request.getContent(), request.getItem(), request.getSite(), request.getPlace(), request.getMaxCount());
-        if (shop.getMaxCount() == shop.getCount()) {
+        if (shop.getMaxCount() <= shop.getCount()) {
             shop.updateStatus(Shop.statusType.IN_PROGRESS);
         } else {
             shop.updateStatus(Shop.statusType.OPEN);

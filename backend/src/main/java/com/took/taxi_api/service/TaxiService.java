@@ -126,7 +126,7 @@ public class TaxiService {
     public void setTaxi(TaxiSetRequest request) {
         Taxi taxi = taxiRepository.findById(request.getTaxiSeq()).orElseThrow();
         taxi.updateTaxi(request.getMaster(), request.getMax(), request.isGender());
-        if (taxi.getMax() == taxi.getCount()) {
+        if (taxi.getMax() <= taxi.getCount()) {
             taxi.updateStatus(Taxi.Status.FILLED);
         } else {
             taxi.updateStatus(Taxi.Status.OPEN);
