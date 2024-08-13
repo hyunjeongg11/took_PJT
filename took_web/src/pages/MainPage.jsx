@@ -103,11 +103,12 @@ function MainPage() {
           </div>
           <div className="flex flex-col">
             <div onClick={() => handleButtonClick('/payment-methods')}>
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/0b78b4f2a34b054ea6b200953659047054914f073223a91dba4e7707856cce89?apiKey=6a63372050fb46b6bb21a2ca3b7359ed&&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
-                className="object-contain rounded-none w-full"
-              />
+            <img
+              loading="lazy"
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/2437fd8c46307376b7ba98f8386a396d9170469f1fd601196ad923b3edeb12c1?placeholderIfAbsent=true&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
+              className="object-contain rounded-none aspect-[2.41] w-[147px]"
+              alt=""
+            />
             </div>
             <div onClick={() => handleButtonClick('/transaction-history')}>
               <img
