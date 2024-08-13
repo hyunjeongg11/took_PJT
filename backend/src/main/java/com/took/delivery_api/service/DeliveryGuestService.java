@@ -114,7 +114,7 @@ public class DeliveryGuestService {
         List<Delivery> deliveries = deliveryRepository.findByDeliverySeqIn(deliverySeqs);
 
         return deliveries.stream()
-                .map(DeliverySelectResponse::new)
-                .toList();
+                .map(delivery -> new DeliverySelectResponse(delivery, delivery.getUser()))
+                .collect(Collectors.toList());
     }
 }
