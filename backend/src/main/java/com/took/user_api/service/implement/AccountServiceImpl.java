@@ -101,7 +101,8 @@ public class AccountServiceImpl implements AccountService {
         try{
 
 //            al = accountRepositoryCustom.findAccountsByUserSeq(dto.getUserSeq());
-            al = accountRepository.findByUserSeq(dto.getUserSeq());
+            UserEntity user = userRepository.findById(dto.getUserSeq()).orElseThrow();
+            al = accountRepository.findByUser(user);
             List<Long> bankSeq = new ArrayList<>();
 
             for(AccountEntity account : al){

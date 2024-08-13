@@ -11,5 +11,5 @@ public interface AccountRepository extends JpaRepository<AccountEntity,Long>{
 
     AccountEntity findByUserAndMainTrue(UserEntity user);
 
-    List<AccountEntity> findByUserSeq(Long userSeq);
+    List<AccountEntity> findByUser(UserEntity user);
 }
