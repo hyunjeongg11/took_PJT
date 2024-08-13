@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
 import backIcon from '../../assets/delivery/whiteBack.svg';
 import plusIcon from '../../assets/taxi/plus.png';
 import enterIcon from '../../assets/taxi/enter.png';
@@ -15,11 +17,11 @@ import {
   addTaxiPartyMemberApi,
   isUserJoinedTaxiPartyApi,
   getAllTaxiPartyMembersApi,
-  updateTaxiPartyStatusApi,
 } from '../../apis/taxi.js';
 import { getUserInfoApi } from '../../apis/user.js';
 import { getAddr } from '../../utils/map.js';
 import Modal from '../../components/common/titleMessageCommonModal.jsx';
+
 const BackButton = () => {
   const navigate = useNavigate();
   const handleBackClick = () => {
@@ -43,10 +45,33 @@ function TaxiMainPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-
   const [location, setLocation] = useState('');
   const [taxiParties, setTaxiParties] = useState([]);
   const [userGender, setUserGender] = useState('');
+
+  const [stompClient, setStompClient] = useState(null);
+  const [connected, setConnected] = useState(false);
+
+  useEffect(() => {
+    console.log('useEffect 실행됨'); // UseEffect 시작 부분에 로그 추가
+    const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
+    const stompClientInstance = Stomp.over(socket);
+    stompClientInstance.connect({}, () => {
+      console.log('WebSocket 연결 성공');
+      setConnected(true);
+    }, (error) => {
+      console.error('WebSocket 연결 실패:', error); // WebSocket 연결 실패 로그
+    });
+    setStompClient(stompClientInstance); // stompClientInstance 설정
+  
+    return () => {
+      if (stompClientInstance && stompClientInstance.connected) {
+        stompClientInstance.disconnect(() => {
+          console.log('WebSocket 연결 해제');
+        });
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -116,6 +141,22 @@ function TaxiMainPage() {
     }
   }, [userSeq, latitude, longitude]);
 
+  const enterRoom = ({ roomSeq, userSeq }) => {
+    if (stompClient && connected) {
+      stompClient.send(
+        '/pub/room/enter',
+        {},
+        JSON.stringify({
+          roomSeq,
+          userSeq,
+        })
+      );
+      console.log(`Entered room with roomSeq: ${roomSeq}, userSeq: ${userSeq}`);
+    } else {
+      console.error('WebSocket 연결이 아직 준비되지 않았습니다');
+    }
+  };
+
   const handleEnterChatRoom = (chatRoomId, taxiSeq, roomSeq) => {
     navigate(`/chat/taxi/${chatRoomId}`, {
       state: { taxiSeq, roomSeq },
@@ -128,26 +169,26 @@ function TaxiMainPage() {
       const isAlreadyMember = allMembers.some(
         (member) => member.userSeq === userSeq
       );
-
+  
       if (isAlreadyMember) {
         handleEnterChatRoom(item.roomSeq, item.taxiSeq, item.roomSeq);
         return;
       }
-
+  
       if (item.status === 'FILLED') {
         setModalMessage('해당 택시 took은 \n모집이 완료되었어요.');
         setIsModalOpen(true);
         return;
       }
-
+  
       const userStatus = await isUserJoinedTaxiPartyApi(userSeq);
-
+  
       if (userStatus) {
         setModalMessage('이미 참여중이에요!');
         setIsModalOpen(true);
         return;
       }
-
+  
       const memberData = {
         taxiSeq: item.taxiSeq,
         userSeq: userSeq,
@@ -157,16 +198,26 @@ function TaxiMainPage() {
         cost: item.taxiPath[0].cost,
         routeRank: item.taxiPath[0].routeRank,
       };
-
+  
       const response = await addTaxiPartyMemberApi(memberData);
       if (response) {
         console.log('Member added successfully:', response);
-        handleEnterChatRoom(item.roomSeq, item.taxiSeq, item.roomSeq);
+        
+        // WebSocket이 연결되었는지 확인한 후 방에 입장
+        if (stompClient && connected) {
+          enterRoom({ roomSeq: item.roomSeq, userSeq });
+          handleEnterChatRoom(item.roomSeq, item.taxiSeq, item.roomSeq);
+        } else {
+          console.error('WebSocket 연결이 아직 준비되지 않았습니다');
+        }
+      } else {
+        console.error('택시 파티에 멤버 추가 실패');
       }
     } catch (error) {
-      console.error('Error processing taxi party participation:', error);
+      console.error('택시 파티 참여 처리 중 오류 발생:', error);
     }
   };
+  
 
   const handleCreateTaxi = async () => {
     const userStatus = await isUserJoinedTaxiPartyApi(userSeq);
