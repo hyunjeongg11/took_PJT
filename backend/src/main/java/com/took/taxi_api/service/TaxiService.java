@@ -126,6 +126,11 @@ public class TaxiService {
     public void setTaxi(TaxiSetRequest request) {
         Taxi taxi = taxiRepository.findById(request.getTaxiSeq()).orElseThrow();
         taxi.updateTaxi(request.getMaster(), request.getMax(), request.isGender());
+        if (taxi.getMax() == taxi.getCount()) {
+            taxi.updateStatus(Taxi.Status.FILLED);
+        } else {
+            taxi.updateStatus(Taxi.Status.OPEN);
+        }
     }
 
     /**
@@ -206,7 +211,7 @@ public class TaxiService {
         Taxi taxi = taxiRepository.findById(guest.getTaxi().getTaxiSeq()).orElseThrow();
         return new TaxiSelectResponse(taxi);
     }
-    
+
     // 해당 채팅방의 택시 정보
     @Transactional
     public TaxiSelectResponse selectByRoom(Long roomSeq) {

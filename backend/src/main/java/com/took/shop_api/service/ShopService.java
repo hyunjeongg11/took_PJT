@@ -98,8 +98,12 @@ public class ShopService {
     public void update(Long id, UpdateShopRequest request) {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found : " + id));
-
         shop.update(request.getTitle(), request.getContent(), request.getItem(), request.getSite(), request.getPlace(), request.getMaxCount());
+        if (shop.getMaxCount() == shop.getCount()) {
+            shop.updateStatus(Shop.statusType.IN_PROGRESS);
+        } else {
+            shop.updateStatus(Shop.statusType.OPEN);
+        }
     }
 
     @Transactional
@@ -115,8 +119,8 @@ public class ShopService {
         Shop shop = shopRepository.findById(request.getShopSeq()).orElseThrow();
         UserEntity user = userRepository.findById(request.getUserSeq()).orElseThrow();
         ShopGuest shopGuest = shopGuestRepository.findByShopAndUser(shop, user);
-        if (shopGuest == null){
-            if (shop.getMaxCount() > shop.getCount()){
+        if (shopGuest == null) {
+            if (shop.getMaxCount() > shop.getCount()) {
                 shop.updateCount(1);
                 shopGuest = ShopGuest.builder().
                         shop(shop).
@@ -125,23 +129,21 @@ public class ShopService {
                         build();
                 shopGuestRepository.save(shopGuest);
 
-                if(shop.getCount() == shop.getMaxCount()) {
+                if (shop.getCount() == shop.getMaxCount()) {
                     shop.updateStatus(Shop.statusType.IN_PROGRESS);
                 }
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
-        }
-        else{
+        } else {
             return false;
         }
 
     }
 
     @Transactional
-    public void exit(Long shopSeq, Long userSeq){
+    public void exit(Long shopSeq, Long userSeq) {
         Shop shop = shopRepository.findById(shopSeq).orElseThrow();
         UserEntity user = userRepository.findById(userSeq).orElseThrow();
         shopGuestRepository.deleteByShopAndUser(shop, user);
@@ -174,8 +176,8 @@ public class ShopService {
     public boolean pickUpCheck(Long shopSeq) {
         Shop shop = shopRepository.findById(shopSeq).orElseThrow();
         List<ShopGuest> list = shopGuestRepository.findAllByShop(shop);
-        for (ShopGuest shopGuest : list){
-            if (!shopGuest.isPickUp()){
+        for (ShopGuest shopGuest : list) {
+            if (!shopGuest.isPickUp()) {
                 return false;
             }
         }
