@@ -553,6 +553,7 @@ public class PartyServiceImpl implements PartyService {
         UserEntity leader = userRepository.findById(leaderMember.getUser().getUserSeq()).orElseThrow();
 
         for (FinalTaxiPartyRequest.User user : requestBody.getUsers()) {
+            System.out.println("요청 유저: " + user);
             UserEntity userEntity = userRepository.findById(user.getUserSeq()).orElseThrow();
             MemberEntity member = memberRepository.findByPartyAndUser(party, userEntity);
             if (member.isLeader()) continue; // 결제자는 패스
@@ -783,7 +784,7 @@ public class PartyServiceImpl implements PartyService {
             String maskedAccountNum = accountNum.substring(accountNum.length() - 4);
             String maskedUserName;
             int imageNo;
-            
+
             if (pay.getCategory() == 1) {
                 maskedUserName = "배달 took";
                 imageNo = 31;
