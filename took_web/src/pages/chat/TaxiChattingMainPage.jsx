@@ -376,16 +376,6 @@ function TaxiChattingMainPage() {
   }, [messages]);
 
   useEffect(() => {
-    if (taxiParty && taxiParty.count === taxiParty.max) {
-      const updateStatus = async () => {
-        await updateTaxiPartyStatusApi({ taxiSeq: taxiParty.taxiSeq });
-        setTaxiStatus('FILLED');
-      };
-      updateStatus();
-    }
-  }, [taxiParty]);
-
-  useEffect(() => {
     const handleKeyboardShow = () => {
       setIsKeyboardVisible(true);
     };
