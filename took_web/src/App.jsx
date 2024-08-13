@@ -9,6 +9,7 @@ import { loginApi } from './apis/user';
 import { useToken } from './store/token';
 import { useUser } from './store/user';
 import { getUserInfoApi } from './apis/user';
+import { goToAlarm } from './utils/goToAlarm';
 import {
   MainPage,
   LoginPage,
@@ -189,12 +190,15 @@ function App() {
       msgToAndroid('userData', seq, token, id, password);
       fetchData(seq, token, id, password);
     };
+    window.onAlarm = () => {
+
+    }
 
     return () => {
       delete window.onLocation;
       delete window.onLogin;
     };
-  }, []);
+  }, [seq]);
   return <RouterProvider router={ROUTER} />;
 }
 
