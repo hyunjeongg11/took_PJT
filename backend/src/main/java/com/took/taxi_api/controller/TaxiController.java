@@ -263,6 +263,7 @@ public class TaxiController {
     }
 
 
+    @Operation(summary = "방에 참가 중인 택시 조회", description = "방에 참가 중인 택시를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "방에 참가 중인 택시 조회 성공"),
             @ApiResponse(responseCode = "404", description = "방에 참가 중인 택시를 찾을 수 없음")

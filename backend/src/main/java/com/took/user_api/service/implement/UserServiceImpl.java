@@ -102,6 +102,10 @@ public class UserServiceImpl implements UserService {
         System.out.println("수령지 주소: " + lat + ", " + lon);
         return userList.stream()
                 .map(user -> {
+                    if(Objects.equals(user.getUserSeq(), userSeq)) {
+                        System.out.println("본인 제외: " + user.getUserSeq());
+                        return null;
+                    }
                     if(user.getLat() == null || user.getLon() == null) {
                         System.out.println("위경도값 없음: " + user.getUserSeq());
                         return null;
