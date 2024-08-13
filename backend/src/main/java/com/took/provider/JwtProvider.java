@@ -34,7 +34,7 @@ public class JwtProvider {
 
     // accessToken 확인
     public String createAccessToken(String userId){
-        Date expiredDate = Date.from(Instant.now().plusMillis(3600000)); // 1시간 유효
+        Date expiredDate = Date.from(Instant.now().plusMillis(86400000)); // 1일 유효
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharset.UTF_8));
 
         String jwt = Jwts.builder()
