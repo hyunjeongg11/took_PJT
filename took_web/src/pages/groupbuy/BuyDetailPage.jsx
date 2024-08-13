@@ -44,8 +44,13 @@ const BuyDetailPage = () => {
   const fetchShopData = async () => {
     try {
       const data = await getShopApi(id);
+
+     
       setShopData(data);
       setIsLeader(data.userSeq === userSeq);
+
+      console.log('userSeq', userSeq);
+
       setChatRoom((prev) => ({
         ...prev,
         userSeq: data.userSeq,
@@ -54,7 +59,6 @@ const BuyDetailPage = () => {
 
       const isJoin = await isJoinApi(data.shopSeq, userSeq);
       setIsParticipant(isJoin);
-      
     } catch (error) {
       console.log('fetching shop data error', error);
     }
@@ -79,7 +83,7 @@ const BuyDetailPage = () => {
     };
   }, []);
 
-  const enterRoom = ({roomSeq, userSeq}) => {
+  const enterRoom = ({ roomSeq, userSeq }) => {
     if (stompClient && connected) {
       stompClient.send(
         '/pub/room/enter',
@@ -92,9 +96,7 @@ const BuyDetailPage = () => {
     } else {
       console.error('WebSocket 연결이 아직 준비되지 않았습니다');
     }
-  }
-
-
+  };
 
   useEffect(() => {
     const updateStatusIfNeeded = async () => {
@@ -138,11 +140,16 @@ const BuyDetailPage = () => {
     try {
       const params = { shopSeq: shopData.shopSeq, userSeq: userSeq };
       const success = await joinGroupBuyApi(params);
+
+
       if (success) {
         await enterRoom({ roomSeq: shopData.roomSeq, userSeq });
         setIsParticipant(true);
-        // // navigate(`/chatroom/${shopData.shopSeq}`); // todo: 실제 채팅방으로 연결
-        // navigate('/chat/groupbuy/main'); // 일단 여기로 이동되도록
+
+        // todo: 실제 채팅방으로 연결
+        console.log('들어가기전 마지막 출력', chatRoom);
+        console.log('들어갈 방 번호', shopData.roomSeq);
+        navigate(`/chat/buy/${shopData.roomSeq}`, { state: { chatRoom } });
       } else {
         console.error('Failed to join the group buy');
       }
@@ -164,7 +171,7 @@ const BuyDetailPage = () => {
   const handleEndRecruitment = async () => {
     try {
       const params = { status: 'IN_PROGRESS' };
-      console.log('Params:', params);  // 로그 추가
+      console.log('Params:', params); // 로그 추가
       await modifyShopStatusApi(shopData.shopSeq, params);
       console.log('모집 종료 완료');
       navigate('/groupbuy/list', { state: { shouldRefresh: true } });

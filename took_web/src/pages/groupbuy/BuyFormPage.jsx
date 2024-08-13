@@ -112,8 +112,8 @@ function BuyFormPage() {
       item: formData.item,
       site: formData.site,
       place: formData.place,
-      lat: formData.lat,
-      lon: formData.lon,
+      lat: latitude,
+      lon: longitude,
       maxCount: parseInt(formData.max_person),
     });
     console.log('공동 구매 등록 완료');
@@ -155,15 +155,14 @@ function BuyFormPage() {
       if (id) {
         // 수정 모드
         await modifyShopApi(id, {
-          roomSeq: room,
           userSeq,
           title: formData.title,
           content: formData.content,
           item: formData.item,
           site: formData.site,
           place: formData.place,
-          lat: formData.lat,
-          lon: formData.lon,
+          lat: parseFloat(latitude),
+          lon: parseFloat(longitude),
           maxCount: parseInt(formData.max_person),
         });
         console.log('수정 완료');

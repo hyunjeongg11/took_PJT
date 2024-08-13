@@ -7,14 +7,19 @@ import mapIcon from '../../assets/delivery/map.png'; // 지도 아이콘 경로
 import BackButton from '../../components/common/BackButton';
 import { usePosition } from '../../store/position';
 import { useUser } from '../../store/user';
+import { getUserSeq } from '../../utils/getUserSeq';
+import { getSavedUserPositionApi } from '../../apis/position/userPosition';
+import { getUserInfoApi } from '../../apis/user';
 
 const DeliveryListPage = () => {
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState('주소지');
   const [deliveryList, setDeliveryList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { lat, lon } = useUser(); // 주소지 선택되어 있을 때의 주소
+  const [lat, setLat] = useState();
+  const [lon, setLon] = useState();
   const { latitude, longitude } = usePosition(); // 현위치 선택되어 있을 때의 주소
+  const seq = getUserSeq();
 
   useEffect(() => {
     const fetchDeliveryList = async () => {
@@ -37,6 +42,19 @@ const DeliveryListPage = () => {
       }
     };
 
+    const fetchStoredAddress = async () => {
+      try {
+        const response = await getUserInfoApi({ userSeq: seq });
+        if (response) {
+          setLat(response.lat);
+          setLon(response.lon);
+        }
+        console.log(response);
+      } catch (e) {
+        console.error('저장된 주소를 가져오는 중 오류가 발생했습니다:', e);
+      }
+    };
+    fetchStoredAddress();
     fetchDeliveryList();
   }, [selectedOption]);
 

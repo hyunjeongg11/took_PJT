@@ -223,13 +223,7 @@ export const deleteTaxiPartyApi = async (taxiSeq) => {
 export const addTaxiPartyMemberApi = async (params) => {
   try {
     const response = await request.post('/api/taxi/guest/create', params);
-    // 응답이 204일 경우에도 성공으로 처리
-    if (response.status === 200 || response.status === 204) {
-      return true; // 성공 시 true 반환
-    } else {
-      console.error(`API 호출 실패, 응답 코드: ${response.status}`);
-      return false; // 성공 못한 경우 false 반환
-    }
+    return response;
   } catch (error) {
     console.error('API 호출 중 오류 발생:', error);
     return false; // 오류 발생 시 false 반환
@@ -549,6 +543,33 @@ export const calculateIndividualExpectedCostApi = async (params) => {
 export const calculateTotalExpectedCostApi = async (params) => {
   try {
     const response = await request.post('/api/navi/expect/all', params);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+// roomSeq로 참가 중인 택시 조회
+//응답
+// {
+//   "taxiSeq": 1,
+//   "roomSeq": 1,
+//   "userSeq": 1,
+//   "partySeq": 1,
+//   "startLat": 37.5665,
+//   "startLon": 126.978,
+//   "gender": true,
+//   "count": 3,
+//   "max": 4,
+//   "status": "OPEN",
+//   "createdAt": "2024-08-12T14:17:48.073Z",
+//   "finishTime": "2024-08-12T14:17:48.073Z",
+//   "cost": 5000,
+//   "master": 1
+// }
+export const getSeletByRoomApi = async (roomSeq) => {
+  try {
+    const response = await request.get(`/api/taxi/selectByRoom/${roomSeq}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);

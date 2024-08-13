@@ -149,7 +149,7 @@ function MyPage() {
                 src="https://cdn.builder.io/api/v1/image/assets/TEMP/74d47bd2a51ad5783d2c8a3e89a6ac18bf60947f76040b64710f7e2378bbf1a8?"
                 className="shrink-0 aspect-square w-[21px]"
               />
-              <div className="my-auto">결제수단 관리</div>
+              <div className="my-auto">결제 수단 관리</div>
             </div>
           </Link>
           <div
