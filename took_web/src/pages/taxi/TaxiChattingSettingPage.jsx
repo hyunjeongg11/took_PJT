@@ -95,56 +95,40 @@ function TaxiChattingSettingPage() {
     setDraggingIndex(null);
   };
 
-  // 터치 시작 시
-const onTouchStart = (e, index) => {
-  setDraggingIndex(index);
-};
+  const dragThreshold = 20; // 임계값 설정 (20px 이상 이동 시 위치 변경)
 
-// 터치 이동 시
-const onTouchMove = (e) => {
-  e.preventDefault(); // 터치 스크롤 방지
-  const touch = e.touches[0];
-  const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-
-  if (!targetElement) return;
-
-  const targetIndex = Array.from(targetElement.parentNode.children).indexOf(targetElement);
-  if (targetIndex !== -1 && targetIndex !== draggingIndex) {
-    onDragOver(targetIndex); // 요소의 위치를 변경
-  }
-};
-
-// 터치 종료 시
-const onTouchEnd = () => {
-  onDragEnd();
-};
-  const handleCheckExpectedCost = async () => {
-    try {
-      const locations = [
-        { lat: latitude, lon: longitude }, // 현재 위치를 첫번째로 추가
-        ...destinations.map((dest) => ({
-          lat: dest.destiLat,
-          lon: dest.destiLon,
-        })),
-      ];
-
-      const users = destinations.map((dest) => ({
-        userSeq: dest.userSeq,
-        cost: dest.cost,
-      }));
-
-      const params = {
-        locations,
-        users,
-      };
-
-      const result = await calculateTotalExpectedCostApi(params);
-      console.log('result: ', result);
-      setTotalExpectedCost(result);
-      setIsPopupOpen(true);
-    } catch (error) {
-      console.error('Error calculating expected cost:', error);
+  const onTouchStart = (e, index) => {
+    setDraggingIndex(index);
+    // 초기 터치 위치 저장
+    e.target.startX = e.touches[0].clientX;
+    e.target.startY = e.touches[0].clientY;
+  };
+  
+  // 터치 이동 시
+  const onTouchMove = (e) => {
+    e.preventDefault(); // 터치 스크롤 방지
+    const touch = e.touches[0];
+  
+    // 이동 거리를 계산
+    const deltaX = touch.clientX - e.target.startX;
+    const deltaY = touch.clientY - e.target.startY;
+  
+    // 이동 거리가 임계값을 초과했는지 확인
+    if (Math.abs(deltaX) > dragThreshold || Math.abs(deltaY) > dragThreshold) {
+      const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+  
+      if (!targetElement) return;
+  
+      const targetIndex = Array.from(targetElement.parentNode.children).indexOf(targetElement);
+      if (targetIndex !== -1 && targetIndex !== draggingIndex) {
+        onDragOver(targetIndex); // 요소의 위치를 변경
+      }
     }
+  };
+  
+  // 터치 종료 시
+  const onTouchEnd = () => {
+    onDragEnd();
   };
 
   const closePopup = () => {
