@@ -108,23 +108,19 @@ function TaxiChattingSettingPage() {
       setSecondTouch(index); // 두 번째 터치 저장
       setSecondCheck(true);
     }
-  };
-  
-  const onTouchEnd = (e) => {
-    // 두 번째 터치가 종료된 경우에만 위치 교환을 수행
+
     if (firstTouch && secondTouch) {
       swapPositions(firstTouch, secondTouch); // 두 요소의 위치를 교환
       // 초기화
       setFirstCheck(false);
       setSecondCheck(false);
-      // 드래그가 끝난 후 순서를 기준으로 routeRank 재설정
-    const updatedDestinations = destinations.map((dest, index) => ({
-      ...dest,
-      routeRank: index + 1, // 1부터 시작하는 순서로 설정
-    }));
-    setDestinations(updatedDestinations);
     }
+  };
   
+  const onTouchEnd = (e) => {
+    console.log("end");
+    // 두 번째 터치가 종료된 경우에만 위치 교환을 수행
+    
   };
   
   // 두 요소의 위치를 교환하는 함수
