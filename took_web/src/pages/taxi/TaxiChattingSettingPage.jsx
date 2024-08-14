@@ -100,11 +100,16 @@ const onTouchStart = (e, index) => {
   setDraggingIndex(index);
 };
 
-// 터치 이동 시
+// 터치 이동 시 속도 조절
 const onTouchMove = (e) => {
   e.preventDefault(); // 터치 스크롤 방지
   const touch = e.touches[0];
-  const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+  
+  // 이동 속도를 조절하기 위해 비율 적용
+  const adjustedX = touch.clientX * 0.5; // 0.5 비율로 속도 절반으로 줄임
+  const adjustedY = touch.clientY * 0.5;
+
+  const targetElement = document.elementFromPoint(adjustedX, adjustedY);
 
   if (!targetElement) return;
 
