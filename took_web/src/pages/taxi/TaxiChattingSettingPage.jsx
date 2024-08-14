@@ -117,6 +117,12 @@ function TaxiChattingSettingPage() {
       // 초기화
       setFirstCheck(false);
       setSecondCheck(false);
+      // 드래그가 끝난 후 순서를 기준으로 routeRank 재설정
+    const updatedDestinations = destinations.map((dest, index) => ({
+      ...dest,
+      routeRank: index + 1, // 1부터 시작하는 순서로 설정
+    }));
+    setDestinations(updatedDestinations);
     }
   
   };
