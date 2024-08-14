@@ -234,7 +234,7 @@ function TaxiChattingSettingPage() {
               <div key={index}>
                 <div
                 className={`flex items-center p-2 rounded-md cursor-pointer transition duration-200 relative ${
-                  firstTouchIndex === index || secondTouchIndex === index
+                  firstTouch === index || secondTouch === index
                     ? 'bg-neutral-300 opacity-50'
                     : 'bg-neutral-100'
                 }`}
