@@ -95,25 +95,26 @@ function TaxiChattingSettingPage() {
     setDraggingIndex(null);
   };
 
-  // 터치 시작 이벤트 처리
+// 터치 시작 시
 const onTouchStart = (e, index) => {
   setDraggingIndex(index);
 };
 
-// 터치 이동 이벤트 처리
+// 터치 이동 시
 const onTouchMove = (e) => {
   e.preventDefault(); // 터치 스크롤 방지
   const touch = e.touches[0];
-  const element = document.elementFromPoint(touch.clientX, touch.clientY);
-  
-  const targetIndex = destinations.findIndex((item) => item.userSeq === parseInt(element.dataset.userseq, 10));
-  
+  const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+
+  if (!targetElement) return;
+
+  const targetIndex = Array.from(targetElement.parentNode.children).indexOf(targetElement);
   if (targetIndex !== -1 && targetIndex !== draggingIndex) {
-    onDragOver(targetIndex); // 터치 위치에 따른 드래그 오버 처리
+    onDragOver(targetIndex); // 요소의 위치를 변경
   }
 };
 
-// 터치 종료 이벤트 처리
+// 터치 종료 시
 const onTouchEnd = () => {
   onDragEnd();
 };
@@ -224,10 +225,10 @@ const onTouchEnd = () => {
                       ? 'bg-neutral-300 opacity-50'
                       : 'bg-neutral-100'
                   }`}
-                  draggable
-                  onDragStart={(e) => onDragStart(e, index)}
-                  onDragOver={() => onDragOver(index)}
-                  onDragEnd={onDragEnd}
+                  // draggable
+                  // onDragStart={(e) => onDragStart(e, index)}
+                  // onDragOver={() => onDragOver(index)}
+                  // onDragEnd={onDragEnd}
                   onTouchStart={(e) => onTouchStart(e, index)}
                   onTouchMove={onTouchMove}
                   onTouchEnd={onTouchEnd}
