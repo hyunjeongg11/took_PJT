@@ -227,8 +227,16 @@ const swapPositions = (index1, index2) => {
           <div className="mt-1 border border-neutral-100 rounded-xl bg-neutral-100 p-2 shadow-md">
             {destinations.map((item, index) => (
               <div key={index}>
-                
-                 <div
+                <div
+                className={`flex items-center p-2 rounded-md cursor-pointer transition duration-200 relative ${
+                  firstTouchIndex === index || secondTouchIndex === index
+                    ? 'bg-neutral-300 opacity-50'
+                    : 'bg-neutral-100'
+                }`}
+                onTouchStart={(e) => onTouchStart(e, index)}
+                onTouchEnd={onTouchEnd}
+              >
+                 {/* <div
                     className={`flex items-center p-2 rounded-md cursor-grab transition duration-200 relative ${
                       draggingIndex === index ? 'bg-neutral-300 opacity-50' : 'bg-neutral-100'
                     }`}
@@ -238,7 +246,7 @@ const swapPositions = (index1, index2) => {
                   // onDragEnd={onDragEnd}
                   onTouchStart={(e) => onTouchStart(e, index)}
                   onTouchEnd={onTouchEnd}
-                > 
+                >  */}
                  
                   <div className="flex flex-col items-center w-16">
                     <img
