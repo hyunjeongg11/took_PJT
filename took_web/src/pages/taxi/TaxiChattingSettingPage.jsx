@@ -95,36 +95,41 @@ function TaxiChattingSettingPage() {
     setDraggingIndex(null);
   };
 
-  const [firstTouchIndex, setFirstTouchIndex] = useState(null);
-const [secondTouchIndex, setSecondTouchIndex] = useState(null);
+  const [firstTouch, setFirstTouch] = useState(null);
+  const [secondTouch, setSecondTouch] = useState(null);
+  const [firstCheck, setFirstCheck] = useState(false);
+  const [secondCheck, setSecondCheck] = useState(false);
 
-const onTouchStart = (e, index) => {
-  if (e.touches.length === 1) {
-    setFirstTouchIndex({ index, id: e.touches[0].identifier }); // 첫 번째 터치 저장
-  } else if (e.touches.length === 2) {
-    setSecondTouchIndex({ index, id: e.touches[1].identifier }); // 두 번째 터치 저장
-  }
-};
-
-const onTouchEnd = (e) => {
-  if (firstTouchIndex !== null && secondTouchIndex !== null) {
-    swapPositions(firstTouchIndex, secondTouchIndex); // 두 요소의 위치를 교환
-  }
-
-  // 초기화
-  setFirstTouchIndex(null);
-  setSecondTouchIndex(null);
-};
-
-// 두 요소의 위치를 교환하는 함수
-const swapPositions = (index1, index2) => {
-  const tempDestinations = [...destinations];
-  const temp = tempDestinations[index1];
-  tempDestinations[index1] = tempDestinations[index2];
-  tempDestinations[index2] = temp;
+  const onTouchStart = (e, index) => {
+    if (!firstCheck) {
+      setFirstTouch(index); // 첫 번째 터치 저장
+      setFirstCheck(true);
+    } else if (!secondCheck) {
+      setSecondTouch(index); // 두 번째 터치 저장
+      setSecondCheck(true);
+    }
+  };
   
-  setDestinations(tempDestinations);
-};
+  const onTouchEnd = (e) => {
+    // 두 번째 터치가 종료된 경우에만 위치 교환을 수행
+    if (firstTouch && secondTouch) {
+      swapPositions(firstTouch, secondTouch); // 두 요소의 위치를 교환
+    }
+  
+    // 초기화
+    setFirstCheck(false);
+    setSecondCheck(false);
+  };
+  
+  // 두 요소의 위치를 교환하는 함수
+  const swapPositions = (index1, index2) => {
+    const tempDestinations = [...destinations];
+    const temp = tempDestinations[index1];
+    tempDestinations[index1] = tempDestinations[index2];
+    tempDestinations[index2] = temp;
+    
+    setDestinations(tempDestinations);
+  };
 
 
   const handleCheckExpectedCost = async () => {
