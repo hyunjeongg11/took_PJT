@@ -132,49 +132,64 @@ function TaxiChattingSettingPage() {
   };
   
   // 두 요소의 위치를 교환하는 함수
-  const swapPositions = (index1, index2) => {
-    const tempDestinations = [...uniqueDestination];
-    const temp = tempDestinations[index1];
-    tempDestinations[index1] = tempDestinations[index2];
-    tempDestinations[index2] = temp;
-    
-    setUniqueDestination(tempDestinations);
+const swapPositions = (index1, index2) => {
+  const tempDestinations = [...uniqueDestination];
+  const temp = tempDestinations[index1];
+  tempDestinations[index1] = tempDestinations[index2];
+  tempDestinations[index2] = temp;
 
-      // 원래 배열인 destinations에서 순서를 반영
-    const updatedDestinations = [...destinations];
-    
-    // 변경된 uniqueDestination의 각 항목에 대해 원래 destinations 배열에서 순서 변경
-    const userSeq1 = tempDestinations[index1].userSeq;
-    const userSeq2 = tempDestinations[index2].userSeq;
+  // setUniqueDestination으로 uniqueDestination 상태 업데이트
+  setUniqueDestination(tempDestinations);
 
-    // userSeq1과 userSeq2에 해당하는 원래 배열의 인덱스를 찾음
-    const originalIndex1 = updatedDestinations.findIndex((item) => item.userSeq === userSeq1);
-    const originalIndex2 = updatedDestinations.findIndex((item) => item.userSeq === userSeq2);
+  // 원래 배열인 destinations에서 순서를 반영
+  const updatedDestinations = [...destinations];
 
-    // 순서 변경
-    const originalTemp = updatedDestinations[originalIndex1];
-    updatedDestinations[originalIndex1] = updatedDestinations[originalIndex2];
-    updatedDestinations[originalIndex2] = originalTemp;
+  // 변경된 uniqueDestination의 각 항목에 대해 원래 destinations 배열에서 순서 변경
+  const userSeq1 = tempDestinations[index1].userSeq;
+  const userSeq2 = tempDestinations[index2].userSeq;
 
-    // setDestinations로 destinations 상태 업데이트
-    setDestinations(updatedDestinations);
-  };
+  // userSeq1과 userSeq2에 해당하는 원래 배열의 인덱스를 찾음
+  const originalIndex1 = updatedDestinations.findIndex((item) => item.userSeq === userSeq1);
+  const originalIndex2 = updatedDestinations.findIndex((item) => item.userSeq === userSeq2);
 
+  // 위치가 변경된 두 사용자의 routeRank를 서로 교환
+  const tempRank = updatedDestinations[originalIndex1].routeRank;
+  updatedDestinations[originalIndex1].routeRank = updatedDestinations[originalIndex2].routeRank;
+  updatedDestinations[originalIndex2].routeRank = tempRank;
+
+  // 같은 위도와 경도를 가진 다른 사용자들의 routeRank도 일치하도록 설정
+  const { destiLat: lat1, destiLon: lon1, routeRank: rank1 } = updatedDestinations[originalIndex1];
+  const { destiLat: lat2, destiLon: lon2, routeRank: rank2 } = updatedDestinations[originalIndex2];
+
+  for (let i = 0; i < updatedDestinations.length; i++) {
+    if (updatedDestinations[i].destiLat === lat1 && updatedDestinations[i].destiLon === lon1) {
+      updatedDestinations[i].routeRank = rank1;
+    } else if (updatedDestinations[i].destiLat === lat2 && updatedDestinations[i].destiLon === lon2) {
+      updatedDestinations[i].routeRank = rank2;
+    }
+  }
+
+  // setDestinations로 destinations 상태 업데이트
+  setDestinations(updatedDestinations);
+};
 
   const handleCheckExpectedCost = async () => {
     try {
-      const locations = [
-        { lat: latitude, lon: longitude }, // 현재 위치를 첫번째로 추가
-        ...destinations.map((dest) => ({
-          lat: dest.destiLat,
-          lon: dest.destiLon,
-        })),
-      ];
+      // destinations 배열을 routeRank 기준으로 정렬
+    const sortedDestinations = [...destinations].sort((a, b) => a.routeRank - b.routeRank);
 
-      const users = destinations.map((dest) => ({
-        userSeq: dest.userSeq,
-        cost: dest.cost,
-      }));
+    const locations = [
+      { lat: latitude, lon: longitude }, // 현재 위치를 첫 번째로 추가
+      ...sortedDestinations.map((dest) => ({
+        lat: dest.destiLat,
+        lon: dest.destiLon,
+      })),
+    ];
+
+    const users = sortedDestinations.map((dest) => ({
+      userSeq: dest.userSeq,
+      cost: dest.cost,
+    }));
 
       const params = {
         locations,
@@ -216,7 +231,7 @@ function TaxiChattingSettingPage() {
         const rankParams = {
           taxiSeq,
           destiName: destinations[i].destiName,
-          routeRank: i + 1,
+          routeRank: destinations.routeRank,
         };
         console.log('Rank params: ', rankParams); // API 호출 전 파라미터 확인
         const rankResponse = await setDestinationRankApi(rankParams);
@@ -266,7 +281,7 @@ function TaxiChattingSettingPage() {
                     ? 'bg-neutral-300 opacity-50'
                     : 'bg-neutral-100'
                 }`}
-                onTouchStart={(e) => onTouchStart(e, index)}
+                onClick={(e) => onTouchStart(e, index)}
               >
                   <div className="flex flex-col items-center w-16">
                     <img
