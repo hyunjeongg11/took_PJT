@@ -645,6 +645,7 @@ public class PartyServiceImpl implements PartyService {
         if (count == party.getTotalMember() - 1) {
             Taxi taxi = taxiRepository.findByPartySeq(requestBody.getPartySeq());
             taxi.updateStatus(Taxi.Status.DONE);
+            taxiRepository.delete(taxi);
             ChatRoom chatRoom = chatRoomRepository.findById(taxi.getRoomSeq()).orElseThrow();
             chatRoom.updateStaus(false);
             fcmService.sendMessage(
@@ -756,6 +757,7 @@ public class PartyServiceImpl implements PartyService {
 
             Taxi taxi = taxiRepository.findByPartySeq(requestBody.getPartySeq());
             taxi.updateStatus(Taxi.Status.DONE);
+            taxiRepository.delete(taxi);
             ChatRoom chatRoom = chatRoomRepository.findById(taxi.getRoomSeq()).orElseThrow();
             chatRoom.updateStaus(false);
 
