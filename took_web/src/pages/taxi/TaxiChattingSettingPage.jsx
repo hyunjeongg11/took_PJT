@@ -95,6 +95,29 @@ function TaxiChattingSettingPage() {
     setDraggingIndex(null);
   };
 
+  // 터치 시작 이벤트 처리
+const onTouchStart = (e, index) => {
+  setDraggingIndex(index);
+};
+
+// 터치 이동 이벤트 처리
+const onTouchMove = (e) => {
+  e.preventDefault(); // 터치 스크롤 방지
+  const touch = e.touches[0];
+  const element = document.elementFromPoint(touch.clientX, touch.clientY);
+  
+  const targetIndex = destinations.findIndex((item) => item.userSeq === parseInt(element.dataset.userseq, 10));
+  
+  if (targetIndex !== -1 && targetIndex !== draggingIndex) {
+    onDragOver(targetIndex); // 터치 위치에 따른 드래그 오버 처리
+  }
+};
+
+// 터치 종료 이벤트 처리
+const onTouchEnd = () => {
+  onDragEnd();
+};
+
   const handleCheckExpectedCost = async () => {
     try {
       const locations = [
@@ -205,6 +228,9 @@ function TaxiChattingSettingPage() {
                   onDragStart={(e) => onDragStart(e, index)}
                   onDragOver={() => onDragOver(index)}
                   onDragEnd={onDragEnd}
+                  onTouchStart={(e) => onTouchStart(e, index)}
+                  onTouchMove={onTouchMove}
+                  onTouchEnd={onTouchEnd}
                 >
                   <div className="flex flex-col items-center w-16">
                     <img

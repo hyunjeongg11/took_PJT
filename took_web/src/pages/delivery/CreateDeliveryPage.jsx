@@ -104,7 +104,7 @@ function CreateDeliveryPage() {
     if (Object.values(form).some((field) => field !== '')) {
       setShowModal(true);
     } else {
-      navigate(-1);
+      navigate("/delivery/list");
     }
   };
 

@@ -48,7 +48,7 @@ function DeliveryCompletePage() {
       setShowSuccessModal(true);
       setTimeout(() => {
         setShowSuccessModal(false);
-        navigate(`/chat/delivery/main`); // roomSeq를 이용하여 채팅방으로 이동
+        navigate(`/chat/list`); // roomSeq를 이용하여 채팅방으로 이동
       }, 1500);
     } catch (error) {
       console.error('수령 확인 중 오류가 발생했습니다:', error);
