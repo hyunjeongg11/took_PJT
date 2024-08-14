@@ -50,13 +50,13 @@ function ChattingMainPage() {
   const [deliveryInfo, setDeliveryInfo] = useState(null);
   const chatRoom = location.state?.chatRoom || null;
   const [isLeader, setIsLeader] = useState(false);
+  const [chatRoomId, setChatRoomId] = useState(null);
 
   const handleRegister = () => {
     navigate(`/chat/delivery/${deliveryInfo.deliverySeq}/notice`);
   };
-  const [chatRoomId, setChatRoomId] = useState(null);
 
-  useEffect(() => {
+  const saveId = () => {
     const storedId = localStorage.getItem('chatRoomId');
     if (id) {
       localStorage.setItem('chatRoomId', id);
@@ -64,15 +64,18 @@ function ChattingMainPage() {
     } else if (storedId) {
       setChatRoomId(storedId);
     }
-  }, [id]);
+  };
 
   useEffect(() => {
-    if (!chatRoomId) return;
+    if(seq == null) {
+      return;
+    }
     const socket = new SockJS(`${SERVER_URL}/ws`);
     stompClient.current = Stomp.over(socket);
 
     stompClient.current.connect({}, () => {
       console.log('WebSocket connected');
+      saveId();
       enterRoom();
       loadUsers();
       loadDeliveryInfo();
@@ -90,6 +93,7 @@ function ChattingMainPage() {
       setIsLeader(chatRoom.userSeq === seq);
     }
   }, [chatRoom, seq]);
+
   const loadDeliveryInfo = async () => {
     try {
       const response = await getDeliveryByRoom(chatRoomId);
