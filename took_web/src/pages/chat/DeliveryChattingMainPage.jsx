@@ -70,7 +70,7 @@ function ChattingMainPage() {
         stompClient.current.disconnect();
       }
     };
-  }, [showParticipantList, id]);
+  }, [showParticipantList, seq]);
 
   useEffect(() => {
     if (chatRoom) {
