@@ -100,16 +100,11 @@ const onTouchStart = (e, index) => {
   setDraggingIndex(index);
 };
 
-// 터치 이동 시 속도 조절
+// 터치 이동 시
 const onTouchMove = (e) => {
   e.preventDefault(); // 터치 스크롤 방지
   const touch = e.touches[0];
-  
-  // 이동 속도를 조절하기 위해 비율 적용
-  const adjustedX = touch.clientX * 0.2; // 0.5 비율로 속도 절반으로 줄임
-  const adjustedY = touch.clientY * 0.2;
-
-  const targetElement = document.elementFromPoint(adjustedX, adjustedY);
+  const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
 
   if (!targetElement) return;
 
@@ -123,35 +118,6 @@ const onTouchMove = (e) => {
 const onTouchEnd = () => {
   onDragEnd();
 };
-const isDragging = useRef(false);
-
-const onPointerDown = (e, index) => {
-  console.log("down")
-  setDraggingIndex(index);
-  isDragging.current = true;
-  e.target.setPointerCapture(e.pointerId);
-};
-
-const onPointerMove = (e) => {
-  console.log("move")
-  if (!isDragging.current) return;
-
-  const deltaX = e.clientX;
-  const deltaY = e.clientY;
-
-  const draggedElement = e.target.closest('.draggable-item');
-  if (draggedElement) {
-    draggedElement.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-  }
-};
-
-const onPointerUp = (e) => {
-  console.log("onPointerUp")
-  isDragging.current = false;
-  e.target.releasePointerCapture(e.pointerId);
-  onDragEnd();
-};
-
   const handleCheckExpectedCost = async () => {
     try {
       const locations = [
@@ -252,26 +218,18 @@ const onPointerUp = (e) => {
           <div className="mt-1 border border-neutral-100 rounded-xl bg-neutral-100 p-2 shadow-md">
             {destinations.map((item, index) => (
               <div key={index}>
-                {/* <div
-                  className={`draggable-item flex items-center p-2 rounded-md cursor-grab transition duration-200 relative ${
-                    draggingIndex === index ? 'bg-neutral-300 opacity-50' : 'bg-neutral-100'
-                  }`}
-                  style={{ position: 'relative' }}
-                  onPointerDown={(e) => onPointerDown(e, index)}
-                  onPointerMove={onPointerMove}
-                  onPointerUp={onPointerUp}
-                > */}
+                
                  <div
                     className={`flex items-center p-2 rounded-md cursor-grab transition duration-200 relative ${
                       draggingIndex === index ? 'bg-neutral-300 opacity-50' : 'bg-neutral-100'
                     }`}
-                    onTouchStart={(e) => onTouchStart(e, index)}
-                    onTouchMove={onTouchMove}
-                    onTouchEnd={onTouchEnd}
                   // draggable
                   // onDragStart={(e) => onDragStart(e, index)}
                   // onDragOver={() => onDragOver(index)}
                   // onDragEnd={onDragEnd}
+                  onTouchStart={(e) => onTouchStart(e, index)}
+                  onTouchMove={onTouchMove}
+                  onTouchEnd={onTouchEnd}
                 > 
                  
                   <div className="flex flex-col items-center w-16">
