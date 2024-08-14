@@ -29,7 +29,7 @@ import { Link } from 'react-router-dom';
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 function ChattingMainPage() {
-  const { id} = useParams();
+  const { id } = useParams();
   const { seq } = useUser();
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
@@ -127,6 +127,9 @@ function ChattingMainPage() {
   };
 
   const enterRoom = () => {
+    if (seq == null || seq === undefined){
+      return;
+    }
     if (currentSubscription.current) {
       currentSubscription.current.unsubscribe();
     }
