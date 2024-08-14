@@ -39,6 +39,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+
+        // 특정 경로에 대해 필터를 무시합니다.
+        String path = request.getRequestURI();
+        if (path.startsWith("/api/fcm/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
 //        System.out.println("필터에 진입합니다.");
         System.out.println("요청 path 출력: " + request.getRequestURI());
 //        System.out.println("요청의 인증 방법을 출력합니다: " + request.getAuthType());
@@ -84,7 +92,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
             UserEntity userEntity = userRepository.findByUserId(userId);
             String role = userEntity.getRole();
-//            System.out.println("사용자 역할: " + role);
 
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(role));
