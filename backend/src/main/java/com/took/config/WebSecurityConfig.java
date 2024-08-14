@@ -37,10 +37,12 @@ public class WebSecurityConfig {
     protected CorsConfigurationSource configurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("https://i11e205.p.ssafy.io");
-        configuration.addAllowedOrigin("http://localhost:5173");
-        configuration.addAllowedOrigin("http://localhost:5174");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("GET");    // GET 메서드 허용
+        configuration.addAllowedMethod("POST");   // POST 메서드 허용
+        configuration.addAllowedMethod("PUT");    // PUT 메서드 허용
+        configuration.addAllowedMethod("DELETE"); // DELETE 메서드 허용
+        configuration.addAllowedMethod("PATCH");  // PATCH 메서드 허용
+        configuration.addAllowedHeader("*");      // 넘어오는 헤더
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -63,7 +65,6 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/", "/api/auth/**", "/api/oauth2/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
-                        .requestMatchers("/api/swagger-ui/**", "/api-docs/**").permitAll()
                         .requestMatchers("/api/user/**").hasRole("USER")
                         .requestMatchers("/api/account/**").hasRole("USER")
                         .requestMatchers("/api/pay/**").hasRole("USER")
@@ -77,7 +78,6 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/sms/**").hasRole("USER")
                         .requestMatchers("/api/navi/**").hasRole("USER")
                         .requestMatchers("/api/taxi/**").hasRole("USER")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new FailedAuthenticationEntryPoint()))
