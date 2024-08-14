@@ -29,7 +29,7 @@ import { Link } from 'react-router-dom';
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 function ChattingMainPage() {
-  const { id } = useParams();
+  const { id} = useParams();
   const { seq } = useUser();
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
@@ -54,7 +54,20 @@ function ChattingMainPage() {
   const handleRegister = () => {
     navigate(`/chat/delivery/${deliveryInfo.deliverySeq}/notice`);
   };
+  const [chatRoomId, setChatRoomId] = useState(null);
+
   useEffect(() => {
+    const storedId = localStorage.getItem('chatRoomId');
+    if (id) {
+      localStorage.setItem('chatRoomId', id);
+      setChatRoomId(id);
+    } else if (storedId) {
+      setChatRoomId(storedId);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (!chatRoomId) return;
     const socket = new SockJS(`${SERVER_URL}/ws`);
     stompClient.current = Stomp.over(socket);
 
@@ -70,7 +83,7 @@ function ChattingMainPage() {
         stompClient.current.disconnect();
       }
     };
-  }, [showParticipantList, seq]);
+  }, [showParticipantList, seq, chatRoomId]);
 
   useEffect(() => {
     if (chatRoom) {
@@ -79,7 +92,7 @@ function ChattingMainPage() {
   }, [chatRoom, seq]);
   const loadDeliveryInfo = async () => {
     try {
-      const response = await getDeliveryByRoom(id);
+      const response = await getDeliveryByRoom(chatRoomId);
       setDeliveryInfo(response);
       console.log(response);
     } catch (error) {
@@ -90,7 +103,7 @@ function ChattingMainPage() {
   const fetchRoomMessages = async () => {
     try {
       const response = await getChatRoomMessageApi({
-        roomSeq: id,
+        roomSeq: chatRoomId,
         userSeq: seq,
       });
       setMessages(response);
@@ -101,7 +114,7 @@ function ChattingMainPage() {
 
   const loadUsers = async () => {
     try {
-      const response = await getUsersApi(id);
+      const response = await getUsersApi(chatRoomId);
       setUsers(response);
       console.log('users', response);
     } catch (error) {
@@ -113,7 +126,7 @@ function ChattingMainPage() {
     if (currentSubscription.current) {
       currentSubscription.current.unsubscribe();
     }
-    currentSubscription.current = subscribeToRoomMessages(id);
+    currentSubscription.current = subscribeToRoomMessages(chatRoomId);
     fetchRoomMessages();
   };
 
@@ -132,7 +145,7 @@ function ChattingMainPage() {
 
     const messageRequest = {
       type: 'TALK',
-      roomSeq: id,
+      roomSeq: chatRoomId,
       userSeq: seq,
       message: inputMessage,
     };
