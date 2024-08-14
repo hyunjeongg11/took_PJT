@@ -555,7 +555,10 @@ public class PartyServiceImpl implements PartyService {
         for (FinalTaxiPartyRequest.User user : requestBody.getUsers()) {
             UserEntity userEntity = userRepository.findById(user.getUserSeq()).orElseThrow();
             MemberEntity member = memberRepository.findByPartyAndUser(party, userEntity);
-            if (member.isLeader()) continue; // 결제자는 패스
+            if (member.isLeader()) {
+                member.updateCost(user.getCost());
+                continue; // 결제자는 패스
+            }
 
             member.updateCost(user.getCost());
             long fakecost = member.getFakeCost();
@@ -610,6 +613,18 @@ public class PartyServiceImpl implements PartyService {
                         .category(2)
                         .build();
                 payRepository.save(pay);
+
+                // 결제 내역 추가 (송금 )
+                PayEntity pay2 = PayEntity.builder()
+                        .user(leader)
+                        .targetUserSeq(userEntity.getUserSeq())
+                        .account(accountRepository.findByUserAndMainTrue(leader))
+                        .createdAt(LocalDateTime.now())
+                        .cost(exchange)
+                        .receive(false)
+                        .category(2)
+                        .build();
+                payRepository.save(pay2);
 
                 fcmService.sendMessage(
                         MessageRequest.builder()
