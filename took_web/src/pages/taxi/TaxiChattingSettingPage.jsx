@@ -137,6 +137,36 @@ function TaxiChattingSettingPage() {
     setIsDragging(false); // 터치 종료 시 드래그 비활성화
   };
 
+  
+  const handleCheckExpectedCost = async () => {
+    try {
+      const locations = [
+        { lat: latitude, lon: longitude }, // 현재 위치를 첫번째로 추가
+        ...destinations.map((dest) => ({
+          lat: dest.destiLat,
+          lon: dest.destiLon,
+        })),
+      ];
+
+      const users = destinations.map((dest) => ({
+        userSeq: dest.userSeq,
+        cost: dest.cost,
+      }));
+
+      const params = {
+        locations,
+        users,
+      };
+
+      const result = await calculateTotalExpectedCostApi(params);
+      console.log('result: ', result);
+      setTotalExpectedCost(result);
+      setIsPopupOpen(true);
+    } catch (error) {
+      console.error('Error calculating expected cost:', error);
+    }
+  };
+
   const closePopup = () => {
     setIsPopupOpen(false);
   };
