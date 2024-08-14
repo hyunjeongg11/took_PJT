@@ -26,6 +26,7 @@ const TaxiChattingMenu = ({
   taxiStatus,
   setTaxiStatus, // 상태 변경 함수 받기
   handleMenuToggle,
+  setPartySeq,
 }) => {
   const { seq: currentUserSeq } = useUser();
   const [userInfos, setUserInfos] = useState({});
@@ -133,9 +134,10 @@ const TaxiChattingMenu = ({
           startLon: longitude,
           taxiSeq: taxiParty.taxiSeq,
         };
-
+        
         // 택시 정산 파티 생성(가결제시) 가결제 실패시 -1 반환
         const partyResponse = await makeTaxiPartyApi(partyParams);
+        setPartySeq(partyResponse)
         console.log('택시 정산 partyseq:', partyResponse);
         // 나가기 버튼 클릭시
       } else if (modalType === 'leaveChat') {

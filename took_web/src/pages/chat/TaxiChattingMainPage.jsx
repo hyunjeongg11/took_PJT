@@ -56,6 +56,8 @@ function TaxiChattingMainPage() {
   const [userName, setUserName] = useState('');
   const [chatUsers, setChatUsers] = useState([]);
   const [guestSeq, setGuestSeq] = useState(null);
+  const [partySeq, setPartySeq] = useState(null);
+  const [userCount, setUserCount] = useState(null);
   const textareaRef = useRef(null);
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
@@ -81,6 +83,8 @@ function TaxiChattingMainPage() {
       fetchUserInfo();
     }
   }, [userSeq, setName]);
+
+ 
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -307,7 +311,7 @@ function TaxiChattingMainPage() {
   };
 
   const handleSettlement = () => {
-    navigate(`/taxi/input/${taxiParty.partySeq}`, {
+    navigate(`/taxi/input/${partySeq}`, {
       state: { taxiParty, members, userName },
     });
   };
@@ -352,7 +356,7 @@ function TaxiChattingMainPage() {
     };
 
     fetchTaxiPartyData();
-  }, [taxiSeq, userSeq, roomSeq]);
+  }, [taxiSeq, userSeq, roomSeq, partySeq, showMenu ]);
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -392,7 +396,7 @@ function TaxiChattingMainPage() {
       handleSendMessage();
     }
   };
-
+  
   return (
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-5 py-3">
@@ -414,6 +418,7 @@ function TaxiChattingMainPage() {
           handleKickMember={handleKickMember}
           handleLeaveChatting={handleLeaveChatting}
           handleChatSetting={handleChatSetting}
+          setPartySeq={setPartySeq}
         />
       )}
 
@@ -620,7 +625,7 @@ function TaxiChattingMainPage() {
 
       {taxiParty?.master === userSeq && !showSettlementButton && (
         <>
-          {taxiStatus === 'FILLED' && (
+          {partySeq && taxiStatus === 'FILLED'&& (
             <button
               onClick={handleBoardTaxi}
               className="absolute bottom-16 left-4"
