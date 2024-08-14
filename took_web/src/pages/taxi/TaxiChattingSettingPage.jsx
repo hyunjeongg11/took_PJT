@@ -121,10 +121,10 @@ function TaxiChattingSettingPage() {
     const deltaY = touch.clientY - e.target.startY;
     
     // 이동 거리가 임계값을 초과했는지 확인
-    if (Math.abs(deltaX) > dragThreshold || Math.abs(deltaY) > dragThreshold) {
+    // if (Math.abs(deltaX) > dragThreshold || Math.abs(deltaY) > dragThreshold) {
       // 현재 터치 위치를 저장
       setTouchPosition({ x: touch.clientX, y: touch.clientY });
-    }
+    // }
   };
   
   // 터치 종료 시
