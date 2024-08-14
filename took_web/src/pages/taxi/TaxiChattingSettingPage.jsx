@@ -95,34 +95,38 @@ function TaxiChattingSettingPage() {
     setDraggingIndex(null);
   };
 
-// 터치 시작 시
-const onTouchStart = (e, index) => {
-  setDraggingIndex(index);
-};
+  let isDragging = false;
 
-// 터치 이동 시 속도 조절
-const onTouchMove = (e) => {
-  e.preventDefault(); // 터치 스크롤 방지
-  const touch = e.touches[0];
+  const onTouchStart = (e, index) => {
+    setDraggingIndex(index);
+    isDragging = true;
+  };
   
-  // 이동 속도를 조절하기 위해 비율 적용
-  const adjustedX = touch.clientX * 0.5; // 0.5 비율로 속도 절반으로 줄임
-  const adjustedY = touch.clientY * 0.5;
-
-  const targetElement = document.elementFromPoint(adjustedX, adjustedY);
-
-  if (!targetElement) return;
-
-  const targetIndex = Array.from(targetElement.parentNode.children).indexOf(targetElement);
-  if (targetIndex !== -1 && targetIndex !== draggingIndex) {
-    onDragOver(targetIndex); // 요소의 위치를 변경
-  }
-};
-
-// 터치 종료 시
-const onTouchEnd = () => {
-  onDragEnd();
-};
+  const onTouchMove = (e) => {
+    e.preventDefault(); // 터치 스크롤 방지
+    if (!isDragging) return;
+  
+    const touch = e.touches[0];
+    const adjustedX = touch.clientX;
+    const adjustedY = touch.clientY;
+  
+    // 애니메이션을 통한 부드러운 이동
+    requestAnimationFrame(() => {
+      const targetElement = document.elementFromPoint(adjustedX, adjustedY);
+      
+      if (!targetElement) return;
+  
+      const targetIndex = Array.from(targetElement.parentNode.children).indexOf(targetElement);
+      if (targetIndex !== -1 && targetIndex !== draggingIndex) {
+        onDragOver(targetIndex); // 요소의 위치를 변경
+      }
+    });
+  };
+  
+  const onTouchEnd = () => {
+    isDragging = false;
+    onDragEnd();
+  };
 
   const handleCheckExpectedCost = async () => {
     try {
@@ -224,19 +228,18 @@ const onTouchEnd = () => {
           <div className="mt-1 border border-neutral-100 rounded-xl bg-neutral-100 p-2 shadow-md">
             {destinations.map((item, index) => (
               <div key={index}>
+                
                 <div
-                  className={`flex items-center p-2 rounded-md cursor-grab transition duration-200 relative ${
-                    draggingIndex === index
-                      ? 'bg-neutral-300 opacity-50'
-                      : 'bg-neutral-100'
+                  className={`flex items-center p-2 rounded-md cursor-grab transition-transform duration-200 ease-in-out relative ${
+                    draggingIndex === index ? 'bg-neutral-300 opacity-50' : 'bg-neutral-100'
                   }`}
+                  onTouchStart={(e) => onTouchStart(e, index)}
+                  onTouchMove={onTouchMove}
+                  onTouchEnd={onTouchEnd}
                   // draggable
                   // onDragStart={(e) => onDragStart(e, index)}
                   // onDragOver={() => onDragOver(index)}
                   // onDragEnd={onDragEnd}
-                  onTouchStart={(e) => onTouchStart(e, index)}
-                  onTouchMove={onTouchMove}
-                  onTouchEnd={onTouchEnd}
                 >
                   <div className="flex flex-col items-center w-16">
                     <img
