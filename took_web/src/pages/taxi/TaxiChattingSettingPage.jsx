@@ -100,9 +100,9 @@ const [secondTouchIndex, setSecondTouchIndex] = useState(null);
 
 const onTouchStart = (e, index) => {
   if (e.touches.length === 1) {
-    setFirstTouch({ index, id: e.touches[0].identifier }); // 첫 번째 터치 저장
+    setFirstTouchIndex({ index, id: e.touches[0].identifier }); // 첫 번째 터치 저장
   } else if (e.touches.length === 2) {
-    setSecondTouch({ index, id: e.touches[1].identifier }); // 두 번째 터치 저장
+    setSecondTouchIndex({ index, id: e.touches[1].identifier }); // 두 번째 터치 저장
   }
 };
 
