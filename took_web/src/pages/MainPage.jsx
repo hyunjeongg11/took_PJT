@@ -34,8 +34,8 @@ function MainPage() {
         <div className="flex flex-col justify-center ml-3 items-center">
           <Link to="/">
             <div className="font-dela text-main text-4xl">took</div>
-            <span className="text-black font-nanum text-[11px] mt-[1px]">
-              올인원 정산 플랫폼
+            <span className="text-black font-nanum text-[11px] mt-[1px] ml-2">
+              쉽지만, 완벽하게
             </span>
           </Link>
         </div>
@@ -103,12 +103,12 @@ function MainPage() {
           </div>
           <div className="flex flex-col">
             <div onClick={() => handleButtonClick('/payment-methods')}>
-            <img
-              loading="lazy"
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/2437fd8c46307376b7ba98f8386a396d9170469f1fd601196ad923b3edeb12c1?placeholderIfAbsent=true&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
-              className="object-contain rounded-none aspect-[2.41] w-[147px]"
-              alt=""
-            />
+              <img
+                loading="lazy"
+                src="https://cdn.builder.io/api/v1/image/assets/TEMP/2437fd8c46307376b7ba98f8386a396d9170469f1fd601196ad923b3edeb12c1?placeholderIfAbsent=true&apiKey=6a63372050fb46b6bb21a2ca3b7359ed"
+                className="object-contain rounded-none aspect-[2.41] w-[147px]"
+                alt=""
+              />
             </div>
             <div onClick={() => handleButtonClick('/transaction-history')}>
               <img
