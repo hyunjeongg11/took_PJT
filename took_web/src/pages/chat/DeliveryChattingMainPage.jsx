@@ -67,7 +67,7 @@ function ChattingMainPage() {
   };
 
   useEffect(() => {
-    if(seq == null) {
+    if (seq == null || seq === undefined) {
       return;
     }
     const socket = new SockJS(`${SERVER_URL}/ws`);
