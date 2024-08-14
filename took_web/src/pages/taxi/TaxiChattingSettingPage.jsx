@@ -95,56 +95,56 @@ function TaxiChattingSettingPage() {
     setDraggingIndex(null);
   };
 
-  const dragThreshold = 40; // 임계값 설정 (20px 이상 이동 시 위치 변경)
-  const [isDragging, setIsDragging] = useState(false); // 드래그 상태 추가
-  const [touchPosition, setTouchPosition] = useState({ x: 0, y: 0 }); // 터치 이동 좌표 저장
+  // const dragThreshold = 40; // 임계값 설정 (20px 이상 이동 시 위치 변경)
+  // const [isDragging, setIsDragging] = useState(false); // 드래그 상태 추가
+  // const [touchPosition, setTouchPosition] = useState({ x: 0, y: 0 }); // 터치 이동 좌표 저장
   
-  const onTouchStart = (e, index) => {
-    setDraggingIndex(index);
-    setIsDragging(true); // 드래그 시작 시 활성화
-    document.body.style.overflow = 'hidden'; // 스크롤 방지
-    // 초기 터치 위치 저장
-    e.target.startX = e.touches[0].clientX;
-    e.target.startY = e.touches[0].clientY;
-  };
+  // const onTouchStart = (e, index) => {
+  //   setDraggingIndex(index);
+  //   setIsDragging(true); // 드래그 시작 시 활성화
+  //   document.body.style.overflow = 'hidden'; // 스크롤 방지
+  //   // 초기 터치 위치 저장
+  //   e.target.startX = e.touches[0].clientX;
+  //   e.target.startY = e.touches[0].clientY;
+  // };
   
-  // 터치 이동 시
-  const onTouchMove = (e) => {
-    if (!isDragging) return; // 드래그가 비활성화된 경우 이동하지 않음
+  // // 터치 이동 시
+  // const onTouchMove = (e) => {
+  //   if (!isDragging) return; // 드래그가 비활성화된 경우 이동하지 않음
   
-    e.preventDefault(); // 터치 스크롤 방지
+  //   e.preventDefault(); // 터치 스크롤 방지
   
-    const touch = e.touches[0];
+  //   const touch = e.touches[0];
     
-    // 이동 거리를 계산
-    const deltaX = touch.clientX - e.target.startX;
-    const deltaY = touch.clientY - e.target.startY;
+  //   // 이동 거리를 계산
+  //   const deltaX = touch.clientX - e.target.startX;
+  //   const deltaY = touch.clientY - e.target.startY;
     
-    // 이동 거리가 임계값을 초과했는지 확인
-    // if (Math.abs(deltaX) > dragThreshold || Math.abs(deltaY) > dragThreshold) {
-      // 현재 터치 위치를 저장
-      setTouchPosition({ x: touch.clientX, y: touch.clientY });
-    // }
-  };
+  //   // 이동 거리가 임계값을 초과했는지 확인
+  //   // if (Math.abs(deltaX) > dragThreshold || Math.abs(deltaY) > dragThreshold) {
+  //     // 현재 터치 위치를 저장
+  //     setTouchPosition({ x: touch.clientX, y: touch.clientY });
+  //   // }
+  // };
   
-  // 터치 종료 시
-  const onTouchEnd = (e) => {
-    if (isDragging) {
-      const { x, y } = touchPosition; // 이동된 최종 좌표를 사용
-      const targetElement = document.elementFromPoint(x, y);
+  // // 터치 종료 시
+  // const onTouchEnd = (e) => {
+  //   if (isDragging) {
+  //     const { x, y } = touchPosition; // 이동된 최종 좌표를 사용
+  //     const targetElement = document.elementFromPoint(x, y);
   
-      if (targetElement) {
-        const targetIndex = Array.from(targetElement.parentNode.children).indexOf(targetElement);
-        if (targetIndex !== -1 && targetIndex !== draggingIndex) {
-          onDragOver(targetIndex); // 요소의 위치를 최종적으로 변경
-        }
-      }
-    }
+  //     if (targetElement) {
+  //       const targetIndex = Array.from(targetElement.parentNode.children).indexOf(targetElement);
+  //       if (targetIndex !== -1 && targetIndex !== draggingIndex) {
+  //         onDragOver(targetIndex); // 요소의 위치를 최종적으로 변경
+  //       }
+  //     }
+  //   }
   
-    onDragEnd();
-    setIsDragging(false); // 터치 종료 시 드래그 비활성화
-    document.body.style.overflow = 'auto'; // 스크롤 다시 허용
-  };
+  //   onDragEnd();
+  //   setIsDragging(false); // 터치 종료 시 드래그 비활성화
+  //   document.body.style.overflow = 'auto'; // 스크롤 다시 허용
+  // };
 
 
   const handleCheckExpectedCost = async () => {
@@ -256,9 +256,13 @@ function TaxiChattingSettingPage() {
                   // onDragStart={(e) => onDragStart(e, index)}
                   // onDragOver={() => onDragOver(index)}
                   // onDragEnd={onDragEnd}
-                  onTouchStart={(e) => onTouchStart(e, index)}
-                  onTouchMove={onTouchMove}
-                  onTouchEnd={onTouchEnd}
+                  // onTouchStart={(e) => onTouchStart(e, index)}
+                  // onTouchMove={onTouchMove}
+                  // onTouchEnd={onTouchEnd}
+                  draggable
+                  onTouchStart={(e) => onDragStart(e, index)}
+                  onTouchMove={() => onDragOver(index)}
+                  onTouchEnd={onDragEnd}
                 > 
                  
                   <div className="flex flex-col items-center w-16">
