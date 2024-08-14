@@ -57,6 +57,7 @@ function TookDetailsPage() {
   const { seq } = useUser();
   const [users, setUsers] = useState([]);
   const [party, setParty] = useState(null);
+  const [ fakeCost, setFakeCost] = useState(null)
   const [isLeader, setIsLeader] = useState(false);
   const [popupUserName, setPopupUserName] = useState(null); // 팝업용 상태 추가
   const [popupMember, setPopupMember] = useState(null); // 팝업용 멤버 상태 추가
@@ -68,13 +69,12 @@ function TookDetailsPage() {
         const response = await partyDetailApi(id);
         if (response) {
           const party = {
-            partySeq: response.partyDetailList[0].party.partySeq,
             title: response.partyDetailList[0].party.title,
             category: response.partyDetailList[0].party.category,
             cost: response.partyDetailList[0].party.cost, // 실결제 금액
             status: response.partyDetailList[0].party.status
-              ? '완료'
-              : '미완료',
+            ? '완료'
+            : '미완료',
             createdAt: response.partyDetailList[0].party.createdAt,
             count: response.partyDetailList[0].party.count,
             totalMember: response.partyDetailList[0].party.totalMember,
@@ -87,7 +87,8 @@ function TookDetailsPage() {
             memberSeq: member.memberSeq,
             name: member.user.userName,
             imageNo: member.user.imageNo,
-            orderAmount: member.cost, // 택시일 경우 이게 가결제 금액
+            orderAmount: member.cost,
+            fakeCost: member.fakeCost, // 택시 - 가결제 금액
             amount: member.cost + (party.deliveryTip || 0) / party.totalMember,
             status: member.leader || member.status ? '완료' : '미완료',
             isLeader: member.leader,
@@ -133,7 +134,7 @@ function TookDetailsPage() {
               {user.isMe && (
                 <img src={isMeIcon} alt="본인" className="ml-2 w-9.5 h-5" />
               )}
-              {party.category === 4 &&
+              {(party.category === 4) | (party.category === 2) &&
                 !user.isLeader &&
                 !user.isCompleted &&
                 isLeader && (
@@ -173,13 +174,13 @@ function TookDetailsPage() {
               </span>
             </div>
           </div>
-        ) : (
+        ) : type === '택시' ? (
           <div>
             <div className="flex text-sm justify-between mt-2 ml-1">
               선결제금액{' '}
               <span className="ml-2 text-black"> 
                 {/* todo: 파티 돌게 */}
-                {formatNumber(party.cost)} 원
+                {formatNumber(user.fakeCost)} 원
               </span>
             </div>
             <div className="flex text-sm justify-between mt-2 ml-1 mb-4">
@@ -189,7 +190,8 @@ function TookDetailsPage() {
               </span>
             </div>
           </div>
-        )}
+        ) : null}
+
         {index < users.length - 1 && (
           <div className="border-b border-dashed border-gray-300 my-2"></div>
         )}
