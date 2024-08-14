@@ -114,11 +114,11 @@ function TaxiChattingSettingPage() {
     // 두 번째 터치가 종료된 경우에만 위치 교환을 수행
     if (firstTouch && secondTouch) {
       swapPositions(firstTouch, secondTouch); // 두 요소의 위치를 교환
+      // 초기화
+      setFirstCheck(false);
+      setSecondCheck(false);
     }
   
-    // 초기화
-    setFirstCheck(false);
-    setSecondCheck(false);
   };
   
   // 두 요소의 위치를 교환하는 함수
