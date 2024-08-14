@@ -281,7 +281,7 @@ const swapPositions = (index1, index2) => {
                     ? 'bg-neutral-300 opacity-50'
                     : 'bg-neutral-100'
                 }`}
-                onClick={(e) => onTouchStart(e, index)}
+                onTouchStart={(e) => onTouchStart(e, index)}
               >
                   <div className="flex flex-col items-center w-16">
                     <img
