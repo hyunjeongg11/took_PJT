@@ -50,32 +50,17 @@ function ChattingMainPage() {
   const [deliveryInfo, setDeliveryInfo] = useState(null);
   const chatRoom = location.state?.chatRoom || null;
   const [isLeader, setIsLeader] = useState(false);
-  const [chatRoomId, setChatRoomId] = useState(null);
 
   const handleRegister = () => {
     navigate(`/chat/delivery/${deliveryInfo.deliverySeq}/notice`);
   };
 
-  const saveId = () => {
-    const storedId = localStorage.getItem('chatRoomId');
-    if (id) {
-      localStorage.setItem('chatRoomId', id);
-      setChatRoomId(id);
-    } else if (storedId) {
-      setChatRoomId(storedId);
-    }
-  };
-
   useEffect(() => {
-    if (seq == null || seq === undefined) {
-      return;
-    }
     const socket = new SockJS(`${SERVER_URL}/ws`);
     stompClient.current = Stomp.over(socket);
 
     stompClient.current.connect({}, () => {
       console.log('WebSocket connected');
-      saveId();
       enterRoom();
       loadUsers();
       loadDeliveryInfo();
@@ -86,17 +71,16 @@ function ChattingMainPage() {
         stompClient.current.disconnect();
       }
     };
-  }, [showParticipantList, seq, chatRoomId]);
+  }, [showParticipantList, seq]);
 
   useEffect(() => {
     if (chatRoom) {
       setIsLeader(chatRoom.userSeq === seq);
     }
   }, [chatRoom, seq]);
-
   const loadDeliveryInfo = async () => {
     try {
-      const response = await getDeliveryByRoom(chatRoomId);
+      const response = await getDeliveryByRoom(id);
       setDeliveryInfo(response);
       console.log(response);
     } catch (error) {
@@ -107,7 +91,7 @@ function ChattingMainPage() {
   const fetchRoomMessages = async () => {
     try {
       const response = await getChatRoomMessageApi({
-        roomSeq: chatRoomId,
+        roomSeq: id,
         userSeq: seq,
       });
       setMessages(response);
@@ -118,7 +102,7 @@ function ChattingMainPage() {
 
   const loadUsers = async () => {
     try {
-      const response = await getUsersApi(chatRoomId);
+      const response = await getUsersApi(id);
       setUsers(response);
       console.log('users', response);
     } catch (error) {
@@ -127,13 +111,10 @@ function ChattingMainPage() {
   };
 
   const enterRoom = () => {
-    if (seq == null || seq === undefined){
-      return;
-    }
     if (currentSubscription.current) {
       currentSubscription.current.unsubscribe();
     }
-    currentSubscription.current = subscribeToRoomMessages(chatRoomId);
+    currentSubscription.current = subscribeToRoomMessages(id);
     fetchRoomMessages();
   };
 
@@ -152,7 +133,7 @@ function ChattingMainPage() {
 
     const messageRequest = {
       type: 'TALK',
-      roomSeq: chatRoomId,
+      roomSeq: id,
       userSeq: seq,
       message: inputMessage,
     };
