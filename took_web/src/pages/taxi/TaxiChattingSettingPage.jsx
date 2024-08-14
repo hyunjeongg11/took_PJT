@@ -127,6 +127,7 @@ function TaxiChattingSettingPage() {
     isDragging = false;
     onDragEnd();
   };
+  
 
   const handleCheckExpectedCost = async () => {
     try {
@@ -228,9 +229,8 @@ function TaxiChattingSettingPage() {
           <div className="mt-1 border border-neutral-100 rounded-xl bg-neutral-100 p-2 shadow-md">
             {destinations.map((item, index) => (
               <div key={index}>
-                
                 <div
-                  className={`flex items-center p-2 rounded-md cursor-grab transition-transform duration-200 ease-in-out relative ${
+                  className={`flex items-center p-2 rounded-md cursor-grab transition duration-200 relative ${
                     draggingIndex === index ? 'bg-neutral-300 opacity-50' : 'bg-neutral-100'
                   }`}
                   onTouchStart={(e) => onTouchStart(e, index)}
@@ -241,6 +241,7 @@ function TaxiChattingSettingPage() {
                   // onDragOver={() => onDragOver(index)}
                   // onDragEnd={onDragEnd}
                 >
+                 
                   <div className="flex flex-col items-center w-16">
                     <img
                       src={getProfileImagePath(
