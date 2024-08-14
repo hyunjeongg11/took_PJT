@@ -95,87 +95,47 @@ function TaxiChattingSettingPage() {
     setDraggingIndex(null);
   };
 
-  const dragThreshold = 20; // 임계값 설정 (20px 이상 이동 시 위치 변경)
+  const dragThreshold = 30; // 임계값 설정 (20px 이상 이동 시 위치 변경)
+const [isDragging, setIsDragging] = useState(false); // 드래그 상태 추가
 
-  const onTouchStart = (e, index) => {
-    setDraggingIndex(index);
-    // 초기 터치 위치 저장
-    e.target.startX = e.touches[0].clientX;
-    e.target.startY = e.touches[0].clientY;
-  };
-  
-  // 터치 이동 시
-  const onTouchMove = (e) => {
-    e.preventDefault(); // 터치 스크롤 방지
-    const touch = e.touches[0];
-  
-    // 이동 거리를 계산
-    const deltaX = touch.clientX - e.target.startX;
-    const deltaY = touch.clientY - e.target.startY;
-  
-    // 이동 거리가 임계값을 초과했는지 확인
-    if (Math.abs(deltaX) > dragThreshold || Math.abs(deltaY) > dragThreshold) {
-      const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-  
-      if (!targetElement) return;
-  
-      const targetIndex = Array.from(targetElement.parentNode.children).indexOf(targetElement);
-      if (targetIndex !== -1 && targetIndex !== draggingIndex) {
-        onDragOver(targetIndex); // 요소의 위치를 변경
-      }
+const onTouchStart = (e, index) => {
+  setDraggingIndex(index);
+  setIsDragging(true); // 드래그 시작 시 활성화
+  // 초기 터치 위치 저장
+  e.target.startX = e.touches[0].clientX;
+  e.target.startY = e.touches[0].clientY;
+};
+
+// 터치 이동 시
+const onTouchMove = (e) => {
+  if (!isDragging) return; // 드래그가 비활성화된 경우 이동하지 않음
+
+  e.preventDefault(); // 터치 스크롤 방지
+  const touch = e.touches[0];
+
+  // 이동 거리를 계산
+  const deltaX = touch.clientX - e.target.startX;
+  const deltaY = touch.clientY - e.target.startY;
+
+  // 이동 거리가 임계값을 초과했는지 확인
+  if (Math.abs(deltaX) > dragThreshold || Math.abs(deltaY) > dragThreshold) {
+    const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+
+    if (!targetElement) return;
+
+    const targetIndex = Array.from(targetElement.parentNode.children).indexOf(targetElement);
+    if (targetIndex !== -1 && targetIndex !== draggingIndex) {
+      onDragOver(targetIndex); // 요소의 위치를 변경
+      setIsDragging(false); // 위치가 변경되면 드래그 비활성화
     }
-  };
-  
-  // 터치 종료 시
-  const onTouchEnd = () => {
-    onDragEnd();
-  };
+  }
+};
 
-  const closePopup = () => {
-    setIsPopupOpen(false);
-  };
-
-  const handleSaveSettings = async () => {
-    const genderValue = genderPreference === '동성';
-
-    const params = {
-      taxiSeq,
-      master: paymentUser,
-      max: userCount,
-      gender: genderValue,
-    };
-
-    try {
-      // 1. 택시 파티 업데이트 API 호출
-      console.log('Updating taxi party with params:', params); // API 호출 전 파라미터 확인
-      const updateResponse = await updateTaxiPartyApi(params);
-      console.log('Update response:', updateResponse); // API 응답 확인
-
-      console.log('destinations :', destinations);
-      // 2. 목적지 순서 설정 API 호출
-      for (let i = 0; i < destinations.length; i++) {
-        const rankParams = {
-          taxiSeq,
-          destiName: destinations[i].destiName,
-          routeRank: i + 1,
-        };
-        console.log('Rank params: ', rankParams); // API 호출 전 파라미터 확인
-        const rankResponse = await setDestinationRankApi(rankParams);
-      }
-
-      console.log('All API calls successful, navigating...');
-      // API 호출이 성공하면 채팅 페이지로 이동
-      navigate(`/chat/taxi/${taxiParty.roomSeq}`, {
-        state: {
-          roomSeq: taxiParty.roomSeq,
-          taxiSeq,
-        },
-      });
-    } catch (error) {
-      console.error('Error saving settings:', error);
-      // alert('설정 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
-    } finally {}
-  };
+// 터치 종료 시
+const onTouchEnd = () => {
+  onDragEnd();
+  setIsDragging(false); // 터치 종료 시 드래그 비활성화
+};
 
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
