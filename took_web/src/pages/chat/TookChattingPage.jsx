@@ -219,7 +219,7 @@ function TookChattingPage() {
           actualPaymentAmount: alarm.actualCost,
           difference: alarm.differenceCost,
           deliveryTip: alarm.deliveryCost,
-          orderAmount: alarm.orderCost,
+          orderAmount: alarm.cost - alarm.deliveryCost,
           chatTime: alarm.createAt,
           sender: alarm.sender,
           numCategory: alarm.category,

@@ -51,6 +51,9 @@ function ChattingMainPage() {
   const chatRoom = location.state?.chatRoom || null;
   const [isLeader, setIsLeader] = useState(false);
 
+  const handleRegister = () => {
+    navigate(`/chat/delivery/${deliveryInfo.deliverySeq}/notice`);
+  };
   useEffect(() => {
     const socket = new SockJS(`${SERVER_URL}/ws`);
     stompClient.current = Stomp.over(socket);
@@ -67,7 +70,7 @@ function ChattingMainPage() {
         stompClient.current.disconnect();
       }
     };
-  }, []);
+  }, [showParticipantList, id]);
 
   useEffect(() => {
     if (chatRoom) {
@@ -285,9 +288,7 @@ function ChattingMainPage() {
                     {isLeader ? (
                       <button
                         className="bg-gray-300 font-semibold px-6 py-2 text-white rounded-lg"
-                        onClick={() =>
-                          (window.location.href = `/chat/delivery/${deliveryInfo.deliverySeq}/notice`)
-                        }
+                        onClick={handleRegister}
                       >
                         주문 정보 등록하기
                       </button>

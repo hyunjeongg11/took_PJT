@@ -58,12 +58,10 @@ function DeliveryPayInputPage() {
   const handleSubmit = async () => {
     const userCosts = participants.map((participant, index) => ({
       userSeq: participant.userSeq,
-      cost: parseInt(orderAmounts[index] || '0', 10),
+      cost: Number(orderAmounts[index].replace(/,/g, '') || '0'),
     }));
-
-    const deliveryTip = parseInt(tipAmount || '0', 10);
-    console.log(userCosts, deliveryTip);
-
+    const deliveryTip = Number(tipAmount.replace(/,/g, '') || '0');
+    
     try {
       const partySeq = await makeParty();
       await connectPartyToDelivery(id, partySeq);
