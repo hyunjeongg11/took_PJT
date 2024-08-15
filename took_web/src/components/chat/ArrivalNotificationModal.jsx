@@ -3,10 +3,12 @@ import getProfileImagePath from '../../utils/getProfileImagePath';
 import { MdAdd } from 'react-icons/md';
 import { pickUpCheckApi, getAllPickUpApi } from '../../apis/groupBuy/shop.js';
 import { useUser } from '../../store/user.js';
+import { useNavigate } from 'react-router-dom';
 
 const ArrivalNotificationModal = ({ members, onClose, shopSeq }) => {
   const modalRef = useRef(null);
   const { seq: currentUserSeq } = useUser();
+  const navigate = useNavigate();
 
   const handleClickOutside = (event) => {
     if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -22,6 +24,7 @@ const ArrivalNotificationModal = ({ members, onClose, shopSeq }) => {
       const allPickedUp = await getAllPickUpApi(shopSeq);
       if (allPickedUp) {
         alert('모든 멤버가 수령을 완료했습니다.');
+        navigate('/chat/list')
       } else {
         alert('아직 수령을 완료하지 않은 멤버가 있습니다.');
       }

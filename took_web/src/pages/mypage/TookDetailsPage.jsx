@@ -147,7 +147,7 @@ function TookDetailsPage() {
               {user.isMe && (
                 <img src={isMeIcon} alt="본인" className="ml-2 w-9.5 h-5" />
               )}
-              {(party.category === 4) | (party.category === 2) &&
+              {(party.category === 4) || (party.category === 2) &&
                 !user.isLeader &&
                 !user.isCompleted &&
                 isLeader && (

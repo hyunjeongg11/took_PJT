@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import BackButton from '../../../components/common/BackButton';
 import getProfileImagePath from '../../../utils/getProfileImagePath';
 import { FiPlusCircle } from 'react-icons/fi';
 import { FaRegTrashAlt } from 'react-icons/fa';
@@ -16,6 +15,7 @@ import { useLocation } from 'react-router-dom';
 import { makePartyApi } from '../../../apis/pay.js';
 import { insertAllMemberApi } from '../../../apis/payment/jungsan.js';
 import { setPartyApi, getShopApi } from '../../../apis/groupBuy/shop.js';
+import backIcon from '../../../assets/common/back.svg'
 
 function TotalPurchasePage() {
   const location = useLocation();
@@ -30,6 +30,12 @@ function TotalPurchasePage() {
   const [purchaseToDelete, setPurchaseToDelete] = useState(null);
   const [chatRoom, setChatRoom] = useState();
   const [deliveryTip, setDeliveryTip] = useState(0);
+
+  const handleBackClick = () => {
+    const id = shopInfo.roomSeq;
+    console.log(id);
+    navigate(`/chat/buy/${id}`); 
+  };
 
   const fetchShopData = async () => {
     try {
@@ -155,7 +161,12 @@ function TotalPurchasePage() {
     <div className="flex flex-col pt-5 bg-white max-w-screen min-h-screen">
       <div className="flex flex-col px-5 w-full">
         <div className="flex flex-col px-5 w-full">
-          <BackButton />
+          <img
+          src={backIcon}
+          alt="뒤로"
+          className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
+          onClick={handleBackClick}
+        />
           <div className="mx-6 text-2xl text-main font-extrabold">
             공구 <span className="font-dela">took !</span>
           </div>

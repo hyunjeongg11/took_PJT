@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BackButton from '../../components/common/BackButton';
 import taxiIcon from '../../assets/chat/taxiIcon.png';
 import deliveryIcon from '../../assets/chat/deliveryIcon.png';
 import buyingIcon from '../../assets/chat/buyingIcon.png';
@@ -9,10 +8,13 @@ import { getChatListApi } from '../../apis/chat/chat';
 import { useUser } from '../../store/user';
 import { getSeletByRoomApi } from '../../apis/taxi';
 import CompleteIcon from '../../assets/payment/complete.png';
+import backIcon from '../../assets/common/back.svg';
 function formatTime(timeString) {
   const date = new Date(timeString);
   const now = new Date();
   const diff = (now - date) / 1000 / 60; // difference in minutes
+
+  
 
   if (diff < 1) {
     return '방금 전';
@@ -50,7 +52,11 @@ function ChattingListPage() {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const { seq } = useUser();
-
+  
+  const handleBackClick = () => {
+    navigate('/'); 
+  };
+  
   const handleChatRoomClick = async (chatRoom) => {
     let route;
     let state = { chatRoom, roomSeq: chatRoom.roomSeq }; // roomSeq 추가
@@ -95,7 +101,12 @@ function ChattingListPage() {
   return (
     <div className="flex flex-col bg-white max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-4 py-3">
-        <BackButton />
+          <img
+          src={backIcon}
+          alt="뒤로"
+          className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
+          onClick={handleBackClick}
+        />
         <div className="mt-2 flex-grow ml-11 text-left text-xl font-bold text-main">
           <span className="font-dela">took</span> 채팅
         </div>

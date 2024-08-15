@@ -23,9 +23,9 @@ import ParticipantList from '../../components/chat/ParticipantList';
 import ArrivalNotificationModal from '../../components/chat/ArrivalNotificationModal';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
-import { getChatRoomMessageApi, getUsersApi } from '../../apis/chat/chat';
+import { getChatRoomMessageApi, getUsersApi, getChatListApi } from '../../apis/chat/chat';
 import { getShopByRoom } from '../../apis/findByRoom';
-
+import backIcon from '../../assets/common/back.svg';
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 function GroupBuyChattingMainPage() {
@@ -50,15 +50,17 @@ function GroupBuyChattingMainPage() {
   const textareaRef = useRef(null);
   const stompClient = useRef(null);
   const currentSubscription = useRef(null);
-  const chatRoom = location.state?.chatRoom || null;
-  console.log('chatRoom', chatRoom);
-
+  const [chatRoom, setChatRoom] = useState({});
+  const handleBackClick = () => {
+    navigate('/chat/list'); 
+  };
   useEffect(() => {
     const socket = new SockJS(`${SERVER_URL}/ws`);
     stompClient.current = Stomp.over(socket);
-
+    
     stompClient.current.connect({}, () => {
       console.log('WebSocket connected');
+      getChat();
       enterRoom();
       loadShopInfo();
       loadUsers();
@@ -68,7 +70,7 @@ function GroupBuyChattingMainPage() {
         stompClient.current.disconnect();
       }
     };
-  }, []);
+  }, [showParticipantList]);
 
   const loadShopInfo = async () => {
     try {
@@ -80,6 +82,17 @@ function GroupBuyChattingMainPage() {
       }
     } catch (err) {
       console.log('Error fetching shop info', err);
+    }
+  };
+
+  const getChat = async () => {
+    try {
+      const response = await getChatListApi(seq);
+      const matchingRoom = response.find(chatRoom => chatRoom.roomSeq == id);
+      console.log("chatRoom ", matchingRoom)
+      setChatRoom(matchingRoom);
+    } catch (err) {
+      console.log('Error fetching chatRoom ', err);
     }
   };
 
@@ -226,7 +239,12 @@ function GroupBuyChattingMainPage() {
   return (
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-5 py-3">
-        <BackButton />
+        <img
+            src={backIcon}
+            alt="뒤로"
+            className="w-6 h-6 mx-6 mt-6 absolute top-0 left-0 opacity-80"
+            onClick={handleBackClick}
+          />
         <div className="mt-3 flex-grow text-center text-base font-bold text-black">
           {chatRoom?.roomTitle || '채팅방'}
         </div>
