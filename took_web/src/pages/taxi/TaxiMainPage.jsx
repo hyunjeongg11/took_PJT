@@ -145,7 +145,7 @@ function TaxiMainPage() {
     if (userSeq) {
       fetchData();
     }
-  }, [userSeq, latitude, longitude]);
+  }, [userSeq]);
 
   const enterRoom = ({ roomSeq, userSeq }) => {
     if (stompClient && connected) {
