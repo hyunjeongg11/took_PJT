@@ -145,8 +145,8 @@ function TaxiMainPage() {
       fetchLocation();
       fetchUserGender();
       fetchTaxiParties();
+      setLoading(true);
     }
-    setLoading(true);
   }, [userSeq, latitude, longitude]);
 
   const enterRoom = ({ roomSeq, userSeq }) => {
@@ -253,6 +253,7 @@ function TaxiMainPage() {
   });
 
   if(!loading){
+    console.log("loading...");
     <div>Loading...</div>
   }
 
