@@ -7,24 +7,22 @@ import {
   setDestinationAndCostApi,
   getNextDestinationRankApi,
 } from '../../apis/taxi';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useUser } from '../../store/user';
+import { usePosition } from '../../store/position';
 
-const tempStartLat = 35.09362058403008;
-const tempStartLon = 128.8556517902862;
-const tempTaxiSeq = 1;
-
-const TaxiPathSettingPage = () => {
+const TaxiPathSettingPage = (members, taxiParty) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { id: taxiSeq } = useParams();
   const [destination, setDestination] = useState('');
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
+  const [endLatitude, setLatitude] = useState(null);
+  const [endLongitude, setLongitude] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
-
+  const { latitude, longitude} = usePosition();
   const dropdownRef = useRef(null);
   const { guestSeq } = location.state || {};
 
@@ -49,15 +47,16 @@ const TaxiPathSettingPage = () => {
     setLoading(true);
     try {
       // 1. 다음 목적지 순위 가져오기
-      const rank = await getNextDestinationRankApi(tempTaxiSeq);
-
+      const rank = await getNextDestinationRankApi(taxiSeq);
+      console.log(rank);
       // 2. 개인 예상 비용 계산
       const paramsForCost = {
-        startLat: tempStartLat,
-        startLon: tempStartLon,
-        endLat: latitude,
-        endLon: longitude,
+        startLat: latitude,
+        startLon: longitude,
+        endLat: endLatitude,
+        endLon: endLongitude,
       };
+      console.log(paramsForCost)
       const costResponse = await calculateIndividualExpectedCostApi(paramsForCost);
       const cost = costResponse.cost; // cost 변수에 값을 할당
 
@@ -65,8 +64,8 @@ const TaxiPathSettingPage = () => {
       const paramsForDestination = {
         guestSeq,
         destiName: selectedAddress,
-        destiLat: latitude,
-        destiLon: longitude,
+        destiLat: endLatitude,
+        destiLon: endLongitude,
         cost: cost,
         routeRank: rank,
       };

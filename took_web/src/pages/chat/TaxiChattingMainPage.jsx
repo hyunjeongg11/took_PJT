@@ -24,7 +24,7 @@ const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const BackButton = () => {
   const navigate = useNavigate();
   const handleBackClick = () => {
-    navigate('/');
+    navigate("/chat/list");
   };
   return (
     <img

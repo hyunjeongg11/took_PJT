@@ -90,7 +90,7 @@ const DeliveryListPage = () => {
   return (
     <div className="flex flex-col max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-4 mt-4">
-        <BackButton />
+        <BackButton path="/"/>
         <div className="flex-grow text-center">
           <span className="mt-2.5 mb-1 text-2xl font-bold text-main">
             배달{' '}

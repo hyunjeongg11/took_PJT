@@ -1,10 +1,14 @@
 import backIcon from '../../assets/common/back.svg';
 import { useNavigate } from 'react-router-dom';
 
-const BackButton = () => {
+const BackButton = ({ path }) => {
   const navigate = useNavigate();
   const handleBackClick = () => {
-    navigate(-1);
+    if (path) {
+      navigate(path); // 전달받은 path로 이동
+    } else {
+      navigate(-1); // path가 없을 경우 -1로 이동
+    }
   };
   return (
     <img

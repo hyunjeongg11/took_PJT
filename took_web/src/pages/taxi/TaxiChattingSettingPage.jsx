@@ -43,10 +43,10 @@ function TaxiChattingSettingPage() {
     try {
       // 1. 모든 택시 파티 멤버 조회
       const members = await getAllTaxiPartyMembersApi(taxiSeq);
-
+      console.log(members);
       // 1-1. routeRank로 정렬
       const sortedMembers = members.sort((a, b) => a.routeRank - b.routeRank);
-
+      console.log(sortedMembers);
       // 위도와 경도가 같은 사용자를 필터링하여 한 명만 남김
       const uniqueDestinations = sortedMembers.filter((item, index, self) =>
         index === self.findIndex((t) => (
@@ -143,15 +143,12 @@ const swapPositions = (index1, index2) => {
 
   // 원래 배열인 destinations에서 순서를 반영
   const updatedDestinations = [...destinations];
-
   // 변경된 uniqueDestination의 각 항목에 대해 원래 destinations 배열에서 순서 변경
   const userSeq1 = tempDestinations[index1].userSeq;
   const userSeq2 = tempDestinations[index2].userSeq;
-
   // userSeq1과 userSeq2에 해당하는 원래 배열의 인덱스를 찾음
   const originalIndex1 = updatedDestinations.findIndex((item) => item.userSeq === userSeq1);
   const originalIndex2 = updatedDestinations.findIndex((item) => item.userSeq === userSeq2);
-
   // 위치가 변경된 두 사용자의 routeRank를 서로 교환
   const tempRank = updatedDestinations[originalIndex1].routeRank;
   updatedDestinations[originalIndex1].routeRank = updatedDestinations[originalIndex2].routeRank;
@@ -168,6 +165,7 @@ const swapPositions = (index1, index2) => {
       updatedDestinations[i].routeRank = rank2;
     }
   }
+  console.log(updatedDestinations)
 
   // setDestinations로 destinations 상태 업데이트
   setDestinations(updatedDestinations);
@@ -226,12 +224,13 @@ const swapPositions = (index1, index2) => {
       console.log('Update response:', updateResponse); // API 응답 확인
 
       console.log('destinations :', destinations);
+      const sortedDestinations = [...destinations].sort((a, b) => a.routeRank - b.routeRank);
       // 2. 목적지 순서 설정 API 호출
-      for (let i = 0; i < destinations.length; i++) {
+      for (let i = 0; i < sortedDestinations.length; i++) {
         const rankParams = {
           taxiSeq,
-          destiName: destinations[i].destiName,
-          routeRank: destinations.routeRank,
+          destiName: sortedDestinations[i].destiName,
+          routeRank: sortedDestinations[i].routeRank,
         };
         console.log('Rank params: ', rankParams); // API 호출 전 파라미터 확인
         const rankResponse = await setDestinationRankApi(rankParams);
@@ -281,7 +280,7 @@ const swapPositions = (index1, index2) => {
                     ? 'bg-neutral-300 opacity-50'
                     : 'bg-neutral-100'
                 }`}
-                onTouchStart={(e) => onTouchStart(e, index)}
+                onClick={(e) => onTouchStart(e, index)}
               >
                   <div className="flex flex-col items-center w-16">
                     <img

@@ -241,7 +241,7 @@ function ChattingMainPage() {
   return (
     <div className="flex flex-col bg-[#FFF7ED] max-w-[360px] mx-auto relative h-screen">
       <div className="flex items-center px-5 py-3">
-        <BackButton />
+        <BackButton path="/chat/list"/>
         <div className="mt-2.5 flex-grow text-center text-lg font-bold text-black">
           {chatRoom?.roomTitle || '채팅방'}
         </div>

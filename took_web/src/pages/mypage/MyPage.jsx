@@ -9,7 +9,7 @@ import backIcon from '../../assets/delivery/whiteBack.svg';
 const BackButton = () => {
   const navigate = useNavigate();
   const handleBackClick = () => {
-    navigate(-1);
+    navigate('/');
   };
   return (
     <img
