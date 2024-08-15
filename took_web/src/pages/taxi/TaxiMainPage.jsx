@@ -147,7 +147,7 @@ function TaxiMainPage() {
       fetchTaxiParties();
       setTimeout(() => {
         setLoading(true);
-      }, 1500);
+      }, 500);
     }
   }, [userSeq, latitude, longitude]);
 
@@ -256,7 +256,7 @@ function TaxiMainPage() {
 
   if(!loading){
     console.log("loading...");
-    <div>Loading...</div>
+    return <div>Loading...</div>
   }
 
   return (
