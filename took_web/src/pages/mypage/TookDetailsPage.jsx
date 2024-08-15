@@ -95,20 +95,32 @@ function TookDetailsPage() {
           };
           setParty(party);
 
-          const partyList = response.partyDetailList.map((member) => ({
-            memberSeq: member.memberSeq,
-            name: member.user.userName,
-            imageNo: member.user.imageNo,
-            orderAmount: member.cost,
-            fakeCost: member.fakeCost, // 택시 - 가결제 금액
-            amount: member.cost + (party.deliveryTip || 0) / party.totalMember,
-            status: member.leader || member.status ? '완료' : '미완료',
-            isLeader: member.leader,
-            isCompleted: member.status,
-            userSeq: member.user.userSeq,
-            createdAt: member.createdAt,
-            isMe: member.user.userSeq === seq,
-          }));
+          const partyList = response.partyDetailList.map((member) => {
+            let amount = member.cost + (party.deliveryTip || 0) / party.totalMember;
+            
+            if (amount % 1 !== 0) {  // amount가 소수일 때
+              if (member.leader) {
+                amount = Math.floor(amount);  // 리더일 경우 버림
+              } else {
+                amount = Math.ceil(amount);   // 리더가 아닐 경우 올림
+              }
+            }
+          
+            return {
+              memberSeq: member.memberSeq,
+              name: member.user.userName,
+              imageNo: member.user.imageNo,
+              orderAmount: member.cost,
+              fakeCost: member.fakeCost, // 택시 - 가결제 금액
+              amount: amount,
+              status: member.leader || member.status ? '완료' : '미완료',
+              isLeader: member.leader,
+              isCompleted: member.status,
+              userSeq: member.user.userSeq,
+              createdAt: member.createdAt,
+              isMe: member.user.userSeq === seq,
+            };
+          });
           setUsers(partyList);
 
           const currentUser = partyList.find((user) => user.isMe);
