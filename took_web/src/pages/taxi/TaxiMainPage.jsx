@@ -74,80 +74,76 @@ function TaxiMainPage() {
   }, []);
 
   useEffect(() => {
-    const fetchLocation = async () => {
-      if (latitude && longitude) {
-        try {
-          const addr = await getAddr(latitude, longitude);
-          setLocation(addr);
-        } catch (error) {
-          console.error('Error fetching address:', error);
-        }
-      }
-    };
-
-    const fetchUserGender = async () => {
+    const fetchData = async () => {
       try {
-        const userInfo = await getUserInfoApi({ userSeq });
-        setUserGender(userInfo.gender);
-      } catch (error) {
-        console.error('Error fetching user info:', error);
-      }
-    };
-
-    const fetchTaxiParties = async () => {
-      try {
-        const nearbyUsers = await getNearByUserPositionApi({
-          userSeq,
-          lat: latitude,
-          lon: longitude,
-        });
-        const userSeqs = nearbyUsers.map((user) => user.userSeq);
-        userSeqs.push(userSeq);
-
-        const listParams = {
-          lat: parseFloat(latitude),
-          lon: parseFloat(longitude),
+        const fetchLocation = async () => {
+          if (latitude && longitude) {
+            const addr = await getAddr(latitude, longitude);
+            setLocation(addr);
+          }
         };
-        console.log('현재 lat:', parseFloat(latitude));
-        console.log('현재 lon:', parseFloat(longitude));
-
-        const taxiPartyList = await getTaxiPartyListApi(listParams);
-
-        const taxiPartiesData = await Promise.all(
-          taxiPartyList.map(async (party) => {
-            const userInfo = await getUserInfoApi({ userSeq: party.userSeq });
-
-            const taxiPathResponse = await getTaxiPartyPathApi(party.taxiSeq);
-
-            const taxiPath = Array.isArray(taxiPathResponse)
-              ? taxiPathResponse
-              : [];
-
-            const destinations = [...new Set(taxiPath.map((path) => path.destiName))];
-
-            return {
-              ...party,
-              imgNo: userInfo.imageNo,
-              userGender: userInfo.gender,
-              destinations,
-              taxiPath,
-            };
-          })
-        );
-
-        setTaxiParties(taxiPartiesData);
+  
+        const fetchUserGender = async () => {
+          const userInfo = await getUserInfoApi({ userSeq });
+          setUserGender(userInfo.gender);
+        };
+  
+        const fetchTaxiParties = async () => {
+          const nearbyUsers = await getNearByUserPositionApi({
+            userSeq,
+            lat: latitude,
+            lon: longitude,
+          });
+          const userSeqs = nearbyUsers.map((user) => user.userSeq);
+          userSeqs.push(userSeq);
+  
+          const listParams = {
+            lat: parseFloat(latitude),
+            lon: parseFloat(longitude),
+          };
+          console.log('현재 lat:', parseFloat(latitude));
+          console.log('현재 lon:', parseFloat(longitude));
+  
+          const taxiPartyList = await getTaxiPartyListApi(listParams);
+  
+          const taxiPartiesData = await Promise.all(
+            taxiPartyList.map(async (party) => {
+              const userInfo = await getUserInfoApi({ userSeq: party.userSeq });
+  
+              const taxiPathResponse = await getTaxiPartyPathApi(party.taxiSeq);
+  
+              const taxiPath = Array.isArray(taxiPathResponse)
+                ? taxiPathResponse
+                : [];
+  
+              const destinations = [...new Set(taxiPath.map((path) => path.destiName))];
+  
+              return {
+                ...party,
+                imgNo: userInfo.imageNo,
+                userGender: userInfo.gender,
+                destinations,
+                taxiPath,
+              };
+            })
+          );
+  
+          setTaxiParties(taxiPartiesData);
+        };
+  
+        // 모든 데이터를 병렬로 가져온 후 로딩 상태를 업데이트
+        await Promise.all([fetchLocation(), fetchUserGender(), fetchTaxiParties()]);
+  
+        setLoading(true);
       } catch (error) {
-        console.error('Error fetching taxi parties:', error);
+        console.error('Error fetching data:', error);
+        // 에러가 발생했을 경우에도 로딩 상태를 true로 변경 (에러 처리를 위한 화면이 필요할 수 있음)
+        setLoading(true);
       }
     };
-
+  
     if (userSeq) {
-      fetchLocation();
-      fetchUserGender();
-      fetchTaxiParties();
-      setTimeout(() => {
-        setLoading(true);
-      }, 2000);
+      fetchData();
     }
   }, [userSeq, latitude, longitude]);
 
@@ -256,14 +252,7 @@ function TaxiMainPage() {
 
   if (!loading) {
     console.log("loading...");
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-center">
-          <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16 mb-4"></div>
-          <div className="text-xl font-semibold text-gray-700">Loading...</div>
-        </div>
-      </div>
-    );
+    return <div>Loading...</div>
   }
   
 
