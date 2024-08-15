@@ -147,7 +147,7 @@ function TaxiMainPage() {
       fetchTaxiParties();
       setTimeout(() => {
         setLoading(true);
-      }, 500);
+      }, 1500);
     }
   }, [userSeq, latitude, longitude]);
 
