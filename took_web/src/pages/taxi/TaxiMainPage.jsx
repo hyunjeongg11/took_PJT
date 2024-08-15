@@ -127,7 +127,7 @@ function TaxiMainPage() {
               };
             })
           );
-  
+          console.log(taxiPartiesData)
           setTaxiParties(taxiPartiesData);
         };
   
