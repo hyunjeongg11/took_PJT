@@ -147,7 +147,7 @@ function TaxiMainPage() {
       fetchTaxiParties();
       setTimeout(() => {
         setLoading(true);
-      }, 500);
+      }, 2000);
     }
   }, [userSeq, latitude, longitude]);
 
@@ -254,10 +254,18 @@ function TaxiMainPage() {
     return item.userGender === userGender;
   });
 
-  if(!loading){
+  if (!loading) {
     console.log("loading...");
-    return <div>Loading...</div>
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-center">
+          <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16 mb-4"></div>
+          <div className="text-xl font-semibold text-gray-700">Loading...</div>
+        </div>
+      </div>
+    );
   }
+  
 
   return (
     <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main mb-16">
