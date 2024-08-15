@@ -25,7 +25,7 @@ import Modal from '../../components/common/titleMessageCommonModal.jsx';
 const BackButton = () => {
   const navigate = useNavigate();
   const handleBackClick = () => {
-    navigate(-1);
+    navigate("/");
   };
   return (
     <img
@@ -51,7 +51,7 @@ function TaxiMainPage() {
 
   const [stompClient, setStompClient] = useState(null);
   const [connected, setConnected] = useState(false);
-
+  const [loading, setLoading ] = useState(false);
   useEffect(() => {
     console.log('useEffect 실행됨'); // UseEffect 시작 부분에 로그 추가
     const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
@@ -146,6 +146,7 @@ function TaxiMainPage() {
       fetchUserGender();
       fetchTaxiParties();
     }
+    setLoading(true);
   }, [userSeq, latitude, longitude]);
 
   const enterRoom = ({ roomSeq, userSeq }) => {
@@ -251,11 +252,15 @@ function TaxiMainPage() {
     return item.userGender === userGender;
   });
 
+  if(!loading){
+    <div>Loading...</div>
+  }
+
   return (
     <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main mb-16">
       <div className="bg-main py-4">
         <div className="flex items-center px-4 relative mb-4 mt-3">
-          <BackButton />
+          <BackButton/>
           <div className="flex-grow text-center text-2xl font-bold text-white">
             택시{' '}
             <span className="font-dela">
