@@ -297,7 +297,7 @@ function TaxiMainPage() {
                     className={`px-3 py-1 rounded-full text-xs font-bold ${
                       item.gender === false
                         ? 'bg-white border border-neutral-300 text-gray-700'
-                        : item.gender
+                        : userGender === 'F'
                           ? 'bg-pink-200 text-pink-600'
                           : 'bg-blue-200 text-blue-600'
                     }`}
