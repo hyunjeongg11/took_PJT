@@ -105,7 +105,6 @@ function TaxiMainPage() {
           console.log('현재 lon:', parseFloat(longitude));
   
           const taxiPartyList = await getTaxiPartyListApi(listParams);
-  
           const taxiPartiesData = await Promise.all(
             taxiPartyList.map(async (party) => {
               const userInfo = await getUserInfoApi({ userSeq: party.userSeq });
@@ -115,9 +114,10 @@ function TaxiMainPage() {
               const taxiPath = Array.isArray(taxiPathResponse)
                 ? taxiPathResponse
                 : [];
-  
+              console.log(taxiPathResponse)
+              
               const destinations = [...new Set(taxiPath.map((path) => path.destiName))];
-  
+              console.log(destinations)
               return {
                 ...party,
                 imgNo: userInfo.imageNo,
