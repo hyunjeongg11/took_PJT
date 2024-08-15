@@ -860,13 +860,17 @@ public class PartyServiceImpl implements PartyService {
                 maskedName = maskedName.charAt(0) + "**" + maskedName.charAt(maskedName.length() - 1);
             }
 
+            Long cost = member.getCost();
+            if(party.getCategory() == 2) {
+                cost = member.getRestCost();
+            }
             responseList.add(
                     new NoPayResponseDto(
                             party.getPartySeq(),
                             leaderUser.getUserSeq(),
                             maskedName,
                             leaderUser.getImageNo(),
-                            member.getCost(),
+                            cost,
                             party.getCategory(),
                             party.getCreatedAt()
                     )
