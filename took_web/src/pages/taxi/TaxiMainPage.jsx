@@ -25,7 +25,7 @@ import Modal from '../../components/common/titleMessageCommonModal.jsx';
 const BackButton = () => {
   const navigate = useNavigate();
   const handleBackClick = () => {
-    navigate("/");
+    navigate('/');
   };
   return (
     <img
@@ -51,19 +51,97 @@ function TaxiMainPage() {
 
   const [stompClient, setStompClient] = useState(null);
   const [connected, setConnected] = useState(false);
-  const [loading, setLoading ] = useState(false);
+
+  const fetchLocation = async () => {
+    if (latitude && longitude) {
+      try {
+        const addr = await getAddr(latitude, longitude);
+        setLocation(addr);
+      } catch (error) {
+        console.error('Error fetching address:', error);
+      }
+    }
+  };
+
+  const fetchUserGender = async () => {
+    try {
+      const userInfo = await getUserInfoApi({ userSeq });
+      setUserGender(userInfo.gender);
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+    }
+  };
+
+  const fetchTaxiParties = async () => {
+    try {
+      const nearbyUsers = await getNearByUserPositionApi({
+        userSeq,
+        lat: latitude,
+        lon: longitude,
+      });
+      const userSeqs = nearbyUsers.map((user) => user.userSeq);
+      userSeqs.push(userSeq);
+
+      const listParams = {
+        lat: parseFloat(latitude),
+        lon: parseFloat(longitude),
+      };
+      console.log('현재 lat:', parseFloat(latitude));
+      console.log('현재 lon:', parseFloat(longitude));
+
+      const taxiPartyList = await getTaxiPartyListApi(listParams);
+
+      const taxiPartiesData = await Promise.all(
+        taxiPartyList.map(async (party) => {
+          const userInfo = await getUserInfoApi({ userSeq: party.userSeq });
+
+          const taxiPathResponse = await getTaxiPartyPathApi(party.taxiSeq);
+
+          const taxiPath = Array.isArray(taxiPathResponse)
+            ? taxiPathResponse
+            : [];
+
+          const destinations = [
+            ...new Set(taxiPath.map((path) => path.destiName)),
+          ];
+
+          return {
+            ...party,
+            imgNo: userInfo.imageNo,
+            userGender: userInfo.gender,
+            destinations,
+            taxiPath,
+          };
+        })
+      );
+
+      setTaxiParties(taxiPartiesData);
+    } catch (error) {
+      console.error('Error fetching taxi parties:', error);
+    }
+  };
+
   useEffect(() => {
     console.log('useEffect 실행됨'); // UseEffect 시작 부분에 로그 추가
+    if (userSeq) {
+      fetchLocation();
+      fetchUserGender();
+      fetchTaxiParties();
+    }
     const socket = new SockJS('https://i11e205.p.ssafy.io/ws');
     const stompClientInstance = Stomp.over(socket);
-    stompClientInstance.connect({}, () => {
-      console.log('WebSocket 연결 성공');
-      setConnected(true);
-    }, (error) => {
-      console.error('WebSocket 연결 실패:', error); // WebSocket 연결 실패 로그
-    });
+    stompClientInstance.connect(
+      {},
+      () => {
+        console.log('WebSocket 연결 성공');
+        setConnected(true);
+      },
+      (error) => {
+        console.error('WebSocket 연결 실패:', error); // WebSocket 연결 실패 로그
+      }
+    );
     setStompClient(stompClientInstance); // stompClientInstance 설정
-  
+
     return () => {
       if (stompClientInstance && stompClientInstance.connected) {
         stompClientInstance.disconnect(() => {
@@ -74,76 +152,10 @@ function TaxiMainPage() {
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fetchLocation = async () => {
-          if (latitude && longitude) {
-            const addr = await getAddr(latitude, longitude);
-            setLocation(addr);
-          }
-        };
-  
-        const fetchUserGender = async () => {
-          const userInfo = await getUserInfoApi({ userSeq });
-          setUserGender(userInfo.gender);
-        };
-  
-        const fetchTaxiParties = async () => {
-          const nearbyUsers = await getNearByUserPositionApi({
-            userSeq,
-            lat: latitude,
-            lon: longitude,
-          });
-          const userSeqs = nearbyUsers.map((user) => user.userSeq);
-          userSeqs.push(userSeq);
-  
-          const listParams = {
-            lat: parseFloat(latitude),
-            lon: parseFloat(longitude),
-          };
-          console.log('현재 lat:', parseFloat(latitude));
-          console.log('현재 lon:', parseFloat(longitude));
-  
-          const taxiPartyList = await getTaxiPartyListApi(listParams);
-          const taxiPartiesData = await Promise.all(
-            taxiPartyList.map(async (party) => {
-              const userInfo = await getUserInfoApi({ userSeq: party.userSeq });
-  
-              const taxiPathResponse = await getTaxiPartyPathApi(party.taxiSeq);
-  
-              const taxiPath = Array.isArray(taxiPathResponse)
-                ? taxiPathResponse
-                : [];
-              console.log(taxiPathResponse)
-              
-              const destinations = [...new Set(taxiPath.map((path) => path.destiName))];
-              console.log(destinations)
-              return {
-                ...party,
-                imgNo: userInfo.imageNo,
-                userGender: userInfo.gender,
-                destinations,
-                taxiPath,
-              };
-            })
-          );
-          console.log(taxiPartiesData)
-          setTaxiParties(taxiPartiesData);
-        };
-  
-        // 모든 데이터를 병렬로 가져온 후 로딩 상태를 업데이트
-        await Promise.all([fetchLocation(), fetchUserGender(), fetchTaxiParties()]);
-  
-        setLoading(true);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        // 에러가 발생했을 경우에도 로딩 상태를 true로 변경 (에러 처리를 위한 화면이 필요할 수 있음)
-        setLoading(true);
-      }
-    };
-  
     if (userSeq) {
-      fetchData();
+      fetchLocation();
+      fetchUserGender();
+      fetchTaxiParties();
     }
   }, [userSeq]);
 
@@ -175,26 +187,26 @@ function TaxiMainPage() {
       const isAlreadyMember = allMembers.some(
         (member) => member.userSeq === userSeq
       );
-  
+
       if (isAlreadyMember) {
         handleEnterChatRoom(item.roomSeq, item.taxiSeq, item.roomSeq);
         return;
       }
-  
+
       if (item.status === 'FILLED') {
         setModalMessage('해당 택시 took은 \n모집이 완료되었어요.');
         setIsModalOpen(true);
         return;
       }
-  
+
       const userStatus = await isUserJoinedTaxiPartyApi(userSeq);
-  
+
       if (userStatus) {
         setModalMessage('이미 참여중이에요!');
         setIsModalOpen(true);
         return;
       }
-  
+
       const memberData = {
         taxiSeq: item.taxiSeq,
         userSeq: userSeq,
@@ -204,11 +216,11 @@ function TaxiMainPage() {
         cost: item.taxiPath[0].cost,
         routeRank: item.taxiPath[0].routeRank,
       };
-  
+
       const response = await addTaxiPartyMemberApi(memberData);
       if (response) {
         console.log('Member added successfully:', response);
-        
+
         // WebSocket이 연결되었는지 확인한 후 방에 입장
         if (stompClient && connected) {
           enterRoom({ roomSeq: item.roomSeq, userSeq });
@@ -223,18 +235,17 @@ function TaxiMainPage() {
       console.error('택시 파티 참여 처리 중 오류 발생:', error);
     }
   };
-  
 
   const handleCreateTaxi = async () => {
     const userStatus = await isUserJoinedTaxiPartyApi(userSeq);
-    console.log("현재 유저의 상태는 ", userStatus);
-  
+    console.log('현재 유저의 상태는 ', userStatus);
+
     if (userStatus) {
       setModalMessage('이미 참여중이에요!');
       setIsModalOpen(true); // 모달 열기
       return;
     }
-  
+
     navigate('/taxi/create');
   };
 
@@ -250,17 +261,11 @@ function TaxiMainPage() {
     return item.userGender === userGender;
   });
 
-  if (!loading) {
-    console.log("loading...");
-    return <div>Loading...</div>
-  }
-  
-
   return (
     <div className="flex flex-col max-w-[360px] mx-auto relative h-screen bg-main mb-16">
       <div className="bg-main py-4">
         <div className="flex items-center px-4 relative mb-4 mt-3">
-          <BackButton/>
+          <BackButton />
           <div className="flex-grow text-center text-2xl font-bold text-white">
             택시{' '}
             <span className="font-dela">
@@ -293,8 +298,8 @@ function TaxiMainPage() {
                       item.gender === false
                         ? 'bg-white border border-neutral-300 text-gray-700'
                         : item.gender
-                        ? 'bg-pink-200 text-pink-600'
-                        : 'bg-blue-200 text-blue-600'
+                          ? 'bg-pink-200 text-pink-600'
+                          : 'bg-blue-200 text-blue-600'
                     }`}
                   >
                     {item.gender
@@ -305,7 +310,10 @@ function TaxiMainPage() {
                   </div>
                 </div>
                 <div className="flex flex-wrap mb-2 overflow-x-auto space-x-1">
-                  {item.destinations.map((destination, i) => (
+                  {(item.destinations.length > 0
+                    ? item.destinations
+                    : ['해운대역 부산 2호선']
+                  ).map((destination, i) => (
                     <div
                       key={i}
                       className="bg-neutral-300 text-gray-700 text-xs font-bold mr-1 mb-1 px-2 py-1 rounded-lg"
@@ -345,11 +353,7 @@ function TaxiMainPage() {
       </button>
 
       {isModalOpen && (
-        <Modal
-          title="알림"
-          message={modalMessage}
-          onClose={closeModal}
-        />
+        <Modal title="알림" message={modalMessage} onClose={closeModal} />
       )}
     </div>
   );
