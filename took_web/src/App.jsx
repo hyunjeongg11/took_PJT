@@ -141,7 +141,6 @@ function App() {
   const seq = getUserSeq();
   const savePosition = async ({ latitude, longitude }) => {
     if (seq) {
-      // Check if `seq` is not null
       await saveUserPositionApi({
         userSeq: seq,
         lat: latitude,
@@ -187,7 +186,7 @@ function App() {
 
     window.onLogin = (seq, token, id, password) => {
       console.log('userData', seq, token);
-      msgToAndroid('userData', seq, token, id, password);
+      // msgToAndroid(`userData', ${seq}, ${token}, ${id}, ${password}`);
       fetchData(seq, token, id, password);
     };
     // window.onAlarm = () => {
