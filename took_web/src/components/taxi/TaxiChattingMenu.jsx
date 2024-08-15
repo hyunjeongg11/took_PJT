@@ -35,6 +35,7 @@ const TaxiChattingMenu = ({
   const [modalMessageLine2, setModalMessageLine2] = useState('');
   const [modalType, setModalType] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,6 +59,7 @@ const TaxiChattingMenu = ({
       }, {});
 
       setUserInfos(userInfoMap);
+      setLoading(true);
     };
 
     fetchUserInfos();
@@ -198,7 +200,9 @@ const TaxiChattingMenu = ({
       state: { taxiSeq: taxiParty.taxiSeq, taxiParty },
     });
   };
-
+  if(!loading) {
+    <div>Loading...</div>
+  }
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-50">
       <div className="w-4/5 h-full bg-white shadow-md p-4 relative">
