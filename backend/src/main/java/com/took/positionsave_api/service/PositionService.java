@@ -93,7 +93,6 @@ public class PositionService {
                         double distance = calculateDistance(
                                 request.getLat(), request.getLon(),
                                 user.getLat(), user.getLon());
-
                         if (distance <= distanceThreshold) { // 거리 범위를 1000m로 설정
                             PositionUserListResponse response = new PositionUserListResponse();
                             // userSeq를 Long으로 변환
