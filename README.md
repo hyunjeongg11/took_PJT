@@ -1,6 +1,8 @@
 ## took(툭!)
 
-![툭배너](/uploads/ffe33dab30f2d837dc68537d7d844f84/image.png)
+![image](https://github.com/user-attachments/assets/230a13dc-8920-4557-9952-9222a5869fa4)
+
+
 
 Took은 20~30대의 효율적인 소비를 돕기 위한 위치 기반 더치페이 및 공동구매 플랫폼입니다. 
 사용자들은 간편한 원터치 더치페이 서비스를 기반으로 모임, 배달, 공동구매, 택시 등 다양한 상황에서 간편하게 비용을 나누고 알뜰하게 소비할 수 있습니다. 
@@ -10,7 +12,8 @@ Took은 20~30대의 효율적인 소비를 돕기 위한 위치 기반 더치페
 ### Func 1. 정산 took! 
 
 **정산 took!** 은 근처에 위치한, 앱에 접속한 사용자들 간에 원터치 송금 서비스를 통해 빠르고 간편하게 더치페이 정산을 진행할 수 있는 서비스입니다. 
-![정산 툭](/uploads/1bdeb7e47e16261509e5bfafeb773e65/image.png)
+![image](https://github.com/user-attachments/assets/acef94f3-fb77-474e-9951-48dc796f09ae)
+
 
 <br/>
 
